@@ -33,11 +33,12 @@
 
 ### Introduction
 
-> 
+> This project is aiming to simulate societies contesting for resources over a map through the use of Genetic Algorithms.  The map will consist of tiles of different terrain quality (e.g Water Tiles, Plain Tiles, Arrid TIles, Fertile TIles). Each tile will either be unclaimed or claimed by an existing society. Any tile that is claimed will host a number of people who are members of the society to which the tile belongs. The goal of the simulation is to examine how societies will change and react over time in order to gain the most amount of territory while maintaining a healthy population.
 
 ### Outline
 
-> Outline the proposed project.
+> When the program is begun the user can choose certain parameters that will effect the map and certain factyors that will effect each society in the game. (e.g Tile Size, Average Life Expectancy, A society's tendency to be more aggressive, etc. Once the user has chosen their specified parameters the simulation will begin. From heresocieites will be placed randomly onto the map 
+
 
 ### Background
 
