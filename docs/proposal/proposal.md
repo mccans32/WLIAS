@@ -35,9 +35,130 @@
 
 > This project is aiming to simulate societies contesting for resources over a map through the use of Genetic Algorithms.  The map will consist of tiles of different terrain quality (e.g Water Tiles, Plain Tiles, Arrid TIles, Fertile TIles). Each tile will either be unclaimed or claimed by an existing society. Any tile that is claimed will host a number of people who are members of the society to which the tile belongs. The goal of the simulation is to examine how societies will change and react over time in order to gain the most amount of territory while maintaining a healthy population.
 
+The techincal area this project covers is simulation of population growth, genetic algorithms and strategy like games. We believe that using this it might prove to be an effective way to demonstrate how genetic algorithms function and how genetic structures, in our case Societies, can adapt and change over time in order to adjust to their environment as well as adapt to the other genetic Structures that compete against them. 
+
 ### Outline
 
-> When the program is begun the user can choose certain parameters that will effect the map and certain factyors that will effect each society in the game. (e.g Tile Size, Average Life Expectancy, A society's tendency to be more aggressive, etc. Once the user has chosen their specified parameters the simulation will begin. From heresocieites will be placed randomly onto the map 
+> TThis will be a simple interactive simulation of multiple groups of people(Societies) attempting to gain majority control of a world(set of tiles). It will consist of two major components
+
+**Front end**
+
+- Written in Python using Libraries such as (Plotly, Pygame)
+- Will contain the UI
+  - UI consists of graphical representation of what is happening in the world
+  - Contains Various Graphs and breakdown of each individual Society
+    - ■■Population increase over time
+    - ■■Population aggressiveness over time
+    - ■■Population spread over time
+    - ■■etc..
+
+**Back end**
+
+- Written in Python
+- Will contain the Algorithm which is used to make decisions
+
+The majority of the workload will be inside the Back end component as we want to get the most accurate results for our algorithm. This will mean a lot of tuning and training of any component we create. \*BURP\* Below is the following logic we wish to implement.
+
+A Society is made up of people
+
+Each person has some traits
+
+Majority of traits determines society&#39;s strategy
+
+**What is the world made of?**
+
+- Tiles of different types of land
+  - Water tiles
+  - Fertile tiles
+  - Arrid Tiles
+  - Plain Tiles
+
+**Water Tile**
+
+- impassible
+- Gives bonuses to Societies nearby
+
+**Fertile Tile**
+
+- Passable
+- Gives positive bonuses to occupying Society
+
+**Arrid Tiles**
+
+- Passable
+- Gives Negative bonuses to occupying Society
+
+**Plain Tiles**
+
+- Passable
+- Give no bonuses to occupying Society
+
+**What is a Person made of?**
+
+- Health
+  - An int of 100
+  - This value decreases as a person goes through &quot;life&quot;
+  - This value will change frequently
+- Age
+  - Value between 0 and average life expectancy or higher. This is  inputted by user at the start.
+  - 1 year will roughly equal 1 minute in real life. This speed can be altered by the user
+- Gender
+  - Male or female
+- Aggressiveness index
+  - Value between -1 and 1
+    - ■■-1 passive
+    - ■■1 aggressive
+  - The more aggressive a person is the more likely they are to attack if available
+- Fertility index
+  - Value between -1 and 1
+    - ■■1 fertile will be more likely to be selected for reproduction
+    - ■■-1 Infertile will be less likely to be selected for reproduction
+
+
+
+(Unsure how to tackle just yet)
+
+- Pathfinding Index
+  - index value between -1 and 1
+    - ■■Will depend on individuals within a tile Age, Aggressiveness, Fertility and Health
+    - ■■-1 Society is not willing to try and secure more tiles until it has more pop
+    - ■■1 Society is willing to try and secure more land before increasing your pop
+
+**What is a Society?**
+
+- A group of People
+
+**What does the Society do?**
+
+- Claim territory
+
+**How?**
+
+**Expanding territory**
+
+- Claiming unowned territory by staying in it for 1 turn
+- Claiming owned territory by battling opposing Society
+- Stealing another Society tile and its population.
+
+**How does battling work?**
+
+- One society defends a tile one society attacks a tile. **NOTE** The more aggressive Society will be the first to decide its events
+
+- Create some sort of an attacking or defending modifier / winning probability based on the following factors
+  - Number of people attacking / defending
+  - Aggressiveness of the attackers / defending
+  - Overall health of force attacking / defending
+
+**How does a Society Decide what to do?**
+
+- Based on the following factors Each Society will determine what is the more appropriate move.
+  - Societies Aggressiveness - **Attack**
+  - Societies Size - **Reproduce**
+  - Societies Pathfinding - **Move**
+
+**Why does a Society want to make these moves?**
+
+- The goal of each Society is to have the largest population of healthy individuals across the largest territory. A society can also win by being the last society left on the map. Each decision will alter the Societies time efficiency which will dictate its movements. After the time limit is reached, a winner is decided.
 
 
 ### Background
