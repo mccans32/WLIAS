@@ -57,7 +57,7 @@ The techincal area this project covers is simulation of population growth, genet
 - Written in Python
 - Will contain the Algorithm which is used to make decisions
 
-The majority of the workload will be inside the Back end component as we want to get the most accurate results for our algorithm. This will mean a lot of tuning and training of any component we create. \*BURP\* Below is the following logic we wish to implement.
+The majority of the workload will be inside the Back end component as we want to get the most accurate results for our algorithm. This will mean a lot of tuning and training of any component we create. Below is the following logic we wish to implement.
 
 A Society is made up of people
 
