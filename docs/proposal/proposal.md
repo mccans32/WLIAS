@@ -138,7 +138,7 @@ How does a Society Decide what to do?
   - Societies Aggressiveness - **Attack**
   - Societies Size - **Reproduce**
   - Societies Pathfinding - **Move**
-  - Societies major skills - **Trade**
+  - Societies major skills - **Trade or co-operation**
 
 Why does a Society want to make these moves?
 
