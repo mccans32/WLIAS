@@ -12,16 +12,16 @@ before_script:
 
 cache:
   paths:
-    - src/.gradle/wrapper
-    - src/.gradle/caches
+    - .gradle/wrapper
+    - .gradle/caches
 
 build:
   stage: build
   script:
-    - ./src/gradlew assemble
+    - ./gradlew assemble
   artifacts:
     paths:
-      - src/build/libs/*.jar
+      - build/libs/*.jar
     expire_in: 1 week
   only:
     - master
@@ -29,12 +29,12 @@ build:
 test:
   stage: test
   script:
-    - ./src/gradlew check
+    - ./gradlew check
 
 deploy:
   stage: deploy
   script:
-    - ./src/deploy
+    - ./deploy
 
 after_script:
   - echo "End CI"
