@@ -163,7 +163,7 @@ public class Window {
    * Destroy.
    */
   public void destroy() {
-        Input.destroy();
+    Input.destroy();
     glfwWindowShouldClose(window);
     glfwDestroyWindow(window);
   }
