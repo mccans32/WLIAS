@@ -3,7 +3,7 @@ image: java
 stages:
   - build
   - test
-  - deploy
+#  - deploy
 
 before_script:
   #  - echo `pwd` # debug
