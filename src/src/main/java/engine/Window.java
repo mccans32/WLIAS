@@ -107,8 +107,8 @@ public class Window {
     setErrorCallback();
 
     if (!glfwInit()) {
-      System.err.println(("GLFW Failed to start!"));
-      System.exit(1);
+      //  System.exit(1);
+      throw new RuntimeException("GLFW Failed to start!");
     }
 
     input = new Input();

@@ -32,36 +32,35 @@ public class Input {
    * Instantiates a new Input.
    */
   public Input() {
-    keyboard = new GLFWKeyCallback() {
+    setKeyboard(new GLFWKeyCallback() {
       @Override
       public void invoke(long window, int key, int scancode, int action, int mods) {
-        keys[key] = (action != GLFW_RELEASE);
-
+        Input.keys[key] = (action != GLFW_RELEASE);
       }
-    };
+    });
 
-    mouseMove = new GLFWCursorPosCallback() {
+    setMouseMove(new GLFWCursorPosCallback() {
       @Override
       public void invoke(long window, double xpos, double ypos) {
-        mouseX = xpos;
-        mouseY = ypos;
+        Input.mouseX = xpos;
+        Input.mouseY = ypos;
       }
-    };
+    });
 
-    mouseButtons = new GLFWMouseButtonCallback() {
+    setMouseButtons(new GLFWMouseButtonCallback() {
       @Override
       public void invoke(long window, int button, int action, int mods) {
-        buttons[button] = (action != GLFW.GLFW_RELEASE);
+        Input.buttons[button] = (action != GLFW.GLFW_RELEASE);
       }
-    };
+    });
 
-    mouseScroll = new GLFWScrollCallback() {
+    setMouseScroll(new GLFWScrollCallback() {
       @Override
       public void invoke(long window, double xoffset, double yoffset) {
-        scrollX += xoffset;
-        scrollY += yoffset;
+        Input.scrollX += xoffset;
+        Input.scrollY += yoffset;
       }
-    };
+    });
   }
 
   /**
@@ -88,10 +87,10 @@ public class Input {
    * Destroy.
    */
   public static void destroy() {
-    keyboard.free();
-    mouseMove.free();
-    mouseButtons.free();
-    mouseScroll.free();
+    Input.keyboard.free();
+    Input.mouseMove.free();
+    Input.mouseButtons.free();
+    Input.mouseScroll.free();
   }
 
   /**
@@ -139,6 +138,10 @@ public class Input {
     return mouseScroll;
   }
 
+  public static void setMouseScroll(GLFWScrollCallback mouseScroll) {
+    Input.mouseScroll = mouseScroll;
+  }
+
   /**
    * Gets mouse move.
    *
@@ -146,6 +149,10 @@ public class Input {
    */
   public GLFWCursorPosCallback getMouseMove() {
     return mouseMove;
+  }
+
+  public static void setMouseMove(GLFWCursorPosCallback mouseMove) {
+    Input.mouseMove = mouseMove;
   }
 
   /**
@@ -158,11 +165,24 @@ public class Input {
   }
 
   /**
+   * Sets keyboard.
+   *
+   * @param keyboard the keyboard
+   */
+  public static void setKeyboard(GLFWKeyCallback keyboard) {
+    Input.keyboard = keyboard;
+  }
+
+  /**
    * Gets mouse buttons.
    *
    * @return the mouse buttons
    */
   public GLFWMouseButtonCallback getMouseButtons() {
     return mouseButtons;
+  }
+
+  public static void setMouseButtons(GLFWMouseButtonCallback mouseButtons) {
+    Input.mouseButtons = mouseButtons;
   }
 }
