@@ -1,7 +1,11 @@
 plugins {
     id 'java'
+    id 'checkstyle'
 }
-
+checkstyle {
+    ignoreFailures = false
+    toolVersion('8.29')
+}
 group 'org.example'
 version '1.0-SNAPSHOT'
 

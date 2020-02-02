@@ -1,34 +1,82 @@
 package engine;
 
+import static java.lang.System.currentTimeMillis;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-import static java.lang.System.currentTimeMillis;
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.*;
-
+/**
+ * The type Window.
+ */
 public class Window {
 
+  /**
+   * The Enable vsync.
+   */
+  static final boolean ENABLE_V_SYNC = true;
+  /**
+   * The Frames.
+   */
+  public int frames;
+  /**
+   * The Time.
+   */
+  public long time;
   private long window;
   private int height;
   private int width;
   private String title;
-  public int frames;
-  public long time;
-  private float backgroundR, backgroundG, backgroundB, backgroundAlpha;
+  private float backgroundR;
+  private float backgroundG;
+  private float backgroundB;
+  private float backgroundAlpha;
   private GLFWWindowSizeCallback windowSizeCallback;
   private boolean hasResized = false;
   private boolean fullscreen = false;
-  private int[] windowPosX = new int[1], windowPosY = new int[1];
-
-  //FINALS
-  final boolean ENABLE_VSYNC = true;
-
+  private int[] windowPosX = new int[1];
+  private int[] windowPosY = new int[1];
   private Input input;
 
+  /**
+   * Instantiates a new Window.
+   *
+   * @param width  the width
+   * @param height the height
+   * @param title  the title
+   */
+  public Window(int width, int height, String title) {
+    this.width = width;
+    this.height = height;
+    this.title = title;
+  }
+
+  /**
+   * Sets error callback.
+   */
   public static void setErrorCallback() {
     glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
   }
@@ -52,12 +100,9 @@ public class Window {
     glfwSetMouseButtonCallback(window, input.getMouseButtons());
   }
 
-  public Window(int width, int height, String title) {
-    this.width = width;
-    this.height = height;
-    this.title = title;
-  }
-
+  /**
+   * Create.
+   */
   public void create() {
     setErrorCallback();
 
@@ -70,9 +115,9 @@ public class Window {
 
     window = glfwCreateWindow(width, height, title, (fullscreen ? glfwGetPrimaryMonitor() : 0), 0);
 
-      if (window == 0) {
-          throw new IllegalStateException("Failed to create window!");
-      }
+    if (window == 0) {
+      throw new IllegalStateException("Failed to create window!");
+    }
 
     if (!fullscreen) {
       GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -94,12 +139,15 @@ public class Window {
     //Display Window
     showWindow();
     //Enable VSync
-    setVSync(ENABLE_VSYNC);
+    setVSync(ENABLE_V_SYNC);
     // set timer for window
     time = currentTimeMillis();
 
   }
 
+  /**
+   * Update.
+   */
   public void update() {
     if (hasResized) {
       GL11.glViewport(0, 0, width, height);
@@ -111,28 +159,55 @@ public class Window {
     updateFrameCounter();
   }
 
+  /**
+   * Destroy.
+   */
   public void destroy() {
-    Input.destroy();
+        Input.destroy();
     glfwWindowShouldClose(window);
     glfwDestroyWindow(window);
   }
 
+  /**
+   * Swap buffers.
+   */
   public void swapBuffers() {
     glfwSwapBuffers(window);
   }
 
+  /**
+   * Should close boolean.
+   *
+   * @return the boolean
+   */
   public boolean shouldClose() {
     return glfwWindowShouldClose(window);
   }
 
+  /**
+   * Show window.
+   */
   public void showWindow() {
     glfwShowWindow(window);
   }
 
-  public void setVSync(boolean V_sync) {
-    glfwSwapInterval(V_sync ? 1 : 0);
+  /**
+   * Sets v sync.
+   *
+   * @param vsync the v sync
+   */
+  public void setVSync(boolean vsync) {
+    glfwSwapInterval(vsync ? 1 : 0);
   }
 
+  /**
+   * Sets background colour.
+   *
+   * @param r     the r
+   * @param g     the g
+   * @param b     the b
+   * @param alpha the alpha
+   */
   public void setBackgroundColour(float r, float g, float b, float alpha) {
     backgroundR = r;
     backgroundG = g;
@@ -140,6 +215,9 @@ public class Window {
     backgroundAlpha = alpha;
   }
 
+  /**
+   * Update frame counter.
+   */
   public void updateFrameCounter() {
     frames++;
     if (currentTimeMillis() > time + 1000) {
@@ -149,10 +227,20 @@ public class Window {
     }
   }
 
+  /**
+   * Is fullscreen boolean.
+   *
+   * @return the boolean
+   */
   public boolean isFullscreen() {
     return fullscreen;
   }
 
+  /**
+   * Sets fullscreen.
+   *
+   * @param fullscreen the fullscreen
+   */
   public void setFullscreen(boolean fullscreen) {
     this.fullscreen = fullscreen;
     this.hasResized = true;
@@ -164,18 +252,38 @@ public class Window {
     }
   }
 
+  /**
+   * Gets height.
+   *
+   * @return the height
+   */
   public int getHeight() {
     return height;
   }
 
+  /**
+   * Gets width.
+   *
+   * @return the width
+   */
   public int getWidth() {
     return width;
   }
 
+  /**
+   * Gets title.
+   *
+   * @return the title
+   */
   public String getTitle() {
     return title;
   }
 
+  /**
+   * Is has resized boolean.
+   *
+   * @return the boolean
+   */
   public boolean isHasResized() {
     return hasResized;
   }
