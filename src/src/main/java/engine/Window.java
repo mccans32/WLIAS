@@ -109,6 +109,7 @@ public class Window {
    * Create.
    */
   public void create() {
+    System.out.println("Testing do we get here?");
     setErrorCallback();
 
     isGlfwInitialised = glfwInit();
