@@ -34,7 +34,7 @@ test:
     - ./gradlew check
   artifacts:
     paths:
-      - ./build/reports/tests/test/index.html
+      - ./builds/mccans32/2020-ca400-mccans32-slowikk2/src/build/reports/tests/test/index.html
       - ./build/reports/spotbugs/main.xml
       - ./build/reports/spotbugs/test.xml
       - ./build/reports/checkstyle/main.html
