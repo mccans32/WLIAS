@@ -36,7 +36,7 @@ java:
   artifacts:
     reports:
       junit:
-        - ./build/reports/tests/test/*.html
+        - builds/mccans32/2020-ca400-mccans32-slowikk2/srcbuild/reports/tests/test/index.html
 
 deploy:
   stage: deploy
