@@ -20,7 +20,7 @@ cache:
 build:
   stage: build
   script:
-    - mkdir ./build
+    - mkdir ./build/reports/tests/test/
     - ./gradlew assemble
   artifacts:
     paths:
@@ -37,7 +37,7 @@ java:
   artifacts:
     reports:
       junit:
-        - build/reports/tests/test/index.html
+        - ./build/reports/tests/test/index.html
 
 deploy:
   stage: deploy
