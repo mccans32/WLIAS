@@ -36,8 +36,6 @@ public class WindowTests {
 
   @Test
   public void fullscreenToggleTest() {
-    System.out.println("Testing Fullscreen");
-    System.out.println(window);
     window.create();
     assertFalse(window.isFullscreen());
     window.setFullscreen(true);

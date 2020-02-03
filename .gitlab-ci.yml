@@ -32,6 +32,14 @@ test:
   stage: test
   script:
     - ./gradlew check
+  artifacts:
+    paths:
+      - ./build/reports/tests/test/index.html
+      - ./build/reports/spotbugs/main.xml
+      - ./build/reports/spotbugs/test.xml
+      - ./build/reports/checkstyle/main.html
+      - ./build/reports/checkstyle/test.html
+    expire_in: 1 hrs
 
 deploy:
   stage: deploy
