@@ -32,6 +32,7 @@ java:
   stage: test
   script:
     - pwd
+    - ls -h
     - ./gradlew check
   artifacts:
     reports:
