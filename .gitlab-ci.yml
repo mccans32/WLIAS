@@ -31,12 +31,10 @@ build:
 java:
   stage: test
   script:
-    - pwd
-    - ./gradlew check
+    - gradle test
   artifacts:
     reports:
-      junit:
-        - build/test-results/test/**/TEST-*.xml
+      junit: build/test-results/test/**/TEST-*.xml
 
 deploy:
   stage: deploy
