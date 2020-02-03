@@ -23,7 +23,7 @@ build:
     - ./gradlew assemble
   artifacts:
     paths:
-      - build/libs/*.jar
+      - ./build/libs/*.jar
     expire_in: 1 week
   only:
     - master
@@ -32,12 +32,11 @@ java:
   stage: test
   script:
     - pwd
-    - ls -h
     - ./gradlew check
   artifacts:
     reports:
       junit:
-        - builds/mccans32/2020-ca400-mccans32-slowikk2/src/build/reports/tests/test/index.html
+        - build/reports/tests/test/index.html
 
 deploy:
   stage: deploy
