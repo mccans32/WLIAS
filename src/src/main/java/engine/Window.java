@@ -119,7 +119,7 @@ public class Window {
    * Create.
    */
   public void create() {
-    //setErrorCallback();
+    setErrorCallback();
 
     isGlfwInitialised = glfwInit();
     if (!isGlfwInitialised) {

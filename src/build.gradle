@@ -34,14 +34,27 @@ dependencies {
     implementation "org.lwjgl:lwjgl-openal"
     implementation "org.lwjgl:lwjgl-opengl"
     implementation "org.lwjgl:lwjgl-stb"
+    testImplementation "org.lwjgl:lwjgl"
+    testImplementation "org.lwjgl:lwjgl-assimp"
+    testImplementation "org.lwjgl:lwjgl-glfw"
+    testImplementation "org.lwjgl:lwjgl-openal"
+    testImplementation "org.lwjgl:lwjgl-opengl"
+    testImplementation "org.lwjgl:lwjgl-stb"
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+    testRuntimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    testRuntimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+    testRuntimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    testRuntimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+    testRuntimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    testRuntimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+
 }
 
 test {
