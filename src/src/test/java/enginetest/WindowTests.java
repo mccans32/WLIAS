@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import engine.Window;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class WindowTests {
@@ -17,8 +18,8 @@ public class WindowTests {
   static String[] titleArray = new String[] {"Test window 1", "Test window 2",
       "Test window 3", "Test window 4", "Test window 5"};
 
-  @BeforeAll
-  static void setup() {
+  @BeforeEach
+  void setup() {
     window = new Window(heightArray[0], heightArray[0], titleArray[0]);
   }
 
