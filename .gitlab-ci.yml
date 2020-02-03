@@ -20,6 +20,7 @@ cache:
 build:
   stage: build
   script:
+    - mkdir ./build
     - ./gradlew assemble
   artifacts:
     paths:
