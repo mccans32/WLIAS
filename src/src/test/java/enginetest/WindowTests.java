@@ -1,6 +1,7 @@
 package enginetest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
 import org.junit.jupiter.api.AfterEach;
@@ -17,6 +18,7 @@ public class WindowTests {
 
   @BeforeEach
   void setup() {
+    glfwInit();
     window = new Window(heightArray[0], heightArray[0], titleArray[0]);
     window.setVisible(false);
     window.create();
