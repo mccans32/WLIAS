@@ -46,6 +46,10 @@ public class Window {
    * The Time.
    */
   public long time;
+  /**
+   * The Is glfw initialised.
+   */
+  public boolean isGlfwInitialised = false;
   private long window;
   private int height;
   private int width;
@@ -60,7 +64,6 @@ public class Window {
   private int[] windowPosX = new int[1];
   private int[] windowPosY = new int[1];
   private Input input;
-  public boolean isGlfwInitialised = false;
 
   /**
    * Instantiates a new Window.
@@ -143,6 +146,9 @@ public class Window {
 
   }
 
+  /**
+   * Center screen.
+   */
   public void centerScreen() {
     GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     // X value
@@ -288,6 +294,15 @@ public class Window {
   }
 
   /**
+   * Sets title.
+   *
+   * @param argTitle the arg title
+   */
+  public void setTitle(String argTitle) {
+    this.title = argTitle;
+  }
+
+  /**
    * Is has resized boolean.
    *
    * @return the boolean
@@ -296,14 +311,16 @@ public class Window {
     return hasResized;
   }
 
+  /**
+   * Sets size.
+   *
+   * @param argWidth  the arg width
+   * @param argHeight the arg height
+   */
   public void setSize(int argWidth, int argHeight) {
     this.width = argWidth;
     this.height = argHeight;
     hasResized = true;
-  }
-
-  public void setTitle(String argTitle) {
-    this.title = argTitle;
   }
 
 }
