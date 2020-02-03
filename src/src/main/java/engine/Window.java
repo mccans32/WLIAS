@@ -60,6 +60,7 @@ public class Window {
   private int[] windowPosX = new int[1];
   private int[] windowPosY = new int[1];
   private Input input;
+  public boolean isGlfwInitialised = false;
 
   /**
    * Instantiates a new Window.
@@ -98,6 +99,7 @@ public class Window {
     glfwSetCursorPosCallback(window, input.getMouseMove());
     glfwSetScrollCallback(window, input.getMouseScroll());
     glfwSetMouseButtonCallback(window, input.getMouseButtons());
+
   }
 
   /**
@@ -106,7 +108,8 @@ public class Window {
   public void create() {
     setErrorCallback();
 
-    if (!glfwInit()) {
+    isGlfwInitialised = glfwInit();
+    if (!isGlfwInitialised) {
       //  System.exit(1);
       throw new RuntimeException("GLFW Failed to start!");
     }
@@ -114,18 +117,13 @@ public class Window {
     input = new Input();
 
     window = glfwCreateWindow(width, height, title, (fullscreen ? glfwGetPrimaryMonitor() : 0), 0);
-
+    System.out.println(window);
     if (window == 0) {
       throw new IllegalStateException("Failed to create window!");
     }
 
     if (!fullscreen) {
-      GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-      // X value
-      windowPosX[0] = (videoMode.width() - width) / 2;
-      // Y value
-      windowPosY[0] = (videoMode.height() - height) / 2;
-      glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
+      centerScreen();
     }
 
     //Set Current Context to Window
@@ -145,12 +143,22 @@ public class Window {
 
   }
 
+  public void centerScreen() {
+    GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    // X value
+    windowPosX[0] = (videoMode.width() - width) / 2;
+    // Y value
+    windowPosY[0] = (videoMode.height() - height) / 2;
+    glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
+  }
+
   /**
    * Update.
    */
   public void update() {
     if (hasResized) {
       GL11.glViewport(0, 0, width, height);
+      centerScreen();
       hasResized = false;
     }
     GL11.glClearColor(backgroundR, backgroundG, backgroundB, backgroundAlpha);
@@ -287,4 +295,15 @@ public class Window {
   public boolean isHasResized() {
     return hasResized;
   }
+
+  public void setSize(int argWidth, int argHeight) {
+    this.width = argWidth;
+    this.height = argHeight;
+    hasResized = true;
+  }
+
+  public void setTitle(String argTitle) {
+    this.title = argTitle;
+  }
+
 }
