@@ -31,7 +31,7 @@ build:
 java:
   stage: test
   script:
-    - ./gradlew check
+    - gradlew check
     artifacts:
       reports:
       junit:
