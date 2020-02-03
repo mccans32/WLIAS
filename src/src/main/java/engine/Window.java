@@ -1,11 +1,13 @@
 package engine;
 
 import static java.lang.System.currentTimeMillis;
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -14,13 +16,13 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -60,10 +62,10 @@ public class Window {
   private float backgroundAlpha;
   private GLFWWindowSizeCallback windowSizeCallback;
   private boolean hasResized = false;
-  private boolean fullscreen = false;
   private int[] windowPosX = new int[1];
   private int[] windowPosY = new int[1];
   private Input input;
+  private boolean isVisible = true;
 
   /**
    * Instantiates a new Window.
@@ -83,6 +85,14 @@ public class Window {
    */
   public static void setErrorCallback() {
     glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
+  }
+
+  public boolean isVisible() {
+    return isVisible;
+  }
+
+  public void setVisible(boolean visible) {
+    isVisible = visible;
   }
 
   private void setLocalCallbacks() {
@@ -109,7 +119,6 @@ public class Window {
    * Create.
    */
   public void create() {
-    System.out.println("Testing do we get here?");
     setErrorCallback();
 
     isGlfwInitialised = glfwInit();
@@ -120,16 +129,15 @@ public class Window {
 
     input = new Input();
 
-    window = glfwCreateWindow(width, height, title, (fullscreen ? glfwGetPrimaryMonitor() : 0), 0);
+    glfwWindowHint(GLFW_VISIBLE, (isVisible() ? GLFW_TRUE : GLFW_FALSE));
+    window = glfwCreateWindow(width, height, title, 0, 0);
     System.out.println(window);
     if (window == 0) {
       throw new IllegalStateException("Failed to create window!");
     }
 
-    if (!fullscreen) {
-      centerScreen();
-    }
-
+    // Center the screen
+    centerScreen();
     //Set Current Context to Window
     glfwMakeContextCurrent(window);
     // Enables OpenGL functionality
@@ -139,7 +147,9 @@ public class Window {
     //Set local callbacks
     setLocalCallbacks();
     //Display Window
-    showWindow();
+    if (isVisible()) {
+      showWindow();
+    }
     //Enable VSync
     setVSync(ENABLE_V_SYNC);
     // set timer for window
@@ -239,31 +249,6 @@ public class Window {
       glfwSetWindowTitle(window, title + " | FPS " + frames);
       time = currentTimeMillis();
       frames = 0;
-    }
-  }
-
-  /**
-   * Is fullscreen boolean.
-   *
-   * @return the boolean
-   */
-  public boolean isFullscreen() {
-    return fullscreen;
-  }
-
-  /**
-   * Sets fullscreen.
-   *
-   * @param fullscreen the fullscreen
-   */
-  public void setFullscreen(boolean fullscreen) {
-    this.fullscreen = fullscreen;
-    this.hasResized = true;
-    if (isFullscreen()) {
-      glfwGetWindowPos(window, windowPosX, windowPosY);
-      glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, 0);
-    } else {
-      glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0);
     }
   }
 

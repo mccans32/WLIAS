@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import engine.Window;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,13 @@ public class WindowTests {
   @BeforeEach
   void setup() {
     window = new Window(heightArray[0], heightArray[0], titleArray[0]);
+    window.setVisible(false);
+    window.create();
+  }
+
+  @AfterEach
+  void cleanUpEach() {
+    window.destroy();
   }
 
   @Test
@@ -33,14 +42,5 @@ public class WindowTests {
       assertEquals(window.getTitle(), titleArray[i]);
     }
   }
-
-  @Test
-  public void fullscreenToggleTest() {
-    window.create();
-    assertFalse(window.isFullscreen());
-    window.setFullscreen(true);
-    assertTrue(window.isFullscreen());
-  }
-
 
 }

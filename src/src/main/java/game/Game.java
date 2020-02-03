@@ -57,16 +57,11 @@ public class Game {
   }
 
   private void gameLoop() {
-    System.out.println("This is the Game Loo\n");
+    System.out.println("This is the Game Loop\n");
     // while (true)
     while (!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
       update();
       render();
-
-      //Check for fullscreen
-      if (Input.isKeyDown(GLFW.GLFW_KEY_F11)) {
-        window.setFullscreen(!window.isFullscreen());
-      }
     }
   }
 
