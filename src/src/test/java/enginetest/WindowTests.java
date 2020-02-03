@@ -21,7 +21,6 @@ public class WindowTests {
   @BeforeEach
   void setup() {
     window = new Window(heightArray[0], heightArray[0], titleArray[0]);
-    window.create();
   }
 
   @Test
@@ -37,9 +36,11 @@ public class WindowTests {
 
   @Test
   public void fullscreenToggleTest() {
+    System.out.println("Testing Fullscreen");
+    System.out.println(window);
+    window.create();
     assertFalse(window.isFullscreen());
     window.setFullscreen(true);
-    System.out.println(window.isFullscreen());
     assertTrue(window.isFullscreen());
   }
 
