@@ -32,17 +32,16 @@ java:
   stage: test
   script:
     - gradlew check
-    artifacts:
-      reports:
+  artifacts:
+    reports:
       junit:
         - build/reports/tests/test/index.html
-      expire_in: 1 hrs
 
 deploy:
   stage: deploy
   script:
-  # - ./deploy
-  - echo "Deploy Stage"
+    # - ./deploy
+    - echo "Deploy Stage"
 
 after_script:
   - echo "End CI"
