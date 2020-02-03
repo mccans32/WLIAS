@@ -25,8 +25,10 @@ repositories {
     mavenCentral()
 }
 
+
 dependencies {
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+    compileClasspath("org.lwjgl:lwjgl::$lwjglNatives")
 
     implementation "org.lwjgl:lwjgl"
     implementation "org.lwjgl:lwjgl-assimp"
