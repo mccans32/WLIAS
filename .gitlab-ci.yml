@@ -28,18 +28,15 @@ build:
   only:
     - master
 
-test:
+java:
   stage: test
   script:
     - ./gradlew check
-  artifacts:
-    paths:
-      - ./builds/mccans32/2020-ca400-mccans32-slowikk2/src/build/reports/tests/test/index.html
-      - ./build/reports/spotbugs/main.xml
-      - ./build/reports/spotbugs/test.xml
-      - ./build/reports/checkstyle/main.html
-      - ./build/reports/checkstyle/test.html
-    expire_in: 1 hrs
+    artifacts:
+      reports:
+      junit:
+        - build/reports/tests/test/index.html
+      expire_in: 1 hrs
 
 deploy:
   stage: deploy
