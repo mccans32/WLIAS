@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,11 +26,6 @@ public class WindowTests {
     window.create();
   }
 
-  @AfterEach
-  void cleanUpEach() {
-    window.destroy();
-  }
-
   @Test
   public void windowHasCorrectAttributes() {
     for (int i = 0; i < heightArray.length; i++) {
@@ -41,11 +35,13 @@ public class WindowTests {
       assertEquals(window.getWidth(), widthArray[i]);
       assertEquals(window.getTitle(), titleArray[i]);
     }
+    window.destroy();
   }
 
   @Test
   public void initTest() {
     assertTrue(window.isGlfwInitialised);
+    window.destroy();
   }
 
 }
