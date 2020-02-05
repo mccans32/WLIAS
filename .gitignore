@@ -18,3 +18,4 @@ node_modules/
 
 # Add gradle folders
 /src/.gradle/
+.gradle/
