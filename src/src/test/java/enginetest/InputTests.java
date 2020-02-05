@@ -20,6 +20,7 @@ public class InputTests {
 
   @AfterEach
   public void cleanUpEach() {
+    assumeTrue(glfwInit());
     Input.destroy();
   }
 

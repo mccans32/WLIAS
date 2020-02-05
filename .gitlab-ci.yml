@@ -3,7 +3,6 @@ image: java
 stages:
   - build
   - test
-  - deploy
 
 before_script:
   #  - echo `pwd` # debug
@@ -28,15 +27,10 @@ build:
   only:
     - master
 
-java:
+test:
   stage: test
   script:
     - ./gradlew check -i
-deploy:
-  stage: deploy
-  script:
-    # - ./deploy
-    - echo "Deploy Stage"
 
 after_script:
   - echo "End CI"
