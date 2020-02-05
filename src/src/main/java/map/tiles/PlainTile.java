@@ -9,7 +9,4 @@ public class PlainTile extends Tile {
   public PlainTile() {
   }
 
-  public boolean isPassable() {
-    return isPassable;
-  }
 }

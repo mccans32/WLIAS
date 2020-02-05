@@ -1,13 +1,12 @@
 package map;
 
-public class Tile {
+public abstract class Tile {
 
   public float positionX;
   public float positionY;
   public float terrainHealth;
-
-  public Tile() {
-  }
+  public static final boolean isPassable = true;
+  public float rateOfDecay;
 
   public float getPositionX() {
     return positionX;
