@@ -1,5 +1,6 @@
 package map;
 
+import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
@@ -14,71 +15,84 @@ public class MapGenerator {
   /**
    * The Size x.
    */
-  final double sizeX;
+  final int sizeX;
   /**
    * The Size y.
    */
-  final double sizeY;
+  final int sizeY;
 
-  private final double percentArid;
-  private final double percentFertile;
-  private final double percentWater;
-  private final double percentPlain;
+  private final int amountOfAridTiles;
+  private final int amountOfFertileTiles;
+  private final int amountOfWaterTiles;
+  private final int amountOfPlainTiles;
 
   /**
    * The List of tiles.
    */
   public ArrayList<Tile> listOfTiles = new ArrayList<Tile>();
+  public Tile[][] listOfOrderedTiles;
 
   /**
    * Instantiates a new Map generator.
    *
-   * @param sizeX          the size x
-   * @param sizeY          the size y
-   * @param percentArid    the percent arid
-   * @param percentFertile the percent fertile
-   * @param percentWater   the percent water
-   * @param percentPlain   the percent plain
+   * @param sizeX the size x
+   * @param sizeY the size y
    */
-  public MapGenerator(double sizeX, double sizeY, double percentArid, double percentFertile,
-                      double percentWater, double percentPlain) {
+  public MapGenerator(int sizeX, int sizeY, int amountOfAridTiles, int amountOfFertileTiles,
+                      int amountOfWaterTiles, int amountOfPlainTiles) throws UnexpectedException {
     this.sizeX = sizeX;
     this.sizeY = sizeY;
-    this.percentArid = percentArid;
-    this.percentFertile = percentFertile;
-    this.percentWater = percentWater;
-    this.percentPlain = percentPlain;
+    this.amountOfAridTiles = amountOfAridTiles;
+    this.amountOfFertileTiles = amountOfFertileTiles;
+    this.amountOfPlainTiles = amountOfPlainTiles;
+    this.amountOfWaterTiles = amountOfWaterTiles;
     generateTiles();
+    generateOrderedListOfTile();
   }
 
-  private void generateTiles() {
-    double totalAmountOfTiles = sizeX * sizeY;
-    double amountOfAridTiles = totalAmountOfTiles * percentArid;
+  public Tile[][] getListOfOrderedTiles() {
+    return listOfOrderedTiles;
+  }
+
+  public void setListOfOrderedTiles(Tile[][] listOfOrderedTiles) {
+    this.listOfOrderedTiles = listOfOrderedTiles;
+  }
+
+  // This should generate a list of lists/a 2 dimensional matrix of the tiles.
+  // It should follow these simple rules
+  // 1) no single non water Tiles can be surrounded by only watter Tiles
+  private void generateOrderedListOfTile() {
+    this.listOfOrderedTiles = new Tile[this.sizeX][this.sizeY];
+  }
+
+  private void generateTiles() throws UnexpectedException {
+    int reservedNumberOfTiles = sizeX * sizeY;
+    int actualNumberOfTiles = this.amountOfAridTiles + this.amountOfFertileTiles
+        + this.amountOfPlainTiles + this.amountOfWaterTiles;
+
+    if ((reservedNumberOfTiles != actualNumberOfTiles)) {
+      throw new AssertionError("Number of reserved Tiles does not equal the Actual "
+          + "number of tiles provided");
+    }
     for (double i = 0.0; i < amountOfAridTiles; i++) {
       Tile tile = new AridTile();
       listOfTiles.add(tile);
     }
 
-    double amountOfFertileTiles = totalAmountOfTiles * percentFertile;
     for (double i = 0.0; i < amountOfFertileTiles; i++) {
       Tile tile = new FertileTile();
       listOfTiles.add(tile);
     }
 
-    double amountOfPlainTiles = totalAmountOfTiles * percentPlain;
     for (double i = 0.0; i < amountOfPlainTiles; i++) {
       Tile tile = new PlainTile();
       listOfTiles.add(tile);
     }
-
-    double amountOfWaterTiles = totalAmountOfTiles * percentWater;
     for (double i = 0.0; i < amountOfWaterTiles; i++) {
       Tile tile = new WaterTile();
       listOfTiles.add(tile);
     }
 
-
-    System.out.println(listOfTiles);
   }
 
 
