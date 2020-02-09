@@ -2,6 +2,7 @@ package game;
 
 import engine.Input;
 import engine.Window;
+import engine.graphics.Renderer;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -38,6 +39,10 @@ public class Game {
    */
   static final float BACKGROUND_ALPHA = 1.0f;
   /**
+   * The constant renderer.
+   */
+  public static Renderer renderer;
+  /**
    * The Window.
    */
   public Window window;
@@ -67,6 +72,8 @@ public class Game {
 
   private void initialize() {
     System.out.println("Initializing Simulation\n");
+    // Initialise Renderer
+    renderer = new Renderer();
     // Create main window
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TILE);
     window.setBackgroundColour(BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, BACKGROUND_ALPHA);
