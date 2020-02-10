@@ -27,7 +27,7 @@ public class RendererTests {
   /**
    * The Rectangle indices.
    */
-  static int[] rectangleIndices = {0, 1, 2, 2, 3, 1};
+  static int[] rectangleIndices = {0, 1, 2, 3};
   /**
    * The Triangle indices.
    */
