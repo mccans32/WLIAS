@@ -15,9 +15,9 @@ public class Main {
    * @throws UnexpectedException the unexpected exception
    */
   public static void main(String[] args) throws UnexpectedException {
-    MapGenerator map = new MapGenerator(4, 4, 8, 4,
-        2, 2);
-    System.out.println(Arrays.deepToString(map.getListOfOrderedTiles()));
+    MapGenerator map = new MapGenerator(5, 5, 8, 4,
+        10, 3, 2);
+    System.out.println(Arrays.deepToString(map.getMapOfOrderedTiles()));
     Game game = new Game();
     game.start();
   }
