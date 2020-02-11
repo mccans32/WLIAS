@@ -2,6 +2,8 @@ package map;
 
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
 import map.tiles.PlainTile;
@@ -12,15 +14,9 @@ import map.tiles.WaterTile;
  */
 public class MapGenerator {
 
-  /**
-   * The Size x.
-   */
-  final int sizeX;
-  /**
-   * The Size y.
-   */
-  final int sizeY;
-  final int numberOfWaterSources;
+  final int landMassSizeX;
+  final int landMassSizeY;
+  final int numberOfLandMasses;
 
   private final int amountOfAridTiles;
   private final int amountOfFertileTiles;
@@ -30,28 +26,30 @@ public class MapGenerator {
   /**
    * The List of tiles.
    */
-  public ArrayList<Tile> listOfLandTiles = new ArrayList<Tile>();
-  public ArrayList<ArrayList<Tile>> listOfWaterTiles = new ArrayList<ArrayList<Tile>>();
+  public ArrayList<Tile> listOfTiles = new ArrayList<Tile>();
+  public Tile[][] landMass;
   public Tile[][] mapOfOrderedTiles;
+  public ArrayList<Tile[][]> landMassMaps = new ArrayList<Tile[][]>();
 
   /**
    * Instantiates a new Map generator.
    *
-   * @param sizeX the size x
-   * @param sizeY the size y
    */
-  public MapGenerator(int sizeX, int sizeY, int amountOfAridTiles, int amountOfFertileTiles,
+  public MapGenerator(int landMassSizeX, int landMassSizeY, int amountOfAridTiles, int amountOfFertileTiles,
                       int amountOfWaterTiles, int amountOfPlainTiles,
-                      int numberOfWaterSources) throws UnexpectedException {
-    this.sizeX = sizeX;
-    this.sizeY = sizeY;
+                      int numberOfLandMasses) throws UnexpectedException {
+    this.landMassSizeX = landMassSizeX;
+    this.landMassSizeY = landMassSizeY;
     this.amountOfAridTiles = amountOfAridTiles;
     this.amountOfFertileTiles = amountOfFertileTiles;
     this.amountOfPlainTiles = amountOfPlainTiles;
     this.amountOfWaterTiles = amountOfWaterTiles;
-    this.numberOfWaterSources = numberOfWaterSources;
+    this.numberOfLandMasses = numberOfLandMasses;
     generateTiles();
-    generateOrderedListOfTile();
+    for(int landMassCounter = 0; landMassCounter < numberOfLandMasses; landMassCounter++){
+      Collections.shuffle(this.listOfTiles);
+      landMassMaps.add(generateLandMass());
+    }
   }
 
   public Tile[][] getMapOfOrderedTiles() {
@@ -62,61 +60,48 @@ public class MapGenerator {
     this.mapOfOrderedTiles = mapOfOrderedTiles;
   }
 
-  private void generateOrderedListOfTile() {
-    // Initialise a fixed length 2d Matrix representation of the map
-    Tile[][] mapOfTiles = new Tile[this.sizeX][this.sizeY];
-
-    // add in the water Tiles first
-    // Rules for generating water tiles
-    // if one tile is in column 0 no tile can be in the last column and vice versa
-    // if one tile is in row 0 no tile can be in the last row
-    // no two sources of water can meet
-    int numberOfTilesInASource = this.amountOfWaterTiles / this.numberOfWaterSources;
-    for (int counter = 0; counter < numberOfWaterSources; counter++) {
-      addWaterTiles(mapOfTiles, numberOfTilesInASource, counter);
+  private Tile[][] generateLandMass() {
+    int tileCounter = 0;
+    Tile [][] currentLandMass = new Tile[landMassSizeX][landMassSizeY];
+    for(int i = 0; i < landMassSizeY; i++){
+      for (int j = 0; j < landMassSizeX; j++){
+        currentLandMass[i][j] = listOfTiles.get(tileCounter);
+        tileCounter ++;
+      }
     }
-
-    setMapOfOrderedTiles(mapOfTiles);
-  }
-
-  private void addWaterTiles(Tile[][] mapOfTiles, int numberOfTilesInASource, int counter) {
-    System.out.println(mapOfTiles.length);
+    System.out.println(Arrays.deepToString(currentLandMass));
+    return currentLandMass;
 
   }
 
   private void generateTiles() throws UnexpectedException {
-    int reservedNumberOfTiles = sizeX * sizeY;
+    int reservedNumberOfTiles = this.landMassSizeX * this.landMassSizeY;
 
     int actualNumberOfTiles = this.amountOfAridTiles + this.amountOfFertileTiles
         + this.amountOfPlainTiles + this.amountOfWaterTiles;
 
     if ((reservedNumberOfTiles != actualNumberOfTiles)) {
       throw new AssertionError("Number of reserved Tiles does not equal the Actual "
-          + "number of tiles provided");
+          + "number of tiles provided.\nActual Tiles = " + actualNumberOfTiles + "\nReserved Tiles = " + reservedNumberOfTiles);
     }
     for (int i = 0; i < this.amountOfAridTiles; i++) {
       Tile tile = new AridTile();
-      this.listOfLandTiles.add(tile);
+      this.listOfTiles.add(tile);
     }
 
     for (int i = 0; i < this.amountOfFertileTiles; i++) {
       Tile tile = new FertileTile();
-      this.listOfLandTiles.add(tile);
+      this.listOfTiles.add(tile);
     }
 
     for (int i = 0; i < this.amountOfPlainTiles; i++) {
       Tile tile = new PlainTile();
-      this.listOfLandTiles.add(tile);
+      this.listOfTiles.add(tile);
     }
 
-    int numberOfTilesInASource = this.amountOfWaterTiles / this.numberOfWaterSources;
-    for (int i = 0; i < this.numberOfWaterSources; i++) {
-      ArrayList<Tile> tempListOfWaterTiles = new ArrayList<Tile>();
-      for (int j = 0; j < numberOfTilesInASource; j++) {
-        Tile tile = new WaterTile();
-        tempListOfWaterTiles.add(tile);
-      }
-      this.listOfWaterTiles.add(tempListOfWaterTiles);
+    for (int i = 0; i < this.amountOfWaterTiles; i++) {
+      Tile tile = new WaterTile();
+      this.listOfTiles.add(tile);
     }
 
   }
