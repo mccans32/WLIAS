@@ -2,6 +2,11 @@ package game;
 
 import engine.Input;
 import engine.Window;
+import engine.graphics.Mesh;
+import engine.graphics.Renderer;
+import engine.graphics.Shader;
+import engine.graphics.Vertex2D;
+import math.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -38,9 +43,26 @@ public class Game {
    */
   static final float BACKGROUND_ALPHA = 1.0f;
   /**
+   * The Simulation Renderer.
+   */
+
+  static final String SHADERS_PATH = "/shaders/";
+  static final String VERTEX_SHADER_FILE_NAME = "mainVertex.glsl";
+  static final String FRAGMENT_SHADER_FILE_NAME = "mainFragment.glsl";
+
+  private static Renderer renderer;
+  /**
    * The Window.
    */
-  public Window window;
+  private Window window;
+  private Shader shader;
+
+  // Temporary Mesh
+  private Mesh tempMesh = new Mesh(
+      new Vertex2D[] {
+          new Vertex2D(new Vector2f(0f, 0.5f)), new Vertex2D(new Vector2f(-0.5f, 0f)),
+          new Vertex2D(new Vector2f(0.5f, 0f))},
+      new int[] {0, 1, 2});
 
   /**
    * Start.
@@ -67,10 +89,19 @@ public class Game {
 
   private void initialize() {
     System.out.println("Initializing Simulation\n");
+    // Initialise the Shader
+    shader = new Shader(SHADERS_PATH + VERTEX_SHADER_FILE_NAME,
+        SHADERS_PATH + FRAGMENT_SHADER_FILE_NAME);
+    // Initialise Renderer
+    renderer = new Renderer(shader);
     // Create main window
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TILE);
     window.setBackgroundColour(BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, BACKGROUND_ALPHA);
     window.create();
+    // Create Shader
+    shader.create();
+    //  Create Temporary Mesh
+    tempMesh.create();
   }
 
   /**
@@ -88,6 +119,7 @@ public class Game {
    * Render.
    */
   public void render() {
+    renderer.renderMesh(tempMesh);
     window.swapBuffers();
   }
 }
