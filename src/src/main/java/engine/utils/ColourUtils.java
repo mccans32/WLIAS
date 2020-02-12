@@ -1,0 +1,19 @@
+package engine.utils;
+
+import java.awt.Color;
+import math.Vector3f;
+
+public class ColourUtils {
+  /**
+   * Convert color vector 3 f.
+   *
+   * @param colour the colour
+   * @return the vector 3 f
+   */
+// Takes in a colour from the java.awt.Color package and returns as RGB in the for Vector3f
+  public static Vector3f ConvertColor(Color colour) {
+    float max_color_value = 255;
+    return new Vector3f(colour.getRed() / max_color_value,
+        colour.getGreen() / max_color_value, colour.getBlue() / max_color_value);
+  }
+}
