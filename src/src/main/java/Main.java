@@ -18,13 +18,17 @@ public class Main {
   public static void main(String[] args) throws UnexpectedException {
     //TODO move this functionality to the main menu when the functionality is created
     //creates a map object which has all parameters needed.
-    MapGenerator map = new MapGenerator(4, 4, 4, 6,
-        3, 3, 1);
+    MapGenerator map = new MapGenerator(50, 50, 1000, 500,
+        500, 500, 1);
     // Generates an ordered 2d array which is a representation of the map
     map.createMap();
     // retrieves the ordered map
-    Tile[][] tile = map.getMapOfOrderedTiles();
-    System.out.println(Arrays.deepToString(tile));
+    Tile[][] gameMap = map.getSimulationMap();
+    // pretty prints the 2d array into console
+    for (Tile[] row : gameMap) {
+      System.out.println(Arrays.toString(row));
+    }
+
     Game game = new Game();
     game.start();
   }
