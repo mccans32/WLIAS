@@ -79,6 +79,9 @@ public class Mesh {
     initialiseIndicesBuffer();
   }
 
+  /**
+   * Destroy.
+   */
   public void destroy() {
     GL15.glDeleteBuffers(cbo);
     GL15.glDeleteBuffers(pbo);
@@ -133,7 +136,8 @@ public class Mesh {
     }
   }
 
-  public int storeData(FloatBuffer buffer, int index, int size) {
+
+  private int storeData(FloatBuffer buffer, int index, int size) {
     // Generate Position Buffer Object
     int bufferID = GL15.glGenBuffers();
     // Bind Buffer and Set Data
@@ -145,6 +149,11 @@ public class Mesh {
     return bufferID;
   }
 
+  /**
+   * Sets colour.
+   *
+   * @param colour the colour
+   */
   public void setColour(Vector3f colour) {
     for (Vertex2D vertex : vertices) {
       vertex.setColour(colour);

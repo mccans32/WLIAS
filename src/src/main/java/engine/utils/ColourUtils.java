@@ -10,10 +10,10 @@ public class ColourUtils {
    * @param colour the colour
    * @return the vector 3 f
    */
-// Takes in a colour from the java.awt.Color package and returns as RGB in the for Vector3f
-  public static Vector3f ConvertColor(Color colour) {
-    float max_color_value = 255;
-    return new Vector3f(colour.getRed() / max_color_value,
-        colour.getGreen() / max_color_value, colour.getBlue() / max_color_value);
+  // Takes in a colour from the java.awt.Color package and returns as RGB in the for Vector3f
+  public static Vector3f convertColor(Color colour) {
+    float maxColorValue = 255;
+    return new Vector3f(colour.getRed() / maxColorValue,
+        colour.getGreen() / maxColorValue, colour.getBlue() / maxColorValue);
   }
 }
