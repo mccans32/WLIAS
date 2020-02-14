@@ -10,7 +10,6 @@ import engine.utils.ColourUtils;
 import math.Vector2f;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.linux.XSetWindowAttributes;
 
 /**
  * The type Game.
@@ -107,7 +106,7 @@ public class Game {
     // Create Shader
     shader.create();
     //  Create Temporary Mesh
-    //    tempMesh.setColour(ColourUtils.convertColor(ChartColor.green));
+    tempMesh.setColour(ColourUtils.convertColor(ChartColor.green));
     tempMesh.create();
   }
 

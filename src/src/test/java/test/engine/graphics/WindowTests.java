@@ -1,4 +1,4 @@
-package test.engine;
+package test.engine.graphics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
