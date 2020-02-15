@@ -6,7 +6,9 @@ import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
 import engine.graphics.Vertex2D;
+import engine.utils.ColourUtils;
 import math.Vector2f;
+import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -60,8 +62,9 @@ public class Game {
   // Temporary Mesh
   private Mesh tempMesh = new Mesh(
       new Vertex2D[] {
-          new Vertex2D(new Vector2f(0f, 0.5f)), new Vertex2D(new Vector2f(-0.5f, 0f)),
-          new Vertex2D(new Vector2f(0.5f, 0f))},
+          new Vertex2D(new Vector2f(-1f, -1f)),
+          new Vertex2D(new Vector2f(1f, 1f)),
+          new Vertex2D(new Vector2f(1f, -1f))},
       new int[] {0, 1, 2});
 
   /**
@@ -76,6 +79,8 @@ public class Game {
   private void dispose() {
     System.out.println("Disposing active processes");
     window.destroy();
+    tempMesh.destroy();
+    shader.destroy();
   }
 
   private void gameLoop() {
@@ -101,6 +106,7 @@ public class Game {
     // Create Shader
     shader.create();
     //  Create Temporary Mesh
+    tempMesh.setColour(ColourUtils.convertColor(ChartColor.green));
     tempMesh.create();
   }
 

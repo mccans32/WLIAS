@@ -2,6 +2,7 @@ package engine.graphics;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import math.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -12,8 +13,10 @@ import org.lwjgl.system.MemoryUtil;
  * The type Mesh.
  */
 public class Mesh {
-
-  static final int GRAPHICS_DIMENSION = 2;
+  static final int POSITION_INDEX = 0;
+  static final int POSITION_DIMENSION = 2;
+  static final int COLOUR_INDEX = POSITION_INDEX + 1;
+  static final int COLOUR_DIMENSION = 3;
   private Vertex2D[] vertices;
   private int[] indices;
   // Vertex Array Object
@@ -22,7 +25,11 @@ public class Mesh {
   private int pbo;
   // Indices Buffer Object
   private int ibo;
+  // Colour Buffer Object
+  private int cbo;
+
   private float[] positionData;
+  private float[] colourData;
 
   /**
    * Instantiates a new Mesh.
@@ -35,49 +42,28 @@ public class Mesh {
     this.indices = indices.clone();
   }
 
-  /**
-   * Get vertices vertex 2 d [ ].
-   *
-   * @return the vertex 2 d [ ]
-   */
   public Vertex2D[] getVertices() {
     return vertices.clone();
   }
 
-  /**
-   * Get indices int [ ].
-   *
-   * @return the int [ ]
-   */
   public int[] getIndices() {
     return indices.clone();
   }
 
-  /**
-   * Gets vao.
-   *
-   * @return the vao
-   */
   public int getVao() {
     return vao;
   }
 
-  /**
-   * Gets pbo.
-   *
-   * @return the pbo
-   */
   public int getPbo() {
     return pbo;
   }
 
-  /**
-   * Gets ibo.
-   *
-   * @return the ibo
-   */
   public int getIbo() {
     return ibo;
+  }
+
+  public int getCbo() {
+    return cbo;
   }
 
   /**
@@ -89,27 +75,36 @@ public class Mesh {
     GL30.glBindVertexArray(vao);
 
     initialisePositionBuffer();
-
+    initialiseColourBuffer();
     initialiseIndicesBuffer();
+  }
 
+  /**
+   * Destroy.
+   */
+  public void destroy() {
+    GL15.glDeleteBuffers(cbo);
+    GL15.glDeleteBuffers(pbo);
+    GL15.glDeleteBuffers(ibo);
+    GL30.glDeleteVertexArrays(vao);
   }
 
   private void initialisePositionBuffer() {
-    FloatBuffer positionBuffer = MemoryUtil.memAllocFloat(vertices.length * GRAPHICS_DIMENSION);
-    positionData = new float[vertices.length * GRAPHICS_DIMENSION];
+    FloatBuffer positionBuffer = MemoryUtil.memAllocFloat(vertices.length * POSITION_DIMENSION);
+    positionData = new float[vertices.length * POSITION_DIMENSION];
 
     storePositions();
-
     positionBuffer.put(positionData).flip();
+    pbo = storeData(positionBuffer, POSITION_INDEX, POSITION_DIMENSION);
+  }
 
-    // Generate Position Buffer Object
-    pbo = GL15.glGenBuffers();
-    // Bind Buffer and Set Data
-    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, pbo);
-    GL15.glBufferData(GL15.GL_ARRAY_BUFFER, positionBuffer, GL15.GL_STATIC_DRAW);
-    GL20.glVertexAttribPointer(0, GRAPHICS_DIMENSION, GL11.GL_FLOAT, false, 0, 0);
-    // Unbind Buffer
-    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+  private void initialiseColourBuffer() {
+    FloatBuffer colourBuffer = MemoryUtil.memAllocFloat(vertices.length * COLOUR_DIMENSION);
+    colourData = new float[vertices.length * COLOUR_DIMENSION];
+
+    storeColours();
+    colourBuffer.put(colourData).flip();
+    cbo = storeData(colourBuffer, COLOUR_INDEX, COLOUR_DIMENSION);
   }
 
   private void initialiseIndicesBuffer() {
@@ -128,8 +123,40 @@ public class Mesh {
     for (int i = 0; i < vertices.length; i++) {
       // For 2D Vertices only
       // In the form positionData{i * dimension + offset]
-      positionData[i * GRAPHICS_DIMENSION] = vertices[i].getPosition().getX();
-      positionData[i * GRAPHICS_DIMENSION + 1] = vertices[i].getPosition().getY();
+      positionData[i * POSITION_DIMENSION] = vertices[i].getPosition().getX();
+      positionData[i * POSITION_DIMENSION + 1] = vertices[i].getPosition().getY();
+    }
+  }
+
+  private void storeColours() {
+    for (int i = 0; i < vertices.length; i++) {
+      colourData[i * COLOUR_DIMENSION] = vertices[i].getColour().getX();
+      colourData[i * COLOUR_DIMENSION + 1] = vertices[i].getColour().getY();
+      colourData[i * COLOUR_DIMENSION + 2] = vertices[i].getColour().getZ();
+    }
+  }
+
+
+  private int storeData(FloatBuffer buffer, int index, int size) {
+    // Generate Position Buffer Object
+    int bufferID = GL15.glGenBuffers();
+    // Bind Buffer and Set Data
+    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
+    GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+    GL20.glVertexAttribPointer(index, size, GL11.GL_FLOAT, false, 0, 0);
+    // Unbind Buffer
+    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    return bufferID;
+  }
+
+  /**
+   * Sets colour.
+   *
+   * @param colour the colour
+   */
+  public void setColour(Vector3f colour) {
+    for (Vertex2D vertex : vertices) {
+      vertex.setColour(colour);
     }
   }
 }
