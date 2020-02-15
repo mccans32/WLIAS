@@ -71,6 +71,17 @@ public class RendererTests {
     drawMesh(testMesh);
   }
 
+  @Test
+  public void testBoth() throws InterruptedException {
+    setupWindow();
+    Mesh rectangleMesh = new Mesh(rectangleVertices, rectangleIndices);
+    rectangleMesh.setColour(ColourUtils.convertColor(ChartColor.BLUE));
+    Mesh triangleMesh = new Mesh(triangleVertices, triangleIndices);
+    triangleMesh.setColour(ColourUtils.convertColor(ChartColor.YELLOW));
+    drawMesh(rectangleMesh);
+    drawMesh(triangleMesh);
+  }
+
   @Test void testBlueSquare() throws InterruptedException {
     setupWindow();
     Mesh testMesh = new Mesh(rectangleVertices, rectangleIndices);
@@ -81,7 +92,7 @@ public class RendererTests {
   @Test void testPinkTriangle() throws InterruptedException {
     setupWindow();
     Mesh testMesh = new Mesh(triangleVertices, triangleIndices);
-    testMesh.setColour(ColourUtils.convertColor(ChartColor.YELLOW));
+    testMesh.setColour(ColourUtils.convertColor(ChartColor.PINK));
     drawMesh(testMesh);
   }
 

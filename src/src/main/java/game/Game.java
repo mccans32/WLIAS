@@ -2,12 +2,15 @@ package game;
 
 import engine.Input;
 import engine.Window;
+import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
 import engine.graphics.Vertex2D;
 import engine.utils.ColourUtils;
+import java.awt.Color;
 import math.Vector2f;
+import math.Vector3f;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
 
@@ -62,10 +65,16 @@ public class Game {
   // Temporary Mesh
   private Mesh tempMesh = new Mesh(
       new Vertex2D[] {
-          new Vertex2D(new Vector2f(-1f, -1f)),
-          new Vertex2D(new Vector2f(1f, 1f)),
-          new Vertex2D(new Vector2f(1f, -1f))},
-      new int[] {0, 1, 2});
+          new Vertex2D(new Vector2f(-0.5f, 0.5f),
+              ColourUtils.convertColor(Color.WHITE), new Vector2f(0, 0)),
+          new Vertex2D(new Vector2f(-0.5f, -0.5f),
+              ColourUtils.convertColor(Color.WHITE), new Vector2f(0, 1)),
+          new Vertex2D(new Vector2f(-0.5f, -0.5f),
+              ColourUtils.convertColor(Color.WHITE), new Vector2f(1, 1)),
+          new Vertex2D(new Vector2f(0.5f, 0.5f),
+              ColourUtils.convertColor(Color.WHITE), new Vector2f(1, 0))
+      },
+      new int[] {0, 1, 2}, new Material("../resources/images/mid-tier-tile.png"));
 
   /**
    * Start.
