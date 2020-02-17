@@ -2,16 +2,16 @@ package map;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import map.tiles.AridTile;
-import map.tiles.FertileTile;
-import map.tiles.PlainTile;
-import map.tiles.WaterTile;
+
+import map.tiles.*;
 
 /**
  * The type Map generator.
  */
 public class MapGenerator {
 
+  private static final int HORIZONTAL_WATER_PADDING = 1;
+  private static final int VERTICAL_WATER_PADDING = 2;
   /**
    * The Land mass size x.
    */
@@ -170,8 +170,8 @@ public class MapGenerator {
     to create some padding we also add a layer of water between each landmass */
 
     // Sets the overall size of the Canvas(Map)
-    this.mapSizeX = this.landMassSizeX * numberOfLandMasses + (numberOfLandMasses + 1);
-    this.mapSizeY = this.landMassSizeY + 2;
+    this.mapSizeX = this.landMassSizeX * numberOfLandMasses + (numberOfLandMasses + HORIZONTAL_WATER_PADDING);
+    this.mapSizeY = this.landMassSizeY + VERTICAL_WATER_PADDING;
     this.simulationMap = new Tile[this.mapSizeY][this.mapSizeX];
 
     /* Since its a 2d array we will consider each row to be y co-ord and each column to be x
@@ -179,6 +179,12 @@ public class MapGenerator {
     y comes first as when accessing the array we will be accessing the row first
     and column second. */
 
+    setUpPadding();
+    setUpLandMasses();
+
+  }
+
+  private void setUpPadding() {
     // this for loop creates the outer ridge of water
     for (int y = 0; y < mapSizeY; y++) {
       for (int x = 0; x < mapSizeX; x++) {
@@ -188,11 +194,9 @@ public class MapGenerator {
         }
       }
     }
+  }
 
-    /* This is an algorithm that places each landMass next to each other
-    i is a counter of which tile we're working with(essentially landMassPointer + 1)
-    this is to accommodate the watter padding */
-    int i = 1;
+  private void setUpLandMasses() {
     /* landMassPointer points to the current land mass we want to place and helps calculate the
     position */
 
@@ -204,7 +208,8 @@ public class MapGenerator {
       for (int y = 1; y < landMassSizeY + 1; y++) {
         // x position of the landmass
         int landMassXPos = 0;
-        for (int x = landMassSizeY * landMassPointer + i; x < landMassSizeY + 1; x++) {
+        for (int x = landMassSizeY * landMassPointer + HORIZONTAL_WATER_PADDING;
+             x < landMassSizeY + HORIZONTAL_WATER_PADDING; x++) {
           /* places a tile from a landMass in the appropriate y,x co-ords
           the x co-ord is calculated depending on which land mass we're working with
           if were working with land mass 1 the x co-ord will be
@@ -216,6 +221,7 @@ public class MapGenerator {
         landMassYPos++;
       }
     }
+
   }
 
 

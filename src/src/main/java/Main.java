@@ -2,7 +2,7 @@ import game.Game;
 import java.rmi.UnexpectedException;
 import java.util.Arrays;
 import map.MapGenerator;
-import map.Tile;
+import map.tiles.Tile;
 
 /**
  * The type Main.

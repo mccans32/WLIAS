@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 public class MapGenerationTest {
 
   public MapGenerator map;
+  private static final int UPPER_LIMIT = 5;
 
   @BeforeEach
   public void startUp() {
@@ -38,9 +39,8 @@ public class MapGenerationTest {
   }
 
   private int generateRandomInt() {
-    int upperLimit = 5;
     Random randomInt = new Random();
-    int randomLimit = randomInt.nextInt(upperLimit);
+    int randomLimit = randomInt.nextInt(UPPER_LIMIT);
     if (randomLimit == 0) {
       return 1;
     } else {
@@ -50,7 +50,7 @@ public class MapGenerationTest {
 
   @Test
   public void notEnoughTilesTest() {
-    map = new MapGenerator(generateRandomInt(), generateRandomInt(),
+    map = new MapGenerator(0, 0,
         generateRandomInt(), generateRandomInt(),
         generateRandomInt(), generateRandomInt(), generateRandomInt());
     assertThrows(AssertionError.class, () -> map.createMap());
