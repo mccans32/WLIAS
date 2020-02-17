@@ -28,7 +28,10 @@ public class Renderer {
   private void bindMesh(Mesh mesh) {
     // Bind Mesh VAO
     GL30.glBindVertexArray(mesh.getVao());
+    // Enable Index 0 for Shaders
     GL30.glEnableVertexAttribArray(0);
+    // Enable Index 1 for Shaders
+    GL30.glEnableVertexAttribArray(1);
     // Bind Indices
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIbo());
     //Bind Shader
@@ -41,6 +44,7 @@ public class Renderer {
     // Unbind Indices
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
     GL30.glDisableVertexAttribArray(0);
+    GL30.glDisableVertexAttribArray(1);
     // Unbind VAO
     GL30.glBindVertexArray(0);
   }
