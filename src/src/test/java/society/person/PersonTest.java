@@ -16,9 +16,9 @@ class PersonTest {
   static final int LOWER_INT_LIMIT = 1;
   static final int UPPER_INT_LIMIT = 50;
   static final int LOOP_ITERATIONS = 5;
-  static int[] randomIntArray;
-  static float[] randomFloatArray;
-  static float[] randomHealthArray;
+  int[] randomIntArray;
+  float[] randomFloatArray;
+  float[] randomHealthArray;
   Person person;
 
   @BeforeEach
@@ -49,7 +49,7 @@ class PersonTest {
 
   @Test
   void idTest() {
-    assertEquals(person.getId(),1);
+    assertEquals(person.getId(), 1);
     for (int value : randomIntArray) {
       person.setId(value);
       assertEquals(person.getId(), value);
@@ -59,7 +59,7 @@ class PersonTest {
   @Test
   void healthTest() {
     randomHealthArray = new float[LOOP_ITERATIONS];
-    for(int i = 0; i < LOOP_ITERATIONS; i++){
+    for (int i = 0; i < LOOP_ITERATIONS; i++) {
       randomHealthArray[i] = generateRandomHealth();
     }
     assertEquals(person.getHealth(), 100);
