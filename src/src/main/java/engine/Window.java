@@ -131,7 +131,6 @@ public class Window {
 
     glfwWindowHint(GLFW_VISIBLE, (isVisible() ? GLFW_TRUE : GLFW_FALSE));
     window = glfwCreateWindow(width, height, title, 0, 0);
-    System.out.println(window);
     if (window == 0) {
       throw new IllegalStateException("Failed to create window!");
     }

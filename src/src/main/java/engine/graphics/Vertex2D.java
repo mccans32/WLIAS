@@ -11,20 +11,6 @@ public class Vertex2D {
   private Vector3f colour = new Vector3f(DEFAULT_COLOUR.getRed(), DEFAULT_COLOUR.getGreen(),
       DEFAULT_COLOUR.getBlue());
 
-  public Vertex2D(Vector2f position) {
-    this.position = position;
-  }
-
-  public Vertex2D(Vector2f position, Vector3f colour) {
-    this.position = position;
-    this.colour = colour;
-  }
-
-  public Vertex2D(Vector2f position, Vector2f textureCoordinates) {
-    this.position = position;
-    this.textureCoordinates = textureCoordinates;
-  }
-
   /**
    * Instantiates a new Vertex 2 d.
    *
@@ -36,6 +22,10 @@ public class Vertex2D {
     this.position = position;
     this.colour = colour;
     this.textureCoordinates = textureCoordinates;
+  }
+
+  public Vertex2D(Vector2f position) {
+    this.position = position;
   }
 
   public Vector2f getPosition() {
