@@ -2,8 +2,11 @@ package map;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import map.tiles.*;
+import map.tiles.AridTile;
+import map.tiles.FertileTile;
+import map.tiles.PlainTile;
+import map.tiles.Tile;
+import map.tiles.WaterTile;
 
 /**
  * The type Map generator.
@@ -170,7 +173,8 @@ public class MapGenerator {
     to create some padding we also add a layer of water between each landmass */
 
     // Sets the overall size of the Canvas(Map)
-    this.mapSizeX = this.landMassSizeX * numberOfLandMasses + (numberOfLandMasses + HORIZONTAL_WATER_PADDING);
+    this.mapSizeX = this.landMassSizeX * numberOfLandMasses
+        + (numberOfLandMasses + HORIZONTAL_WATER_PADDING);
     this.mapSizeY = this.landMassSizeY + VERTICAL_WATER_PADDING;
     this.simulationMap = new Tile[this.mapSizeY][this.mapSizeX];
 
