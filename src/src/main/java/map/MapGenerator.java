@@ -48,6 +48,7 @@ public class MapGenerator {
    * The Land mass maps.
    */
   public ArrayList<Tile[][]> landMassMaps = new ArrayList<Tile[][]>();
+
   /**
    * Instantiates a new Map generator.
    *
@@ -59,8 +60,12 @@ public class MapGenerator {
    * @param amountOfPlainTiles   the amount of plain tiles
    * @param numberOfLandMasses   the number of land masses
    */
-  public MapGenerator(int landMassSizeX, int landMassSizeY, int amountOfAridTiles,
-                      int amountOfFertileTiles, int amountOfWaterTiles, int amountOfPlainTiles,
+  public MapGenerator(int landMassSizeX,
+                      int landMassSizeY,
+                      int amountOfAridTiles,
+                      int amountOfFertileTiles,
+                      int amountOfWaterTiles,
+                      int amountOfPlainTiles,
                       int numberOfLandMasses) {
     this.landMassSizeX = landMassSizeX;
     this.landMassSizeY = landMassSizeY;

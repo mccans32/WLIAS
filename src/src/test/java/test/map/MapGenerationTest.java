@@ -27,12 +27,13 @@ public class MapGenerationTest {
   }
 
   @Test
-  public void MultipleContinentsMapSizeTest() {
+  public void multipleContinentsMapSizeTest() {
     int randomLimit = generateRandomInt();
     for (int numberOfLandMasses = 1; numberOfLandMasses < randomLimit; numberOfLandMasses++) {
       map = new MapGenerator(10, 10, 25, 25, 25, 25, numberOfLandMasses);
       map.createMap();
-      assertEquals(map.mapSizeX, ((map.getLandMassSizeX() * numberOfLandMasses) + (map.landMassMaps.size() + 1)));
+      assertEquals(map.mapSizeX,
+          ((map.getLandMassSizeX() * numberOfLandMasses) + (map.landMassMaps.size() + 1)));
     }
   }
 
@@ -49,7 +50,9 @@ public class MapGenerationTest {
 
   @Test
   public void notEnoughTilesTest() {
-    map = new MapGenerator(generateRandomInt(), generateRandomInt(), generateRandomInt(), generateRandomInt(), generateRandomInt(), generateRandomInt(), generateRandomInt());
+    map = new MapGenerator(generateRandomInt(), generateRandomInt(),
+        generateRandomInt(), generateRandomInt(),
+        generateRandomInt(), generateRandomInt(), generateRandomInt());
     assertThrows(AssertionError.class, () -> map.createMap());
   }
 }
