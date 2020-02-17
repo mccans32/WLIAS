@@ -1,4 +1,4 @@
-package society.person.gender;
+package society.person.dataobjects;
 
 public enum  Gender {
   MALE,

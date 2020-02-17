@@ -1,12 +1,8 @@
 package society.person;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static society.person.Person.MAX_HEALTH;
-import static society.person.Person.MAX_INDEX;
-import static society.person.Person.MIN_HEALTH;
-import static society.person.Person.MIN_INDEX;
-import static society.person.gender.Gender.FEMALE;
-import static society.person.gender.Gender.MALE;
+import static society.person.dataobjects.Gender.FEMALE;
+import static society.person.dataobjects.Gender.MALE;
 
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,12 +25,12 @@ class PersonTest {
       randomIntArray[i] = generateRandomInt();
       randomFloatArray[i] = generateRandomFloat();
     }
-    person = new Person(1, MAX_HEALTH, 0, MALE, 0.0f, 0.0f, 0.0f);
+    person = new Person(1, 0, MALE, 0.0f, 0.0f, 0.0f);
   }
 
   private float generateRandomFloat() {
     Random r = new Random();
-    return MIN_INDEX + r.nextFloat() * (MAX_INDEX - MIN_INDEX);
+    return Person.getMaxIndex() + r.nextFloat() * (Person.getMaxIndex() - Person.getMinIndex());
   }
 
   private int generateRandomInt() {
@@ -44,7 +40,7 @@ class PersonTest {
 
   private float generateRandomHealth() {
     Random r = new Random();
-    return MIN_HEALTH + r.nextInt() * (MAX_HEALTH - MIN_HEALTH);
+    return Person.getMinHealth() + r.nextInt() * (Person.getMaxHealth() - Person.getMinHealth());
   }
 
   @Test
