@@ -16,6 +16,12 @@ public class Main {
    * @throws UnexpectedException the unexpected exception
    */
   public static void main(String[] args) throws UnexpectedException {
+    generateMap();
+    Game game = new Game();
+    game.start();
+  }
+
+  private static void generateMap() {
     //TODO move this functionality to the main menu when the functionality is created
     //creates a map object which has all parameters needed.
     MapGenerator map = new MapGenerator(50, 50, 1000, 500,
@@ -28,8 +34,5 @@ public class Main {
     for (Tile[] row : gameMap) {
       System.out.println(Arrays.toString(row));
     }
-
-    Game game = new Game();
-    game.start();
   }
 }
