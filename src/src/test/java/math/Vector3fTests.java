@@ -1,8 +1,7 @@
-package test.math;
+package math;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import math.Vector3f;
 import org.junit.jupiter.api.Test;
 
 

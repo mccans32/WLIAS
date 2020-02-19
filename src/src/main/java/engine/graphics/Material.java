@@ -9,7 +9,6 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 public class Material {
   private String path;
-  private Texture texture;
   private float width;
   private float height;
   private int textureID;
@@ -28,7 +27,7 @@ public class Material {
    */
   public void create() {
     try {
-      this.texture = TextureLoader.getTexture(FilenameUtils.getExtension(path),
+      Texture texture = TextureLoader.getTexture(FilenameUtils.getExtension(path),
           Material.class.getResourceAsStream(path), GL11.GL_NEAREST);
       this.height = texture.getHeight();
       this.width = texture.getWidth();

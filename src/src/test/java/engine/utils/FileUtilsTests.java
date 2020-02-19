@@ -1,10 +1,8 @@
-package test.engine.utils;
+package engine.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import engine.utils.FileUtils;
-import java.io.File;
 import org.junit.jupiter.api.Test;
 
 public class FileUtilsTests {

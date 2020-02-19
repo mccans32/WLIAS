@@ -2,7 +2,6 @@ package game;
 
 import engine.Input;
 import engine.Window;
-import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
@@ -72,7 +71,7 @@ public class Game {
           new Vertex2D(new Vector2f(0.5f, 0.5f),
               ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 0f))
       },
-      new int[] {0, 3, 1, 2}, new Material("/images/water-tile.png"));
+      new int[] {0, 3, 1, 2});
 
   /**
    * Start.
