@@ -1,8 +1,7 @@
-package test.engine.utils;
+package engine.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
