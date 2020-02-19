@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 
 public class RendererTests {
   static final String SHADERS_PATH = "/shaders/";
-  static final String VERTEX_COLOUR_SHADER_FILE_NAME = "testVertex.glsl";
-  static final String FRAGMENT_COLOUR_SHADER_FILE_NAME = "testFragment.glsl";
+  static final String VERTEX_COLOUR_SHADER_FILE_NAME = "testColourVertex.glsl";
+  static final String FRAGMENT_COLOUR_SHADER_FILE_NAME = "testColourFragment.glsl";
   static final int WINDOW_HEIGHT = 600;
   static final int WINDOW_WIDTH = 800;
   static final String WINDOW_TITLE = "Test Window";
@@ -37,9 +37,9 @@ public class RendererTests {
   /**
    * Sets .
    */
-  public void setupWindow(String vertex_file_name, String fragment_file_name) {
-    Shader shader = new Shader(SHADERS_PATH + vertex_file_name,
-        SHADERS_PATH + fragment_file_name);
+  public void setupWindow(String vertexFileName, String fragmentFileName) {
+    Shader shader = new Shader(SHADERS_PATH + vertexFileName,
+        SHADERS_PATH + fragmentFileName);
     assumeTrue(glfwInit());
     renderer = new Renderer(shader);
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
@@ -80,8 +80,8 @@ public class RendererTests {
     rectangleMesh.setColour(ColourUtils.convertColor(ChartColor.BLUE));
     Mesh triangleMesh = new Mesh(triangleVertices, triangleIndices);
     triangleMesh.setColour(ColourUtils.convertColor(ChartColor.YELLOW));
-    drawMesh(rectangleMesh);
     drawMesh(triangleMesh);
+    drawMesh(rectangleMesh);
   }
 
   @Test void testBlueSquare() throws InterruptedException {
@@ -92,7 +92,7 @@ public class RendererTests {
   }
 
   @Test void testPinkTriangle() throws InterruptedException {
-    setupWindow();
+    setupWindow(VERTEX_COLOUR_SHADER_FILE_NAME, FRAGMENT_COLOUR_SHADER_FILE_NAME);
     Mesh testMesh = new Mesh(triangleVertices, triangleIndices);
     testMesh.setColour(ColourUtils.convertColor(ChartColor.PINK));
     drawMesh(testMesh);
