@@ -30,17 +30,17 @@ class PersonTest {
 
   private float generateRandomFloat() {
     Random r = new Random();
-    return Person.getMaxIndex() + r.nextFloat() * (Person.getMaxIndex() - Person.getMinIndex());
+    return Person.getMinIndex() + (Person.getMaxIndex() - Person.getMinIndex()) * r.nextFloat();
   }
 
   private int generateRandomInt() {
     Random r = new Random();
-    return LOWER_INT_LIMIT + r.nextInt() * (UPPER_INT_LIMIT - LOWER_INT_LIMIT);
+    return r.nextInt(UPPER_INT_LIMIT) + LOWER_INT_LIMIT;
   }
 
   private float generateRandomHealth() {
     Random r = new Random();
-    return Person.getMinHealth() + r.nextInt() * (Person.getMaxHealth() - Person.getMinHealth());
+    return r.nextInt((int) Person.getMaxHealth()) + Person.getMinHealth();
   }
 
   @Test

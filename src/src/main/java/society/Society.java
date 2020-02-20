@@ -68,7 +68,7 @@ public class Society {
   public void setAverageTechnology(ArrayList<Person> population) {
     float totalTechnology = 0;
     for (Person person : population) {
-      totalTechnology += person.getMedicine();
+      totalTechnology += person.getTechnology();
     }
     this.averageTechnology = totalTechnology / population.size();
   }
@@ -80,7 +80,7 @@ public class Society {
   /**
    * Sets average medicine.
    */
-  public void setAverageMedicine() {
+  public void setAverageMedicine(ArrayList<Person> population) {
     float totalMedicine = 0;
     for (Person person : population) {
       totalMedicine += person.getMedicine();
@@ -95,12 +95,11 @@ public class Society {
   /**
    * Sets average agriculture.
    *
-   * @param averageAgriculture the average agriculture
    */
-  public void setAverageAgriculture(float averageAgriculture) {
+  public void setAverageAgriculture(ArrayList<Person> population) {
     float totalAgriculture = 0;
     for (Person person : population) {
-      totalAgriculture += person.getMedicine();
+      totalAgriculture += person.getAgriculture();
     }
     this.averageAgriculture = totalAgriculture / population.size();
   }
@@ -109,7 +108,7 @@ public class Society {
     return averageLifeExpectancy;
   }
 
-  public void setAverageLifeExpectancy(int averageLifeExpectancy) {
+  public void setAverageLifeExpectancy() {
     this.averageLifeExpectancy = calculateLifeExpectancy();
   }
 
