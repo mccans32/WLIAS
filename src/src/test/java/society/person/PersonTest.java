@@ -25,7 +25,7 @@ class PersonTest {
       randomIntArray[i] = generateRandomInt();
       randomFloatArray[i] = generateRandomFloat();
     }
-    person = new Person(1, 0, MALE, 0.0f, 0.0f, 0.0f);
+    person = new Person(1, 0, MALE, 0.0f, 0.0f, 0.0f, null);
   }
 
   private float generateRandomFloat() {

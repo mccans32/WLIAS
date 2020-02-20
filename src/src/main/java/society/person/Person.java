@@ -1,5 +1,6 @@
 package society.person;
 
+import java.util.ArrayList;
 import society.Society;
 import society.person.dataobjects.Gender;
 import society.person.dataobjects.SocietyOpinion;
@@ -54,7 +55,8 @@ public class Person {
                 Gender gender,
                 float aggressiveness,
                 float fertility,
-                float pathFinding) {
+                float pathFinding,
+                Society[] listOfSocieties) {
     this.id = id;
     this.health = MAX_HEALTH;
     this.age = age;
@@ -62,6 +64,7 @@ public class Person {
     this.aggressiveness = aggressiveness;
     this.fertility = fertility;
     this.pathFinding = pathFinding;
+    setOpinionsOfSocieties(listOfSocieties);
 
   }
 
