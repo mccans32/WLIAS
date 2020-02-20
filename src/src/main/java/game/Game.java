@@ -49,6 +49,8 @@ public class Game {
    */
 
   static final String SHADERS_PATH = "/shaders/";
+  static final String VERTEX_DIRECTORY = "vertex/";
+  static final String FRAGMENT_DIRECTORY = "fragment/";
   static final String VERTEX_SHADER_FILE_NAME = "mainVertex.glsl";
   static final String FRAGMENT_SHADER_FILE_NAME = "mainFragment.glsl";
 
@@ -101,8 +103,8 @@ public class Game {
   private void initialize() {
     System.out.println("Initializing Simulation\n");
     // Initialise the Shader
-    shader = new Shader(SHADERS_PATH + VERTEX_SHADER_FILE_NAME,
-        SHADERS_PATH + FRAGMENT_SHADER_FILE_NAME);
+    shader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + VERTEX_SHADER_FILE_NAME,
+        SHADERS_PATH + FRAGMENT_DIRECTORY + FRAGMENT_SHADER_FILE_NAME);
     // Initialise Renderer
     renderer = new Renderer(shader);
     // Create main window
@@ -124,6 +126,7 @@ public class Game {
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
       System.out.println("X: " + Input.getMouseX() + ", Y: " + Input.getMouseY());
     }
+
   }
 
   /**
