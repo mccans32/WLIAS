@@ -23,21 +23,20 @@ public class Society {
    */
   public Society(int initialPopulationSize, int societyId) {
     this.societyId = societyId;
-    this.population = generateInitialPopulation(initialPopulationSize);
+    generateInitialPopulation(initialPopulationSize);
 
   }
 
-  private ArrayList<Person> generateInitialPopulation(int initialPopulation) {
-    ArrayList<Person> pop = new ArrayList<>();
+  private void generateInitialPopulation(int initialPopulationSize) {
+    population = new ArrayList<>();
     Gender[] genderList = Gender.class.getEnumConstants();
-    pop.add(new Person(0, Gender.FEMALE));
-    pop.add(new Person(1, Gender.MALE));
-    for (personIdCounter = 2; personIdCounter < initialPopulation; personIdCounter++) {
+    population.add(new Person(0, Gender.FEMALE));
+    population.add(new Person(1, Gender.MALE));
+    for (personIdCounter = 2; personIdCounter < initialPopulationSize; personIdCounter++) {
       Random r = new Random();
       int randomIndex = r.nextInt(genderList.length);
-      pop.add(new Person(personIdCounter, genderList[randomIndex]));
+      population.add(new Person(personIdCounter, genderList[randomIndex]));
     }
-    return pop;
   }
 
   public ArrayList<Person> getPopulation() {
