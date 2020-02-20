@@ -1,4 +1,4 @@
-package test.map.tile;
+package map.tile;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;

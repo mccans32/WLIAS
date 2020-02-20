@@ -1,4 +1,4 @@
-package test.engine.graphics;
+package engine.graphics;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;

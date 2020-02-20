@@ -1,10 +1,9 @@
-package test.engine.graphics;
+package engine.graphics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import engine.graphics.Vertex2D;
 import math.Vector2f;
 import org.junit.jupiter.api.Test;
 
