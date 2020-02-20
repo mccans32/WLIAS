@@ -21,6 +21,7 @@ public class Shader {
   private int vertexID;
   private int fragmentID;
   private int programID;
+  private int[] shaderIDs;
 
   /**
    * Instantiates a new Shader.
@@ -45,11 +46,10 @@ public class Shader {
     fragmentID = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
     createShader(fragmentID, fragmentFile, FRAGMENT_TYPE_STRING);
 
-    int[] shaderIDs = {vertexID, fragmentID};
-    attachShaders(shaderIDs);
+    shaderIDs = new int[] {vertexID, fragmentID};
+    attachShaders();
     linkProgram();
     validateProgram();
-    deleteShaders(shaderIDs);
   }
 
   /**
@@ -70,6 +70,10 @@ public class Shader {
    * Destroy.
    */
   public void destroy() {
+    for (int shaderID : shaderIDs) {
+      GL20.glDetachShader(programID, shaderID);
+      GL20.glDeleteShader(shaderID);
+    }
     GL20.glDeleteProgram(programID);
   }
 
@@ -83,15 +87,9 @@ public class Shader {
     }
   }
 
-  private void attachShaders(int[] shaderIDs) {
+  private void attachShaders() {
     for (int shaderID : shaderIDs) {
       GL20.glAttachShader(programID, shaderID);
-    }
-  }
-
-  private void deleteShaders(int[] shaderIDs) {
-    for (int shaderID : shaderIDs) {
-      GL20.glDeleteShader(shaderID);
     }
   }
 

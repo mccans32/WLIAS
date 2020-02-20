@@ -21,6 +21,7 @@ public class RendererTests {
       "water-tile.png"
   };
 
+  private static final int SLEEP_TIME = 1;
   static final String SHADERS_PATH = "/shaders/";
   static final String VERTEX_COLOUR_SHADER_FILE_NAME = "testColourVertex.glsl";
   static final String FRAGMENT_COLOUR_SHADER_FILE_NAME = "testColourFragment.glsl";
@@ -80,7 +81,7 @@ public class RendererTests {
     renderer.renderMesh(mesh);
     window.swapBuffers();
     window.update();
-    TimeUnit.SECONDS.sleep(3);
+    TimeUnit.SECONDS.sleep(SLEEP_TIME);
   }
 
   private void shutDownWindow() {
