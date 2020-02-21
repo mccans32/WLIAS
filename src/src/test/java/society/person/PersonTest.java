@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static society.person.dataobjects.Gender.FEMALE;
 import static society.person.dataobjects.Gender.MALE;
 
+import java.util.Arrays;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import society.Society;
 
 class PersonTest {
   static final int LOWER_INT_LIMIT = 1;
@@ -16,16 +18,19 @@ class PersonTest {
   float[] randomFloatArray;
   float[] randomHealthArray;
   Person person;
+  Society[] listOfSocieties = new Society[LOOP_ITERATIONS];
 
   @BeforeEach
   public void setUp() {
+    Society society = new Society(0,LOWER_INT_LIMIT);
+    Arrays.fill(listOfSocieties, society);
     randomIntArray = new int[LOOP_ITERATIONS];
     randomFloatArray = new float[LOOP_ITERATIONS];
     for (int i = 0; i < LOOP_ITERATIONS; i++) {
       randomIntArray[i] = generateRandomInt();
       randomFloatArray[i] = generateRandomFloat();
     }
-    person = new Person(1, 0, MALE, 0.0f, 0.0f, 0.0f, null);
+    person = new Person(1, 0, MALE, 0.0f, 0.0f, 0.0f, listOfSocieties);
   }
 
   private float generateRandomFloat() {

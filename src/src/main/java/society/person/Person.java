@@ -37,7 +37,7 @@ public class Person {
     this.gender = gender;
     this.aggressiveness = DEFAULT_INDEX;
     this.fertility = DEFAULT_INDEX;
-    this.pathFinding = DEFAULT_INDEX;
+    this.pathFinding = DEFAULT_INDEX;;
   }
 
   /**
@@ -64,7 +64,7 @@ public class Person {
     this.aggressiveness = aggressiveness;
     this.fertility = fertility;
     this.pathFinding = pathFinding;
-    setOpinionsOfSocieties(listOfSocieties);
+    setOpinions(listOfSocieties);
 
   }
 
@@ -116,7 +116,7 @@ public class Person {
    */
   public void setOpinionsOfSocieties(Society[] listOfSocieties) {
     this.opinionsOfSocieties = new SocietyOpinion[listOfSocieties.length - 1];
-    for (int i = 0; i < listOfSocieties.length; i++) {
+    for (int i = 0; i < listOfSocieties.length - 1; i++) {
       SocietyOpinion opinion = new SocietyOpinion(listOfSocieties[i].getSocietyId());
       opinion.setSocietyOpinion(calculateOpinionOfSociety(listOfSocieties[i]));
       this.opinionsOfSocieties[i] = opinion;
