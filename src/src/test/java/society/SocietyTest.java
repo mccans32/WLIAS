@@ -21,7 +21,7 @@ class SocietyTest {
 
   private int generateRandomInt() {
     Random r = new Random();
-    return r.nextInt(UPPER_INT_LIMIT);
+    return r.nextInt(UPPER_INT_LIMIT - DEFAULT_POPULATION_SIZE) + DEFAULT_POPULATION_SIZE;
   }
 
   private float generateRandomFloat() {
