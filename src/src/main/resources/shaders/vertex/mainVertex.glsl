@@ -9,10 +9,10 @@ out vec2 passTextureCoords;
 
 float z = 0.0;
 
-uniform float scale = 1;
+uniform mat4 model;
 
 void main() {
-    gl_Position = vec4(position, z, 1.0) * vec4(scale, scale, scale, 1.0);
+    gl_Position = vec4(position, z, 1.0) * model;
     passColor = color;
     passTextureCoords = textureCoords;
 }

@@ -6,9 +6,11 @@ import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
 import engine.graphics.Vertex2D;
+import engine.objects.GameObject;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector2f;
+import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -75,6 +77,12 @@ public class Game {
       },
       new int[] {0, 3, 1, 2});
 
+  private GameObject tempObject = new GameObject(
+      new Vector2f(0, 0),
+      new Vector2f(0, 0),
+      new Vector2f(1f, 1f),
+      tempMesh);
+
   /**
    * Start.
    */
@@ -121,6 +129,7 @@ public class Game {
    * Update.
    */
   public void update() {
+    tempObject.update();
     window.update();
     // Temporary
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
@@ -133,7 +142,7 @@ public class Game {
    * Render.
    */
   public void render() {
-    renderer.renderMesh(tempMesh);
+    renderer.renderObject(tempObject);
     window.swapBuffers();
   }
 }

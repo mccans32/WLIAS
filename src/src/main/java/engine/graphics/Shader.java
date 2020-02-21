@@ -144,7 +144,7 @@ public class Shader {
    */
   public void setUniform(String uniformName, Matrix4f val) {
     FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(Matrix4f.getSize() * Matrix4f.getSize());
-    matrixBuffer.put(val.getElements()).flip();
+    matrixBuffer.put(val.getAll()).flip();
     GL20.glUniformMatrix4fv(getUniformLocation(uniformName), true, matrixBuffer);
   }
 
