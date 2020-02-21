@@ -1,13 +1,16 @@
 package society.person;
 
-import society.person.gender.Gender;
+import java.util.ArrayList;
+import society.Society;
+import society.person.dataobjects.Gender;
+import society.person.dataobjects.SocietyOpinion;
 
 public class Person {
-
-  static final float MAX_HEALTH = 100;
-  static final float MIN_HEALTH = 1;
-  static final float MAX_INDEX = 1.0f;
-  static final float MIN_INDEX = -1.0f;
+  private static final float MAX_HEALTH = 100;
+  private static final float MIN_HEALTH = 1;
+  private static final float MAX_INDEX = 1.0f;
+  private static final float MIN_INDEX = -1.0f;
+  private static final float DEFAULT_INDEX = (MAX_INDEX + MIN_INDEX) / 2;
   private int id;
   private float health;
   private int age;
@@ -18,12 +21,29 @@ public class Person {
   private float technology;
   private float agriculture;
   private float medicine;
+  private float opinionOfLeader;
+  private SocietyOpinion[] opinionsOfSocieties;
+
+  /**
+   * Instantiates a new Person.
+   *
+   * @param id     the id
+   * @param gender the gender
+   */
+  public Person(int id, Gender gender) {
+    this.id = id;
+    this.health = MAX_HEALTH;
+    this.age = 0;
+    this.gender = gender;
+    this.aggressiveness = DEFAULT_INDEX;
+    this.fertility = DEFAULT_INDEX;
+    this.pathFinding = DEFAULT_INDEX;;
+  }
 
   /**
    * Instantiates a new Person.
    *
    * @param id             the id
-   * @param health         the health
    * @param age            the age
    * @param gender         the gender
    * @param aggressiveness the aggressiveness
@@ -31,19 +51,80 @@ public class Person {
    * @param pathFinding    the path finding
    */
   public Person(int id,
-                float health,
                 int age,
                 Gender gender,
                 float aggressiveness,
                 float fertility,
-                float pathFinding) {
+                float pathFinding,
+                Society[] listOfSocieties) {
     this.id = id;
-    this.health = health;
+    this.health = MAX_HEALTH;
     this.age = age;
     this.gender = gender;
     this.aggressiveness = aggressiveness;
     this.fertility = fertility;
     this.pathFinding = pathFinding;
+    setOpinions(listOfSocieties);
+
+  }
+
+  public static float getMaxHealth() {
+    return MAX_HEALTH;
+  }
+
+  public static float getMinHealth() {
+    return MIN_HEALTH;
+  }
+
+  public static float getMaxIndex() {
+    return MAX_INDEX;
+  }
+
+  public static float getMinIndex() {
+    return MIN_INDEX;
+  }
+
+  public static float getDefaultIndex() {
+    return DEFAULT_INDEX;
+  }
+
+  public void setOpinions(Society[] listOfSocieties) {
+    setOpinionOfLeader();
+    setOpinionsOfSocieties(listOfSocieties);
+  }
+
+  public float getOpinionOfLeader() {
+    return opinionOfLeader;
+  }
+
+  public void setOpinionOfLeader() {
+    this.opinionOfLeader = calculateOpinionOfLeader();
+  }
+
+  private float calculateOpinionOfLeader() {
+    return 0;
+  }
+
+  public SocietyOpinion[] getOpinionsOfSocieties() {
+    return opinionsOfSocieties.clone();
+  }
+
+  /**
+   * Sets opinions of societies.
+   *
+   * @param listOfSocieties the list of societies
+   */
+  public void setOpinionsOfSocieties(Society[] listOfSocieties) {
+    this.opinionsOfSocieties = new SocietyOpinion[listOfSocieties.length - 1];
+    for (int i = 0; i < listOfSocieties.length - 1; i++) {
+      SocietyOpinion opinion = new SocietyOpinion(listOfSocieties[i].getSocietyId(),
+              calculateOpinionOfSociety(listOfSocieties[i]));
+      this.opinionsOfSocieties[i] = opinion;
+    }
+  }
+
+  private float calculateOpinionOfSociety(Society listOfSociety) {
+    return 0;
   }
 
   public int getId() {
