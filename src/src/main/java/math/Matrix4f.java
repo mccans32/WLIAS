@@ -5,6 +5,22 @@ public class Matrix4f {
   private static final int SIZE = 4;
   private float[] elements = new float[SIZE * SIZE];
 
+  public Matrix4f() {
+  }
+
+  /**
+   * Instantiates a new Matrix 4 f.
+   *
+   * @param elements the elements
+   */
+  public Matrix4f(float[] elements) {
+    if (elements.length != SIZE * SIZE) {
+      throw new IllegalArgumentException(
+          String.format("Passed Elements must be of size %d", SIZE * SIZE));
+    }
+
+  }
+
   /**
    * Identity matrix 4 f.
    *
@@ -69,8 +85,8 @@ public class Matrix4f {
   public static Matrix4f rotate(float angle, Vector3f axis) {
     Matrix4f result = Matrix4f.identity();
 
-    float cos = (float) Math.cos(Math.toRadians(angle));
-    float sin = (float) Math.sin(Math.toRadians(angle));
+    float cos = (float) Math.cos(angle);
+    float sin = (float) Math.sin(angle);
     float inversion = 1 - cos;
 
     result.set(0, 0, cos + axis.getX() * axis.getX() * inversion);
@@ -119,19 +135,21 @@ public class Matrix4f {
    * @return the matrix 4 f
    */
   public static Matrix4f transform(Vector3f position, Vector3f rotation, Vector3f scale) {
-    Matrix4f result = Matrix4f.identity();
-
     Matrix4f translationMatrix = Matrix4f.translate(position);
     Matrix4f rotXMatrix = Matrix4f.rotate(rotation.getX(), new Vector3f(1, 0, 0));
     Matrix4f rotYMatrix = Matrix4f.rotate(rotation.getY(), new Vector3f(0, 1, 0));
     Matrix4f rotZMatrix = Matrix4f.rotate(rotation.getZ(), new Vector3f(0, 0, 1));
     Matrix4f scaleMatrix = Matrix4f.scale(scale);
 
-    Matrix4f rotationMatrix = Matrix4f.multiply(rotXMatrix, Matrix4f.multiply(rotYMatrix, rotZMatrix));
+    Matrix4f rotationMatrix = Matrix4f.multiply(
+        rotXMatrix,
+        Matrix4f.multiply(
+            rotYMatrix,
+            rotZMatrix));
 
-    result = Matrix4f.multiply(translationMatrix, Matrix4f.multiply(rotationMatrix, scaleMatrix));
-
-    return result;
+    return Matrix4f.multiply(
+        translationMatrix,
+        Matrix4f.multiply(rotationMatrix, scaleMatrix));
   }
 
   /**
@@ -142,10 +160,10 @@ public class Matrix4f {
    * @param scale    the scale
    * @return the matrix 4 f
    */
-  public static Matrix4f transform(Vector2f position, Vector2f rotation, Vector2f scale) {
+  public static Matrix4f transform(Vector2f position, Vector3f rotation, Vector2f scale) {
     return transform(
         new Vector3f(position.getX(), position.getY(), 0f),
-        new Vector3f(rotation.getX(), rotation.getY(), 0f),
+        rotation,
         new Vector3f(scale.getX(), scale.getY(), 1f)
     );
   }
@@ -155,7 +173,7 @@ public class Matrix4f {
   }
 
   public static int calculateIndex(int row, int col) {
-    return row * SIZE + col;
+    return col * SIZE + row;
   }
 
   public float get(int row, int col) {

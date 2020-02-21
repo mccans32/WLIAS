@@ -1,10 +1,7 @@
 package engine.graphics;
 
 import engine.objects.GameObject;
-import java.sql.Array;
-import java.util.Arrays;
 import math.Matrix4f;
-import math.Vector2f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -48,10 +45,24 @@ public class Renderer {
     GL13.glBindTexture(GL11.GL_TEXTURE_2D, object.getMesh().getMaterial().getTextureID());
     //Bind Shader
     shader.bind();
-    // Set Model Uniform
-    System.out.println(Arrays.toString(Matrix4f.rotate(0, new Vector2f(0,0)).getAll()));
-    shader.setUniform("model", Matrix4f.transform(object.getPosition(), object.getRotation(), object.getScale()));
+    // Set Uniforms
+    setUniforms(object);
+
   }
+
+  private void setUniforms(GameObject object) {
+    setModelUniform(object);
+  }
+
+  private void setModelUniform(GameObject object) {
+    shader.setUniform(
+        "model",
+        Matrix4f.transform(
+            object.getPosition(),
+            object.getRotation(),
+            object.getScale()));
+  }
+
 
   private void unbindObject() {
     //Unbind Shader
