@@ -117,8 +117,8 @@ public class Person {
   public void setOpinionsOfSocieties(Society[] listOfSocieties) {
     this.opinionsOfSocieties = new SocietyOpinion[listOfSocieties.length - 1];
     for (int i = 0; i < listOfSocieties.length - 1; i++) {
-      SocietyOpinion opinion = new SocietyOpinion(listOfSocieties[i].getSocietyId());
-      opinion.setSocietyOpinion(calculateOpinionOfSociety(listOfSocieties[i]));
+      SocietyOpinion opinion = new SocietyOpinion(listOfSocieties[i].getSocietyId(),
+              calculateOpinionOfSociety(listOfSocieties[i]));
       this.opinionsOfSocieties[i] = opinion;
     }
   }

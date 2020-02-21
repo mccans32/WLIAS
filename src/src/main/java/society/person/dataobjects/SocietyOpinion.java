@@ -4,8 +4,9 @@ public class SocietyOpinion {
   public int societyId;
   public float societyOpinion;
 
-  public SocietyOpinion(int societyId) {
+  public SocietyOpinion(int societyId, float societyOpinion) {
     this.societyId = societyId;
+    this.societyOpinion = societyOpinion;
   }
 
   public int getSocietyId() {
