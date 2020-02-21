@@ -20,8 +20,9 @@ public class RendererTests {
       "mid-tier-tile.png",
       "water-tile.png"
   };
-
   static final String SHADERS_PATH = "/shaders/";
+  static final String VERTEX_DIR = "vertex/";
+  static final String FRAGMENT_DIR = "fragment/";
   static final String VERTEX_COLOUR_SHADER_FILE_NAME = "testColourVertex.glsl";
   static final String FRAGMENT_COLOUR_SHADER_FILE_NAME = "testColourFragment.glsl";
   static final String VERTEX_IMAGE_SHADER_FILE_NAME = "testImageVertex.glsl";
@@ -50,6 +51,7 @@ public class RendererTests {
       ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 1f));
   Vertex2D[] imageRectangleVertices = {topLeftImageVertex, topRightImageVertex,
       bottomLeftImageVertex, bottomRightImageVertex};
+  private int sleepTime = 1;
   private Window window;
   private Renderer renderer;
   private Shader shader;
@@ -63,8 +65,8 @@ public class RendererTests {
    * Sets .
    */
   public void setupWindow(String vertexFileName, String fragmentFileName) {
-    shader = new Shader(SHADERS_PATH + vertexFileName,
-        SHADERS_PATH + fragmentFileName);
+    shader = new Shader(SHADERS_PATH + VERTEX_DIR + vertexFileName,
+        SHADERS_PATH + FRAGMENT_DIR + fragmentFileName);
     renderer = new Renderer(shader);
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     window.setBackgroundColour(1.0f, 1.0f, 1.0f, 1.0f);
@@ -76,11 +78,10 @@ public class RendererTests {
   private void drawMesh(Mesh mesh) throws InterruptedException {
     window.update();
     mesh.create();
-    mesh.getMaterial().create();
     renderer.renderMesh(mesh);
     window.swapBuffers();
     window.update();
-    TimeUnit.SECONDS.sleep(3);
+    TimeUnit.SECONDS.sleep(sleepTime);
   }
 
   private void shutDownWindow() {
@@ -105,14 +106,22 @@ public class RendererTests {
   }
 
   @Test
-  public void testBoth() throws InterruptedException {
+  public void testBoth() {
     setupWindow(VERTEX_COLOUR_SHADER_FILE_NAME, FRAGMENT_COLOUR_SHADER_FILE_NAME);
     Mesh rectangleMesh = new Mesh(rectangleVertices, rectangleIndices);
     rectangleMesh.setColour(ColourUtils.convertColor(ChartColor.BLUE));
     Mesh triangleMesh = new Mesh(triangleVertices, triangleIndices);
     triangleMesh.setColour(ColourUtils.convertColor(ChartColor.YELLOW));
-    drawMesh(triangleMesh);
-    drawMesh(rectangleMesh);
+
+    for (int i = 0; i < 100; i++) {
+      triangleMesh.create();
+      rectangleMesh.create();
+      window.update();
+      renderer.renderMesh(triangleMesh);
+      renderer.renderMesh(rectangleMesh);
+      window.swapBuffers();
+    }
+
     triangleMesh.destroy();
     rectangleMesh.destroy();
     shutDownWindow();
@@ -157,5 +166,23 @@ public class RendererTests {
       testMesh.destroy();
       shutDownWindow();
     }
+  }
+
+  @Test
+  void testUniformScale() throws InterruptedException {
+    setupWindow(VERTEX_IMAGE_SHADER_FILE_NAME, FRAGMENT_IMAGE_SHADER_FILE_NAME);
+    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
+    this.sleepTime = 0;
+    double scale = 0.1;
+    for (int i = 0; i < 100; i++) {
+      shader.bind();
+      shader.setUniform("scale", (float) Math.sin(scale));
+      shader.unbind();
+      drawMesh(testMesh);
+      scale += 0.02;
+    }
+    this.sleepTime = 1;
+    testMesh.destroy();
+    shutDownWindow();
   }
 }
