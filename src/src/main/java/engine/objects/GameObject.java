@@ -5,7 +5,6 @@ import math.Vector2f;
 import math.Vector3f;
 
 public class GameObject {
-  private float temp;
   private Vector2f position = new Vector2f(0f, 0f);
   private Vector3f rotation = new Vector3f(0f, 0f, 0f);
   private Vector2f scale = new Vector2f(1f, 1f);
@@ -51,20 +50,5 @@ public class GameObject {
   public Mesh getMesh() {
     return mesh;
   }
-
-  /**
-   * Temp Update.
-   */
-  // TEMP
-  public void update() {
-    temp += 0.01;
-    float val = (float) Math.sin(temp);
-    float angle = (float) Math.toRadians(temp * 100);
-    this.position.set(val, val);
-    this.rotation.set(angle, angle, angle);
-    this.scale.set(val, val);
-
-  }
-
 
 }
