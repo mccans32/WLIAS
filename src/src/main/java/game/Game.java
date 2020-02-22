@@ -131,7 +131,6 @@ public class Game {
    * Update.
    */
   public void update() {
-    tempObject.update();
     window.update();
     // Temporary
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
