@@ -25,6 +25,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
+import math.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
@@ -66,6 +67,10 @@ public class Window {
   private int[] windowPosY = new int[1];
   private Input input;
   private boolean isVisible = true;
+  private Matrix4f projectionMatrix;
+  private float fov = 70.0f;
+  private float near = 0.1f;
+  private float far = 1000f;
 
   /**
    * Instantiates a new Window.
@@ -78,6 +83,11 @@ public class Window {
     this.width = width;
     this.height = height;
     this.title = title;
+    this.projectionMatrix = Matrix4f.projection(
+        fov,
+        (float) width / (float) height,
+        near,
+        far);
   }
 
   /**
@@ -85,6 +95,22 @@ public class Window {
    */
   public static void setErrorCallback() {
     glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
+  }
+
+  public Matrix4f getProjectionMatrix() {
+    return projectionMatrix;
+  }
+
+  public float getFov() {
+    return fov;
+  }
+
+  public float getNear() {
+    return near;
+  }
+
+  public float getFar() {
+    return far;
   }
 
   public boolean isVisible() {
