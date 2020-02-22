@@ -57,7 +57,7 @@ public class Vector3fTests {
     for (float testXCoordinate : testXCoordinates) {
       for (float testYCoordinate : testYCoordinates) {
         for (float testZCoordinate : testZCoordinates) {
-          testVector.set(testXCoordinate, testYCoordinate, testZCoordinate);
+          testVector.set(new Vector3f(testXCoordinate, testYCoordinate, testZCoordinate));
           assertEquals(testVector.getX(), testXCoordinate);
           assertEquals(testVector.getY(), testYCoordinate);
         }

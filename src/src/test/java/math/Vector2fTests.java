@@ -43,7 +43,7 @@ public class Vector2fTests {
     Vector2f testVector = new Vector2f(0.0f, 0.0f);
     for (float testXCoordinate : testXCoordinates) {
       for (float testYCoordinate : testYCoordinates) {
-        testVector.set(testXCoordinate, testYCoordinate);
+        testVector.set(new Vector2f(testXCoordinate, testYCoordinate));
         assertEquals(testVector.getX(), testXCoordinate);
         assertEquals(testVector.getY(), testYCoordinate);
       }
