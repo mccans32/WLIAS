@@ -4,11 +4,12 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
+import engine.objects.Camera;
 import engine.objects.GameObject;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import java.util.concurrent.TimeUnit;
-import math.Vector2f;
+import math.Vector3f;
 import org.jfree.chart.ChartColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,28 +38,29 @@ public class RendererTests {
   static int[] rectangleIndices = {0, 1, 2, 3};
   static int[] triangleIndices = {0, 1, 2};
   static int[] imageRectangleIndices = rectangleIndices;
-  Vertex2D topLeftVertex = new Vertex2D(new Vector2f(-0.5f, 0.5f));
-  Vertex2D topRightVertex = new Vertex2D(new Vector2f(0.5f, 0.5f));
-  Vertex2D topCenterVertex = new Vertex2D(new Vector2f(0f, 0.5f));
-  Vertex2D bottomLeftVertex = new Vertex2D(new Vector2f(-0.5f, -0.5f));
-  Vertex2D bottomRightVertex = new Vertex2D(new Vector2f(0.5f, -0.5f));
-  Vertex2D[] rectangleVertices = {topLeftVertex, topRightVertex, bottomLeftVertex,
+  Vertex3D topLeftVertex = new Vertex3D(new Vector3f(-0.5f, 0.5f, 0));
+  Vertex3D topRightVertex = new Vertex3D(new Vector3f(0.5f, 0.5f, 0));
+  Vertex3D topCenterVertex = new Vertex3D(new Vector3f(0f, 0.5f, 0));
+  Vertex3D bottomLeftVertex = new Vertex3D(new Vector3f(-0.5f, -0.5f, 0));
+  Vertex3D bottomRightVertex = new Vertex3D(new Vector3f(0.5f, -0.5f, 0));
+  Vertex3D[] rectangleVertices = {topLeftVertex, topRightVertex, bottomLeftVertex,
       bottomRightVertex};
-  Vertex2D[] triangleVertices = {topCenterVertex, bottomLeftVertex, bottomRightVertex};
-  Vertex2D topLeftImageVertex = new Vertex2D(new Vector2f(-0.5f, 0.5f),
-      ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 0f));
-  Vertex2D topRightImageVertex = new Vertex2D(new Vector2f(0.5f, 0.5f),
-      ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 0f));
-  Vertex2D bottomLeftImageVertex = new Vertex2D(new Vector2f(-0.5f, -0.5f),
-      ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 1f));
-  Vertex2D bottomRightImageVertex = new Vertex2D(new Vector2f(0.5f, -0.5f),
-      ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 1f));
-  Vertex2D[] imageRectangleVertices = {topLeftImageVertex, topRightImageVertex,
+  Vertex3D[] triangleVertices = {topCenterVertex, bottomLeftVertex, bottomRightVertex};
+  Vertex3D topLeftImageVertex = new Vertex3D(new Vector3f(-0.5f, 0.5f, 0),
+      ColourUtils.convertColor(Color.WHITE), new Vector3f(0f, 0f, 0));
+  Vertex3D topRightImageVertex = new Vertex3D(new Vector3f(0.5f, 0.5f, 0),
+      ColourUtils.convertColor(Color.WHITE), new Vector3f(1f, 0f, 0));
+  Vertex3D bottomLeftImageVertex = new Vertex3D(new Vector3f(-0.5f, -0.5f, 0),
+      ColourUtils.convertColor(Color.WHITE), new Vector3f(0f, 1f, 0));
+  Vertex3D bottomRightImageVertex = new Vertex3D(new Vector3f(0.5f, -0.5f, 0),
+      ColourUtils.convertColor(Color.WHITE), new Vector3f(1f, 1f, 0));
+  Vertex3D[] imageRectangleVertices = {topLeftImageVertex, topRightImageVertex,
       bottomLeftImageVertex, bottomRightImageVertex};
   private int sleepTime = 1;
   private Window window;
   private Renderer renderer;
   private Shader shader;
+  private Camera camera;
 
   @BeforeEach
   public void setup() {
@@ -69,11 +71,12 @@ public class RendererTests {
    * Sets .
    */
   public void setupWindow(String vertexFileName, String fragmentFileName) {
+    camera = new Camera(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0));
     shader = new Shader(SHADERS_PATH + VERTEX_DIR + vertexFileName,
         SHADERS_PATH + FRAGMENT_DIR + fragmentFileName);
-    renderer = new Renderer(shader);
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     window.setBackgroundColour(1.0f, 1.0f, 1.0f, 1.0f);
+    renderer = new Renderer(window, shader);
     window.create();
     shader.create();
   }
@@ -82,7 +85,7 @@ public class RendererTests {
   private void drawObject(GameObject object) throws InterruptedException {
     window.update();
     object.getMesh().create();
-    renderer.renderObject(object);
+    renderer.renderObject(object, camera);
     window.swapBuffers();
     window.update();
     TimeUnit.SECONDS.sleep(sleepTime);
@@ -126,8 +129,8 @@ public class RendererTests {
       triangleMesh.create();
       rectangleMesh.create();
       window.update();
-      renderer.renderObject(triangleObject);
-      renderer.renderObject(rectangleObject);
+      renderer.renderObject(triangleObject, camera);
+      renderer.renderObject(rectangleObject, camera);
       window.swapBuffers();
     }
 
@@ -202,15 +205,37 @@ public class RendererTests {
   }
 
   @Test
-  public void testPositionMatrix() throws InterruptedException {
+  public void testPositionMatrix() {
     setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
     Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
     GameObject testObject = new GameObject(testMesh);
+    testObject.getMesh().create();
     this.sleepTime = 0;
+    // Test X
     for (int i = 0; i < LOOP_MAX; i++) {
-      drawObject(testObject);
-      testObject.getPosition().set((float) Math.sin(i / 10.0), (float) Math.sin(i / 10.0));
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      testObject.getPosition().add(0.01f, 0, 0);
     }
+    // Test Y
+    for (int i = 0; i < LOOP_MAX; i++) {
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      testObject.getPosition().add(0, 0.01f, 0);
+    }
+    // Test Z
+    for (int i = 0; i < LOOP_MAX; i++) {
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      testObject.getPosition().add(0, 0, -0.1f);
+    }
+
     this.sleepTime = 1;
     testMesh.destroy();
     shutDownWindow();
@@ -247,6 +272,7 @@ public class RendererTests {
     this.sleepTime = 1;
     testMesh.destroy();
     shutDownWindow();
+
   }
 
   @Test
@@ -262,6 +288,80 @@ public class RendererTests {
       testObject.getRotation().set(i, i, i);
       testObject.getPosition().set((float) Math.sin(i / 10.0), (float) Math.sin(i / 10.0));
     }
+    this.sleepTime = 1;
+    testMesh.destroy();
+    shutDownWindow();
+  }
+
+  @Test
+  public void testMoveCameraPosition() {
+    setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
+    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
+    GameObject testObject = new GameObject(testMesh);
+    testObject.getMesh().create();
+    this.sleepTime = 0;
+    // Test X
+    for (int i = 0; i < LOOP_MAX; i++) {
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      camera.getPosition().add(0.01f, 0, 0);
+    }
+    // Test Y
+    for (int i = 0; i < LOOP_MAX; i++) {
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      camera.getPosition().add(0, 0.01f, 0);
+    }
+    // Test Z
+    for (int i = 0; i < LOOP_MAX; i++) {
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      camera.getPosition().add(0, 0, 0.1f);
+    }
+
+    this.sleepTime = 1;
+    testMesh.destroy();
+    shutDownWindow();
+  }
+
+  @Test
+  public void testMoveCameraRotation() {
+    setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
+    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
+    GameObject testObject = new GameObject(testMesh);
+    testObject.getMesh().create();
+    this.sleepTime = 0;
+    // Test X
+    for (int i = 0; i < LOOP_MAX; i++) {
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      camera.getRotation().add(0.2f, 0, 0);
+    }
+    // Test Y
+    for (int i = 0; i < LOOP_MAX; i++) {
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      camera.getRotation().add(0, 0.2f, 0);
+    }
+    // Test Z
+    for (int i = 0; i < LOOP_MAX; i++) {
+      window.update();
+      renderer.renderObject(testObject, camera);
+      window.swapBuffers();
+      window.update();
+      camera.getRotation().add(0, 0, 0.2f);
+    }
+
     this.sleepTime = 1;
     testMesh.destroy();
     shutDownWindow();

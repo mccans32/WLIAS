@@ -1,11 +1,9 @@
 package engine.objects;
 
 import engine.graphics.Mesh;
-import math.Vector2f;
 import math.Vector3f;
 
 public class GameObject {
-  private float temp;
   private Vector3f position = new Vector3f(0f, 0f, 0f);
   private Vector3f rotation = new Vector3f(0f, 0f, 0f);
   private Vector3f scale = new Vector3f(1f, 1f, 1f);

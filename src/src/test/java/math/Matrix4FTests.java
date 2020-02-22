@@ -68,9 +68,9 @@ public class Matrix4FTests {
     float valY = 1f;
     float valZ = -2f;
     // Test base translation on identity matrix
-    assertEquals(Matrix4f.translate(new Vector3f(0f, 0f, valZ)).get(2, 3), valZ);
-    assertEquals(Matrix4f.translate(new Vector3f(valX, 0f, 0f)).get(0, 3), valX);
-    assertEquals(Matrix4f.translate(new Vector3f(0f, valY, 0f)).get(1, 3), valY);
+    assertEquals(Matrix4f.translate(new Vector3f(0f, 0f, valZ)).get(3, 2), valZ);
+    assertEquals(Matrix4f.translate(new Vector3f(valX, 0f, 0f)).get(3, 0), valX);
+    assertEquals(Matrix4f.translate(new Vector3f(0f, valY, 0f)).get(3, 1), valY);
   }
 
 }

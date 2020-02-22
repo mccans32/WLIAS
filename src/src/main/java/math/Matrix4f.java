@@ -69,19 +69,18 @@ public class Matrix4f {
    * @return the matrix 4 f
    */
   public static Matrix4f view(Vector3f position, Vector3f rotation) {
-    Matrix4f result = Matrix4f.identity();
-
     Vector3f negative = new Vector3f(-position.getX(), -position.getY(), -position.getZ());
     Matrix4f translationMatrix = Matrix4f.translate(negative);
     Matrix4f rotXMatrix = Matrix4f.rotate(rotation.getX(), new Vector3f(1, 0, 0));
     Matrix4f rotYMatrix = Matrix4f.rotate(rotation.getY(), new Vector3f(0, 1, 0));
     Matrix4f rotZMatrix = Matrix4f.rotate(rotation.getZ(), new Vector3f(0, 0, 1));
 
-    Matrix4f rotationMatrix = Matrix4f.multiply(rotZMatrix, Matrix4f.multiply(rotYMatrix, rotXMatrix));
+    Matrix4f rotationMatrix = Matrix4f.multiply(
+        rotZMatrix, Matrix4f.multiply(
+            rotYMatrix,
+            rotXMatrix));
 
-    result = Matrix4f.multiply(translationMatrix, rotationMatrix);
-
-    return result;
+    return Matrix4f.multiply(translationMatrix, rotationMatrix);
   }
 
   /**

@@ -13,6 +13,7 @@ import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector2f;
 import math.Vector3f;
+import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -20,38 +21,15 @@ import org.lwjgl.glfw.GLFW;
  */
 public class Game {
 
-  /**
-   * The Window width.
-   */
   static final int WINDOW_WIDTH = 1200;
-  /**
-   * The Window height.
-   */
   static final int WINDOW_HEIGHT = 900;
-  /**
-   * The Window tile.
-   */
   static final String WINDOW_TILE = "We Live in a Society";
-  /**
-   * The Background red.
-   */
-  static final float BACKGROUND_RED = 1.0f;
-  /**
-   * The Background green.
-   */
-  static final float BACKGROUND_GREEN = 0.0f;
-  /**
-   * The Background blue.
-   */
-  static final float BACKGROUND_BLUE = 0.0f;
-  /**
-   * The Background alpha.
-   */
-  static final float BACKGROUND_ALPHA = 1.0f;
-  /**
-   * The Simulation Renderer.
-   */
-
+  static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
+      ChartColor.VERY_LIGHT_CYAN.brighter());
+  static final float BACKGROUND_RED = BACKGROUND_COLOUR.getX();
+  static final float BACKGROUND_GREEN = BACKGROUND_COLOUR.getY();
+  static final float BACKGROUND_BLUE = BACKGROUND_COLOUR.getZ();
+  static final float BACKGROUND_ALPHA = 1f;
   static final String SHADERS_PATH = "/shaders/";
   static final String VERTEX_DIRECTORY = "vertex/";
   static final String FRAGMENT_DIRECTORY = "fragment/";
@@ -132,19 +110,9 @@ public class Game {
    */
   public void update() {
     window.update();
-    // Zoom by scroll wheel
-    float cameraDist = (float) (-Input.getScrollY() / 2);
-    if (cameraDist <= 1) {
-      cameraDist = 1;
-    }
-    if (cameraDist > 10) {
-      cameraDist = 10;
-    }
-
-    camera.getPosition().setZ(cameraDist);
-    System.out.println(camera.getPosition().getZ() + ", " + tempObject.getPosition().getZ());
+    tempObject.getPosition().add(0, 0, -0.1f);
+    tempObject.getRotation().add(0, 0, 1f);
   }
-
 
   /**
    * Render.
