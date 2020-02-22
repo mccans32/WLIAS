@@ -5,9 +5,10 @@ import math.Vector2f;
 import math.Vector3f;
 
 public class GameObject {
-  private Vector2f position = new Vector2f(0f, 0f);
+  private float temp;
+  private Vector3f position = new Vector3f(0f, 0f, 0f);
   private Vector3f rotation = new Vector3f(0f, 0f, 0f);
-  private Vector2f scale = new Vector2f(1f, 1f);
+  private Vector3f scale = new Vector3f(1f, 1f, 1f);
   private Mesh mesh;
 
 
@@ -15,7 +16,7 @@ public class GameObject {
     this.mesh = mesh;
   }
 
-  public GameObject(Vector2f position, Mesh mesh) {
+  public GameObject(Vector3f position, Mesh mesh) {
     this.position = position;
     this.mesh = mesh;
   }
@@ -28,14 +29,14 @@ public class GameObject {
    * @param scale    the scale
    * @param mesh     the mesh
    */
-  public GameObject(Vector2f position, Vector3f rotation, Vector2f scale, Mesh mesh) {
+  public GameObject(Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh) {
     this.position = position;
     this.rotation = rotation;
     this.scale = scale;
     this.mesh = mesh;
   }
 
-  public Vector2f getPosition() {
+  public Vector3f getPosition() {
     return position;
   }
 
@@ -43,7 +44,7 @@ public class GameObject {
     return rotation;
   }
 
-  public Vector2f getScale() {
+  public Vector3f getScale() {
     return scale;
   }
 

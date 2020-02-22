@@ -1,7 +1,11 @@
 package engine.graphics;
 
+import engine.Window;
+import engine.objects.Camera;
 import engine.objects.GameObject;
+import java.util.Arrays;
 import math.Matrix4f;
+import math.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -12,9 +16,11 @@ import org.lwjgl.opengl.GL30;
  */
 public class Renderer {
   private Shader shader;
+  private Window window;
 
-  public Renderer(Shader shader) {
+  public Renderer(Window window, Shader shader) {
     this.shader = shader;
+    this.window = window;
   }
 
   /**
@@ -22,13 +28,13 @@ public class Renderer {
    *
    * @param object the mesh
    */
-  public void renderObject(GameObject object) {
-    bindObject(object);
+  public void renderObject(GameObject object, Camera camera) {
+    bindObject(object, camera);
     drawObject(object);
     unbindObject();
   }
 
-  private void bindObject(GameObject object) {
+  private void bindObject(GameObject object, Camera camera) {
     // Bind Mesh VAO
     GL30.glBindVertexArray(object.getMesh().getVao());
     // Enable Index 0 for Shaders (Position)
@@ -46,12 +52,14 @@ public class Renderer {
     //Bind Shader
     shader.bind();
     // Set Uniforms
-    setUniforms(object);
+    setUniforms(object, camera);
 
   }
 
-  private void setUniforms(GameObject object) {
+  private void setUniforms(GameObject object, Camera camera) {
     setModelUniform(object);
+    setViewUniform(camera);
+    setProjectionUniform();
   }
 
   private void setModelUniform(GameObject object) {
@@ -61,6 +69,14 @@ public class Renderer {
             object.getPosition(),
             object.getRotation(),
             object.getScale()));
+  }
+
+  private void setViewUniform(Camera camera) {
+    shader.setUniform("view", Matrix4f.view(camera.getPosition(), camera.getRotation()));
+  }
+
+  private void setProjectionUniform() {
+    shader.setUniform("projection", window.getProjectionMatrix());
   }
 
 

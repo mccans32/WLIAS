@@ -6,7 +6,8 @@ import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
-import engine.graphics.Vertex2D;
+import engine.graphics.Vertex3D;
+import engine.objects.Camera;
 import engine.objects.GameObject;
 import engine.utils.ColourUtils;
 import java.awt.Color;
@@ -58,31 +59,30 @@ public class Game {
   static final String FRAGMENT_SHADER_FILE_NAME = "mainFragment.glsl";
 
   private static Renderer renderer;
+  public Camera camera = new Camera(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0));
   /**
    * The Window.
    */
   private Window window;
   private Shader shader;
-
   // Temporary Mesh
   private Mesh tempMesh = new Mesh(
-      new Vertex2D[] {
-          new Vertex2D(new Vector2f(-0.5f, 0.5f),
+      new Vertex3D[] {
+          new Vertex3D(new Vector3f(-0.5f, 0.5f, 0),
               ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 0f)),
-          new Vertex2D(new Vector2f(-0.5f, -0.5f),
+          new Vertex3D(new Vector3f(-0.5f, -0.5f, 0),
               ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 1f)),
-          new Vertex2D(new Vector2f(0.5f, -0.5f),
+          new Vertex3D(new Vector3f(0.5f, -0.5f, 0),
               ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 1f)),
-          new Vertex2D(new Vector2f(0.5f, 0.5f),
+          new Vertex3D(new Vector3f(0.5f, 0.5f, 0),
               ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 0f))
       },
       new int[] {0, 3, 1, 2},
       new Material("/images/mid-tier-tile.png"));
-
   private GameObject tempObject = new GameObject(
-      new Vector2f(0, 0),
       new Vector3f(0, 0, 0),
-      new Vector2f(1f, 1f),
+      new Vector3f(0, 0, 0),
+      new Vector3f(1f, 1f, 1f),
       tempMesh);
 
   /**
@@ -115,11 +115,11 @@ public class Game {
     // Initialise the Shader
     shader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + VERTEX_SHADER_FILE_NAME,
         SHADERS_PATH + FRAGMENT_DIRECTORY + FRAGMENT_SHADER_FILE_NAME);
-    // Initialise Renderer
-    renderer = new Renderer(shader);
     // Create main window
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TILE);
     window.setBackgroundColour(BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, BACKGROUND_ALPHA);
+    // Initialise Renderer
+    renderer = new Renderer(window, shader);
     window.create();
     // Create Shader
     shader.create();
@@ -132,19 +132,26 @@ public class Game {
    */
   public void update() {
     window.update();
-    // Temporary
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
-      System.out.println("X: " + Input.getMouseX() + ", Y: " + Input.getMouseY());
+    // Zoom by scroll wheel
+    float cameraDist = (float) (-Input.getScrollY() / 2);
+    if (cameraDist <= 1) {
+      cameraDist = 1;
+    }
+    if (cameraDist > 10) {
+      cameraDist = 10;
     }
 
+    camera.getPosition().setZ(cameraDist);
+    System.out.println(camera.getPosition().getZ() + ", " + tempObject.getPosition().getZ());
   }
+
 
   /**
    * Render.
    */
   public void render() {
     // Render all game objects
-    renderer.renderObject(tempObject);
+    renderer.renderObject(tempObject, camera);
     window.swapBuffers();
   }
 }

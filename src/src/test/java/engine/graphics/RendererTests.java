@@ -224,9 +224,8 @@ public class RendererTests {
     GameObject testObject = new GameObject(testMesh);
     this.sleepTime = 0;
     for (int i = 0; i < LOOP_MAX; i++) {
-      float angle = (float) Math.toRadians(i);
       drawObject(testObject);
-      testObject.getRotation().set(angle, angle, angle);
+      testObject.getRotation().set(i, i, i);
     }
     this.sleepTime = 1;
     testMesh.destroy();
@@ -257,11 +256,10 @@ public class RendererTests {
     GameObject testObject = new GameObject(testMesh);
     this.sleepTime = 0;
     for (int i = 0; i < LOOP_MAX; i++) {
-      float angle = (float) Math.toRadians(i);
       float val = (float) Math.sin(i / 100.0);
       drawObject(testObject);
       testObject.getScale().set(val, val);
-      testObject.getRotation().set(angle, angle, angle);
+      testObject.getRotation().set(i, i, i);
       testObject.getPosition().set((float) Math.sin(i / 10.0), (float) Math.sin(i / 10.0));
     }
     this.sleepTime = 1;
