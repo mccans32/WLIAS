@@ -29,4 +29,9 @@ public class Vector2f {
   public void setY(float y) {
     this.vectorY = y;
   }
+
+  public void add(float x, float y) {
+    this.vectorX += x;
+    this.vectorY += y;
+  }
 }

@@ -48,4 +48,17 @@ public class Vector3f extends Vector2f {
   public void setZ(float z) {
     this.vectorZ = z;
   }
+
+  /**
+   * Add.
+   *
+   * @param x the x
+   * @param y the y
+   * @param z the z
+   */
+  public void add(float x, float y, float z) {
+    this.vectorX += x;
+    this.vectorY += y;
+    this.vectorZ += z;
+  }
 }

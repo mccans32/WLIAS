@@ -2,13 +2,16 @@ package game;
 
 import engine.Input;
 import engine.Window;
+import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Renderer;
 import engine.graphics.Shader;
 import engine.graphics.Vertex2D;
+import engine.objects.GameObject;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector2f;
+import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -73,7 +76,14 @@ public class Game {
           new Vertex2D(new Vector2f(0.5f, 0.5f),
               ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 0f))
       },
-      new int[] {0, 3, 1, 2});
+      new int[] {0, 3, 1, 2},
+      new Material("/images/mid-tier-tile.png"));
+
+  private GameObject tempObject = new GameObject(
+      new Vector2f(0, 0),
+      new Vector3f(0, 0, 0),
+      new Vector2f(1f, 1f),
+      tempMesh);
 
   /**
    * Start.
@@ -133,7 +143,8 @@ public class Game {
    * Render.
    */
   public void render() {
-    renderer.renderMesh(tempMesh);
+    // Render all game objects
+    renderer.renderObject(tempObject);
     window.swapBuffers();
   }
 }

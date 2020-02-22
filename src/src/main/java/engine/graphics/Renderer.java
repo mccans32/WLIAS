@@ -1,5 +1,7 @@
 package engine.graphics;
 
+import engine.objects.GameObject;
+import math.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -18,17 +20,17 @@ public class Renderer {
   /**
    * Render mesh.
    *
-   * @param mesh the mesh
+   * @param object the mesh
    */
-  public void renderMesh(Mesh mesh) {
-    bindMesh(mesh);
-    drawMesh(mesh);
-    unbindMesh(mesh);
+  public void renderObject(GameObject object) {
+    bindObject(object);
+    drawObject(object);
+    unbindObject();
   }
 
-  private void bindMesh(Mesh mesh) {
+  private void bindObject(GameObject object) {
     // Bind Mesh VAO
-    GL30.glBindVertexArray(mesh.getVao());
+    GL30.glBindVertexArray(object.getMesh().getVao());
     // Enable Index 0 for Shaders (Position)
     GL30.glEnableVertexAttribArray(0);
     // Enable Index 1 for Shaders (Colour)
@@ -36,16 +38,33 @@ public class Renderer {
     // Enable Index 1 for Shaders (Texture)
     GL30.glEnableVertexAttribArray(2);
     // Bind Indices
-    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIbo());
+    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, object.getMesh().getIbo());
     // Set Active Texture
     GL13.glActiveTexture(GL13.GL_TEXTURE0);
     // Bind the Texture
-    GL13.glBindTexture(GL11.GL_TEXTURE_2D, mesh.getMaterial().getTextureID());
+    GL13.glBindTexture(GL11.GL_TEXTURE_2D, object.getMesh().getMaterial().getTextureID());
     //Bind Shader
     shader.bind();
+    // Set Uniforms
+    setUniforms(object);
+
   }
 
-  private void unbindMesh(Mesh mesh) {
+  private void setUniforms(GameObject object) {
+    setModelUniform(object);
+  }
+
+  private void setModelUniform(GameObject object) {
+    shader.setUniform(
+        "model",
+        Matrix4f.transform(
+            object.getPosition(),
+            object.getRotation(),
+            object.getScale()));
+  }
+
+
+  private void unbindObject() {
     //Unbind Shader
     shader.unbind();
     // Unbind Indices
@@ -57,7 +76,11 @@ public class Renderer {
     GL30.glBindVertexArray(0);
   }
 
-  private void drawMesh(Mesh mesh) {
-    GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
+  private void drawObject(GameObject object) {
+    GL11.glDrawElements(
+        GL11.GL_TRIANGLE_STRIP,
+        object.getMesh().getIndices().length,
+        GL11.GL_UNSIGNED_INT,
+        0);
   }
 }
