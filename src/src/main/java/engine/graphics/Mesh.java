@@ -14,13 +14,13 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class Mesh {
   static final int POSITION_INDEX = 0;
-  static final int POSITION_DIMENSION = 2;
+  static final int POSITION_DIMENSION = 3;
   static final int COLOUR_INDEX = POSITION_INDEX + 1;
   static final int COLOUR_DIMENSION = 3;
   static final int TEXTURE_DIMENSION = 2;
   static final int TEXTURE_INDEX = COLOUR_INDEX + 1;
   static final String DEFAULT_MATERIAL_PATH = "/images/default_texture.png";
-  private Vertex2D[] vertices;
+  private Vertex3D[] vertices;
   private int[] indices;
   private Material material = new Material(DEFAULT_MATERIAL_PATH);
   // Vertex Array Object
@@ -44,18 +44,18 @@ public class Mesh {
    * @param vertices the vertices
    * @param indices  the indices
    */
-  public Mesh(Vertex2D[] vertices, int[] indices, Material material) {
+  public Mesh(Vertex3D[] vertices, int[] indices, Material material) {
     this.vertices = vertices.clone();
     this.indices = indices.clone();
     this.material = material;
   }
 
-  public Mesh(Vertex2D[] vertices, int[] indices) {
+  public Mesh(Vertex3D[] vertices, int[] indices) {
     this.vertices = vertices.clone();
     this.indices = indices.clone();
   }
 
-  public Vertex2D[] getVertices() {
+  public Vertex3D[] getVertices() {
     return vertices.clone();
   }
 
@@ -160,6 +160,7 @@ public class Mesh {
       // In the form positionData{i * dimension + offset]
       positionData[i * POSITION_DIMENSION] = vertices[i].getPosition().getX();
       positionData[i * POSITION_DIMENSION + 1] = vertices[i].getPosition().getY();
+      positionData[i * POSITION_DIMENSION + 2] = vertices[i].getPosition().getZ();
     }
   }
 
@@ -197,7 +198,7 @@ public class Mesh {
    * @param colour the colour
    */
   public void setColour(Vector3f colour) {
-    for (Vertex2D vertex : vertices) {
+    for (Vertex3D vertex : vertices) {
       vertex.setColour(colour);
     }
   }

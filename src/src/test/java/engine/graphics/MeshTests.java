@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
-import math.Vector2f;
+import math.Vector3f;
 import org.junit.jupiter.api.Test;
 
 
@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
  * The type Mesh tests.
  */
 public class MeshTests {
-  Vertex2D testVertex = new Vertex2D(new Vector2f(-0.5f, 0.5f));
-  Vertex2D[] testVertices = {testVertex};
+  Vertex3D testVertex = new Vertex3D(new Vector3f(-0.5f, 0.5f, 0));
+  Vertex3D[] testVertices = {testVertex};
   int[] testIndices = {0, 0, 0};
   Window window;
 

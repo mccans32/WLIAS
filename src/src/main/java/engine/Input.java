@@ -22,6 +22,8 @@ public class Input {
   private static double mouseY;
   private static double scrollX;
   private static double scrollY;
+  private static double oldMouseX;
+  private static double oldMouseY;
 
   private static GLFWKeyCallback keyboard;
   private static GLFWCursorPosCallback mouseMove;
@@ -42,6 +44,8 @@ public class Input {
     setMouseMove(new GLFWCursorPosCallback() {
       @Override
       public void invoke(long window, double xpos, double ypos) {
+        Input.oldMouseX = Input.mouseX;
+        Input.oldMouseY = Input.mouseY;
         Input.mouseX = xpos;
         Input.mouseY = ypos;
       }
@@ -127,6 +131,14 @@ public class Input {
    */
   public static double getScrollY() {
     return scrollY;
+  }
+
+  public static double getOldMouseX() {
+    return oldMouseX;
+  }
+
+  public static double getOldMouseY() {
+    return oldMouseY;
   }
 
   /**

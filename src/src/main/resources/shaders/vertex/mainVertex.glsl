@@ -1,18 +1,17 @@
-#version 330 core
+#version 460 core
 
-in vec2 position;
+in vec3 position;
 in vec3 color;
 in vec2 textureCoords;
 
-out vec3 passColor;
+out vec3 passColour;
 out vec2 passTextureCoords;
-
-float z = 0.0;
-
 uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main() {
-    gl_Position = vec4(position, z, 1.0) * model;
-    passColor = color;
+    gl_Position = projection * view * model * vec4(position, 1.0);
+    passColour = color;
     passTextureCoords = textureCoords;
 }

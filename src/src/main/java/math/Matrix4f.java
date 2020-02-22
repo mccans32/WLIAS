@@ -1,6 +1,7 @@
 package math;
 
 // A Matrix4f is visualised as a 2D Array, However the GPU requires the vector to be in 1D
+// Matrix4f is read in by Column Major Order so is set by (col, row);
 public class Matrix4f {
   private static final int SIZE = 4;
   private float[] elements = new float[SIZE * SIZE];
@@ -36,6 +37,53 @@ public class Matrix4f {
   }
 
   /**
+   * Projection matrix 4 f.
+   *
+   * @param fov    the fov
+   * @param aspect the aspect
+   * @param near   the near
+   * @param far    the far
+   * @return the matrix 4 f
+   */
+  public static Matrix4f projection(float fov, float aspect, float near, float far) {
+    Matrix4f result = Matrix4f.identity();
+
+    float tanFov = (float) Math.tan(Math.toRadians(fov / 2));
+    float range = far - near;
+
+    result.set(0, 0, 1.0f / (aspect * tanFov));
+    result.set(1, 1, 1.0f / tanFov);
+    result.set(2, 2, -((far + near) / range));
+    result.set(2, 3, -1.0f);
+    result.set(3, 2, -((2 * far * near) / range));
+    result.set(3, 3, 0.0f);
+
+    return result;
+  }
+
+  /**
+   * View matrix 4 f.
+   *
+   * @param position the position
+   * @param rotation the rotation
+   * @return the matrix 4 f
+   */
+  public static Matrix4f view(Vector3f position, Vector3f rotation) {
+    Vector3f negative = new Vector3f(-position.getX(), -position.getY(), -position.getZ());
+    Matrix4f translationMatrix = Matrix4f.translate(negative);
+    Matrix4f rotXMatrix = Matrix4f.rotate(rotation.getX(), new Vector3f(1, 0, 0));
+    Matrix4f rotYMatrix = Matrix4f.rotate(rotation.getY(), new Vector3f(0, 1, 0));
+    Matrix4f rotZMatrix = Matrix4f.rotate(rotation.getZ(), new Vector3f(0, 0, 1));
+
+    Matrix4f rotationMatrix = Matrix4f.multiply(
+        rotZMatrix, Matrix4f.multiply(
+            rotYMatrix,
+            rotXMatrix));
+
+    return Matrix4f.multiply(translationMatrix, rotationMatrix);
+  }
+
+  /**
    * Multiply matrix 4 f.
    *
    * @param matrix the matrix
@@ -65,9 +113,9 @@ public class Matrix4f {
    */
   public static Matrix4f translate(Vector3f translation) {
     Matrix4f result = Matrix4f.identity();
-    result.set(0, 3, translation.getX());
-    result.set(1, 3, translation.getY());
-    result.set(2, 3, translation.getZ());
+    result.set(3, 0, translation.getX());
+    result.set(3, 1, translation.getY());
+    result.set(3, 2, translation.getZ());
     return result;
   }
 
@@ -85,8 +133,8 @@ public class Matrix4f {
   public static Matrix4f rotate(float angle, Vector3f axis) {
     Matrix4f result = Matrix4f.identity();
 
-    float cos = (float) Math.cos(angle);
-    float sin = (float) Math.sin(angle);
+    float cos = (float) Math.cos(Math.toRadians(angle));
+    float sin = (float) Math.sin(Math.toRadians(angle));
     float inversion = 1 - cos;
 
     result.set(0, 0, cos + axis.getX() * axis.getX() * inversion);
@@ -172,16 +220,16 @@ public class Matrix4f {
     return SIZE;
   }
 
-  public static int calculateIndex(int row, int col) {
-    return col * SIZE + row;
+  public static int calculateIndex(int col, int row) {
+    return row * SIZE + col;
   }
 
-  public float get(int row, int col) {
-    return elements[calculateIndex(row, col)];
+  public float get(int col, int row) {
+    return elements[calculateIndex(col, row)];
   }
 
-  public void set(int row, int col, float value) {
-    elements[calculateIndex(row, col)] = value;
+  public void set(int col, int row, float value) {
+    elements[calculateIndex(col, row)] = value;
   }
 
   public float[] getAll() {
