@@ -217,7 +217,8 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      testObject.getPosition().add(0.01f, 0, 0);
+      testObject.getPosition().set(
+          Vector3f.add(testObject.getPosition(), new Vector3f(0.01f, 0, 0)));
     }
     // Test Y
     for (int i = 0; i < LOOP_MAX; i++) {
@@ -225,7 +226,7 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      testObject.getPosition().add(0, 0.01f, 0);
+      testObject.getPosition().add(new Vector3f(0, 0.01f, 0));
     }
     // Test Z
     for (int i = 0; i < LOOP_MAX; i++) {
@@ -233,7 +234,7 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      testObject.getPosition().add(0, 0, -0.1f);
+      testObject.getPosition().add(new Vector3f(0, 0, -0.1f));
     }
 
     this.sleepTime = 1;
@@ -250,7 +251,7 @@ public class RendererTests {
     this.sleepTime = 0;
     for (int i = 0; i < LOOP_MAX; i++) {
       drawObject(testObject);
-      testObject.getRotation().set(i, i, i);
+      testObject.getRotation().set(new Vector3f(i, i, i));
     }
     this.sleepTime = 1;
     testMesh.destroy();
@@ -267,7 +268,7 @@ public class RendererTests {
     for (int i = 0; i < LOOP_MAX; i++) {
       float val = (float) Math.sin(i / 100.0);
       drawObject(testObject);
-      testObject.getScale().set(val, val);
+      testObject.getScale().set(new Vector3f(val, val, val));
     }
     this.sleepTime = 1;
     testMesh.destroy();
@@ -284,9 +285,9 @@ public class RendererTests {
     for (int i = 0; i < LOOP_MAX; i++) {
       float val = (float) Math.sin(i / 100.0);
       drawObject(testObject);
-      testObject.getScale().set(val, val);
-      testObject.getRotation().set(i, i, i);
-      testObject.getPosition().set((float) Math.sin(i / 10.0), (float) Math.sin(i / 10.0));
+      testObject.getScale().set(new Vector3f(val, val, val));
+      testObject.getRotation().set(new Vector3f(i, i, i));
+      testObject.getPosition().set((float) Math.sin(i / 10.0));
     }
     this.sleepTime = 1;
     testMesh.destroy();
@@ -306,7 +307,7 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      camera.getPosition().add(0.01f, 0, 0);
+      camera.getPosition().add(new Vector3f(0.01f, 0, 0));
     }
     // Test Y
     for (int i = 0; i < LOOP_MAX; i++) {
@@ -314,7 +315,7 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      camera.getPosition().add(0, 0.01f, 0);
+      camera.getPosition().add(new Vector3f(0, 0.01f, 0));
     }
     // Test Z
     for (int i = 0; i < LOOP_MAX; i++) {
@@ -322,7 +323,7 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      camera.getPosition().add(0, 0, 0.1f);
+      camera.getPosition().add(new Vector3f(0, 0, 0.1f));
     }
 
     this.sleepTime = 1;
@@ -343,7 +344,7 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      camera.getRotation().add(0.2f, 0, 0);
+      camera.getRotation().add(new Vector3f(0.2f, 0, 0));
     }
     // Test Y
     for (int i = 0; i < LOOP_MAX; i++) {
@@ -351,7 +352,7 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      camera.getRotation().add(0, 0.2f, 0);
+      camera.getRotation().add(new Vector3f(0, 0.2f, 0));
     }
     // Test Z
     for (int i = 0; i < LOOP_MAX; i++) {
@@ -359,7 +360,7 @@ public class RendererTests {
       renderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
-      camera.getRotation().add(0, 0, 0.2f);
+      camera.getRotation().add(new Vector3f(0, 0, 0.2f));
     }
 
     this.sleepTime = 1;

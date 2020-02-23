@@ -101,7 +101,7 @@ public class Game {
     window.create();
     // Create Shader
     shader.create();
-    //  Create Temporary Mesh;
+    /* Create Temporary Mesh; */
     tempMesh.create();
   }
 
@@ -109,9 +109,8 @@ public class Game {
    * Update.
    */
   public void update() {
+    camera.update();
     window.update();
-    tempObject.getPosition().add(0, 0, -0.1f);
-    tempObject.getRotation().add(0, 0, 1f);
   }
 
   /**
