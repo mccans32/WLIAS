@@ -3,6 +3,7 @@ package math;
 // A Matrix4f is visualised as a 2D Array, However the GPU requires the vector to be in 1D
 // Matrix4f is read in by Column Major Order so is set by (col, row);
 public class Matrix4f {
+
   private static final int SIZE = 4;
   private float[] elements = new float[SIZE * SIZE];
 
@@ -57,6 +58,24 @@ public class Matrix4f {
     result.set(2, 3, -1.0f);
     result.set(3, 2, -((2 * far * near) / range));
     result.set(3, 3, 0.0f);
+
+    return result;
+  }
+
+  public static Matrix4f orthographic(float left, float right, float bottom, float top, float near,
+      float far) {
+    Matrix4f result = Matrix4f.identity();
+
+    float tx = - (right + left) / (right - left);
+    float ty = - (top + bottom) / (top - bottom);
+    float tz = - (far + near) / (far - near);
+
+    result.set(0, 0, 2 / (right - left));
+    result.set(1, 1, 2 / (top - bottom));
+    result.set(2, 2, -2 / (far - near));
+    result.set(3, 0, tx);
+    result.set(3, 1, ty);
+    result.set(3, 2, tz);
 
     return result;
   }
@@ -208,12 +227,11 @@ public class Matrix4f {
    * @param scale    the scale
    * @return the matrix 4 f
    */
-  public static Matrix4f transform(Vector2f position, Vector3f rotation, Vector2f scale) {
+  public static Matrix4f transform(Vector2f position, Vector2f rotation, Vector2f scale) {
     return transform(
         new Vector3f(position.getX(), position.getY(), 0f),
-        rotation,
-        new Vector3f(scale.getX(), scale.getY(), 1f)
-    );
+        new Vector3f(rotation.getX(), position.getY(), 0f),
+        new Vector3f(scale.getX(), scale.getY(), 1f));
   }
 
   public static int getSize() {

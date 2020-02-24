@@ -25,6 +25,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
+import engine.io.Input;
 import math.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -68,6 +69,7 @@ public class Window {
   private Input input;
   private boolean isVisible = true;
   private Matrix4f projectionMatrix;
+  private Matrix4f orthographicMatrix;
   private float fov = 70.0f;
   private float near = 0.1f;
   private float far = 1000f;
@@ -83,11 +85,8 @@ public class Window {
     this.width = width;
     this.height = height;
     this.title = title;
-    this.projectionMatrix = Matrix4f.projection(
-        fov,
-        (float) width / (float) height,
-        near,
-        far);
+    createProjectionMatrix();
+    createOrthographicMatrix();
   }
 
   /**
@@ -194,11 +193,18 @@ public class Window {
     glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
   }
 
+  public Matrix4f getOrthographicMatrix() {
+    return orthographicMatrix;
+  }
+
   /**
    * Update.
    */
   public void update() {
     if (hasResized) {
+      // Must update projection matrix to prevent distortion;
+      createProjectionMatrix();
+      createOrthographicMatrix();
       GL11.glViewport(0, 0, width, height);
       centerScreen();
       hasResized = false;
@@ -332,6 +338,19 @@ public class Window {
     this.width = argWidth;
     this.height = argHeight;
     hasResized = true;
+  }
+
+
+  private void createProjectionMatrix() {
+    this.projectionMatrix = Matrix4f.projection(
+        fov,
+        (float) width / (float) height,
+        near,
+        far);
+  }
+
+  private void createOrthographicMatrix() {
+    this.orthographicMatrix = Matrix4f.orthographic(-1f,1f, -1f, 1f, 0f, 10f);
   }
 
 }

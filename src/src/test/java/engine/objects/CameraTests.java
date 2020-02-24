@@ -2,6 +2,7 @@ package engine.objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import engine.objects.world.Camera;
 import math.Vector3f;
 import org.junit.jupiter.api.Test;
 

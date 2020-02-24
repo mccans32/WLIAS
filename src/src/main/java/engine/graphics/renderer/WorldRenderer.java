@@ -1,24 +1,23 @@
-package engine.graphics;
+package engine.graphics.renderer;
 
 import engine.Window;
-import engine.objects.Camera;
-import engine.objects.GameObject;
-import java.util.Arrays;
+import engine.graphics.Shader;
+import engine.objects.world.Camera;
+import engine.objects.world.GameObject;
 import math.Matrix4f;
-import math.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
 /**
- * The type Renderer.
+ * The type WorldRenderer.
  */
-public class Renderer {
+public class WorldRenderer {
   private Shader shader;
   private Window window;
 
-  public Renderer(Window window, Shader shader) {
+  public WorldRenderer(Window window, Shader shader) {
     this.shader = shader;
     this.window = window;
   }

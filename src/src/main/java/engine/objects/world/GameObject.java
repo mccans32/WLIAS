@@ -1,4 +1,4 @@
-package engine.objects;
+package engine.objects.world;
 
 import engine.graphics.Mesh;
 import math.Vector3f;
@@ -48,6 +48,10 @@ public class GameObject {
 
   public Mesh getMesh() {
     return mesh;
+  }
+
+  public void create() {
+    mesh.create();
   }
 
 }

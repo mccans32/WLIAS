@@ -13,6 +13,7 @@ import org.lwjgl.system.MemoryUtil;
  * The type Mesh.
  */
 public class Mesh {
+
   static final int POSITION_INDEX = 0;
   static final int POSITION_DIMENSION = 3;
   static final int COLOUR_INDEX = POSITION_INDEX + 1;
@@ -52,6 +53,29 @@ public class Mesh {
 
   public Mesh(Vertex3D[] vertices, int[] indices) {
     this.vertices = vertices.clone();
+    this.indices = indices.clone();
+  }
+
+  public Mesh(Vertex2D[] vertices, int[] indices, Material material) {
+    Vertex3D[] newVertices = new Vertex3D[vertices.length];
+    for (int i = 0; i < vertices.length; i++) {
+      Vertex3D newVertex = Vertex3D.convert(vertices[i]);
+      newVertices[i] = newVertex;
+    }
+
+    this.vertices = newVertices.clone();
+    this.indices = indices.clone();
+    this.material = material;
+  }
+
+  public Mesh(Vertex2D[] vertices, int[] indices) {
+    Vertex3D[] newVertices = new Vertex3D[vertices.length];
+    for (int i = 0; i < vertices.length; i++) {
+      Vertex3D newVertex = Vertex3D.convert(vertices[i]);
+      newVertices[i] = newVertex;
+    }
+
+    this.vertices = newVertices.clone();
     this.indices = indices.clone();
   }
 

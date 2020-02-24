@@ -5,6 +5,8 @@ import math.Vector2f;
 import math.Vector3f;
 
 public class Vertex3D {
+
+  static final float DEFAULT_Z_VALUE = 0;
   private static final Color DEFAULT_COLOUR = Color.BLACK;
   private Vector3f position;
   private Vector2f textureCoordinates = new Vector2f(0f, 0f);
@@ -28,6 +30,18 @@ public class Vertex3D {
     this.position = position;
   }
 
+  public static Vertex3D convert(Vertex2D vertex) {
+    Vector2f vertexPosition = vertex.getPosition();
+    Vector3f vertexColour = vertex.getColour();
+    Vector2f vertexTextureCoordinates = vertex.getTextureCoordinates();
+    Vector3f newVertexPosition = new Vector3f(
+        vertexPosition.getX(),
+        vertexPosition.getY(),
+        DEFAULT_Z_VALUE);
+
+    return new Vertex3D(newVertexPosition, vertexColour, vertexTextureCoordinates);
+  }
+
   public Vector3f getPosition() {
     return position;
   }
@@ -43,4 +57,5 @@ public class Vertex3D {
   public Vector2f getTextureCoordinates() {
     return textureCoordinates;
   }
+
 }

@@ -4,8 +4,9 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
-import engine.objects.Camera;
-import engine.objects.GameObject;
+import engine.graphics.renderer.WorldRenderer;
+import engine.objects.world.Camera;
+import engine.objects.world.GameObject;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +15,7 @@ import org.jfree.chart.ChartColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class RendererTests {
+public class WorldRendererTests {
   static final String TEST_IMAGES_DIRECTORY = "/images/";
   static final String[] TEST_IMAGES_NAMES = {
       "bad-tile.png",
@@ -58,7 +59,7 @@ public class RendererTests {
       bottomLeftImageVertex, bottomRightImageVertex};
   private int sleepTime = 1;
   private Window window;
-  private Renderer renderer;
+  private WorldRenderer worldRenderer;
   private Shader shader;
   private Camera camera;
 
@@ -76,7 +77,7 @@ public class RendererTests {
         SHADERS_PATH + FRAGMENT_DIR + fragmentFileName);
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     window.setBackgroundColour(1.0f, 1.0f, 1.0f, 1.0f);
-    renderer = new Renderer(window, shader);
+    worldRenderer = new WorldRenderer(window, shader);
     window.create();
     shader.create();
   }
@@ -85,7 +86,7 @@ public class RendererTests {
   private void drawObject(GameObject object) throws InterruptedException {
     window.update();
     object.getMesh().create();
-    renderer.renderObject(object, camera);
+    worldRenderer.renderObject(object, camera);
     window.swapBuffers();
     window.update();
     TimeUnit.SECONDS.sleep(sleepTime);
@@ -129,8 +130,8 @@ public class RendererTests {
       triangleMesh.create();
       rectangleMesh.create();
       window.update();
-      renderer.renderObject(triangleObject, camera);
-      renderer.renderObject(rectangleObject, camera);
+      worldRenderer.renderObject(triangleObject, camera);
+      worldRenderer.renderObject(rectangleObject, camera);
       window.swapBuffers();
     }
 
@@ -214,7 +215,7 @@ public class RendererTests {
     // Test X
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       testObject.getPosition().set(
@@ -223,7 +224,7 @@ public class RendererTests {
     // Test Y
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       testObject.getPosition().add(new Vector3f(0, 0.01f, 0));
@@ -231,7 +232,7 @@ public class RendererTests {
     // Test Z
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       testObject.getPosition().add(new Vector3f(0, 0, -0.1f));
@@ -304,7 +305,7 @@ public class RendererTests {
     // Test X
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       camera.getPosition().add(new Vector3f(0.01f, 0, 0));
@@ -312,7 +313,7 @@ public class RendererTests {
     // Test Y
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       camera.getPosition().add(new Vector3f(0, 0.01f, 0));
@@ -320,7 +321,7 @@ public class RendererTests {
     // Test Z
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       camera.getPosition().add(new Vector3f(0, 0, 0.1f));
@@ -341,7 +342,7 @@ public class RendererTests {
     // Test X
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       camera.getRotation().add(new Vector3f(0.2f, 0, 0));
@@ -349,7 +350,7 @@ public class RendererTests {
     // Test Y
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       camera.getRotation().add(new Vector3f(0, 0.2f, 0));
@@ -357,7 +358,7 @@ public class RendererTests {
     // Test Z
     for (int i = 0; i < LOOP_MAX; i++) {
       window.update();
-      renderer.renderObject(testObject, camera);
+      worldRenderer.renderObject(testObject, camera);
       window.swapBuffers();
       window.update();
       camera.getRotation().add(new Vector3f(0, 0, 0.2f));

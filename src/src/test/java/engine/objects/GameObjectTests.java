@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Vertex3D;
+import engine.objects.world.GameObject;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector2f;

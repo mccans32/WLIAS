@@ -1,6 +1,6 @@
-package engine.objects;
+package engine.objects.world;
 
-import engine.Input;
+import engine.io.Input;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
