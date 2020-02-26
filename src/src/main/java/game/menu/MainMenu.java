@@ -6,85 +6,91 @@ import engine.graphics.Mesh;
 import engine.graphics.Vertex2D;
 import engine.graphics.renderer.GuiRenderer;
 import engine.objects.gui.GuiObject;
-import engine.objects.world.Camera;
 import engine.utils.ColourUtils;
-import java.awt.Color;
 import math.Vector2f;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
 
 public class MainMenu {
+    private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
+            ChartColor.VERY_LIGHT_CYAN.brighter());
+    private static float BUTTON_WIDTH = 0.7f;
+    private static float BUTTON_HEIGHT = 0.3f;
+    private static String BUTTON_TEXTURE = "/images/button_texture.jpg";
+    private static float[] START_REPOSITION_VALUES = {0, 0, 1, -0.6f};
+    private static float[] EXIT_REPOSITION_VALUES = {0, 0, -1, 0.6f};
+    private static Vector3f BUTTON_COLOUR = new Vector3f(0, 0, 0);
+    private static Vertex2D TOP_LEFT_VERTEX = new Vertex2D(
+            new Vector2f(-BUTTON_WIDTH / 2, BUTTON_HEIGHT / 2),
+            BUTTON_COLOUR,
+            new Vector2f(0, 0));
+    private static Vertex2D TOP_RIGHT_VERTEX = new Vertex2D(
+            new Vector2f(BUTTON_WIDTH / 2, BUTTON_HEIGHT / 2),
+            BUTTON_COLOUR,
+            new Vector2f(1, 0));
+    private static Vertex2D BOTTOM_LEFT_VERTEX = new Vertex2D(
+            new Vector2f(-BUTTON_WIDTH / 2, -BUTTON_HEIGHT / 2),
+            BUTTON_COLOUR,
+            new Vector2f(0, 1));
+    private static Vertex2D BOTTOM_RIGHT_VERTEX = new Vertex2D(
+            new Vector2f(BUTTON_WIDTH / 2, -BUTTON_HEIGHT / 2),
+            BUTTON_COLOUR,
+            new Vector2f(1, 1));
+    private static int[] BUTTON_INDICES = {0, 1, 2, 3};
+    private static GuiObject startButton;
+    private static GuiObject exitButton;
 
-  private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
-      ChartColor.VERY_LIGHT_GREEN.brighter());
-  private static final Vector3f DEFAULT_BUTTON_COLOUR = ColourUtils.convertColor(Color.white);
-  private static final float DEFAULT_BUTTON_WIDTH = 1f;
-  private static final float DEFAULT_BUTTON_HEIGHT = 0.75f;
-  private static GuiObject startButton;
+    public static void create(Window window) {
+        setBackgroundColour(BACKGROUND_COLOUR, window);
+        createObjects(window);
+    }
 
-  public static void create(Window window) {
-    createObjects();
-    window.setBackgroundColour(
-        BACKGROUND_COLOUR.getX(),
-        BACKGROUND_COLOUR.getY(),
-        BACKGROUND_COLOUR.getZ(),
-        1f);
-  }
+    private static void createObjects(Window window) {
+//        createStartButton(window);
+//        // Create Start Button
+        startButton = initButton(
+                window,
+                START_REPOSITION_VALUES[0],
+                START_REPOSITION_VALUES[1],
+                START_REPOSITION_VALUES[2],
+                START_REPOSITION_VALUES[3]);
+        startButton.create();
+        // Create Exit Button
+        exitButton = initButton(
+                window,
+                EXIT_REPOSITION_VALUES[0],
+                EXIT_REPOSITION_VALUES[1],
+                EXIT_REPOSITION_VALUES[2],
+                EXIT_REPOSITION_VALUES[3]);
+        exitButton.create();
+    }
 
-  private static void createObjects() {
-    createStartButton();
-  }
+    public static void render(GuiRenderer renderer) {
+        renderer.renderObject(startButton);
+        renderer.renderObject(exitButton);
+    }
 
-  private static void createStartButton() {
-    Vector2f position = new Vector2f(0, 0);
-    Vector2f scale = new Vector2f(1, 1);
-    Vertex2D topLeft = new Vertex2D(
-        new Vector2f(
-        -DEFAULT_BUTTON_WIDTH/2,
-        DEFAULT_BUTTON_HEIGHT/2),
-        new Vector3f(
-            DEFAULT_BUTTON_COLOUR.getX(),
-            DEFAULT_BUTTON_COLOUR.getY(),
-            DEFAULT_BUTTON_COLOUR.getZ()),
-        new Vector2f(0, 0));
-    Vertex2D bottomLeft = new Vertex2D(
-        new Vector2f(
-            -DEFAULT_BUTTON_WIDTH/2,
-            -DEFAULT_BUTTON_HEIGHT/2),
-        new Vector3f(
-            DEFAULT_BUTTON_COLOUR.getX(),
-            DEFAULT_BUTTON_COLOUR.getY(),
-            DEFAULT_BUTTON_COLOUR.getZ()),
-        new Vector2f(0, 1));
-    Vertex2D bottomRight = new Vertex2D(
-        new Vector2f(
-            DEFAULT_BUTTON_WIDTH/2,
-            -DEFAULT_BUTTON_HEIGHT/2),
-        new Vector3f(
-            DEFAULT_BUTTON_COLOUR.getX(),
-            DEFAULT_BUTTON_COLOUR.getY(),
-            DEFAULT_BUTTON_COLOUR.getZ()),
-        new Vector2f(1, 1));
-    Vertex2D topRight = new Vertex2D(
-        new Vector2f(
-            DEFAULT_BUTTON_WIDTH/2,
-            DEFAULT_BUTTON_HEIGHT/2),
-        new Vector3f(
-            DEFAULT_BUTTON_COLOUR.getX(),
-            DEFAULT_BUTTON_COLOUR.getY(),
-            DEFAULT_BUTTON_COLOUR.getZ()),
-        new Vector2f(1, 0));
+    public static void resize(Window window) {
+        startButton.reposition(window.getxSpan(), window.getySpan());
+    }
 
-    Vertex2D[] vertices = new Vertex2D[] {topLeft, bottomLeft, bottomRight, topRight};
-    int [] indices = new int[] {0, 3, 1, 2};
-    Material material = new Material("/images/button_texture.jpg");
-    Mesh mesh = new Mesh(vertices, indices, material);
-    startButton = new GuiObject(position, scale, mesh);
-    startButton.create();
-  }
+    private static void setBackgroundColour(Vector3f colour, Window window) {
+        window.setBackgroundColour(colour.getX(), colour.getY(), colour.getZ(), 1f);
+    }
 
-  public static void render(GuiRenderer renderer) {
-    renderer.renderObject(startButton);
-  }
+    private static GuiObject initButton(Window window, float xEdge, float xOffset, float yEdge, float yOffset) {
+        Mesh tempMesh = new Mesh(
+                new Vertex2D[]{TOP_LEFT_VERTEX, TOP_RIGHT_VERTEX, BOTTOM_LEFT_VERTEX, BOTTOM_RIGHT_VERTEX},
+                BUTTON_INDICES,
+                new Material(BUTTON_TEXTURE));
 
+        return new GuiObject(
+                new Vector2f(xEdge * window.getxSpan() + xOffset, yEdge * window.getySpan() + yOffset),
+                new Vector2f(1, 1),
+                tempMesh,
+                xEdge,
+                xOffset,
+                yEdge,
+                yOffset);
+    }
 }

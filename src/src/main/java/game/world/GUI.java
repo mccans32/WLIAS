@@ -16,10 +16,12 @@ import java.awt.*;
 public class GUI {
 
     private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
-            ChartColor.VERY_LIGHT_GREEN.brighter());
+            ChartColor.VERY_LIGHT_CYAN.brighter());
     private static GuiObject tempGui;
+    private static float[] TEMP_GUI_VALUES = {-1, 0.1f, 1, -0.1f};
 
     public static void create(Window window) {
+        setBackgroundColour(BACKGROUND_COLOUR, window);
         createObjects(window);
     }
 
@@ -44,7 +46,11 @@ public class GUI {
         tempGui = new GuiObject(
                 new Vector2f(-1 * window.getxSpan() + 0.1f, 1 * window.getySpan() - 0.1f),
                 new Vector2f(1, 1),
-                guiMesh);
+                guiMesh,
+                TEMP_GUI_VALUES[0],
+                TEMP_GUI_VALUES[1],
+                TEMP_GUI_VALUES[2],
+                TEMP_GUI_VALUES[3]);
         tempGui.create();
     }
 
@@ -53,6 +59,10 @@ public class GUI {
     }
 
     public static void resize(Window window) {
-        tempGui.reposition(-1f, 0.1f, window.getxSpan(), 1f, -0.1f, window.getySpan());
+        tempGui.reposition(window.getxSpan(), window.getySpan());
+    }
+
+    private static void setBackgroundColour(Vector3f colour, Window window) {
+        window.setBackgroundColour(colour.getX(), colour.getY(), colour.getZ(), 1f);
     }
 }
