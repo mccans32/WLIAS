@@ -10,6 +10,7 @@ import engine.graphics.renderer.WorldRenderer;
 import engine.io.Input;
 import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
+import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
 import game.menu.MainMenu;
 import game.world.GUI;
@@ -38,6 +39,7 @@ public class Game {
   private static GuiRenderer guiRenderer;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
   private GameState state = GameState.MAIN_MENU;
+  private MousePicker mousePicker;
   /**
    * The Window.
    */
@@ -109,12 +111,13 @@ public class Game {
     worldShader.create();
     // Create GUI Shader
     guiShader.create();
+    // Create Mouse Picker
+    mousePicker = new MousePicker(camera, window.getProjectionMatrix());
 
     if (state == GameState.MAIN_MENU) {
       // Create the Main Menu
       MainMenu.create(window);
     } else if (state == GameState.GAME) {
-      System.out.println("GOT HERE");
       /* Create Temporary Mesh; */
       tempObject.create();
       //  create GUI
@@ -130,12 +133,17 @@ public class Game {
     camera.update();
     window.update();
 
+    // Update Mouse Picker
+    mousePicker.update(window);
+    Vector3f ray = mousePicker.getCurrentRay(window);
+    System.out.println(ray.getX() + ", " + ray.getY() + ", " + ray.getZ());
+
     if (this.knownAspect != window.getAspect()) {
       // Reposition GUI Elements
       if (state == GameState.MAIN_MENU) {
         MainMenu.resize(window);
       } else if (state == GameState.GAME) {
-          GUI.resize(window);
+        GUI.resize(window);
       }
       // update Known Aspect
       this.knownAspect = window.getAspect();
