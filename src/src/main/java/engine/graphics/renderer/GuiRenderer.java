@@ -1,15 +1,10 @@
 package engine.graphics.renderer;
 
-import static org.lwjgl.opengl.GL11.glOrtho;
-
 import engine.Window;
 import engine.graphics.Shader;
 import engine.objects.gui.GuiObject;
-import engine.objects.world.Camera;
-import engine.objects.world.GameObject;
 import math.Matrix4f;
 import math.Vector2f;
-import math.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;

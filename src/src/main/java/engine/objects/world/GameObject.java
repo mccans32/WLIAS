@@ -54,4 +54,8 @@ public class GameObject {
     mesh.create();
   }
 
+  public void destroy() {
+    mesh.destroy();
+  }
+
 }

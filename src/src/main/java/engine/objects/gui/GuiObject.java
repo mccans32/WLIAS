@@ -64,6 +64,10 @@ public class GuiObject {
         mesh.create();
     }
 
+    public void destroy() {
+        mesh.destroy();
+    }
+
     public void reposition(float xSpan, float ySpan) {
         position.setX(xEdge * xSpan + xOffset);
         position.setY(yEdge * ySpan + yOffset);
