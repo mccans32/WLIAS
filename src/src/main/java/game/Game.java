@@ -15,9 +15,12 @@ import engine.objects.world.GameObject;
 import engine.utils.ColourUtils;
 import game.menu.MainMenu;
 import java.awt.Color;
+
+import game.world.GUI;
 import math.Vector2f;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
+import org.jfree.data.json.JSONUtils;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -38,12 +41,13 @@ public class Game {
 
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
-  public Camera camera = new Camera(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
+  public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
   private GameState state = GameState.GAME;
   /**
    * The Window.
    */
   private Window window;
+  private float knownAspect = (float) WINDOW_WIDTH / (float) WINDOW_HEIGHT;
   private Shader worldShader;
   private Shader guiShader;
   // Temporary Mesh
@@ -61,28 +65,10 @@ public class Game {
       new int[]{0, 3, 1, 2},
       new Material("/images/mid-tier-tile.png"));
   private GameObject tempObject = new GameObject(
-      new Vector3f(0, 0, 0),
+      new Vector3f(0, 0, 0f),
       new Vector3f(0, 0, 0),
       new Vector3f(1f, 1f, 1f),
       tempMesh);
-
-  private Mesh guiMesh = new Mesh(
-      new Vertex2D[]{
-          new Vertex2D(new Vector2f(-0.2f, 0.2f),
-              ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 0f)),
-          new Vertex2D(new Vector2f(-0.2f, -0.2f),
-              ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 1f)),
-          new Vertex2D(new Vector2f(0.2f, -0.2f),
-              ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 1f)),
-          new Vertex2D(new Vector2f(0.2f, 0.2f),
-              ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 0f))},
-      new int[] {0, 3, 1, 2},
-      new Material("/images/bad-tile.png"));
-
-  public GuiObject tempGui = new GuiObject(
-      new Vector2f(-0.8f, 0.8f),
-      new Vector2f(1, 1),
-      guiMesh);
 
   /**
    * Start.
@@ -132,7 +118,8 @@ public class Game {
     if (state == GameState.GAME) {
       /* Create Temporary Mesh; */
       tempObject.create();
-      tempGui.create();
+//      create GUI
+      GUI.create(window);
     }
     else if (state == GameState.MAIN_MENU) {
       MainMenu.create(window);
@@ -146,6 +133,13 @@ public class Game {
   public void update() {
     camera.update();
     window.update();
+
+    if (this.knownAspect != window.getAspect()) {
+      // Reposition GUI Elements
+      GUI.resize(window);
+      // update Known Aspect
+      this.knownAspect = window.getAspect();
+    }
   }
 
   /**
@@ -155,9 +149,13 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.render(guiRenderer);
     }
-    // Render all game objects
-    guiRenderer.renderObject(tempGui);
-    worldRenderer.renderObject(tempObject, camera);
-    window.swapBuffers();
+    else {
+      // Render all game objects
+      Vector3f background = ColourUtils.convertColor(ChartColor.VERY_LIGHT_CYAN.brighter());
+      window.setBackgroundColour(background.getX(), background.getY(), background.getZ(), 1);
+      GUI.render(guiRenderer);
+      worldRenderer.renderObject(tempObject, camera);
+      window.swapBuffers();
+    }
   }
 }

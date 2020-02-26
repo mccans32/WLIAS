@@ -4,17 +4,27 @@ import engine.io.Input;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import javax.swing.text.IconView;
+
 public class Camera {
   private static final float MIN_CAMERA_Z = 1f;
   private static final float MAX_CAMERA_Z = 50f;
   private static final float ZOOM_MODIFIER = 0.05f;
   private static final float MOVE_SPEED = 0.05f;
+  private float defaultDistance;
   private Vector3f position;
   private Vector3f rotation;
 
   public Camera(Vector3f position, Vector3f rotation) {
     this.position = position;
+    // Compensate for Zoom Factor
+    this.position.setZ(this.position.getZ() / -(ZOOM_MODIFIER));
+    this.defaultDistance = this.position.getZ();
     this.rotation = rotation;
+  }
+
+  public static float getZoomModifier() {
+    return ZOOM_MODIFIER;
   }
 
   /**
@@ -35,12 +45,13 @@ public class Camera {
       position = Vector3f.add(position, new Vector3f(MOVE_SPEED, 0, 0));
     }
 
-    position = Vector3f.add(position, new Vector3f(0, 0, 1));
-    float cameraDistance = (float) -(Input.getScrollY() + MIN_CAMERA_Z * ZOOM_MODIFIER);
+    float cameraDistance = (float) -(Input.getScrollY() + defaultDistance * ZOOM_MODIFIER);
 
     if (cameraDistance < MIN_CAMERA_Z) {
+      System.out.println("MIN, " + cameraDistance + ", " + MIN_CAMERA_Z);
       position.setZ(MIN_CAMERA_Z);
     } else {
+      System.out.println("MAX, " + cameraDistance + ", " + MAX_CAMERA_Z);
       position.setZ(Math.min(cameraDistance, MAX_CAMERA_Z));
     }
   }
@@ -60,4 +71,5 @@ public class Camera {
   public void setRotation(Vector3f rotation) {
     this.rotation = rotation;
   }
+
 }

@@ -70,6 +70,7 @@ public class GuiRenderer {
   private void setModelUniform(GuiObject object) {
     shader.setUniform(
         "model",
+
         Matrix4f.transform(
             object.getPosition(),
             DEFAULT_ROTATION,
@@ -79,7 +80,6 @@ public class GuiRenderer {
   private void setProjectionUniform() {
     float width = window.getWidth();
     float height = window.getHeight();
-//    Matrix4f orthographicMatrix = Matrix4f.orthographic(-1f, 1f, -1f, 1f, 0f, 100f);
     shader.setUniform("projection", window.getOrthographicMatrix());
   }
 

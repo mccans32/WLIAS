@@ -76,6 +76,7 @@ public class Matrix4f {
     result.set(3, 0, tx);
     result.set(3, 1, ty);
     result.set(3, 2, tz);
+    result.set(3, 3, 1);
 
     return result;
   }
