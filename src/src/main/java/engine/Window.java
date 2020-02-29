@@ -158,6 +158,10 @@ public class Window {
 
   }
 
+  public long getWindow() {
+    return window;
+  }
+
   /**
    * Create.
    */

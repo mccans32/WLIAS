@@ -6,7 +6,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Camera {
   private static final float MIN_CAMERA_Z = 1f;
-  private static final float MAX_CAMERA_Z = 50f;
+  private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
   private static final float MOVE_SPEED = 0.05f;
   private float defaultDistance;
@@ -43,6 +43,7 @@ public class Camera {
       position = Vector3f.add(position, new Vector3f(MOVE_SPEED, 0, 0));
     }
 
+    // Calculate Distance for Zoom
     float cameraDistance = (float) -(Input.getScrollY() + defaultDistance * ZOOM_MODIFIER);
 
     if (cameraDistance < MIN_CAMERA_Z) {

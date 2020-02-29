@@ -1,6 +1,7 @@
 package math;
 
 import Jama.Matrix;
+import java.util.Arrays;
 
 // A Matrix4f is visualised as a 2D Array, However the GPU requires the vector to be in 1D
 // Matrix4f is read in by Column Major Order so is set by (col, row);
@@ -242,7 +243,7 @@ public class Matrix4f {
     double[][] matrixArray = matrixToArray(matrix);
     Matrix matrix1 = new Matrix(matrixArray);
     // Convert Vector4f to Jama Matrix
-    double[]vectorArray = {
+    double[] vectorArray = {
         (double) vector.getX(),
         (double) vector.getY(),
         (double) vector.getZ(),

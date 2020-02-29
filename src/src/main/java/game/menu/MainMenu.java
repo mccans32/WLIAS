@@ -1,15 +1,21 @@
 package game.menu;
 
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+
 import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Vertex2D;
 import engine.graphics.renderer.GuiRenderer;
+import engine.io.Input;
 import engine.objects.gui.GuiObject;
 import engine.utils.ColourUtils;
+import game.Game;
+import game.GameState;
 import math.Vector2f;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
+import org.lwjgl.glfw.GLFW;
 
 public class MainMenu {
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
@@ -39,10 +45,29 @@ public class MainMenu {
   private static int[] BUTTON_INDICES = {0, 1, 2, 3};
   private static GuiObject startButton;
   private static GuiObject exitButton;
+  private static GuiObject[] guiObjects = new GuiObject[2];
 
   public static void create(Window window) {
     setBackgroundColour(BACKGROUND_COLOUR, window);
     createObjects(window);
+  }
+
+  public static void update(Window window) {
+    checkButtonClick(window);
+  }
+
+  public static void checkButtonClick(Window window) {
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+      if (startButton.isMouseOver(window)) {
+        Game.setState(GameState.GAME);
+      }
+      else if (exitButton.isMouseOver(window))
+        GLFW.glfwSetWindowShouldClose(window.getWindow(), true);
+    }
+  }
+
+  public static GuiObject[] getGuiObjects() {
+    return guiObjects;
   }
 
   private static void createObjects(Window window) {
@@ -55,6 +80,7 @@ public class MainMenu {
         START_REPOSITION_VALUES[2],
         START_REPOSITION_VALUES[3]);
     startButton.create();
+    guiObjects[0] = startButton;
     // Create Exit Button
     exitButton = initButton(
         window,
@@ -63,6 +89,7 @@ public class MainMenu {
         EXIT_REPOSITION_VALUES[2],
         EXIT_REPOSITION_VALUES[3]);
     exitButton.create();
+    guiObjects[1] = exitButton;
   }
 
   public static void render(GuiRenderer renderer) {

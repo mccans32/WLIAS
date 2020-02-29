@@ -8,6 +8,7 @@ import engine.graphics.Vertex3D;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.WorldRenderer;
 import engine.io.Input;
+import engine.objects.gui.GuiObject;
 import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
 import engine.tools.MousePicker;
@@ -15,9 +16,12 @@ import engine.utils.ColourUtils;
 import game.menu.MainMenu;
 import game.world.GUI;
 import java.awt.Color;
+import java.util.Arrays;
 import math.Vector2f;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjglx.Sys;
+import sun.rmi.rmic.Main;
 
 /**
  * The type Game.
@@ -38,7 +42,7 @@ public class Game {
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
-  private GameState state = GameState.MAIN_MENU;
+  public static GameState state = GameState.MAIN_MENU;
   private MousePicker mousePicker;
   /**
    * The Window.
@@ -66,6 +70,10 @@ public class Game {
       new Vector3f(0, 0, 0),
       new Vector3f(1f, 1f, 1f),
       tempMesh);
+
+  public static void setState(GameState state) {
+    Game.state = state;
+  }
 
   /**
    * Start.
@@ -130,13 +138,19 @@ public class Game {
    * Update.
    */
   public void update() {
+
     camera.update();
     window.update();
 
     // Update Mouse Picker
     mousePicker.update(window);
-    Vector3f ray = mousePicker.getCurrentRay(window);
-    System.out.println(ray.getX() + ", " + ray.getY() + ", " + ray.getZ());
+    Vector3f ray = mousePicker.getCurrentRay();
+//    System.out.println(ray.getX() + ", " + ray.getY() + ", " + ray.getZ());
+//    System.out.println("RAY DIRECTION: " + Vector3f.length(ray));
+
+    if (state == GameState.MAIN_MENU) {
+      MainMenu.update(window);
+    }
 
     if (this.knownAspect != window.getAspect()) {
       // Reposition GUI Elements
