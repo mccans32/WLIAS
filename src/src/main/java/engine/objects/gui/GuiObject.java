@@ -86,11 +86,9 @@ public class GuiObject {
         }
       }
 
-      System.out.println("Min-X: " + minX + " Max-X: " + maxX + " Min-Y: " + minY + " Max-Y: " + maxY);
-
       Boolean withinX = ((normalX >= minX) && (normalX <= maxX));
       Boolean withinY = ((normalY >= minY) && (normalY <= maxY));
-      // Check if X is within boundaries
+      // Check if Mouse is within boundaries
       return (withinX && withinY);
     } else {
       return false;

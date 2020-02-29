@@ -28,15 +28,7 @@ public class Material {
    * Create.
    */
   public void create() {
-    try {
-      Texture texture = TextureLoader.getTexture(FilenameUtils.getExtension(path),
-          Material.class.getResourceAsStream(path), GL11.GL_NEAREST);
-      this.height = texture.getHeight();
-      this.width = texture.getWidth();
-      this.textureID = texture.getTextureID();
-    } catch (IOException e) {
-      System.err.println("Could not access path: " + path);
-    }
+    loadTexture(path);
   }
 
   /**
@@ -64,5 +56,24 @@ public class Material {
 
   public void setColorOffset(Vector3f colorOffset) {
     this.colorOffset = colorOffset;
+  }
+
+  private void loadTexture(String path) {
+    try {
+      Texture texture = TextureLoader.getTexture(FilenameUtils.getExtension(path),
+          Material.class.getResourceAsStream(path), GL11.GL_NEAREST);
+      this.height = texture.getHeight();
+      this.width = texture.getWidth();
+      this.textureID = texture.getTextureID();
+    } catch (IOException e) {
+      System.err.println("Could not access path: " + path);
+    }
+  }
+
+  public void setTexture(String path) {
+    // Assign the New Texture Path
+    this.path = path;
+    // Load in the new Texture
+    loadTexture(path);
   }
 }

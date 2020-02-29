@@ -9,19 +9,17 @@ import engine.objects.gui.GuiObject;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector2f;
-import math.Vector3f;
-import org.jfree.chart.ChartColor;
 
 public class GUI {
-
-  private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
-      ChartColor.VERY_LIGHT_CYAN.brighter());
   private static GuiObject tempGui;
   private static float[] TEMP_GUI_VALUES = {-1, 0.1f, 1, -0.1f};
 
   public static void create(Window window) {
-    setBackgroundColour(BACKGROUND_COLOUR, window);
     createObjects(window);
+  }
+
+  public static void update(Window window) {
+    resize(window);
   }
 
   private static void createObjects(Window window) {
@@ -59,9 +57,5 @@ public class GUI {
 
   public static void resize(Window window) {
     tempGui.reposition(window.getxSpan(), window.getySpan());
-  }
-
-  private static void setBackgroundColour(Vector3f colour, Window window) {
-    window.setBackgroundColour(colour.getX(), colour.getY(), colour.getZ(), 1f);
   }
 }

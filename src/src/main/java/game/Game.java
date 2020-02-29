@@ -1,27 +1,17 @@
 package game;
 
 import engine.Window;
-import engine.graphics.Material;
-import engine.graphics.Mesh;
 import engine.graphics.Shader;
-import engine.graphics.Vertex3D;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.WorldRenderer;
 import engine.io.Input;
-import engine.objects.gui.GuiObject;
 import engine.objects.world.Camera;
-import engine.objects.world.GameObject;
 import engine.tools.MousePicker;
-import engine.utils.ColourUtils;
 import game.menu.MainMenu;
 import game.world.GUI;
-import java.awt.Color;
-import java.util.Arrays;
-import math.Vector2f;
+import game.world.World;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjglx.Sys;
-import sun.rmi.rmic.Main;
 
 /**
  * The type Game.
@@ -38,38 +28,17 @@ public class Game {
   static final String FRAGMENT_SHADER_FILE_NAME = "mainFragment.glsl";
   static final String GUI_VERTEX_SHADER_FILE_NAME = "guiVertex.glsl";
   static final String GUI_FRAGMENT_SHADER_FILE_NAME = "guiFragment.glsl";
-
+  public static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
-  public static GameState state = GameState.MAIN_MENU;
   private MousePicker mousePicker;
   /**
    * The Window.
    */
   private Window window;
-  private float knownAspect = (float) WINDOW_WIDTH / (float) WINDOW_HEIGHT;
   private Shader worldShader;
   private Shader guiShader;
-  // Temporary Mesh
-  private Mesh tempMesh = new Mesh(
-      new Vertex3D[] {
-          new Vertex3D(new Vector3f(-0.5f, 0.5f, 0),
-              ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 0f)),
-          new Vertex3D(new Vector3f(-0.5f, -0.5f, 0),
-              ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 1f)),
-          new Vertex3D(new Vector3f(0.5f, -0.5f, 0),
-              ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 1f)),
-          new Vertex3D(new Vector3f(0.5f, 0.5f, 0),
-              ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 0f))
-      },
-      new int[] {0, 3, 1, 2},
-      new Material("/images/mid-tier-tile.png"));
-  private GameObject tempObject = new GameObject(
-      new Vector3f(0, 0, 0f),
-      new Vector3f(0, 0, 0),
-      new Vector3f(1f, 1f, 1f),
-      tempMesh);
 
   public static void setState(GameState state) {
     Game.state = state;
@@ -87,7 +56,6 @@ public class Game {
   private void dispose() {
     System.out.println("Disposing active processes");
     window.destroy();
-    tempMesh.destroy();
     worldShader.destroy();
     guiShader.destroy();
   }
@@ -126,8 +94,6 @@ public class Game {
       // Create the Main Menu
       MainMenu.create(window);
     } else if (state == GameState.GAME) {
-      /* Create Temporary Mesh; */
-      tempObject.create();
       //  create GUI
       GUI.create(window);
     }
@@ -144,26 +110,14 @@ public class Game {
 
     // Update Mouse Picker
     mousePicker.update(window);
-    Vector3f ray = mousePicker.getCurrentRay();
-//    System.out.println(ray.getX() + ", " + ray.getY() + ", " + ray.getZ());
-//    System.out.println("RAY DIRECTION: " + Vector3f.length(ray));
 
-    Vector2f normalisedMouse = MousePicker.getNormalisedDeviceCoordinates(window);
-//    System.out.println("Mouse-X: " + normalisedMouse.getX() + " Mouse-Y:  " + normalisedMouse.getY());
-    System.out.println(Arrays.toString(MainMenu.getButtonObjects()[0].getNormalisedVertexPositions(window)));
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window);
-    }
-
-    if (this.knownAspect != window.getAspect()) {
-      // Reposition GUI Elements
-      if (state == GameState.MAIN_MENU) {
-        MainMenu.resize(window);
-      } else if (state == GameState.GAME) {
-        GUI.resize(window);
-      }
-      // update Known Aspect
-      this.knownAspect = window.getAspect();
+    } else { // state == GameState.GAME
+      // Update The GUI
+      GUI.update(window);
+      // Update The World
+      World.update();
     }
   }
 
@@ -173,10 +127,11 @@ public class Game {
   public void render() {
     if (state == GameState.MAIN_MENU) {
       MainMenu.render(guiRenderer);
-    } else {
+    } else { // state == GameState.GAME;
       // Render all game objects
       GUI.render(guiRenderer);
-      worldRenderer.renderObject(tempObject, camera);
+      // Render world objects
+      World.render(worldRenderer, camera);
     }
     window.swapBuffers();
   }

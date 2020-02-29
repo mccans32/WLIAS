@@ -13,6 +13,8 @@ import engine.objects.gui.GuiObject;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
+import game.world.GUI;
+import game.world.World;
 import math.Vector2f;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
@@ -54,9 +56,18 @@ public class MainMenu {
   }
 
   public static void update(Window window) {
+    resize(window);
     updateButtons(window);
     checkButtonClick(window);
   }
+
+  public static void destroy() {
+    // Destroy Buttons
+    for (ButtonObject button: buttons) {
+      button.destroy();
+    }
+  }
+
 
   private static void updateButtons(Window window) {
     for (ButtonObject button: buttons) {
@@ -67,7 +78,14 @@ public class MainMenu {
   public static void checkButtonClick(Window window) {
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
       if (startButton.isMouseOver(window)) {
+        // Change the Game State
         Game.setState(GameState.GAME);
+        // Destroy the Main Menu
+        destroy();
+        // Create the GUI
+        GUI.create(window);
+        // Create the World
+        World.create(window);
       }
       else if (exitButton.isMouseOver(window))
         GLFW.glfwSetWindowShouldClose(window.getWindow(), true);
