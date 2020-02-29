@@ -26,10 +26,21 @@ public class Vertex3D {
     this.textureCoordinates = textureCoordinates;
   }
 
+  /**
+   * Instantiates a new Vertex 3 d.
+   *
+   * @param position the position
+   */
   public Vertex3D(Vector3f position) {
     this.position = position;
   }
 
+  /**
+   * Convert vertex 3 d.
+   *
+   * @param vertex the vertex
+   * @return the vertex 3 d
+   */
   public static Vertex3D convert(Vertex2D vertex) {
     Vector2f vertexPosition = vertex.getPosition();
     Vector3f vertexColour = vertex.getColour();

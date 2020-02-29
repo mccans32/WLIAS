@@ -15,12 +15,24 @@ public class MousePicker {
   private Matrix4f viewMatrix;
   private Camera camera;
 
+  /**
+   * Instantiates a new Mouse picker.
+   *
+   * @param camera           the camera
+   * @param projectionMatrix the projection matrix
+   */
   public MousePicker(Camera camera, Matrix4f projectionMatrix) {
     this.camera = camera;
     this.projectionMatrix = projectionMatrix;
     this.viewMatrix = Matrix4f.view(camera.getPosition(), camera.getRotation());
   }
 
+  /**
+   * Gets normalised device coordinates.
+   *
+   * @param window the window
+   * @return the normalised device coordinates
+   */
   public static Vector2f getNormalisedDeviceCoordinates(Window window) {
     float normalisedX = (2f * (float) Input.getMouseX()) / window.getWidth() - 1f;
     float normalisedY = -(2f * (float) Input.getMouseY()) / window.getHeight() + 1f;
@@ -38,7 +50,11 @@ public class MousePicker {
 
   private Vector3f calculateMouseRay(Window window) {
     Vector2f normalisedCoordinates = getNormalisedDeviceCoordinates(window);
-    Vector4f clipCoordinates = new Vector4f(normalisedCoordinates.getX(), normalisedCoordinates.getY(), -1f, 1f);
+    Vector4f clipCoordinates = new Vector4f(
+        normalisedCoordinates.getX(),
+        normalisedCoordinates.getY(),
+        -1f,
+        1f);
     Vector4f eyeCoordinates = toEyeCoordinates(clipCoordinates);
     return toWorldCoordinates(eyeCoordinates);
   }

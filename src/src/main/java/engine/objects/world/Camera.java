@@ -13,6 +13,12 @@ public class Camera {
   private Vector3f position;
   private Vector3f rotation;
 
+  /**
+   * Instantiates a new Camera.
+   *
+   * @param position the position
+   * @param rotation the rotation
+   */
   public Camera(Vector3f position, Vector3f rotation) {
     this.position = position;
     // Compensate for Zoom Factor

@@ -10,7 +10,7 @@ import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector2f;
 
-public class GUI {
+public class Gui {
   private static GuiObject tempGui;
   private static float[] TEMP_GUI_VALUES = {-1, 0.1f, 1, -0.1f};
 
@@ -41,7 +41,7 @@ public class GUI {
         new Material("/images/button_texture.jpg"));
 
     tempGui = new GuiObject(
-        new Vector2f(-1 * window.getxSpan() + 0.1f, 1 * window.getySpan() - 0.1f),
+        new Vector2f(-1 * window.getSpanX() + 0.1f, 1 * window.getSpanY() - 0.1f),
         new Vector2f(1, 1),
         guiMesh,
         TEMP_GUI_VALUES[0],
@@ -56,6 +56,6 @@ public class GUI {
   }
 
   public static void resize(Window window) {
-    tempGui.reposition(window.getxSpan(), window.getySpan());
+    tempGui.reposition(window.getSpanX(), window.getSpanY());
   }
 }

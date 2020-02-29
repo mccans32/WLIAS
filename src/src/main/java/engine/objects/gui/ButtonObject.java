@@ -12,16 +12,22 @@ public class ButtonObject extends GuiObject {
    * @param position the position
    * @param scale    the scale
    * @param mesh     the mesh.
-   * @param xEdge
-   * @param xOffset
-   * @param yEdge
-   * @param yOffset
+   * @param edgeX    the x coordinate to offset from.
+   * @param offsetX  amount to offset from the xEdge.
+   * @param edgeY    the y coordinate to offset from.
+   * @param offsetY  amount to offset from the yEdge.
    */
   private static final Vector3f INACTIVE_COLOUR_OFFSET = new Vector3f(1, 1, 1);
   private static final Vector3f ACTIVE_COLOUR_OFFSET = new Vector3f(0.6f, 0.6f, 0.6f);
 
-  public ButtonObject(Vector2f position, Vector2f scale, Mesh mesh, float xEdge, float xOffset, float yEdge, float yOffset) {
-    super(position, scale, mesh, xEdge, xOffset, yEdge, yOffset);
+  public ButtonObject(Vector2f position,
+                      Vector2f scale,
+                      Mesh mesh,
+                      float edgeX,
+                      float offsetX,
+                      float edgeY,
+                      float offsetY) {
+    super(position, scale, mesh, edgeX, offsetX, edgeY, offsetY);
     this.getMesh().getMaterial().setColorOffset(INACTIVE_COLOUR_OFFSET);
   }
 

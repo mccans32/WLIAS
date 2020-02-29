@@ -8,14 +8,13 @@ import math.Vector2f;
 import math.Vector3f;
 
 public class GuiObject {
-  private Vector2f defaultPosition;
   private Vector2f position;
   private Vector2f scale;
   private Mesh mesh;
-  private float xEdge;
-  private float xOffset;
-  private float yEdge;
-  private float yOffset;
+  private float edgeX;
+  private float offsetX;
+  private float edgeY;
+  private float offsetY;
 
   /**
    * Instantiates a new Gui object.
@@ -24,18 +23,29 @@ public class GuiObject {
    * @param scale    the scale
    * @param mesh     the mesh.
    */
-  public GuiObject(Vector2f position, Vector2f scale, Mesh mesh, float xEdge, float xOffset, float yEdge, float yOffset) {
-    this.defaultPosition = position;
+  public GuiObject(Vector2f position,
+                   Vector2f scale,
+                   Mesh mesh,
+                   float edgeX,
+                   float offsetX,
+                   float edgeY,
+                   float offsetY) {
     this.position = position;
     this.scale = scale;
     this.mesh = mesh;
-    this.xEdge = xEdge;
-    this.xOffset = xOffset;
-    this.yEdge = yEdge;
-    this.yOffset = yOffset;
+    this.edgeX = edgeX;
+    this.offsetX = offsetX;
+    this.edgeY = edgeY;
+    this.offsetY = offsetY;
 
   }
 
+  /**
+   * Get normalised vertex positions vector 2 f [ ].
+   *
+   * @param window the window
+   * @return the vector 2 f [ ]
+   */
   public Vector2f[] getNormalisedVertexPositions(Window window) {
     Vertex3D[] vertices = mesh.getVertices();
     // Get Array of X and Y offsets for all vertices
@@ -48,12 +58,20 @@ public class GuiObject {
     // Add vertex positions to position in order to get their OpenGl coordinates
     for (int i = 0; i < vertexPositions.length; i++) {
       vertexPositions[i] = Vector2f.add(position, vertexPositions[i]);
-      vertexPositions[i] = Vector2f.divide(vertexPositions[i], new Vector2f(window.getxSpan(), window.getySpan()));
+      vertexPositions[i] = Vector2f.divide(
+          vertexPositions[i],
+          new Vector2f(window.getSpanX(), window.getSpanY()));
     }
 
     return vertexPositions;
   }
 
+  /**
+   * Is mouse over boolean.
+   *
+   * @param window the window
+   * @return the boolean
+   */
   public Boolean isMouseOver(Window window) {
     // Get normalised Mouse Positions
     Vector2f normalisedMouse = MousePicker.getNormalisedDeviceCoordinates(window);
@@ -95,20 +113,20 @@ public class GuiObject {
     }
   }
 
-  public float getxEdge() {
-    return xEdge;
+  public float getEdgeX() {
+    return edgeX;
   }
 
-  public float getxOffset() {
-    return xOffset;
+  public float getOffsetX() {
+    return offsetX;
   }
 
   public float getyEdge() {
-    return yEdge;
+    return edgeY;
   }
 
   public float getYOffset() {
-    return yOffset;
+    return offsetY;
   }
 
   public Vector2f getPosition() {
@@ -131,8 +149,8 @@ public class GuiObject {
     mesh.destroy();
   }
 
-  public void reposition(float xSpan, float ySpan) {
-    position.setX(xEdge * xSpan + xOffset);
-    position.setY(yEdge * ySpan + yOffset);
+  public void reposition(float spanX, float spanY) {
+    position.setX(edgeX * spanX + offsetX);
+    position.setY(edgeY * spanY + offsetY);
   }
 }

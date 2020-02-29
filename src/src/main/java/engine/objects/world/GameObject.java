@@ -3,7 +3,7 @@ package engine.objects.world;
 import engine.graphics.Mesh;
 import math.Vector3f;
 
-public abstract class GameObject {
+public class GameObject {
   private Vector3f position = new Vector3f(0f, 0f, 0f);
   private Vector3f rotation = new Vector3f(0f, 0f, 0f);
   private Vector3f scale = new Vector3f(1f, 1f, 1f);

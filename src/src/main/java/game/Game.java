@@ -4,14 +4,12 @@ import engine.Window;
 import engine.graphics.Shader;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.WorldRenderer;
-import engine.io.Input;
 import engine.objects.world.Camera;
 import engine.tools.MousePicker;
 import game.menu.MainMenu;
-import game.world.GUI;
+import game.world.Gui;
 import game.world.World;
 import math.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * The type Game.
@@ -63,7 +61,7 @@ public class Game {
   private void gameLoop() {
     System.out.println("This is the Game Loop\n");
     // while (true)
-    while (!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+    while (!window.shouldClose()) {
       update();
       render();
     }
@@ -74,7 +72,7 @@ public class Game {
     // Initialise the Shader
     worldShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + VERTEX_SHADER_FILE_NAME,
         SHADERS_PATH + FRAGMENT_DIRECTORY + FRAGMENT_SHADER_FILE_NAME);
-    // Initialise GUI Shader
+    // Initialise Gui Shader
     guiShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + GUI_VERTEX_SHADER_FILE_NAME,
         SHADERS_PATH + FRAGMENT_DIRECTORY + GUI_FRAGMENT_SHADER_FILE_NAME);
     // Create main window
@@ -85,7 +83,7 @@ public class Game {
     window.create();
     // Create World Shader
     worldShader.create();
-    // Create GUI Shader
+    // Create Gui Shader
     guiShader.create();
     // Create Mouse Picker
     mousePicker = new MousePicker(camera, window.getProjectionMatrix());
@@ -94,8 +92,8 @@ public class Game {
       // Create the Main Menu
       MainMenu.create(window);
     } else if (state == GameState.GAME) {
-      //  create GUI
-      GUI.create(window);
+      //  create Gui
+      Gui.create(window);
     }
 
   }
@@ -114,8 +112,8 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window);
     } else { // state == GameState.GAME
-      // Update The GUI
-      GUI.update(window);
+      // Update The Gui
+      Gui.update(window);
       // Update The World
       World.update();
     }
@@ -129,7 +127,7 @@ public class Game {
       MainMenu.render(guiRenderer);
     } else { // state == GameState.GAME;
       // Render all game objects
-      GUI.render(guiRenderer);
+      Gui.render(guiRenderer);
       // Render world objects
       World.render(worldRenderer, camera);
     }

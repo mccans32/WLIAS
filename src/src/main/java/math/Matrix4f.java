@@ -1,7 +1,6 @@
 package math;
 
 import Jama.Matrix;
-import java.util.Arrays;
 
 // A Matrix4f is visualised as a 2D Array, However the GPU requires the vector to be in 1D
 // Matrix4f is read in by Column Major Order so is set by (col, row);
@@ -65,6 +64,17 @@ public class Matrix4f {
     return result;
   }
 
+  /**
+   * Orthographic matrix 4 f.
+   *
+   * @param left   the left
+   * @param right  the right
+   * @param bottom the bottom
+   * @param top    the top
+   * @param near   the near
+   * @param far    the far
+   * @return the matrix 4 f
+   */
   public static Matrix4f orthographic(float left, float right, float bottom, float top, float near,
                                       float far) {
     Matrix4f result = Matrix4f.identity();
@@ -238,6 +248,13 @@ public class Matrix4f {
         new Vector3f(scale.getX(), scale.getY(), 1f));
   }
 
+  /**
+   * Transform vector 4 f.
+   *
+   * @param matrix the matrix
+   * @param vector the vector
+   * @return the vector 4 f
+   */
   public static Vector4f transform(Matrix4f matrix, Vector4f vector) {
     // Convert Matrix4f to JAMA Matrix
     double[][] matrixArray = matrixToArray(matrix);
@@ -258,6 +275,12 @@ public class Matrix4f {
         (float) transformation[3]);
   }
 
+  /**
+   * Invert matrix 4 f.
+   *
+   * @param matrix the matrix
+   * @return the matrix 4 f
+   */
   public static Matrix4f invert(Matrix4f matrix) {
     double[][] matrixArray = matrixToArray(matrix);
     Matrix tempMatrix = new Matrix(matrixArray);
@@ -266,6 +289,12 @@ public class Matrix4f {
     return arrayToMatrix(inverseArray);
   }
 
+  /**
+   * Matrix to array double [ ] [ ].
+   *
+   * @param matrix the matrix
+   * @return the double [ ] [ ]
+   */
   public static double[][] matrixToArray(Matrix4f matrix) {
     double[][] matrixArray = new double[SIZE][SIZE];
     for (int row = 0; row < SIZE; row++) {
@@ -276,6 +305,12 @@ public class Matrix4f {
     return matrixArray;
   }
 
+  /**
+   * Array to matrix matrix 4 f.
+   *
+   * @param matrixArray the matrix array
+   * @return the matrix 4 f
+   */
   public static Matrix4f arrayToMatrix(double[][] matrixArray) {
     Matrix4f result = Matrix4f.identity();
     for (int row = 0; row < SIZE; row++) {

@@ -1,7 +1,6 @@
 package game.world;
 
 import engine.Window;
-import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Vertex3D;
 import engine.graphics.renderer.WorldRenderer;
@@ -41,7 +40,11 @@ public class World {
   }
 
   private static void setBackgroundColour(Window window) {
-    window.setBackgroundColour(BACKGROUND_COLOUR.getX(), BACKGROUND_COLOUR.getY(), BACKGROUND_COLOUR.getZ(), 1f);
+    window.setBackgroundColour(
+        BACKGROUND_COLOUR.getX(),
+        BACKGROUND_COLOUR.getY(),
+        BACKGROUND_COLOUR.getZ(),
+        1f);
   }
 
   private static void createObjects() {

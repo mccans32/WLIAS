@@ -70,6 +70,11 @@ public class Material {
     }
   }
 
+  /**
+   * Sets texture.
+   *
+   * @param path the path
+   */
   public void setTexture(String path) {
     // Assign the New Texture Path
     this.path = path;

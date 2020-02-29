@@ -7,6 +7,15 @@ import math.Vector3f;
 public class TileObject extends GameObject {
   private Tile tile;
 
+  /**
+   * Instantiates a new Tile object.
+   *
+   * @param position the position
+   * @param rotation the rotation
+   * @param scale    the scale
+   * @param mesh     the mesh
+   * @param tile     the tile
+   */
   public TileObject(Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, Tile tile) {
     super(position, rotation, scale, mesh);
     this.tile = tile;

@@ -1,7 +1,5 @@
 package game.menu;
 
-import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
-
 import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.Mesh;
@@ -9,11 +7,10 @@ import engine.graphics.Vertex2D;
 import engine.graphics.renderer.GuiRenderer;
 import engine.io.Input;
 import engine.objects.gui.ButtonObject;
-import engine.objects.gui.GuiObject;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
-import game.world.GUI;
+import game.world.Gui;
 import game.world.World;
 import math.Vector2f;
 import math.Vector3f;
@@ -55,26 +52,39 @@ public class MainMenu {
     createButtons(window);
   }
 
+  /**
+   * Update.
+   *
+   * @param window the window
+   */
   public static void update(Window window) {
     resize(window);
     updateButtons(window);
     checkButtonClick(window);
   }
 
+  /**
+   * Destroy.
+   */
   public static void destroy() {
     // Destroy Buttons
-    for (ButtonObject button: buttons) {
+    for (ButtonObject button : buttons) {
       button.destroy();
     }
   }
 
 
   private static void updateButtons(Window window) {
-    for (ButtonObject button: buttons) {
+    for (ButtonObject button : buttons) {
       button.update(window);
     }
   }
 
+  /**
+   * Check button click.
+   *
+   * @param window the window
+   */
   public static void checkButtonClick(Window window) {
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
       if (startButton.isMouseOver(window)) {
@@ -82,13 +92,13 @@ public class MainMenu {
         Game.setState(GameState.GAME);
         // Destroy the Main Menu
         destroy();
-        // Create the GUI
-        GUI.create(window);
+        // Create the Gui
+        Gui.create(window);
         // Create the World
         World.create(window);
-      }
-      else if (exitButton.isMouseOver(window))
+      } else if (exitButton.isMouseOver(window)) {
         GLFW.glfwSetWindowShouldClose(window.getWindow(), true);
+      }
     }
   }
 
@@ -97,8 +107,7 @@ public class MainMenu {
   }
 
   private static void createButtons(Window window) {
-//        createStartButton(window);
-//        // Create Start Button
+    // Create Start Button
     startButton = initButton(
         window,
         START_REPOSITION_VALUES[0],
@@ -124,26 +133,31 @@ public class MainMenu {
   }
 
   public static void resize(Window window) {
-    startButton.reposition(window.getxSpan(), window.getySpan());
+    startButton.reposition(window.getSpanX(), window.getSpanY());
   }
 
   private static void setBackgroundColour(Vector3f colour, Window window) {
     window.setBackgroundColour(colour.getX(), colour.getY(), colour.getZ(), 1f);
   }
 
-  private static ButtonObject initButton(Window window, float xEdge, float xOffset, float yEdge, float yOffset) {
+  private static ButtonObject initButton(
+      Window window,
+      float edgeX,
+      float offsetX,
+      float edgeY,
+      float offsetY) {
     Mesh tempMesh = new Mesh(
         new Vertex2D[] {TOP_LEFT_VERTEX, TOP_RIGHT_VERTEX, BOTTOM_LEFT_VERTEX, BOTTOM_RIGHT_VERTEX},
         BUTTON_INDICES,
         new Material(BUTTON_TEXTURE));
 
     return new ButtonObject(
-        new Vector2f(xEdge * window.getxSpan() + xOffset, yEdge * window.getySpan() + yOffset),
+        new Vector2f(edgeX * window.getSpanX() + offsetX, edgeY * window.getSpanY() + offsetY),
         new Vector2f(1, 1),
         tempMesh,
-        xEdge,
-        xOffset,
-        yEdge,
-        yOffset);
+        edgeX,
+        offsetX,
+        edgeY,
+        offsetY);
   }
 }

@@ -74,8 +74,8 @@ public class Window {
   private float near = 0.1f;
   private float far = 1000f;
   private float aspect;
-  private float xSpan;
-  private float ySpan;
+  private float spanX;
+  private float spanY;
 
   /**
    * Instantiates a new Window.
@@ -101,12 +101,12 @@ public class Window {
     glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
   }
 
-  public float getxSpan() {
-    return xSpan;
+  public float getSpanX() {
+    return spanX;
   }
 
-  public float getySpan() {
-    return ySpan;
+  public float getSpanY() {
+    return spanY;
   }
 
   public Matrix4f getProjectionMatrix() {
@@ -209,6 +209,7 @@ public class Window {
   public void centerScreen() {
     GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     // X value
+    assert videoMode != null;
     windowPosX[0] = (videoMode.width() - width) / 2;
     // Y value
     windowPosY[0] = (videoMode.height() - height) / 2;
@@ -380,7 +381,7 @@ public class Window {
   }
 
   private void createOrthographicMatrix() {
-    this.orthographicMatrix = Matrix4f.orthographic(-1 * xSpan, xSpan, -1 * ySpan, ySpan, -1, 1);
+    this.orthographicMatrix = Matrix4f.orthographic(-1 * spanX, spanX, -1 * spanY, spanY, -1, 1);
   }
 
   private void setAspect() {
@@ -389,12 +390,12 @@ public class Window {
 
   private void setSpans() {
     // set xSpan and ySpan for orthographic projection and for repositioning gui
-    this.xSpan = 1;
-    this.ySpan = 1;
+    this.spanX = 1;
+    this.spanY = 1;
     if (aspect >= 1) {
-      this.xSpan *= aspect;
+      this.spanX *= aspect;
     } else {
-      this.ySpan = this.xSpan / aspect;
+      this.spanY = this.spanX / aspect;
     }
   }
 }

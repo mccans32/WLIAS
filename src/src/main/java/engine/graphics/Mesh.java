@@ -56,6 +56,13 @@ public class Mesh {
     this.indices = indices.clone();
   }
 
+  /**
+   * Instantiates a new Mesh.
+   *
+   * @param vertices the vertices
+   * @param indices  the indices
+   * @param material the material
+   */
   public Mesh(Vertex2D[] vertices, int[] indices, Material material) {
     Vertex3D[] newVertices = new Vertex3D[vertices.length];
     for (int i = 0; i < vertices.length; i++) {
@@ -68,6 +75,12 @@ public class Mesh {
     this.material = material;
   }
 
+  /**
+   * Instantiates a new Mesh.
+   *
+   * @param vertices the vertices
+   * @param indices  the indices
+   */
   public Mesh(Vertex2D[] vertices, int[] indices) {
     Vertex3D[] newVertices = new Vertex3D[vertices.length];
     for (int i = 0; i < vertices.length; i++) {
