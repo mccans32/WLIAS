@@ -206,38 +206,6 @@ public class WorldRendererTests {
   }
 
   @Test
-  public void testPositionMatrix() throws InterruptedException {
-    setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
-    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
-    GameObject testObject = new GameObject(testMesh);
-    testObject.create();
-    this.sleepTime = 0;
-    for (int i = 0; i < LOOP_MAX; i++) {
-      drawObject(testObject);
-    }
-    this.sleepTime = 1;
-    testObject.destroy();
-    shutDownWindow();
-
-  }
-
-  @Test
-  public void testRotationMatrix() throws InterruptedException {
-    setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
-    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
-    GameObject testObject = new GameObject(testMesh);
-    this.sleepTime = 0;
-    for (int i = 0; i < LOOP_MAX; i++) {
-      drawObject(testObject);
-      testObject.getRotation().set(new Vector3f(i, i, i));
-    }
-    this.sleepTime = 1;
-    testMesh.destroy();
-    shutDownWindow();
-
-  }
-
-  @Test
   public void testScaleMatrix() throws InterruptedException {
     setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
     Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
@@ -248,99 +216,6 @@ public class WorldRendererTests {
       drawObject(testObject);
       testObject.getScale().set(new Vector3f(val, val, val));
     }
-    this.sleepTime = 1;
-    testMesh.destroy();
-    shutDownWindow();
-
-  }
-
-  @Test
-  public void testAllTransformations() throws InterruptedException {
-    setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
-    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
-    GameObject testObject = new GameObject(testMesh);
-    this.sleepTime = 0;
-    for (int i = 0; i < LOOP_MAX; i++) {
-      float val = (float) Math.sin(i / 100.0);
-      drawObject(testObject);
-      testObject.getScale().set(new Vector3f(val, val, val));
-      testObject.getRotation().set(new Vector3f(i, i, i));
-      testObject.getPosition().set((float) Math.sin(i / 10.0));
-    }
-    this.sleepTime = 1;
-    testMesh.destroy();
-    shutDownWindow();
-  }
-
-  @Test
-  public void testMoveCameraPosition() {
-    setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
-    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
-    GameObject testObject = new GameObject(testMesh);
-    testObject.getMesh().create();
-    this.sleepTime = 0;
-    // Test X
-    for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      camera.getPosition().add(new Vector3f(0.01f, 0, 0));
-    }
-    // Test Y
-    for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      camera.getPosition().add(new Vector3f(0, 0.01f, 0));
-    }
-    // Test Z
-    for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      camera.getPosition().add(new Vector3f(0, 0, 0.1f));
-    }
-
-    this.sleepTime = 1;
-    testMesh.destroy();
-    shutDownWindow();
-  }
-
-  @Test
-  public void testMoveCameraRotation() {
-    setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
-    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
-    GameObject testObject = new GameObject(testMesh);
-    testObject.getMesh().create();
-    this.sleepTime = 0;
-    // Test X
-    for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      camera.getRotation().add(new Vector3f(0.2f, 0, 0));
-    }
-    // Test Y
-    for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      camera.getRotation().add(new Vector3f(0, 0.2f, 0));
-    }
-    // Test Z
-    for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      camera.getRotation().add(new Vector3f(0, 0, 0.2f));
-    }
-
     this.sleepTime = 1;
     testMesh.destroy();
     shutDownWindow();
