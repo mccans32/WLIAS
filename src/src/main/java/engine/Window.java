@@ -140,11 +140,6 @@ public class Window {
         width = argWidth;
         height = argHeight;
         hasResized = true;
-
-        // set spans for orthographic projection matrix and for repositioning gui
-        float aspect = (float) width / (float) height;
-
-
       }
     };
 

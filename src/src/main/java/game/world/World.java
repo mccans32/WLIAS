@@ -21,7 +21,15 @@ public class World {
 
   private static ArrayList<TileObject> tiles = new ArrayList<>();
 
-  public static void create(Window window) {
+  /**
+   * Create.
+   *
+   * @param window the window
+   * @param camera the camera
+   */
+  public static void create(Window window, Camera camera) {
+    // reset the camera to its default position.
+    camera.reset();
     setBackgroundColour(window);
     createObjects();
   }

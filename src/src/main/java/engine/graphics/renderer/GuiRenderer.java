@@ -78,8 +78,6 @@ public class GuiRenderer {
   }
 
   private void setProjectionUniform() {
-    float width = window.getWidth();
-    float height = window.getHeight();
     shader.setUniform("projection", window.getOrthographicMatrix());
   }
 

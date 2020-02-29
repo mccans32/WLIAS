@@ -72,7 +72,7 @@ public class WorldRendererTests {
    * Sets .
    */
   public void setupWindow(String vertexFileName, String fragmentFileName) {
-    camera = new Camera(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0));
+    camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
     shader = new Shader(SHADERS_PATH + VERTEX_DIR + vertexFileName,
         SHADERS_PATH + FRAGMENT_DIR + fragmentFileName);
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
@@ -206,40 +206,17 @@ public class WorldRendererTests {
   }
 
   @Test
-  public void testPositionMatrix() {
+  public void testPositionMatrix() throws InterruptedException {
     setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
     Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
     GameObject testObject = new GameObject(testMesh);
-    testObject.getMesh().create();
+    testObject.create();
     this.sleepTime = 0;
-    // Test X
     for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      testObject.getPosition().set(
-          Vector3f.add(testObject.getPosition(), new Vector3f(0.01f, 0, 0)));
+      drawObject(testObject);
     }
-    // Test Y
-    for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      testObject.getPosition().add(new Vector3f(0, 0.01f, 0));
-    }
-    // Test Z
-    for (int i = 0; i < LOOP_MAX; i++) {
-      window.update();
-      worldRenderer.renderObject(testObject, camera);
-      window.swapBuffers();
-      window.update();
-      testObject.getPosition().add(new Vector3f(0, 0, -0.1f));
-    }
-
     this.sleepTime = 1;
-    testMesh.destroy();
+    testObject.destroy();
     shutDownWindow();
 
   }

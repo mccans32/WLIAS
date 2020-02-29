@@ -26,7 +26,7 @@ public class Game {
   static final String FRAGMENT_SHADER_FILE_NAME = "mainFragment.glsl";
   static final String GUI_VERTEX_SHADER_FILE_NAME = "guiVertex.glsl";
   static final String GUI_FRAGMENT_SHADER_FILE_NAME = "guiFragment.glsl";
-  public static GameState state = GameState.MAIN_MENU;
+  private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
@@ -110,7 +110,7 @@ public class Game {
     mousePicker.update(window);
 
     if (state == GameState.MAIN_MENU) {
-      MainMenu.update(window);
+      MainMenu.update(window, camera);
     } else { // state == GameState.GAME
       // Update The Gui
       Gui.update(window);

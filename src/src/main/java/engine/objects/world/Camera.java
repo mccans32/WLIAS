@@ -1,10 +1,13 @@
 package engine.objects.world;
 
 import engine.io.Input;
+import math.Vector2f;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class Camera {
+  private Vector3f defaultPosition;
+  private Vector3f defaultRotation;
   private static final float MIN_CAMERA_Z = 1f;
   private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
@@ -12,6 +15,7 @@ public class Camera {
   private float defaultDistance;
   private Vector3f position;
   private Vector3f rotation;
+  private boolean isFrozen = false;
 
   /**
    * Instantiates a new Camera.
@@ -25,37 +29,54 @@ public class Camera {
     this.position.setZ(this.position.getZ() / -(ZOOM_MODIFIER));
     this.defaultDistance = this.position.getZ();
     this.rotation = rotation;
+    // Set Defaults, used when resetting
+    this.defaultPosition = position;
+    this.defaultRotation = rotation;
   }
 
   public static float getZoomModifier() {
     return ZOOM_MODIFIER;
   }
 
+  public boolean isFrozen() {
+    return isFrozen;
+  }
+
+  public void freeze() {
+    isFrozen = true;
+  }
+
+  public void unfreeze() {
+    isFrozen = false;
+  }
+
   /**
    * Update.
    */
   public void update() {
-    // Move Camera with keyboard
-    if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
-      position = Vector3f.add(position, new Vector3f(-MOVE_SPEED, 0, 0));
-    }
-    if (Input.isKeyDown(GLFW.GLFW_KEY_W)) {
-      position = Vector3f.add(position, new Vector3f(0, MOVE_SPEED, 0));
-    }
-    if (Input.isKeyDown(GLFW.GLFW_KEY_S)) {
-      position = Vector3f.add(position, new Vector3f(0, -MOVE_SPEED, 0));
-    }
-    if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
-      position = Vector3f.add(position, new Vector3f(MOVE_SPEED, 0, 0));
-    }
+    if (!isFrozen) {
+      // Move Camera with keyboard
+      if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
+        position = Vector3f.add(position, new Vector3f(-MOVE_SPEED, 0, 0));
+      }
+      if (Input.isKeyDown(GLFW.GLFW_KEY_W)) {
+        position = Vector3f.add(position, new Vector3f(0, MOVE_SPEED, 0));
+      }
+      if (Input.isKeyDown(GLFW.GLFW_KEY_S)) {
+        position = Vector3f.add(position, new Vector3f(0, -MOVE_SPEED, 0));
+      }
+      if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
+        position = Vector3f.add(position, new Vector3f(MOVE_SPEED, 0, 0));
+      }
 
-    // Calculate Distance for Zoom
-    float cameraDistance = (float) -(Input.getScrollY() + defaultDistance * ZOOM_MODIFIER);
+      // Calculate Distance for Zoom
+      float cameraDistance = (float) -(Input.getScrollY() + defaultDistance * ZOOM_MODIFIER);
 
-    if (cameraDistance < MIN_CAMERA_Z) {
-      position.setZ(MIN_CAMERA_Z);
-    } else {
-      position.setZ(Math.min(cameraDistance, MAX_CAMERA_Z));
+      if (cameraDistance < MIN_CAMERA_Z) {
+        position.setZ(MIN_CAMERA_Z);
+      } else {
+        position.setZ(Math.min(cameraDistance, MAX_CAMERA_Z));
+      }
     }
   }
 
@@ -73,6 +94,11 @@ public class Camera {
 
   public void setRotation(Vector3f rotation) {
     this.rotation = rotation;
+  }
+
+  public void reset() {
+    this.position = defaultPosition;
+    this.rotation = defaultRotation;
   }
 
 }

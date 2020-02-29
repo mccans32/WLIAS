@@ -7,6 +7,7 @@ import engine.graphics.Vertex2D;
 import engine.graphics.renderer.GuiRenderer;
 import engine.io.Input;
 import engine.objects.gui.ButtonObject;
+import engine.objects.world.Camera;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
@@ -57,10 +58,10 @@ public class MainMenu {
    *
    * @param window the window
    */
-  public static void update(Window window) {
+  public static void update(Window window, Camera camera) {
     resize(window);
     updateButtons(window);
-    checkButtonClick(window);
+    checkButtonClick(window, camera);
   }
 
   /**
@@ -85,7 +86,7 @@ public class MainMenu {
    *
    * @param window the window
    */
-  public static void checkButtonClick(Window window) {
+  public static void checkButtonClick(Window window, Camera camera) {
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
       if (startButton.isMouseOver(window)) {
         // Change the Game State
@@ -95,7 +96,7 @@ public class MainMenu {
         // Create the Gui
         Gui.create(window);
         // Create the World
-        World.create(window);
+        World.create(window, camera);
       } else if (exitButton.isMouseOver(window)) {
         GLFW.glfwSetWindowShouldClose(window.getWindow(), true);
       }
@@ -103,7 +104,7 @@ public class MainMenu {
   }
 
   public static ButtonObject[] getButtonObjects() {
-    return buttons;
+    return buttons.clone();
   }
 
   private static void createButtons(Window window) {
