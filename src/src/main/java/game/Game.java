@@ -148,6 +148,9 @@ public class Game {
 //    System.out.println(ray.getX() + ", " + ray.getY() + ", " + ray.getZ());
 //    System.out.println("RAY DIRECTION: " + Vector3f.length(ray));
 
+    Vector2f normalisedMouse = MousePicker.getNormalisedDeviceCoordinates(window);
+//    System.out.println("Mouse-X: " + normalisedMouse.getX() + " Mouse-Y:  " + normalisedMouse.getY());
+    System.out.println(Arrays.toString(MainMenu.getButtonObjects()[0].getNormalisedVertexPositions(window)));
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window);
     }

@@ -8,6 +8,7 @@ import engine.graphics.Mesh;
 import engine.graphics.Vertex2D;
 import engine.graphics.renderer.GuiRenderer;
 import engine.io.Input;
+import engine.objects.gui.ButtonObject;
 import engine.objects.gui.GuiObject;
 import engine.utils.ColourUtils;
 import game.Game;
@@ -43,17 +44,24 @@ public class MainMenu {
       BUTTON_COLOUR,
       new Vector2f(1, 1));
   private static int[] BUTTON_INDICES = {0, 1, 2, 3};
-  private static GuiObject startButton;
-  private static GuiObject exitButton;
-  private static GuiObject[] guiObjects = new GuiObject[2];
+  private static ButtonObject startButton;
+  private static ButtonObject exitButton;
+  private static ButtonObject[] buttons = new ButtonObject[2];
 
   public static void create(Window window) {
     setBackgroundColour(BACKGROUND_COLOUR, window);
-    createObjects(window);
+    createButtons(window);
   }
 
   public static void update(Window window) {
+    updateButtons(window);
     checkButtonClick(window);
+  }
+
+  private static void updateButtons(Window window) {
+    for (ButtonObject button: buttons) {
+      button.update(window);
+    }
   }
 
   public static void checkButtonClick(Window window) {
@@ -66,11 +74,11 @@ public class MainMenu {
     }
   }
 
-  public static GuiObject[] getGuiObjects() {
-    return guiObjects;
+  public static ButtonObject[] getButtonObjects() {
+    return buttons;
   }
 
-  private static void createObjects(Window window) {
+  private static void createButtons(Window window) {
 //        createStartButton(window);
 //        // Create Start Button
     startButton = initButton(
@@ -80,7 +88,7 @@ public class MainMenu {
         START_REPOSITION_VALUES[2],
         START_REPOSITION_VALUES[3]);
     startButton.create();
-    guiObjects[0] = startButton;
+    buttons[0] = startButton;
     // Create Exit Button
     exitButton = initButton(
         window,
@@ -89,7 +97,7 @@ public class MainMenu {
         EXIT_REPOSITION_VALUES[2],
         EXIT_REPOSITION_VALUES[3]);
     exitButton.create();
-    guiObjects[1] = exitButton;
+    buttons[1] = exitButton;
   }
 
   public static void render(GuiRenderer renderer) {
@@ -105,13 +113,13 @@ public class MainMenu {
     window.setBackgroundColour(colour.getX(), colour.getY(), colour.getZ(), 1f);
   }
 
-  private static GuiObject initButton(Window window, float xEdge, float xOffset, float yEdge, float yOffset) {
+  private static ButtonObject initButton(Window window, float xEdge, float xOffset, float yEdge, float yOffset) {
     Mesh tempMesh = new Mesh(
         new Vertex2D[] {TOP_LEFT_VERTEX, TOP_RIGHT_VERTEX, BOTTOM_LEFT_VERTEX, BOTTOM_RIGHT_VERTEX},
         BUTTON_INDICES,
         new Material(BUTTON_TEXTURE));
 
-    return new GuiObject(
+    return new ButtonObject(
         new Vector2f(xEdge * window.getxSpan() + xOffset, yEdge * window.getySpan() + yOffset),
         new Vector2f(1, 1),
         tempMesh,

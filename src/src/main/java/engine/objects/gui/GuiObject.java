@@ -3,7 +3,6 @@ package engine.objects.gui;
 import engine.Window;
 import engine.graphics.Mesh;
 import engine.graphics.Vertex3D;
-import engine.io.Input;
 import engine.tools.MousePicker;
 import math.Vector2f;
 import math.Vector3f;
@@ -56,35 +55,46 @@ public class GuiObject {
   }
 
   public Boolean isMouseOver(Window window) {
+    // Get normalised Mouse Positions
     Vector2f normalisedMouse = MousePicker.getNormalisedDeviceCoordinates(window);
-    float normalX = normalisedMouse.getX();
-    float normalY = normalisedMouse.getY();
-    float minX = 0;
-    float maxX = 0;
-    float minY = 0;
-    float maxY = 0;
-
-    // Calculate min and max values
+    // Get normalised Vertex Positions
     Vector2f[] positions = getNormalisedVertexPositions(window);
-    for (Vector2f position : positions) {
-      if (position.getX() < minX) {
-        minX = position.getX();
-      }
-      if (position.getX() > maxX) {
-        maxX = position.getX();
-      }
-      if (position.getY() < minY) {
-        minY = position.getY();
-      }
-      if (position.getY() > maxY) {
-        maxY = position.getY();
-      }
-    }
 
-    Boolean withinX = ((normalX >= minX) && (normalX <= maxX));
-    Boolean withinY = ((normalY >= minY) && (normalY <= maxY));
-    // Check if X is within boundaries
-    return (withinX && withinY);
+    // Check if There are a valid amount of vertices
+    if (positions.length >= 3) {
+      float normalX = normalisedMouse.getX();
+      float normalY = normalisedMouse.getY();
+      // Set initial values to be that of the first Vertex
+      float minX = positions[0].getX();
+      float maxX = positions[0].getX();
+      float minY = positions[0].getY();
+      float maxY = positions[0].getY();
+
+      // Calculate min and max values
+      for (int i = 1; i < positions.length; i++) {
+        if (positions[i].getX() < minX) {
+          minX = positions[i].getX();
+        }
+        if (positions[i].getX() > maxX) {
+          maxX = positions[i].getX();
+        }
+        if (positions[i].getY() < minY) {
+          minY = positions[i].getY();
+        }
+        if (positions[i].getY() > maxY) {
+          maxY = positions[i].getY();
+        }
+      }
+
+      System.out.println("Min-X: " + minX + " Max-X: " + maxX + " Min-Y: " + minY + " Max-Y: " + maxY);
+
+      Boolean withinX = ((normalX >= minX) && (normalX <= maxX));
+      Boolean withinY = ((normalY >= minY) && (normalY <= maxY));
+      // Check if X is within boundaries
+      return (withinX && withinY);
+    } else {
+      return false;
+    }
   }
 
   public float getxEdge() {

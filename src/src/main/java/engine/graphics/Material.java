@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import java.io.IOException;
+import math.Vector3f;
 import org.apache.commons.io.FilenameUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -12,6 +13,7 @@ public class Material {
   private float width;
   private float height;
   private int textureID;
+  private Vector3f colorOffset = new Vector3f(1, 1, 1);
 
   /**
    * Instantiates a new Material.
@@ -54,5 +56,13 @@ public class Material {
 
   public int getTextureID() {
     return textureID;
+  }
+
+  public Vector3f getColorOffset() {
+    return colorOffset;
+  }
+
+  public void setColorOffset(Vector3f colorOffset) {
+    this.colorOffset = colorOffset;
   }
 }

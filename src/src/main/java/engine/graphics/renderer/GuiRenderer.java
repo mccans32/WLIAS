@@ -60,6 +60,11 @@ public class GuiRenderer {
   private void setUniforms(GuiObject object) {
     setModelUniform(object);
     setProjectionUniform();
+    setColourOffsetUniform(object);
+  }
+
+  private void setColourOffsetUniform(GuiObject object) {
+    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffset());
   }
 
   private void setModelUniform(GuiObject object) {
