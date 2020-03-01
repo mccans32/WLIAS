@@ -1,4 +1,4 @@
-package engine.objects;
+package engine.objects.world;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

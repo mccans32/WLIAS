@@ -1,17 +1,16 @@
 package engine.objects.world;
 
 import engine.io.Input;
-import math.Vector2f;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class Camera {
-  private Vector3f defaultPosition;
-  private Vector3f defaultRotation;
   private static final float MIN_CAMERA_Z = 1f;
   private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
   private static final float MOVE_SPEED = 0.05f;
+  private Vector3f defaultPosition;
+  private Vector3f defaultRotation;
   private float defaultDistance;
   private Vector3f position;
   private Vector3f rotation;
@@ -36,6 +35,14 @@ public class Camera {
 
   public static float getZoomModifier() {
     return ZOOM_MODIFIER;
+  }
+
+  public Vector3f getDefaultPosition() {
+    return defaultPosition;
+  }
+
+  public Vector3f getDefaultRotation() {
+    return defaultRotation;
   }
 
   public boolean isFrozen() {

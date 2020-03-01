@@ -1,6 +1,7 @@
 package math;
 
 import Jama.Matrix;
+import java.util.Arrays;
 
 // A Matrix4f is visualised as a 2D Array, However the GPU requires the vector to be in 1D
 // Matrix4f is read in by Column Major Order so is set by (col, row);
@@ -341,4 +342,20 @@ public class Matrix4f {
     return elements.clone();
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Matrix4f matrix4f = (Matrix4f) o;
+    return Arrays.equals(elements, matrix4f.elements);
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(elements);
+  }
 }

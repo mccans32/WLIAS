@@ -30,6 +30,8 @@ public class World {
   public static void create(Window window, Camera camera) {
     // reset the camera to its default position.
     camera.reset();
+    // unfreeze the camera in-case it has been frozen before
+    camera.unfreeze();
     setBackgroundColour(window);
     createObjects();
   }
@@ -39,6 +41,7 @@ public class World {
   }
 
   public static void update() {
+
   }
 
   private static void renderTiles(WorldRenderer renderer, Camera camera) {

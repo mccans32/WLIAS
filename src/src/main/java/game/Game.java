@@ -38,6 +38,10 @@ public class Game {
   private Shader worldShader;
   private Shader guiShader;
 
+  public static GameState getState() {
+    return state;
+  }
+
   public static void setState(GameState state) {
     Game.state = state;
   }
@@ -94,6 +98,7 @@ public class Game {
     } else if (state == GameState.GAME) {
       //  create Gui
       Gui.create(window);
+      World.create(window, camera);
     }
 
   }
