@@ -9,14 +9,13 @@ import engine.graphics.Vertex3D;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
 import map.tiles.PlainTile;
-import map.tiles.Tile;
 import map.tiles.WaterTile;
 import math.Vector3f;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.glfw.GLFW;
 
-public class TileObjectsTests {
+public class TileWorldObjectsTests {
   private static final Vector3f DEFAULT_POSITION = new Vector3f(0, 0, 0);
   private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
   private static final Vector3f DEFAULT_SCALE = new Vector3f(1, 1, 1);
@@ -26,10 +25,10 @@ public class TileObjectsTests {
   private static final Vertex3D BOTTOM_RIGHT = new Vertex3D(new Vector3f(1, -1, 0));
   private static final int[] INDICES = {0, 1, 2, 3};
   private Mesh defaultMesh;
-  private TileObject waterTile;
-  private TileObject aridTile;
-  private TileObject fertileTile;
-  private TileObject plainTile;
+  private TileWorldObject waterTile;
+  private TileWorldObject aridTile;
+  private TileWorldObject fertileTile;
+  private TileWorldObject plainTile;
   private Window window;
 
   /**
@@ -46,16 +45,16 @@ public class TileObjectsTests {
     window.setVisible(false);
     window.create();
 
-    waterTile = new TileObject(
+    waterTile = new TileWorldObject(
         DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new WaterTile());
 
-    fertileTile = new TileObject(
+    fertileTile = new TileWorldObject(
         DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new FertileTile());
 
-    aridTile = new TileObject(
+    aridTile = new TileWorldObject(
         DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new AridTile());
 
-    plainTile = new TileObject(
+    plainTile = new TileWorldObject(
         DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new PlainTile());
   }
 

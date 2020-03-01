@@ -76,31 +76,31 @@ public class GuiObject {
     // Get normalised Mouse Positions
     Vector2f normalisedMouse = MousePicker.getNormalisedDeviceCoordinates(window);
     // Get normalised Vertex Positions
-    Vector2f[] positions = getNormalisedVertexPositions(window);
+    Vector2f[] guiVertexPositions = getNormalisedVertexPositions(window);
 
     // Check if There are a valid amount of vertices
-    if (positions.length >= 3) {
+    if (guiVertexPositions.length >= 3) {
       float normalX = normalisedMouse.getX();
       float normalY = normalisedMouse.getY();
       // Set initial values to be that of the first Vertex
-      float minX = positions[0].getX();
-      float maxX = positions[0].getX();
-      float minY = positions[0].getY();
-      float maxY = positions[0].getY();
+      float minX = guiVertexPositions[0].getX();
+      float maxX = guiVertexPositions[0].getX();
+      float minY = guiVertexPositions[0].getY();
+      float maxY = guiVertexPositions[0].getY();
 
       // Calculate min and max values
-      for (int i = 1; i < positions.length; i++) {
-        if (positions[i].getX() < minX) {
-          minX = positions[i].getX();
+      for (int i = 1; i < guiVertexPositions.length; i++) {
+        if (guiVertexPositions[i].getX() < minX) {
+          minX = guiVertexPositions[i].getX();
         }
-        if (positions[i].getX() > maxX) {
-          maxX = positions[i].getX();
+        if (guiVertexPositions[i].getX() > maxX) {
+          maxX = guiVertexPositions[i].getX();
         }
-        if (positions[i].getY() < minY) {
-          minY = positions[i].getY();
+        if (guiVertexPositions[i].getY() < minY) {
+          minY = guiVertexPositions[i].getY();
         }
-        if (positions[i].getY() > maxY) {
-          maxY = positions[i].getY();
+        if (guiVertexPositions[i].getY() > maxY) {
+          maxY = guiVertexPositions[i].getY();
         }
       }
 

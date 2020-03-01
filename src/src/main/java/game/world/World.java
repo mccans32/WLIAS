@@ -5,7 +5,7 @@ import engine.graphics.Mesh;
 import engine.graphics.Vertex3D;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
-import engine.objects.world.TileObject;
+import engine.objects.world.TileWorldObject;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class World {
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
 
-  private static ArrayList<TileObject> tiles = new ArrayList<>();
+  private static ArrayList<TileWorldObject> tiles = new ArrayList<>();
 
   /**
    * Create.
@@ -45,8 +45,8 @@ public class World {
   }
 
   private static void renderTiles(WorldRenderer renderer, Camera camera) {
-    for (TileObject tileObject : tiles) {
-      renderer.renderObject(tileObject, camera);
+    for (TileWorldObject tileWorldObject : tiles) {
+      renderer.renderObject(tileWorldObject, camera);
     }
   }
 
@@ -64,7 +64,7 @@ public class World {
 
   // TODO ADD MAP TO CONTRUCTOR
   private static void createTileObjects() {
-    // TODO READ EACH TILE FORM MAP AND CREATE CORRESPONDINF TILE OBJECT
+    // TODO READ EACH TILE FORM MAP AND CREATE CORRESPONDING TILE OBJECT
     createTestObject();
   }
 
@@ -85,7 +85,7 @@ public class World {
                 ColourUtils.convertColor(Color.WHITE), new Vector2f(1f, 0f))
         },
         new int[] {0, 3, 1, 2});
-    TileObject tempTileObject = new TileObject(
+    TileWorldObject tempTileWorldObject = new TileWorldObject(
         new Vector3f(0, 0, 0f),
         new Vector3f(0, 0, 0),
         new Vector3f(1f, 1f, 1f),
@@ -93,8 +93,8 @@ public class World {
         tempTile);
 
     // Create the Object
-    tempTileObject.create();
+    tempTileWorldObject.create();
     // Add to Current Tile List
-    tiles.add(tempTileObject);
+    tiles.add(tempTileWorldObject);
   }
 }
