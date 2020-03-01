@@ -231,9 +231,9 @@ public class Vector3f extends Vector2f {
    */
   public static float length(Vector3f vector) {
     return (float) Math.sqrt(
-        vector.getX() * vector.getX()
-            + vector.getY() * vector.getY()
-            + vector.getZ() * vector.getZ());
+        (vector.getX() * vector.getX())
+            + (vector.getY() * vector.getY())
+            + (vector.getZ() * vector.getZ()));
   }
 
   public static Vector3f normalise(Vector3f vector) {
@@ -314,4 +314,8 @@ public class Vector3f extends Vector2f {
     this.vectorZ = z;
   }
 
+  @Override
+  public String toString() {
+    return "(" + vectorX + ", " + vectorY + ", " + vectorZ + ")";
+  }
 }

@@ -25,6 +25,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
+import engine.io.Input;
 import math.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -36,11 +37,11 @@ import org.lwjgl.opengl.GL11;
  * The type Window.
  */
 public class Window {
-
   /**
    * The Enable vsync.
    */
   static final boolean ENABLE_V_SYNC = true;
+  private static boolean SHOULD_CENTER = false;
   /**
    * The Frames.
    */
@@ -68,9 +69,13 @@ public class Window {
   private Input input;
   private boolean isVisible = true;
   private Matrix4f projectionMatrix;
+  private Matrix4f orthographicMatrix;
   private float fov = 70.0f;
   private float near = 0.1f;
   private float far = 1000f;
+  private float aspect;
+  private float spanX;
+  private float spanY;
 
   /**
    * Instantiates a new Window.
@@ -83,11 +88,10 @@ public class Window {
     this.width = width;
     this.height = height;
     this.title = title;
-    this.projectionMatrix = Matrix4f.projection(
-        fov,
-        (float) width / (float) height,
-        near,
-        far);
+    setAspect();
+    setSpans();
+    createProjectionMatrix();
+    createOrthographicMatrix();
   }
 
   /**
@@ -95,6 +99,14 @@ public class Window {
    */
   public static void setErrorCallback() {
     glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
+  }
+
+  public float getSpanX() {
+    return spanX;
+  }
+
+  public float getSpanY() {
+    return spanY;
   }
 
   public Matrix4f getProjectionMatrix() {
@@ -139,6 +151,10 @@ public class Window {
     glfwSetScrollCallback(window, input.getMouseScroll());
     glfwSetMouseButtonCallback(window, input.getMouseButtons());
 
+  }
+
+  public long getWindow() {
+    return window;
   }
 
   /**
@@ -188,10 +204,15 @@ public class Window {
   public void centerScreen() {
     GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     // X value
+    assert videoMode != null;
     windowPosX[0] = (videoMode.width() - width) / 2;
     // Y value
     windowPosY[0] = (videoMode.height() - height) / 2;
     glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
+  }
+
+  public Matrix4f getOrthographicMatrix() {
+    return orthographicMatrix;
   }
 
   /**
@@ -199,8 +220,15 @@ public class Window {
    */
   public void update() {
     if (hasResized) {
+      setAspect();
+      setSpans();
+      // Must update projection matrix to prevent distortion;
+      createProjectionMatrix();
+      createOrthographicMatrix();
       GL11.glViewport(0, 0, width, height);
-      centerScreen();
+      if (SHOULD_CENTER) {
+        centerScreen();
+      }
       hasResized = false;
     }
     GL11.glClearColor(backgroundR, backgroundG, backgroundB, backgroundAlpha);
@@ -322,6 +350,10 @@ public class Window {
     return hasResized;
   }
 
+  public float getAspect() {
+    return aspect;
+  }
+
   /**
    * Sets size.
    *
@@ -334,4 +366,31 @@ public class Window {
     hasResized = true;
   }
 
+
+  private void createProjectionMatrix() {
+    this.projectionMatrix = Matrix4f.projection(
+        fov,
+        (float) width / (float) height,
+        near,
+        far);
+  }
+
+  private void createOrthographicMatrix() {
+    this.orthographicMatrix = Matrix4f.orthographic(-1 * spanX, spanX, -1 * spanY, spanY, -1, 1);
+  }
+
+  private void setAspect() {
+    this.aspect = (float) width / (float) height;
+  }
+
+  private void setSpans() {
+    // set xSpan and ySpan for orthographic projection and for repositioning gui
+    this.spanX = 1;
+    this.spanY = 1;
+    if (aspect >= 1) {
+      this.spanX *= aspect;
+    } else {
+      this.spanY = this.spanX / aspect;
+    }
+  }
 }

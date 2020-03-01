@@ -213,4 +213,9 @@ public class Vector2f {
   public int hashCode() {
     return Objects.hash(vectorX, vectorY);
   }
+
+  @Override
+  public String toString() {
+    return  "(" + vectorX + ", " + vectorY + ")";
+  }
 }

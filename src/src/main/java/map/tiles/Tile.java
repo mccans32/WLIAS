@@ -1,10 +1,10 @@
 package map.tiles;
 
 public abstract class Tile {
-
-  public float positionX;
-  public float positionY;
-  public float terrainHealth;
+  private String image = "/images/default_texture.png";
+  private float positionX;
+  private float positionY;
+  private float terrainHealth;
 
   public float getPositionX() {
     return positionX;
@@ -37,5 +37,9 @@ public abstract class Tile {
 
   public void setTerrainHealth(float terrainHealth) {
     this.terrainHealth = terrainHealth;
+  }
+
+  public String getImage() {
+    return image;
   }
 }

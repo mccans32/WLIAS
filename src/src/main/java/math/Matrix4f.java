@@ -1,8 +1,12 @@
 package math;
 
+import Jama.Matrix;
+import java.util.Arrays;
+
 // A Matrix4f is visualised as a 2D Array, However the GPU requires the vector to be in 1D
 // Matrix4f is read in by Column Major Order so is set by (col, row);
 public class Matrix4f {
+
   private static final int SIZE = 4;
   private float[] elements = new float[SIZE * SIZE];
 
@@ -57,6 +61,36 @@ public class Matrix4f {
     result.set(2, 3, -1.0f);
     result.set(3, 2, -((2 * far * near) / range));
     result.set(3, 3, 0.0f);
+
+    return result;
+  }
+
+  /**
+   * Orthographic matrix 4 f.
+   *
+   * @param left   the left
+   * @param right  the right
+   * @param bottom the bottom
+   * @param top    the top
+   * @param near   the near
+   * @param far    the far
+   * @return the matrix 4 f
+   */
+  public static Matrix4f orthographic(float left, float right, float bottom, float top, float near,
+                                      float far) {
+    Matrix4f result = Matrix4f.identity();
+
+    float tx = -(right + left) / (right - left);
+    float ty = -(top + bottom) / (top - bottom);
+    float tz = -(far + near) / (far - near);
+
+    result.set(0, 0, 2 / (right - left));
+    result.set(1, 1, 2 / (top - bottom));
+    result.set(2, 2, -2 / (far - near));
+    result.set(3, 0, tx);
+    result.set(3, 1, ty);
+    result.set(3, 2, tz);
+    result.set(3, 3, 1);
 
     return result;
   }
@@ -208,12 +242,84 @@ public class Matrix4f {
    * @param scale    the scale
    * @return the matrix 4 f
    */
-  public static Matrix4f transform(Vector2f position, Vector3f rotation, Vector2f scale) {
+  public static Matrix4f transform(Vector2f position, Vector2f rotation, Vector2f scale) {
     return transform(
         new Vector3f(position.getX(), position.getY(), 0f),
-        rotation,
-        new Vector3f(scale.getX(), scale.getY(), 1f)
-    );
+        new Vector3f(rotation.getX(), position.getY(), 0f),
+        new Vector3f(scale.getX(), scale.getY(), 1f));
+  }
+
+  /**
+   * Transform vector 4 f.
+   *
+   * @param matrix the matrix
+   * @param vector the vector
+   * @return the vector 4 f
+   */
+  public static Vector4f transform(Matrix4f matrix, Vector4f vector) {
+    // Convert Matrix4f to JAMA Matrix
+    double[][] matrixArray = matrixToArray(matrix);
+    Matrix matrix1 = new Matrix(matrixArray);
+    // Convert Vector4f to Jama Matrix
+    double[] vectorArray = {
+        (double) vector.getX(),
+        (double) vector.getY(),
+        (double) vector.getZ(),
+        (double) vector.getW()};
+    Matrix matrix2 = new Matrix(vectorArray, 1);
+    Matrix matrix3 = matrix2.times(matrix1);
+    double[] transformation = matrix3.getArray()[0];
+    return new Vector4f(
+        (float) transformation[0],
+        (float) transformation[1],
+        (float) transformation[2],
+        (float) transformation[3]);
+  }
+
+  /**
+   * Invert matrix 4 f.
+   *
+   * @param matrix the matrix
+   * @return the matrix 4 f
+   */
+  public static Matrix4f invert(Matrix4f matrix) {
+    double[][] matrixArray = matrixToArray(matrix);
+    Matrix tempMatrix = new Matrix(matrixArray);
+    tempMatrix = tempMatrix.inverse();
+    double[][] inverseArray = tempMatrix.getArray();
+    return arrayToMatrix(inverseArray);
+  }
+
+  /**
+   * Matrix to array double [ ] [ ].
+   *
+   * @param matrix the matrix
+   * @return the double [ ] [ ]
+   */
+  public static double[][] matrixToArray(Matrix4f matrix) {
+    double[][] matrixArray = new double[SIZE][SIZE];
+    for (int row = 0; row < SIZE; row++) {
+      for (int col = 0; col < SIZE; col++) {
+        matrixArray[row][col] = matrix.get(col, row);
+      }
+    }
+    return matrixArray;
+  }
+
+  /**
+   * Array to matrix matrix 4 f.
+   *
+   * @param matrixArray the matrix array
+   * @return the matrix 4 f
+   */
+  public static Matrix4f arrayToMatrix(double[][] matrixArray) {
+    Matrix4f result = Matrix4f.identity();
+    for (int row = 0; row < SIZE; row++) {
+      for (int col = 0; col < SIZE; col++) {
+        result.set(col, row, (float) matrixArray[row][col]);
+      }
+    }
+    return result;
   }
 
   public static int getSize() {
@@ -236,4 +342,20 @@ public class Matrix4f {
     return elements.clone();
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Matrix4f matrix4f = (Matrix4f) o;
+    return Arrays.equals(elements, matrix4f.elements);
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(elements);
+  }
 }

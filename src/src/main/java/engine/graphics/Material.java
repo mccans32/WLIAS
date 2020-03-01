@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import java.io.IOException;
+import math.Vector3f;
 import org.apache.commons.io.FilenameUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -12,6 +13,7 @@ public class Material {
   private float width;
   private float height;
   private int textureID;
+  private Vector3f colorOffset = new Vector3f(1, 1, 1);
 
   /**
    * Instantiates a new Material.
@@ -26,15 +28,7 @@ public class Material {
    * Create.
    */
   public void create() {
-    try {
-      Texture texture = TextureLoader.getTexture(FilenameUtils.getExtension(path),
-          Material.class.getResourceAsStream(path), GL11.GL_NEAREST);
-      this.height = texture.getHeight();
-      this.width = texture.getWidth();
-      this.textureID = texture.getTextureID();
-    } catch (IOException e) {
-      System.err.println("Could not access path: " + path);
-    }
+    loadTexture(path);
   }
 
   /**
@@ -54,5 +48,37 @@ public class Material {
 
   public int getTextureID() {
     return textureID;
+  }
+
+  public Vector3f getColorOffset() {
+    return colorOffset;
+  }
+
+  public void setColorOffset(Vector3f colorOffset) {
+    this.colorOffset = colorOffset;
+  }
+
+  private void loadTexture(String path) {
+    try {
+      Texture texture = TextureLoader.getTexture(FilenameUtils.getExtension(path),
+          Material.class.getResourceAsStream(path), GL11.GL_NEAREST);
+      this.height = texture.getHeight();
+      this.width = texture.getWidth();
+      this.textureID = texture.getTextureID();
+    } catch (IOException e) {
+      System.err.println("Could not access path: " + path);
+    }
+  }
+
+  /**
+   * Sets texture.
+   *
+   * @param path the path
+   */
+  public void setTexture(String path) {
+    // Assign the New Texture Path
+    this.path = path;
+    // Load in the new Texture
+    loadTexture(path);
   }
 }
