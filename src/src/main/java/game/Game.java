@@ -3,12 +3,15 @@ package game;
 import engine.Window;
 import engine.graphics.Shader;
 import engine.graphics.renderer.GuiRenderer;
+import engine.graphics.renderer.TextRenderer;
 import engine.graphics.renderer.WorldRenderer;
+import engine.objects.gui.GuiText;
 import engine.objects.world.Camera;
 import engine.tools.MousePicker;
 import game.menu.MainMenu;
 import game.world.Gui;
 import game.world.World;
+import math.Vector2f;
 import math.Vector3f;
 
 /**
@@ -26,9 +29,16 @@ public class Game {
   static final String FRAGMENT_SHADER_FILE_NAME = "mainFragment.glsl";
   static final String GUI_VERTEX_SHADER_FILE_NAME = "guiVertex.glsl";
   static final String GUI_FRAGMENT_SHADER_FILE_NAME = "guiFragment.glsl";
+  static final String TEXT_VERTEX_SHADER_FILE_NAME = "textVertex.glsl";
+  static final String TEXT_FRAGMENT_SHADER_FILE_NAME = "textFragment.glsl";
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
+  private static TextRenderer textRenderer;
+  private final String TEMP_SENTENCE = "HHHHHHHH";
+  private final String FONT_FILE_DIRECTORY = "/text/ExportedFont.png";
+  private final int NUM_COLUMNS = 16;
+  private final int NUM_ROWS = 16;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
   private MousePicker mousePicker;
   /**
@@ -37,6 +47,9 @@ public class Game {
   private Window window;
   private Shader worldShader;
   private Shader guiShader;
+  private Shader textShader;
+  // Test global variables
+  private GuiText guiText;
 
   public static GameState getState() {
     return state;
@@ -79,18 +92,25 @@ public class Game {
     // Initialise Gui Shader
     guiShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + GUI_VERTEX_SHADER_FILE_NAME,
         SHADERS_PATH + FRAGMENT_DIRECTORY + GUI_FRAGMENT_SHADER_FILE_NAME);
+    // Initialise Text Shader
+    textShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + TEXT_VERTEX_SHADER_FILE_NAME,
+        SHADERS_PATH + FRAGMENT_DIRECTORY + TEXT_FRAGMENT_SHADER_FILE_NAME);
     // Create main window
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TILE);
     // Initialise WorldRenderer
     worldRenderer = new WorldRenderer(window, worldShader);
     guiRenderer = new GuiRenderer(window, guiShader);
+    textRenderer = new TextRenderer(window, guiShader);
     window.create();
     // Create World Shader
     worldShader.create();
     // Create Gui Shader
     guiShader.create();
+    // Create Text Shader
+    textShader.create();
     // Create Mouse Picker
     mousePicker = new MousePicker(camera, window.getProjectionMatrix());
+    testText();
 
     if (state == GameState.MAIN_MENU) {
       // Create the Main Menu
@@ -130,6 +150,7 @@ public class Game {
   public void render() {
     if (state == GameState.MAIN_MENU) {
       MainMenu.render(guiRenderer);
+      textRenderer.renderObject(guiText);
     } else { // state == GameState.GAME;
       // Render all game objects
       Gui.render(guiRenderer);
@@ -137,5 +158,11 @@ public class Game {
       World.render(worldRenderer, camera);
     }
     window.swapBuffers();
+  }
+
+  public void testText() {
+    guiText = new GuiText(TEMP_SENTENCE, FONT_FILE_DIRECTORY, NUM_COLUMNS, NUM_ROWS, new Vector2f(-1 * window.getSpanX() + 0.1f, 1 * window.getSpanY() - 0.1f),
+        new Vector2f(1, 1));
+    guiText.getMesh().createText();
   }
 }

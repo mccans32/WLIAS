@@ -1,14 +1,14 @@
-#version 330
+#version 330 core
 
-in vec2 outTexCoord;
-in vec3 mvPos;
+in vec3 passColor;
+in vec2 passTextureCoords;
+in vec4 passColourOffset;
+
 out vec4 fragColor;
 
-uniform smapler2D texture_smapler;
-uniform vec4 color;
-
+uniform sampler2D tex;
 void main() {
 
-    fragColor = color * texture(texture_smapler, outTexCoord);
+    fragColor = passColourOffset * texture(tex, passTextureCoords);
 
 }

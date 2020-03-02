@@ -127,6 +127,17 @@ public class Mesh {
   /**
    * Create.
    */
+  public void createText() {
+    // Create Vertex Array Object and Bind it
+    vao = GL30.glGenVertexArrays();
+    GL30.glBindVertexArray(vao);
+    // Initialise the Buffers
+    initialisePositionBuffer();
+    initialiseColourBuffer();
+    initialiseTextureBuffer();
+    initialiseIndicesBuffer();
+  }
+
   public void create() {
     //Create the Material
     material.create();
