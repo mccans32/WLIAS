@@ -3,6 +3,7 @@ package engine.objects.gui;
 import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Vertex3D;
+import engine.utils.ListToArray;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +56,8 @@ public class GuiText {
     float titleHeight = (float) material.getHeight() / (float) numRows;
     createVectors(positions, textCoordinates, indices, titleWidth, titleHeight, numChars, chars);
     createVertex(positions, textCoordinates, vertexList);
-    Vertex3D[] vertexArray = (Vertex3D[]) vertexList.toArray();
-    int[] indicesArray = new int[indices.size()];
+    Vertex3D[] vertexArray = ListToArray.vertex3DListToArray(vertexList);
+    int[] indicesArray = ListToArray.integerListToIntArray(indices);
     for (int i = 0; i < indicesArray.length; i++) {
       indicesArray[i] = indices.get(i);
     }
