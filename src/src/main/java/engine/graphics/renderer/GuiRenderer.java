@@ -42,7 +42,7 @@ public class GuiRenderer {
     GL30.glEnableVertexAttribArray(0);
     // Enable Index 1 for Shaders (Colour)
     GL30.glEnableVertexAttribArray(1);
-    // Enable Index 1 for Shaders (Texture)
+    // Enable Index 2 for Shaders (Texture)
     GL30.glEnableVertexAttribArray(2);
     // Bind Indices
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, object.getMesh().getIbo());

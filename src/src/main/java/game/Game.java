@@ -1,5 +1,11 @@
 package game;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.newdawn.slick.opengl.renderer.SGL.GL_ONE_MINUS_SRC_ALPHA;
+import static org.newdawn.slick.opengl.renderer.SGL.GL_SRC_ALPHA;
+
 import engine.Window;
 import engine.graphics.Shader;
 import engine.graphics.renderer.GuiRenderer;
@@ -35,8 +41,8 @@ public class Game {
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
   private static TextRenderer textRenderer;
-  private final String TEMP_SENTENCE = "HHHHHHHH";
-  private final String FONT_FILE_DIRECTORY = "/text/ExportedFont.png";
+  private final String TEMP_SENTENCE = "TEST";
+  private final String FONT_FILE_DIRECTORY = "/text/Untitled.png";
   private final int NUM_COLUMNS = 16;
   private final int NUM_ROWS = 16;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
@@ -97,11 +103,14 @@ public class Game {
         SHADERS_PATH + FRAGMENT_DIRECTORY + TEXT_FRAGMENT_SHADER_FILE_NAME);
     // Create main window
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TILE);
+
     // Initialise WorldRenderer
     worldRenderer = new WorldRenderer(window, worldShader);
     guiRenderer = new GuiRenderer(window, guiShader);
     textRenderer = new TextRenderer(window, guiShader);
     window.create();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // Create World Shader
     worldShader.create();
     // Create Gui Shader
@@ -110,6 +119,7 @@ public class Game {
     textShader.create();
     // Create Mouse Picker
     mousePicker = new MousePicker(camera, window.getProjectionMatrix());
+    // Support for transparencies
     testText();
 
     if (state == GameState.MAIN_MENU) {
@@ -154,6 +164,7 @@ public class Game {
     } else { // state == GameState.GAME;
       // Render all game objects
       Gui.render(guiRenderer);
+      textRenderer.renderObject(guiText);
       // Render world objects
       World.render(worldRenderer, camera);
     }

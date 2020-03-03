@@ -98,6 +98,8 @@ public class Shader {
 
   private void linkProgram() {
     GL20.glLinkProgram(programID);
+    System.out.println(GL20.GL_LINK_STATUS);
+    System.out.println(GL20.glGetProgrami(programID, GL20.GL_LINK_STATUS));
     // Check if Linked Properly
     if (GL20.glGetProgrami(programID, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
       System.err.println("Program Link Error: " + GL20.glGetShaderInfoLog(programID));

@@ -67,15 +67,13 @@ public class GuiText {
     float[] normals = new float[0];
     List<Integer> indices = new ArrayList<>();
 
-    float titleWidth = (float) material.getWidth() / (float) numColumns;
-    float titleHeight = (float) material.getHeight() / (float) numRows;
+    System.out.println(material.getImageWidth() + ", " + material.getImageHeight());
+    float titleWidth = material.getWidth() / (float) numColumns;
+    float titleHeight = material.getHeight() / (float) numRows;
     createVectors(positions, textCoordinates, indices, titleWidth, titleHeight, numChars, chars);
     createVertex(positions, textCoordinates, vertexList);
     Vertex3D[] vertexArray = ListToArray.vertex3DListToArray(vertexList);
     int[] indicesArray = ListToArray.integerListToIntArray(indices);
-    for (Vertex3D vertex : vertexArray) {
-      System.out.println(vertex.getPosition().getX() + " ," + vertex.getPosition().getY());
-    }
     return new Mesh(vertexArray, indicesArray, material);
   }
 

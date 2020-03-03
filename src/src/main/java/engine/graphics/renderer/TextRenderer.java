@@ -2,6 +2,7 @@ package engine.graphics.renderer;
 
 import engine.Window;
 import engine.graphics.Shader;
+import engine.objects.gui.GuiObject;
 import engine.objects.gui.GuiText;
 import math.Matrix4f;
 import math.Vector2f;
@@ -42,7 +43,7 @@ public class TextRenderer {
     GL30.glEnableVertexAttribArray(0);
     // Enable Index 1 for Shaders (Colour)
     GL30.glEnableVertexAttribArray(1);
-    // Enable Index 1 for Shaders (Texture)
+    // Enable Index 2 for Shaders (Texture)
     GL30.glEnableVertexAttribArray(2);
     // Bind Indices
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, object.getMesh().getIbo());
@@ -60,6 +61,7 @@ public class TextRenderer {
   private void setUniforms(GuiText object) {
     setModelUniform(object);
     setProjectionUniform();
+    setColourOffsetUniform(object);
   }
 
   private void setModelUniform(GuiText object) {
@@ -70,6 +72,10 @@ public class TextRenderer {
             object.getPosition(),
             DEFAULT_ROTATION,
             object.getScale()));
+  }
+
+  private void setColourOffsetUniform(GuiText object) {
+    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffset());
   }
 
   private void setProjectionUniform() {

@@ -11,7 +11,9 @@ import org.newdawn.slick.opengl.TextureLoader;
 public class Material {
   private String path;
   private float width;
+  private float imageWidth;
   private float height;
+  private float imageHeight;
   private int textureID;
   private Vector3f colorOffset = new Vector3f(1, 1, 1);
 
@@ -58,11 +60,21 @@ public class Material {
     this.colorOffset = colorOffset;
   }
 
+  public float getImageWidth() {
+    return imageWidth;
+  }
+
+  public float getImageHeight() {
+    return imageHeight;
+  }
+
   private void loadTexture(String path) {
     try {
       Texture texture = TextureLoader.getTexture(FilenameUtils.getExtension(path),
           Material.class.getResourceAsStream(path), GL11.GL_NEAREST);
+      this.imageHeight = texture.getImageHeight();
       this.height = texture.getHeight();
+      this.imageWidth = texture.getImageWidth();
       this.width = texture.getWidth();
       this.textureID = texture.getTextureID();
     } catch (IOException e) {
