@@ -24,6 +24,11 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
 
 import engine.io.Input;
 import math.Matrix4f;
@@ -179,12 +184,12 @@ public class Window {
 
     // Center the screen
     centerScreen();
-    //Set Current Context to Window
+    //Set ds Context to Window
     glfwMakeContextCurrent(window);
     // Enables OpenGL functionality
     GL.createCapabilities();
     // Set Depth Test
-    GL11.glEnable(GL11.GL_DEPTH_TEST);
+    glEnable(GL11.GL_DEPTH_TEST);
     //Set local callbacks
     setLocalCallbacks();
     //Display Window
@@ -195,7 +200,6 @@ public class Window {
     setVSync(ENABLE_V_SYNC);
     // set timer for window
     time = currentTimeMillis();
-
   }
 
   /**

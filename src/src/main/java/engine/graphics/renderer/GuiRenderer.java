@@ -5,6 +5,7 @@ import engine.graphics.Shader;
 import engine.objects.gui.GuiObject;
 import math.Matrix4f;
 import math.Vector2f;
+import math.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -72,9 +73,9 @@ public class GuiRenderer {
         "model",
 
         Matrix4f.transform(
-            object.getPosition(),
-            DEFAULT_ROTATION,
-            object.getScale()));
+            new Vector3f(object.getPosition().getX(), object.getPosition().getY(), 0.5f),
+            new Vector3f(DEFAULT_ROTATION.getX(), DEFAULT_ROTATION.getY(), 0),
+            new Vector3f(1, 1, 1)));
   }
 
   private void setProjectionUniform() {

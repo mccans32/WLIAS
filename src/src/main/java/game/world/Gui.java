@@ -5,13 +5,22 @@ import engine.graphics.Material;
 import engine.graphics.Mesh;
 import engine.graphics.Vertex2D;
 import engine.graphics.renderer.GuiRenderer;
+import engine.graphics.renderer.TextRenderer;
 import engine.objects.gui.GuiObject;
+import engine.objects.gui.GuiText;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector2f;
+import math.Vector3f;
 
 public class Gui {
+  private static final String TEMP_SENTENCE = "0";
+  private static final String FONT_FILE_DIRECTORY = "/text/defaultFont.png";
+  private static final Vector3f DEFAULT_TEXT_COLOUR = ColourUtils.convertColor(Color.BLACK);
+  private static final int NUM_COLUMNS = 16;
+  private static final int NUM_ROWS = 16;
   private static GuiObject tempGui;
+  private static GuiText tempText;
   private static float[] TEMP_GUI_VALUES = {-1, 0.1f, 1, -0.1f};
 
   public static void create(Window window) {
@@ -23,6 +32,7 @@ public class Gui {
   }
 
   private static void createObjects(Window window) {
+    createTempText(window);
     createTempGui(window);
   }
 
@@ -51,12 +61,22 @@ public class Gui {
     tempGui.create();
   }
 
+  private static void createTempText(Window window) {
+    tempText = new GuiText(TEMP_SENTENCE, FONT_FILE_DIRECTORY, NUM_COLUMNS, NUM_ROWS,
+        DEFAULT_TEXT_COLOUR,
+        new Vector2f(-1 * window.getSpanX() + 0, 1 * window.getSpanY() + 0),
+        new Vector2f(1, 1),
+        -1f, 0, 1f, 0);
+    tempText.getMesh().createText();
+  }
 
-  public static void render(GuiRenderer renderer) {
-    renderer.renderObject(tempGui);
+  public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    textRenderer.renderObject(tempText);
+//    guiRenderer.renderObject(tempGui);
   }
 
   public static void resize(Window window) {
+    tempText.reposition(window.getSpanX(), window.getSpanY());
     tempGui.reposition(window.getSpanX(), window.getSpanY());
   }
 }

@@ -1,11 +1,5 @@
 package game;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.newdawn.slick.opengl.renderer.SGL.GL_ONE_MINUS_SRC_ALPHA;
-import static org.newdawn.slick.opengl.renderer.SGL.GL_SRC_ALPHA;
-
 import engine.Window;
 import engine.graphics.Shader;
 import engine.graphics.renderer.GuiRenderer;
@@ -14,9 +8,11 @@ import engine.graphics.renderer.WorldRenderer;
 import engine.objects.gui.GuiText;
 import engine.objects.world.Camera;
 import engine.tools.MousePicker;
+import engine.utils.ColourUtils;
 import game.menu.MainMenu;
 import game.world.Gui;
 import game.world.World;
+import java.awt.Color;
 import math.Vector2f;
 import math.Vector3f;
 
@@ -41,10 +37,6 @@ public class Game {
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
   private static TextRenderer textRenderer;
-  private final String TEMP_SENTENCE = "TEST";
-  private final String FONT_FILE_DIRECTORY = "/text/Untitled.png";
-  private final int NUM_COLUMNS = 16;
-  private final int NUM_ROWS = 16;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
   private MousePicker mousePicker;
   /**
@@ -54,8 +46,6 @@ public class Game {
   private Shader worldShader;
   private Shader guiShader;
   private Shader textShader;
-  // Test global variables
-  private GuiText guiText;
 
   public static GameState getState() {
     return state;
@@ -109,8 +99,6 @@ public class Game {
     guiRenderer = new GuiRenderer(window, guiShader);
     textRenderer = new TextRenderer(window, guiShader);
     window.create();
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // Create World Shader
     worldShader.create();
     // Create Gui Shader
@@ -119,8 +107,6 @@ public class Game {
     textShader.create();
     // Create Mouse Picker
     mousePicker = new MousePicker(camera, window.getProjectionMatrix());
-    // Support for transparencies
-    testText();
 
     if (state == GameState.MAIN_MENU) {
       // Create the Main Menu
@@ -147,10 +133,10 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
     } else { // state == GameState.GAME
-      // Update The Gui
-      Gui.update(window);
       // Update The World
       World.update();
+      // Update The Gui
+      Gui.update(window);
     }
   }
 
@@ -160,20 +146,12 @@ public class Game {
   public void render() {
     if (state == GameState.MAIN_MENU) {
       MainMenu.render(guiRenderer);
-      textRenderer.renderObject(guiText);
     } else { // state == GameState.GAME;
-      // Render all game objects
-      Gui.render(guiRenderer);
-      textRenderer.renderObject(guiText);
       // Render world objects
       World.render(worldRenderer, camera);
+      // Render all game objects
+      Gui.render(guiRenderer, textRenderer);
     }
     window.swapBuffers();
-  }
-
-  public void testText() {
-    guiText = new GuiText(TEMP_SENTENCE, FONT_FILE_DIRECTORY, NUM_COLUMNS, NUM_ROWS, new Vector2f(-1 * window.getSpanX() + 0.1f, 1 * window.getSpanY() - 0.1f),
-        new Vector2f(1, 1));
-    guiText.getMesh().createText();
   }
 }

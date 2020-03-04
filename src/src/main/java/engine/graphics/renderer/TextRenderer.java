@@ -1,8 +1,14 @@
 package engine.graphics.renderer;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.newdawn.slick.opengl.renderer.SGL.GL_ONE_MINUS_SRC_ALPHA;
+import static org.newdawn.slick.opengl.renderer.SGL.GL_SRC_ALPHA;
+
 import engine.Window;
 import engine.graphics.Shader;
-import engine.objects.gui.GuiObject;
 import engine.objects.gui.GuiText;
 import math.Matrix4f;
 import math.Vector2f;
@@ -31,9 +37,20 @@ public class TextRenderer {
    * @param object the object.
    */
   public void renderObject(GuiText object) {
+    initialise();
     bindObject(object);
     drawObject(object);
     unbindObject();
+    terminate();
+  }
+
+  private void initialise() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  }
+
+  private void terminate() {
+    glDisable(GL_BLEND);
   }
 
   private void bindObject(GuiText object) {
@@ -95,7 +112,6 @@ public class TextRenderer {
   }
 
   private void drawObject(GuiText object) {
-//    GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, object.getMesh().getIndices().length);
     GL11.glDrawElements(
         GL11.GL_TRIANGLES,
         object.getMesh().getIndices().length,
