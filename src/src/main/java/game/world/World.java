@@ -61,15 +61,13 @@ public class World {
   }
 
   private static void createObjects() {
-    MapGenerator map = new MapGenerator(2, 2, 1, 2, 0, 1, 1);
+    // TODO REPLACE WITH A MENU TO CHOSE THE ATRIBUTES FOR THE MAP
+    MapGenerator map = new MapGenerator(20, 20, 100, 150, 50, 100, 1);
     map.createMap();
     createTileObjects(map);
   }
 
   private static void createTileObjects(MapGenerator map) {
-//    for (Tile[] tile : map.getSimulationMap()) {
-//      System.out.println(Arrays.toString(tile));
-//    }
     float centreX = calcCentrePos(map.getLandMassSizeX());
     float centreY = calcCentrePos(map.getLandMassSizeY());
     List<Vertex3D> vertexList = new ArrayList<Vertex3D>();
@@ -79,7 +77,7 @@ public class World {
         addToVertexList(mapRepresentation[row][column], row, column, vertexList);
         Mesh tempMesh = new Mesh(ListToArray.ListVertex3DToVertex3DArray(vertexList), new int[] {0, 1, 2, 3});
         TileWorldObject tempTileWorldObject = new TileWorldObject(
-            new Vector3f(0 + (1 * (float) column), 0 + (1 * (float) row), 0f),
+            new Vector3f(centreX + (1 * (float) column), centreY + (1 * (float) row), 0f),
             new Vector3f(0, 0, 0),
             new Vector3f(1f, 1f, 1f),
             tempMesh,
@@ -92,8 +90,12 @@ public class World {
     }
   }
 
-  private static float calcCentrePos(int mapSize) {
-    return 0;
+  private static float calcCentrePos(int mapDimension) {
+    float value = 0;
+    for (int i = 0; i < mapDimension / 2; i++) {
+      value -= (float) 1;
+    }
+    return value;
   }
 
   private static void addToVertexList(Tile currentTile, int row, int column, List<Vertex3D> vertexList) {

@@ -9,6 +9,10 @@ public class Camera {
   private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
   private static final float MOVE_SPEED = 0.05f;
+  private static final float MAX_CAMERA_X = 10f;
+  private static final float MIN_CAMERA_X = -10f;
+  private static final float MAX_CAMERA_Y = 10f;
+  private static final float MIN_CAMERA_Y = -10f;
   private Vector3f defaultPosition;
   private Vector3f defaultRotation;
   private float defaultDistance;
@@ -83,6 +87,17 @@ public class Camera {
         position.setZ(MIN_CAMERA_Z);
       } else {
         position.setZ(Math.min(cameraDistance, MAX_CAMERA_Z));
+      }
+
+      if (this.position.getX() > MAX_CAMERA_X) {
+        position.setX(MAX_CAMERA_X);
+      } else {
+        position.setX(Math.max(position.getX(), MIN_CAMERA_X));
+      }
+      if (this.position.getY() > MAX_CAMERA_Y) {
+        position.setY(MAX_CAMERA_Y);
+      } else {
+        position.setY(Math.max(position.getY(), MIN_CAMERA_Y));
       }
     }
   }
