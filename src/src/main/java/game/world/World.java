@@ -20,8 +20,8 @@ import org.jfree.chart.ChartColor;
 public class World {
   private static final int BORDER_CUT_OFF = 3;
   private static final int WIDTH_OF_TILE = 1;
-  private static final float LOWER_VERTEX_BAND = -0.5f;
-  private static final float UPPER_VERTEX_BAND = 0.5f;
+  private static final float LOWER_VERTEX_BAND = -1f;
+  private static final float UPPER_VERTEX_BAND = 1f;
   private static final float DEFAULT_Z = 0;
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
@@ -69,21 +69,25 @@ public class World {
     // TODO REPLACE WITH A MENU TO CHOSE THE ATRIBUTES FOR THE MAP
     MapGenerator map = new MapGenerator(20, 20, 100, 150, 50, 100, 1);
     map.createMap();
-    createTileObjects(map);
-    camera.setCameraBorder(map.getMapSizeX() / BORDER_CUT_OFF, map.getMapSizeY() / BORDER_CUT_OFF);
+    float tileSize = UPPER_VERTEX_BAND + Math.abs(LOWER_VERTEX_BAND);
+    createTileObjects(map, tileSize);
+    camera.setCameraBorder((map.getMapSizeX() * tileSize) / BORDER_CUT_OFF,
+        (map.getMapSizeY() * tileSize) / BORDER_CUT_OFF);
   }
 
-  private static void createTileObjects(MapGenerator map) {
-    float centreX = calcCentrePos(map.getLandMassSizeX());
-    float centreY = calcCentrePos(map.getLandMassSizeY());
+  private static void createTileObjects(MapGenerator map, float tileSize) {
+    float centreX = calcCentrePos(map.getLandMassSizeX(), tileSize);
+    float centreY = calcCentrePos(map.getLandMassSizeY(), tileSize);
     List<Vertex3D> vertexList = new ArrayList<Vertex3D>();
     Tile[][] mapRepresentation = map.getSimulationMap();
     for (int row = 0; row < map.getMapSizeY(); row++) {
       for (int column = 0; column < map.getMapSizeX(); column++) {
         addToVertexList(vertexList);
-        Mesh tempMesh = new Mesh(ListToArray.ListVertex3DToVertex3DArray(vertexList), new int[] {0, 1, 2, 3});
+        Mesh tempMesh = new Mesh(ListToArray.listVertex3DToVertex3DArray(vertexList),
+            new int[] {0, 1, 2, 3});
         TileWorldObject tempTileWorldObject = new TileWorldObject(
-            new Vector3f(centreX + (WIDTH_OF_TILE * (float) column), centreY + (WIDTH_OF_TILE * (float) row), 0f),
+            new Vector3f(centreX + (tileSize * (float) column),
+                centreY + (tileSize * (float) row), 0f),
             new Vector3f(0, 0, 0),
             new Vector3f(1f, 1f, 1f),
             tempMesh,
@@ -96,10 +100,10 @@ public class World {
     }
   }
 
-  private static float calcCentrePos(int mapDimension) {
+  private static float calcCentrePos(int mapDimension, float tileSize) {
     float value = 0;
     for (int i = 0; i < mapDimension / 2; i++) {
-      value -= (float) 1;
+      value -= tileSize;
     }
     return value;
   }

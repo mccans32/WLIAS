@@ -112,11 +112,11 @@ public class Camera {
    * @param mapSizeX the map size x
    * @param mapSizeY the map size y
    */
-  public void setCameraBorder(int mapSizeX, int mapSizeY) {
-    this.maxCameraX = Math.max((float) mapSizeX, MIN_CAMERA_BORDER);
-    this.minCameraX = Math.min((float) -mapSizeX, -MIN_CAMERA_BORDER);
-    this.maxCameraY = Math.max((float) mapSizeY, MIN_CAMERA_BORDER);
-    this.minCameraY = Math.min((float) -mapSizeY, -MIN_CAMERA_BORDER);
+  public void setCameraBorder(float mapSizeX, float mapSizeY) {
+    this.maxCameraX = Math.max(mapSizeX, MIN_CAMERA_BORDER);
+    this.minCameraX = Math.min(-mapSizeX, -MIN_CAMERA_BORDER);
+    this.maxCameraY = Math.max(mapSizeY, MIN_CAMERA_BORDER);
+    this.minCameraY = Math.min(-mapSizeY, -MIN_CAMERA_BORDER);
 
   }
 
