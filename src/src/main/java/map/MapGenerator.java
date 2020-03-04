@@ -1,6 +1,7 @@
 package map;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
@@ -77,6 +78,18 @@ public class MapGenerator {
     this.amountOfPlainTiles = amountOfPlainTiles;
     this.amountOfWaterTiles = amountOfWaterTiles;
     this.numberOfLandMasses = numberOfLandMasses;
+  }
+
+  public int getMapSizeX() {
+    return mapSizeX;
+  }
+
+  public int getMapSizeY() {
+    return mapSizeY;
+  }
+
+  public int getNumberOfLandMasses() {
+    return numberOfLandMasses;
   }
 
   public int getLandMassSizeX() {
