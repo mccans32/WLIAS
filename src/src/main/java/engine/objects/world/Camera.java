@@ -9,10 +9,11 @@ public class Camera {
   private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
   private static final float MOVE_SPEED = 0.05f;
-  private static final float MAX_CAMERA_X = 10f;
-  private static final float MIN_CAMERA_X = -10f;
-  private static final float MAX_CAMERA_Y = 10f;
-  private static final float MIN_CAMERA_Y = -10f;
+  private static final float MIN_CAMERA_BORDER = 5f;
+  private float maxCameraX;
+  private float minCameraX;
+  private float maxCameraY;
+  private float minCameraY;
   private Vector3f defaultPosition;
   private Vector3f defaultRotation;
   private float defaultDistance;
@@ -89,17 +90,34 @@ public class Camera {
         position.setZ(Math.min(cameraDistance, MAX_CAMERA_Z));
       }
 
-      if (this.position.getX() > MAX_CAMERA_X) {
-        position.setX(MAX_CAMERA_X);
+      // Calculate if camera is within X Border
+      if (this.position.getX() > maxCameraX) {
+        position.setX(maxCameraX);
       } else {
-        position.setX(Math.max(position.getX(), MIN_CAMERA_X));
+        position.setX(Math.max(position.getX(), minCameraX));
       }
-      if (this.position.getY() > MAX_CAMERA_Y) {
-        position.setY(MAX_CAMERA_Y);
+
+      // Calculate if camera is within Y Border
+      if (this.position.getY() > maxCameraY) {
+        position.setY(maxCameraY);
       } else {
-        position.setY(Math.max(position.getY(), MIN_CAMERA_Y));
+        position.setY(Math.max(position.getY(), minCameraY));
       }
     }
+  }
+
+  /**
+   * Sets camera border.
+   *
+   * @param mapSizeX the map size x
+   * @param mapSizeY the map size y
+   */
+  public void setCameraBorder(int mapSizeX, int mapSizeY) {
+    this.maxCameraX = Math.max((float) mapSizeX, MIN_CAMERA_BORDER);
+    this.minCameraX = Math.min((float) -mapSizeX, -MIN_CAMERA_BORDER);
+    this.maxCameraY = Math.max((float) mapSizeY, MIN_CAMERA_BORDER);
+    this.minCameraY = Math.min((float) -mapSizeY, -MIN_CAMERA_BORDER);
+
   }
 
   public Vector3f getPosition() {

@@ -18,6 +18,11 @@ import math.Vector3f;
 import org.jfree.chart.ChartColor;
 
 public class World {
+  private static final int BORDER_CUT_OFF = 3;
+  private static final int WIDTH_OF_TILE = 1;
+  private static final float LOWER_VERTEX_BAND = -0.5f;
+  private static final float UPPER_VERTEX_BAND = 0.5f;
+  private static final float DEFAULT_Z = 0;
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
 
@@ -35,7 +40,7 @@ public class World {
     // unfreeze the camera in-case it has been frozen before
     camera.unfreeze();
     setBackgroundColour(window);
-    createObjects();
+    createObjects(camera);
   }
 
   public static void render(WorldRenderer renderer, Camera camera) {
@@ -60,11 +65,12 @@ public class World {
         1f);
   }
 
-  private static void createObjects() {
+  private static void createObjects(Camera camera) {
     // TODO REPLACE WITH A MENU TO CHOSE THE ATRIBUTES FOR THE MAP
     MapGenerator map = new MapGenerator(20, 20, 100, 150, 50, 100, 1);
     map.createMap();
     createTileObjects(map);
+    camera.setCameraBorder(map.getMapSizeX() / BORDER_CUT_OFF, map.getMapSizeY() / BORDER_CUT_OFF);
   }
 
   private static void createTileObjects(MapGenerator map) {
@@ -74,10 +80,10 @@ public class World {
     Tile[][] mapRepresentation = map.getSimulationMap();
     for (int row = 0; row < map.getMapSizeY(); row++) {
       for (int column = 0; column < map.getMapSizeX(); column++) {
-        addToVertexList(mapRepresentation[row][column], row, column, vertexList);
+        addToVertexList(vertexList);
         Mesh tempMesh = new Mesh(ListToArray.ListVertex3DToVertex3DArray(vertexList), new int[] {0, 1, 2, 3});
         TileWorldObject tempTileWorldObject = new TileWorldObject(
-            new Vector3f(centreX + (1 * (float) column), centreY + (1 * (float) row), 0f),
+            new Vector3f(centreX + (WIDTH_OF_TILE * (float) column), centreY + (WIDTH_OF_TILE * (float) row), 0f),
             new Vector3f(0, 0, 0),
             new Vector3f(1f, 1f, 1f),
             tempMesh,
@@ -98,11 +104,11 @@ public class World {
     return value;
   }
 
-  private static void addToVertexList(Tile currentTile, int row, int column, List<Vertex3D> vertexList) {
-    Vector3f topRightCoordinates = new Vector3f(0.5f, 0.5f, 0);
-    Vector3f topLeftCoordinates = new Vector3f(-0.5f, 0.5f, 0);
-    Vector3f botRightCoordinates = new Vector3f(0.5f, -0.5f, 0);
-    Vector3f botLeftCoordinates = new Vector3f(-0.5f, -0.5f, 0);
+  private static void addToVertexList(List<Vertex3D> vertexList) {
+    Vector3f topRightCoordinates = new Vector3f(UPPER_VERTEX_BAND, UPPER_VERTEX_BAND, DEFAULT_Z);
+    Vector3f topLeftCoordinates = new Vector3f(LOWER_VERTEX_BAND, UPPER_VERTEX_BAND, DEFAULT_Z);
+    Vector3f botRightCoordinates = new Vector3f(UPPER_VERTEX_BAND, LOWER_VERTEX_BAND, DEFAULT_Z);
+    Vector3f botLeftCoordinates = new Vector3f(LOWER_VERTEX_BAND, LOWER_VERTEX_BAND, DEFAULT_Z);
     vertexList.add(new Vertex3D(topLeftCoordinates, // top left
         ColourUtils.convertColor(Color.WHITE), new Vector2f(0f, 0f)));
     vertexList.add(new Vertex3D(topRightCoordinates, // top right
