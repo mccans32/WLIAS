@@ -2,6 +2,7 @@ package engine.objects.world;
 
 import com.sun.scenario.effect.Crop;
 import engine.io.Input;
+import math.Vector2f;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -113,7 +114,7 @@ public class Camera {
    * @param botLeft  the bot left
    * @param topRight the top right
    */
-  public void setCameraBorder(Vector3f botLeft, Vector3f topRight) {
+  public void setCameraBorder(Vector2f botLeft, Vector2f topRight) {
     this.maxCameraX = topRight.getX();
     this.minCameraX = botLeft.getX();
     this.maxCameraY = topRight.getY();

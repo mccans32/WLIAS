@@ -1,6 +1,8 @@
 package engine.graphics;
 
 import java.awt.Color;
+import java.util.List;
+
 import math.Vector2f;
 import math.Vector3f;
 
@@ -67,6 +69,14 @@ public class Vertex3D {
 
   public Vector2f getTextureCoordinates() {
     return textureCoordinates;
+  }
+
+  public static Vertex3D[] listToArray(List<Vertex3D> vertexList) {
+    Vertex3D[] vertexArray = new Vertex3D[vertexList.size()];
+    for (int i = 0; i < vertexArray.length; i++) {
+      vertexArray[i] = vertexList.get(i);
+    }
+    return vertexArray;
   }
 
 }

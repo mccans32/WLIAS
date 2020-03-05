@@ -7,10 +7,11 @@ import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
 import engine.objects.world.TileWorldObject;
 import engine.utils.ColourUtils;
-import engine.utils.ListToArray;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+
 import map.MapGenerator;
 import map.tiles.Tile;
 import math.Vector2f;
@@ -22,10 +23,14 @@ public class World {
   private static final float LOWER_VERTEX_BAND = -0.5f;
   private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
+  private static final int[] DEFAULT_INDICES = new int[] {0, 1, 2, 3};
+  private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
+  private static final Vector3f DEFAULT_SCALE = new Vector3f(1f, 1f, 1f);
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
 
   private static ArrayList<TileWorldObject> tiles = new ArrayList<>();
+  private static TileWorldObject[][] worldMap;
 
   /**
    * Create.
@@ -68,47 +73,55 @@ public class World {
     // TODO REPLACE WITH A MENU TO CHOSE THE ATRIBUTES FOR THE MAP
     MapGenerator map = new MapGenerator(20, 20, 100, 200, 0, 100, 1);
     map.createMap();
+    // calculate tile size based on vertex values
     float tileSize = UPPER_VERTEX_BAND + Math.abs(LOWER_VERTEX_BAND);
     createTileObjects(map, tileSize, camera);
   }
 
   private static void createTileObjects(MapGenerator map, float tileSize, Camera camera) {
-    float centreX = calcCentrePos(map.getLandMassSizeX(), tileSize);
-    float centreY = calcCentrePos(map.getLandMassSizeY(), tileSize);
-    Vector3f botLeft = new Vector3f(0, 0, 0);
-    Vector3f topRight = new Vector3f(0, 0, 0);
+    // left edge = the position of the first tile in the X axis. Starting left most edge
+    float leftXEdge = calcLeftPos(map.getLandMassSizeX(), tileSize);
+    // bot edge = the position of the first tile in the Y axis. Starting at the top most edge
+    float topYEdge = calcTopPos(map.getLandMassSizeY(), tileSize);
+    // initialise 2d representation of the map
+    worldMap = new TileWorldObject[map.mapSizeX][map.mapSizeY];
     List<Vertex3D> vertexList = new ArrayList<Vertex3D>();
     Tile[][] mapRepresentation = map.getSimulationMap();
+
     for (int row = 0; row < map.getMapSizeY(); row++) {
       for (int column = 0; column < map.getMapSizeX(); column++) {
+        // calculates the vertex positions and adds them to a List
         addToVertexList(vertexList);
-        Mesh tempMesh = new Mesh(ListToArray.listVertex3DToVertex3DArray(vertexList),
-            new int[] {0, 1, 2, 3});
+        // create a a mesh for a tile
+        Mesh tileMesh = new Mesh(Vertex3D.listToArray(vertexList), DEFAULT_INDICES);
+        // create a tileWorldObject
         TileWorldObject tempTileWorldObject = new TileWorldObject(
-            new Vector3f(centreX + (tileSize * (float) column),
-                centreY + (tileSize * (float) row), 0f),
-            new Vector3f(0, 0, 0),
-            new Vector3f(1f, 1f, 1f),
-            tempMesh,
+            new Vector3f(leftXEdge + (tileSize * (float) column),
+                topYEdge - (tileSize * (float) row), 0f),
+            DEFAULT_ROTATION, DEFAULT_SCALE, tileMesh,
             mapRepresentation[row][column]);
-        if (row == 0 && column == 0) {
-          botLeft = new Vector3f(centreX + (tileSize * (float) column),
-              centreY + (tileSize * (float) row), 0f);
-        }
-        if ((row + 1) == map.getMapSizeY() && (column + 1) == map.getMapSizeX()) {
-          topRight = new Vector3f(centreX + (tileSize * (float) column),
-              centreY + (tileSize * (float) row), 0f);
-        }
+        // assign tile ot the world map
+        worldMap[row][column] = tempTileWorldObject;
         // Create the Object
         tempTileWorldObject.create();
         // Add to Current Tile List
         tiles.add(tempTileWorldObject);
       }
     }
+    // calculate the positions for the camera borders based on tiles in appropriate corners
+    Vector2f botLeft = calcCentre(worldMap[worldMap.length - 1][0]);
+    Vector2f topRight = calcCentre(worldMap[0][worldMap.length - 1]);
+    // set camera borders
     camera.setCameraBorder(botLeft, topRight);
   }
 
-  private static float calcCentrePos(int mapDimension, float tileSize) {
+  // function that returns the a Vector2f positions which is centre of a tile
+  private static Vector2f calcCentre(TileWorldObject tile) {
+    return new Vector2f(tile.getPosition().getX(), tile.getPosition().getY());
+  }
+
+  // calculates the left most position of the first tile
+  private static float calcLeftPos(int mapDimension, float tileSize) {
     float value = 0;
     for (int i = 0; i < mapDimension / 2; i++) {
       value -= tileSize;
@@ -116,6 +129,16 @@ public class World {
     return value;
   }
 
+  // calculates the top most position of the first tile
+  private static float calcTopPos(int mapDimension, float tileSize) {
+    float value = 0;
+    for (int i = 0; i < mapDimension / 2; i++) {
+      value += tileSize;
+    }
+    return value;
+  }
+
+  // creates the Vectors for a tile and assigns them to a list.
   private static void addToVertexList(List<Vertex3D> vertexList) {
     Vector3f topRightCoordinates = new Vector3f(UPPER_VERTEX_BAND, UPPER_VERTEX_BAND, DEFAULT_Z);
     Vector3f topLeftCoordinates = new Vector3f(LOWER_VERTEX_BAND, UPPER_VERTEX_BAND, DEFAULT_Z);
