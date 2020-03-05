@@ -19,9 +19,8 @@ import org.jfree.chart.ChartColor;
 
 public class World {
   private static final int BORDER_CUT_OFF = 3;
-  private static final int WIDTH_OF_TILE = 1;
-  private static final float LOWER_VERTEX_BAND = -1f;
-  private static final float UPPER_VERTEX_BAND = 1f;
+  private static final float LOWER_VERTEX_BAND = -0.5f;
+  private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
@@ -67,17 +66,17 @@ public class World {
 
   private static void createObjects(Camera camera) {
     // TODO REPLACE WITH A MENU TO CHOSE THE ATRIBUTES FOR THE MAP
-    MapGenerator map = new MapGenerator(20, 20, 100, 150, 50, 100, 1);
+    MapGenerator map = new MapGenerator(20, 20, 100, 200, 0, 100, 1);
     map.createMap();
     float tileSize = UPPER_VERTEX_BAND + Math.abs(LOWER_VERTEX_BAND);
-    createTileObjects(map, tileSize);
-    camera.setCameraBorder((map.getMapSizeX() * tileSize) / BORDER_CUT_OFF,
-        (map.getMapSizeY() * tileSize) / BORDER_CUT_OFF);
+    createTileObjects(map, tileSize, camera);
   }
 
-  private static void createTileObjects(MapGenerator map, float tileSize) {
+  private static void createTileObjects(MapGenerator map, float tileSize, Camera camera) {
     float centreX = calcCentrePos(map.getLandMassSizeX(), tileSize);
     float centreY = calcCentrePos(map.getLandMassSizeY(), tileSize);
+    Vector3f botLeft = new Vector3f(0, 0, 0);
+    Vector3f topRight = new Vector3f(0, 0, 0);
     List<Vertex3D> vertexList = new ArrayList<Vertex3D>();
     Tile[][] mapRepresentation = map.getSimulationMap();
     for (int row = 0; row < map.getMapSizeY(); row++) {
@@ -92,12 +91,21 @@ public class World {
             new Vector3f(1f, 1f, 1f),
             tempMesh,
             mapRepresentation[row][column]);
+        if (row == 0 && column == 0) {
+          botLeft = new Vector3f(centreX + (tileSize * (float) column),
+              centreY + (tileSize * (float) row), 0f);
+        }
+        if ((row + 1) == map.getMapSizeY() && (column + 1) == map.getMapSizeX()) {
+          topRight = new Vector3f(centreX + (tileSize * (float) column),
+              centreY + (tileSize * (float) row), 0f);
+        }
         // Create the Object
         tempTileWorldObject.create();
         // Add to Current Tile List
         tiles.add(tempTileWorldObject);
       }
     }
+    camera.setCameraBorder(botLeft, topRight);
   }
 
   private static float calcCentrePos(int mapDimension, float tileSize) {

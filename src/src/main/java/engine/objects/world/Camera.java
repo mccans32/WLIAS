@@ -1,5 +1,6 @@
 package engine.objects.world;
 
+import com.sun.scenario.effect.Crop;
 import engine.io.Input;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -8,7 +9,7 @@ public class Camera {
   private static final float MIN_CAMERA_Z = 1f;
   private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
-  private static final float MOVE_SPEED = 0.05f;
+  private static final float MOVE_SPEED = 0.1f;
   private static final float MIN_CAMERA_BORDER = 5f;
   private float maxCameraX;
   private float minCameraX;
@@ -109,14 +110,14 @@ public class Camera {
   /**
    * Sets camera border.
    *
-   * @param mapSizeX the map size x
-   * @param mapSizeY the map size y
+   * @param botLeft  the bot left
+   * @param topRight the top right
    */
-  public void setCameraBorder(float mapSizeX, float mapSizeY) {
-    this.maxCameraX = Math.max(mapSizeX, MIN_CAMERA_BORDER);
-    this.minCameraX = Math.min(-mapSizeX, -MIN_CAMERA_BORDER);
-    this.maxCameraY = Math.max(mapSizeY, MIN_CAMERA_BORDER);
-    this.minCameraY = Math.min(-mapSizeY, -MIN_CAMERA_BORDER);
+  public void setCameraBorder(Vector3f botLeft, Vector3f topRight) {
+    this.maxCameraX = topRight.getX();
+    this.minCameraX = botLeft.getX();
+    this.maxCameraY = topRight.getY();
+    this.minCameraY = botLeft.getY();
 
   }
 
