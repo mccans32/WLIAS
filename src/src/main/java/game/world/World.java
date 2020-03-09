@@ -7,19 +7,17 @@ import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
 import engine.objects.world.TileWorldObject;
 import engine.utils.ColourUtils;
-
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import map.MapGenerator;
+import map.MapGeneration;
 import map.tiles.Tile;
 import math.Vector2f;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
 
 public class World {
-  private static final int BORDER_CUT_OFF = 3;
   private static final float LOWER_VERTEX_BAND = -0.5f;
   private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
@@ -28,9 +26,12 @@ public class World {
   private static final Vector3f DEFAULT_SCALE = new Vector3f(1f, 1f, 1f);
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
-
-  private static ArrayList<TileWorldObject> tiles = new ArrayList<>();
   private static TileWorldObject[][] worldMap;
+  private static ArrayList<TileWorldObject> tiles = new ArrayList<>();
+
+  public static TileWorldObject[][] getWorldMap() {
+    return worldMap;
+  }
 
   /**
    * Create.
@@ -39,6 +40,7 @@ public class World {
    * @param camera the camera
    */
   public static void create(Window window, Camera camera) {
+    MapGeneration.createMap();
     // reset the camera to its default position.
     camera.reset();
     // unfreeze the camera in-case it has been frozen before
@@ -71,25 +73,25 @@ public class World {
 
   private static void createObjects(Camera camera) {
     // TODO REPLACE WITH A MENU TO CHOSE THE ATRIBUTES FOR THE MAP
-    MapGenerator map = new MapGenerator(20, 20, 100, 200, 0, 100, 1);
-    map.createMap();
     // calculate tile size based on vertex values
     float tileSize = UPPER_VERTEX_BAND + Math.abs(LOWER_VERTEX_BAND);
-    createTileObjects(map, tileSize, camera);
+    createTileObjects(tileSize, camera);
   }
 
-  private static void createTileObjects(MapGenerator map, float tileSize, Camera camera) {
+  private static void createTileObjects(float tileSize, Camera camera) {
     // left edge = the position of the first tile in the X axis. Starting left most edge
-    float leftXEdge = calcLeftPos(map.getLandMassSizeX(), tileSize);
-    // bot edge = the position of the first tile in the Y axis. Starting at the top most edge
-    float topYEdge = calcTopPos(map.getLandMassSizeY(), tileSize);
+    float leftXEdge = calcLeftPos(MapGeneration.getLandMassSizeX(), tileSize);
+    // top edge = the position of the first tile in the Y axis. Starting at the top most edge
+    float topYEdge = calcTopPos(MapGeneration.getLandMassSizeY(), tileSize);
     // initialise 2d representation of the map
-    worldMap = new TileWorldObject[map.mapSizeX][map.mapSizeY];
-    List<Vertex3D> vertexList = new ArrayList<Vertex3D>();
-    Tile[][] mapRepresentation = map.getSimulationMap();
 
-    for (int row = 0; row < map.getMapSizeY(); row++) {
-      for (int column = 0; column < map.getMapSizeX(); column++) {
+    worldMap = new TileWorldObject[MapGeneration.getMapSizeX()][MapGeneration.getMapSizeY()];
+    List<Vertex3D> vertexList = new ArrayList<Vertex3D>();
+    for (Tile[] tiles : MapGeneration.getSimulationMap()) {
+      System.out.println(Arrays.toString(tiles));
+    }
+    for (int row = 0; row < MapGeneration.getMapSizeY(); row++) {
+      for (int column = 0; column < MapGeneration.getMapSizeX(); column++) {
         // calculates the vertex positions and adds them to a List
         addToVertexList(vertexList);
         // create a a mesh for a tile
@@ -99,7 +101,7 @@ public class World {
             new Vector3f(leftXEdge + (tileSize * (float) column),
                 topYEdge - (tileSize * (float) row), 0f),
             DEFAULT_ROTATION, DEFAULT_SCALE, tileMesh,
-            mapRepresentation[row][column]);
+            MapGeneration.getSimulationMap()[row][column]);
         // assign tile ot the world map
         worldMap[row][column] = tempTileWorldObject;
         // Create the Object

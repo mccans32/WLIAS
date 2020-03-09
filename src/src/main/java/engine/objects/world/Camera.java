@@ -1,6 +1,5 @@
 package engine.objects.world;
 
-import com.sun.scenario.effect.Crop;
 import engine.io.Input;
 import math.Vector2f;
 import math.Vector3f;
@@ -22,7 +21,6 @@ public class Camera {
   private Vector3f position;
   private Vector3f rotation;
   private boolean isFrozen = false;
-
   /**
    * Instantiates a new Camera.
    *
@@ -38,10 +36,34 @@ public class Camera {
     // Set Defaults, used when resetting
     this.defaultPosition = position;
     this.defaultRotation = rotation;
+    this.maxCameraX = MIN_CAMERA_BORDER;
+    this.minCameraX = -MIN_CAMERA_BORDER;
+    this.maxCameraY = MIN_CAMERA_BORDER;
+    this.minCameraY = -MIN_CAMERA_BORDER;
+  }
+
+  public static float getMinCameraBorder() {
+    return MIN_CAMERA_BORDER;
   }
 
   public static float getZoomModifier() {
     return ZOOM_MODIFIER;
+  }
+
+  public float getMaxCameraX() {
+    return maxCameraX;
+  }
+
+  public float getMinCameraX() {
+    return minCameraX;
+  }
+
+  public float getMaxCameraY() {
+    return maxCameraY;
+  }
+
+  public float getMinCameraY() {
+    return minCameraY;
   }
 
   public Vector3f getDefaultPosition() {
