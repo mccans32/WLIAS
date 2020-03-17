@@ -73,7 +73,7 @@ public class GuiRenderer {
         "model",
 
         Matrix4f.transform(
-            new Vector3f(object.getPosition().getX(), object.getPosition().getY(), 0.5f),
+            new Vector3f(object.getPosition().getX(), object.getPosition().getY(), 0f),
             new Vector3f(DEFAULT_ROTATION.getX(), DEFAULT_ROTATION.getY(), 0),
             new Vector3f(1, 1, 1)));
   }

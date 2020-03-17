@@ -70,9 +70,16 @@ public class Gui {
     tempText.getMesh().createText();
   }
 
+  /**
+   * Render Gui Elements and Text Elements in the world setting.
+   *
+   * @param guiRenderer  the gui renderer
+   * @param textRenderer the text renderer
+   */
   public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    //Render Gui Elements First to fix alpha blending on text
+    guiRenderer.renderObject(tempGui);
     textRenderer.renderObject(tempText);
-//    guiRenderer.renderObject(tempGui);
   }
 
   public static void resize(Window window) {

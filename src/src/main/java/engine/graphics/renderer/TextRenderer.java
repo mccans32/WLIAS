@@ -12,6 +12,7 @@ import engine.graphics.Shader;
 import engine.objects.gui.GuiText;
 import math.Matrix4f;
 import math.Vector2f;
+import math.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -21,7 +22,9 @@ import org.lwjgl.opengl.GL30;
  * The type WorldRenderer.
  */
 public class TextRenderer {
-  private static Vector2f DEFAULT_ROTATION = new Vector2f(0, 0);
+  private static Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
+  private static final float DEFAULT_POSITION_Z_VALUE = 1f;
+  private static final float DEFAULT_SCALE_Z_VALUE = 1f;
   private Shader shader;
   private Window window;
 
@@ -82,13 +85,15 @@ public class TextRenderer {
   }
 
   private void setModelUniform(GuiText object) {
+    Vector2f pos = object.getPosition();
+    Vector2f scale = object.getScale();
     shader.setUniform(
         "model",
 
         Matrix4f.transform(
-            object.getPosition(),
+            new Vector3f(pos.getX(), pos.getY(), DEFAULT_POSITION_Z_VALUE),
             DEFAULT_ROTATION,
-            object.getScale()));
+            new Vector3f(scale.getX(), scale.getY(), DEFAULT_SCALE_Z_VALUE)));
   }
 
   private void setColourOffsetUniform(GuiText object) {
