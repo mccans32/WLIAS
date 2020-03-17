@@ -1,6 +1,6 @@
 package engine.objects.world;
 
-import engine.graphics.Mesh;
+import engine.graphics.mesh.Mesh;
 import map.tiles.Tile;
 import math.Vector3f;
 

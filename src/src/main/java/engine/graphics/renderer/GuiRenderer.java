@@ -2,7 +2,7 @@ package engine.graphics.renderer;
 
 import engine.Window;
 import engine.graphics.Shader;
-import engine.objects.gui.GuiObject;
+import engine.objects.gui.GuiImage;
 import math.Matrix4f;
 import math.Vector2f;
 import math.Vector3f;
@@ -30,13 +30,13 @@ public class GuiRenderer {
    *
    * @param object the object.
    */
-  public void renderObject(GuiObject object) {
+  public void renderObject(GuiImage object) {
     bindObject(object);
     drawObject(object);
     unbindObject();
   }
 
-  private void bindObject(GuiObject object) {
+  private void bindObject(GuiImage object) {
     // Bind Mesh VAO
     GL30.glBindVertexArray(object.getMesh().getVao());
     // Enable Index 0 for Shaders (Position)
@@ -58,17 +58,17 @@ public class GuiRenderer {
 
   }
 
-  private void setUniforms(GuiObject object) {
+  private void setUniforms(GuiImage object) {
     setModelUniform(object);
     setProjectionUniform();
     setColourOffsetUniform(object);
   }
 
-  private void setColourOffsetUniform(GuiObject object) {
+  private void setColourOffsetUniform(GuiImage object) {
     shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffset());
   }
 
-  private void setModelUniform(GuiObject object) {
+  private void setModelUniform(GuiImage object) {
     shader.setUniform(
         "model",
 
@@ -94,7 +94,7 @@ public class GuiRenderer {
     GL30.glBindVertexArray(0);
   }
 
-  private void drawObject(GuiObject object) {
+  private void drawObject(GuiImage object) {
     GL11.glDrawElements(
         GL11.GL_TRIANGLE_STRIP,
         object.getMesh().getIndices().length,

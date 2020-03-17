@@ -1,8 +1,9 @@
 package engine.objects.gui;
 
+import engine.Window;
 import engine.graphics.Material;
-import engine.graphics.Mesh;
 import engine.graphics.Vertex3D;
+import engine.graphics.mesh.Mesh;
 import engine.utils.ListToArray;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -11,24 +12,25 @@ import math.Vector2f;
 import math.Vector3f;
 
 public class GuiText {
-  private static final float Z_POS = 2f;
+  private static final float Z_POS = 0f;
   private static final int VERTICES_PER_QUAD = 4;
   private int numColumns;
   private int numRows;
   private String text;
   private Mesh mesh;
-  private Vector2f position;
-  private Vector2f scale;
+  private Vector2f position = new Vector2f(0, 0);
+  private Vector2f scale = new Vector2f(1, 1);
   private float edgeX;
   private float offsetX;
   private float offsetY;
   private float edgeY;
+  private float fontSize;
+  private float width;
+  private float height;
 
-  public GuiText(String text, String fontFileName, int numColumns, int numRows, Vector3f textColour,
-                 Vector2f position, Vector2f scale, float edgeX, float offsetX, float edgeY,
-                 float offsetY) {
-    this.position = position;
-    this.scale = scale;
+  public GuiText(String text, float fontSize, String fontFileName, int numColumns, int numRows,
+                 Vector3f textColour, float edgeX, float offsetX, float edgeY, float offsetY) {
+    this.fontSize = fontSize;
     this.text = text;
     this.numColumns = numColumns;
     this.numRows = numRows;
@@ -36,6 +38,7 @@ public class GuiText {
     this.offsetX = offsetX;
     this.edgeY = edgeY;
     this.offsetY = offsetY;
+    reposition(Window.getSpanX(), Window.getSpanY());
     Material material = new Material(fontFileName);
     material.setColorOffset(textColour);
     this.setMesh(buildMesh(material, this.numColumns, this.numRows));
@@ -91,8 +94,8 @@ public class GuiText {
     List<Vertex3D> verticesList = new ArrayList<>();
     List<Integer> indices = new ArrayList<>();
 
-    float titleWidth = material.getWidth() / (float) numColumns;
-    float titleHeight = material.getHeight() / (float) numRows;
+    float titleWidth = (material.getWidth() / (float) numColumns) * fontSize;
+    float titleHeight = (material.getHeight() / (float) numRows) * fontSize;
     createVectors(positions, textCoordinates, indices, titleWidth, titleHeight, numChars, chars);
     createVertices(positions, textCoordinates, verticesList);
     Vertex3D[] verticesArray = ListToArray.vertex3DListToArray(verticesList);
@@ -106,11 +109,53 @@ public class GuiText {
     }
   }
 
+  public float getWidth() {
+    return width;
+  }
+
+  public float getHeight() {
+    return height;
+  }
+
+  public float getOffsetX() {
+    return offsetX;
+  }
+
+  public float getEdgeX() {
+    return edgeX;
+  }
+
+  public void setEdgeX(float edgeX) {
+    this.edgeX = edgeX;
+  }
+
+  public float getEdgeY() {
+    return edgeY;
+  }
+
+  public void setEdgeY(float edgeY) {
+    this.edgeY = edgeY;
+  }
+
+  public void setOffsetX(float offsetX) {
+    this.offsetX = offsetX;
+  }
+
+  public float getOffsetY() {
+    return offsetY;
+  }
+
+  public void setOffsetY(float offsetY) {
+    this.offsetY = offsetY;
+  }
+
   private void createVectors(List<Vector3f> positions, List<Vector2f> textCoordinates, List<Integer> indices, float titleWidth, float titleHeight, int numChars, byte[] chars) {
     for (int i = 0; i < numChars; i++) {
       byte currChar = chars[i];
       int column = currChar % numColumns;
       int row = currChar / numColumns;
+      height = titleHeight;
+      width += titleWidth;
 
       // Top Left Vertex
       positions.add(new Vector3f(((float) i * titleWidth), 0.0f, Z_POS));

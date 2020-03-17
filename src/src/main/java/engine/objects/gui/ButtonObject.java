@@ -1,16 +1,14 @@
 package engine.objects.gui;
 
 import engine.Window;
-import engine.graphics.Mesh;
-import math.Vector2f;
+import engine.graphics.mesh.Mesh;
+import engine.graphics.mesh.twoDimensional.RectangleMesh;
 import math.Vector3f;
 
-public class ButtonObject extends GuiObject {
+public class ButtonObject extends GuiImage {
   /**
    * Instantiates a new Gui object.
    *
-   * @param position the position
-   * @param scale    the scale
    * @param mesh     the mesh.
    * @param edgeX    the x coordinate to offset from.
    * @param offsetX  amount to offset from the xEdge.
@@ -20,14 +18,12 @@ public class ButtonObject extends GuiObject {
   private static final Vector3f INACTIVE_COLOUR_OFFSET = new Vector3f(1, 1, 1);
   private static final Vector3f ACTIVE_COLOUR_OFFSET = new Vector3f(0.6f, 0.6f, 0.6f);
 
-  public ButtonObject(Vector2f position,
-                      Vector2f scale,
-                      Mesh mesh,
+  public ButtonObject(RectangleMesh mesh,
                       float edgeX,
                       float offsetX,
                       float edgeY,
                       float offsetY) {
-    super(position, scale, mesh, edgeX, offsetX, edgeY, offsetY);
+    super(mesh, edgeX, offsetX, edgeY, offsetY);
     this.getMesh().getMaterial().setColorOffset(INACTIVE_COLOUR_OFFSET);
   }
 

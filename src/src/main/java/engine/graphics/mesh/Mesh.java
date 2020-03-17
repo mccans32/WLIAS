@@ -1,5 +1,8 @@
-package engine.graphics;
+package engine.graphics.mesh;
 
+import engine.graphics.Material;
+import engine.graphics.Vertex2D;
+import engine.graphics.Vertex3D;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import math.Vector3f;
@@ -21,8 +24,8 @@ public class Mesh {
   static final int TEXTURE_DIMENSION = 2;
   static final int TEXTURE_INDEX = COLOUR_INDEX + 1;
   static final String DEFAULT_MATERIAL_PATH = "/images/default_texture.png";
-  private Vertex3D[] vertices;
-  private int[] indices;
+  protected Vertex3D[] vertices;
+  protected int[] indices;
   private Material material = new Material(DEFAULT_MATERIAL_PATH);
   // Vertex Array Object
   private int vao;
@@ -90,6 +93,10 @@ public class Mesh {
 
     this.vertices = newVertices.clone();
     this.indices = indices.clone();
+  }
+
+  public Mesh(Material material) {
+    this.material = material;
   }
 
   public Vertex3D[] getVertices() {
@@ -166,7 +173,6 @@ public class Mesh {
   private void initialisePositionBuffer() {
     FloatBuffer positionBuffer = MemoryUtil.memAllocFloat(vertices.length * POSITION_DIMENSION);
     positionData = new float[vertices.length * POSITION_DIMENSION];
-
     storePositions();
     positionBuffer.put(positionData).flip();
     pbo = storeData(positionBuffer, POSITION_INDEX, POSITION_DIMENSION);

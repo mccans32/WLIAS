@@ -1,7 +1,7 @@
 package game.world;
 
 import engine.Window;
-import engine.graphics.Mesh;
+import engine.graphics.mesh.Mesh;
 import engine.graphics.Vertex3D;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;

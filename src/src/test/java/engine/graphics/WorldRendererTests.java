@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
+import engine.graphics.mesh.Mesh;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
 import engine.objects.world.GameObject;

@@ -79,8 +79,8 @@ public class Window {
   private float near = 0.1f;
   private float far = 1000f;
   private float aspect;
-  private float spanX;
-  private float spanY;
+  private static float spanX;
+  private static float spanY;
 
   /**
    * Instantiates a new Window.
@@ -106,11 +106,11 @@ public class Window {
     glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
   }
 
-  public float getSpanX() {
+  public static float getSpanX() {
     return spanX;
   }
 
-  public float getSpanY() {
+  public static float getSpanY() {
     return spanY;
   }
 
@@ -389,12 +389,12 @@ public class Window {
 
   private void setSpans() {
     // set xSpan and ySpan for orthographic projection and for repositioning gui
-    this.spanX = 1;
-    this.spanY = 1;
+    spanX = 1;
+    spanY = 1;
     if (aspect >= 1) {
-      this.spanX *= aspect;
+      spanX *= aspect;
     } else {
-      this.spanY = this.spanX / aspect;
+      spanY = spanX / aspect;
     }
   }
 }

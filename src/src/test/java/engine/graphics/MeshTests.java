@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
+import engine.graphics.mesh.Mesh;
 import math.Vector3f;
 import org.junit.jupiter.api.Test;
 

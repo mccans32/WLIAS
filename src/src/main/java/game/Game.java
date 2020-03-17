@@ -5,15 +5,11 @@ import engine.graphics.Shader;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.renderer.WorldRenderer;
-import engine.objects.gui.GuiText;
 import engine.objects.world.Camera;
 import engine.tools.MousePicker;
-import engine.utils.ColourUtils;
 import game.menu.MainMenu;
 import game.world.Gui;
 import game.world.World;
-import java.awt.Color;
-import math.Vector2f;
 import math.Vector3f;
 
 /**
@@ -113,7 +109,7 @@ public class Game {
       MainMenu.create(window);
     } else if (state == GameState.GAME) {
       //  create Gui
-      Gui.create(window);
+      Gui.create();
       World.create(window, camera);
     }
 
@@ -136,7 +132,7 @@ public class Game {
       // Update The World
       World.update();
       // Update The Gui
-      Gui.update(window);
+      Gui.update();
     }
   }
 

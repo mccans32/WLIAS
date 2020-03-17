@@ -2,8 +2,7 @@ package game.menu;
 
 import engine.Window;
 import engine.graphics.Material;
-import engine.graphics.Mesh;
-import engine.graphics.Vertex2D;
+import engine.graphics.mesh.twoDimensional.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
 import engine.io.Input;
 import engine.objects.gui.ButtonObject;
@@ -13,7 +12,6 @@ import game.Game;
 import game.GameState;
 import game.world.Gui;
 import game.world.World;
-import math.Vector2f;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
@@ -26,24 +24,6 @@ public class MainMenu {
   private static String BUTTON_TEXTURE = "/images/button_texture.jpg";
   private static float[] START_REPOSITION_VALUES = {0, 0, 1, -0.6f};
   private static float[] EXIT_REPOSITION_VALUES = {0, 0, -1, 0.6f};
-  private static Vector3f BUTTON_COLOUR = new Vector3f(0, 0, 0);
-  private static Vertex2D TOP_LEFT_VERTEX = new Vertex2D(
-      new Vector2f(-BUTTON_WIDTH / 2, BUTTON_HEIGHT / 2),
-      BUTTON_COLOUR,
-      new Vector2f(0, 0));
-  private static Vertex2D TOP_RIGHT_VERTEX = new Vertex2D(
-      new Vector2f(BUTTON_WIDTH / 2, BUTTON_HEIGHT / 2),
-      BUTTON_COLOUR,
-      new Vector2f(1, 0));
-  private static Vertex2D BOTTOM_LEFT_VERTEX = new Vertex2D(
-      new Vector2f(-BUTTON_WIDTH / 2, -BUTTON_HEIGHT / 2),
-      BUTTON_COLOUR,
-      new Vector2f(0, 1));
-  private static Vertex2D BOTTOM_RIGHT_VERTEX = new Vertex2D(
-      new Vector2f(BUTTON_WIDTH / 2, -BUTTON_HEIGHT / 2),
-      BUTTON_COLOUR,
-      new Vector2f(1, 1));
-  private static int[] BUTTON_INDICES = {0, 1, 2, 3};
   private static ButtonObject startButton;
   private static ButtonObject exitButton;
   private static ButtonObject[] buttons = new ButtonObject[2];
@@ -59,7 +39,7 @@ public class MainMenu {
    * @param window the window
    */
   public static void update(Window window, Camera camera) {
-    resize(window);
+    resize();
     updateButtons(window);
     checkButtonClick(window, camera);
   }
@@ -94,7 +74,7 @@ public class MainMenu {
         // Destroy the Main Menu
         destroy();
         // Create the Gui
-        Gui.create(window);
+        Gui.create();
         // Create the World
         World.create(window, camera);
       } else if (exitButton.isMouseOver(window)) {
@@ -110,7 +90,6 @@ public class MainMenu {
   private static void createButtons(Window window) {
     // Create Start Button
     startButton = initButton(
-        window,
         START_REPOSITION_VALUES[0],
         START_REPOSITION_VALUES[1],
         START_REPOSITION_VALUES[2],
@@ -119,7 +98,6 @@ public class MainMenu {
     buttons[0] = startButton;
     // Create Exit Button
     exitButton = initButton(
-        window,
         EXIT_REPOSITION_VALUES[0],
         EXIT_REPOSITION_VALUES[1],
         EXIT_REPOSITION_VALUES[2],
@@ -133,8 +111,8 @@ public class MainMenu {
     renderer.renderObject(exitButton);
   }
 
-  public static void resize(Window window) {
-    startButton.reposition(window.getSpanX(), window.getSpanY());
+  public static void resize() {
+    startButton.reposition(Window.getSpanX(), Window.getSpanY());
   }
 
   private static void setBackgroundColour(Vector3f colour, Window window) {
@@ -142,23 +120,12 @@ public class MainMenu {
   }
 
   private static ButtonObject initButton(
-      Window window,
       float edgeX,
       float offsetX,
       float edgeY,
       float offsetY) {
-    Mesh tempMesh = new Mesh(
-        new Vertex2D[] {TOP_LEFT_VERTEX, TOP_RIGHT_VERTEX, BOTTOM_LEFT_VERTEX, BOTTOM_RIGHT_VERTEX},
-        BUTTON_INDICES,
-        new Material(BUTTON_TEXTURE));
+    RectangleMesh tempMesh = new RectangleMesh(BUTTON_WIDTH, BUTTON_HEIGHT, new Material(BUTTON_TEXTURE));
 
-    return new ButtonObject(
-        new Vector2f(edgeX * window.getSpanX() + offsetX, edgeY * window.getSpanY() + offsetY),
-        new Vector2f(1, 1),
-        tempMesh,
-        edgeX,
-        offsetX,
-        edgeY,
-        offsetY);
+    return new ButtonObject(tempMesh, edgeX, offsetX, edgeY, offsetY);
   }
 }

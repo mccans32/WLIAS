@@ -1,6 +1,6 @@
 package engine.objects.world;
 
-import engine.graphics.Mesh;
+import engine.graphics.mesh.Mesh;
 import math.Vector3f;
 
 public class GameObject {

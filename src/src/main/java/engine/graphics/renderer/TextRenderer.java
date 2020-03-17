@@ -22,9 +22,9 @@ import org.lwjgl.opengl.GL30;
  * The type WorldRenderer.
  */
 public class TextRenderer {
-  private static Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
   private static final float DEFAULT_POSITION_Z_VALUE = 1f;
   private static final float DEFAULT_SCALE_Z_VALUE = 1f;
+  private static Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
   private Shader shader;
   private Window window;
 
