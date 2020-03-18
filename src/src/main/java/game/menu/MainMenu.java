@@ -82,7 +82,7 @@ public class MainMenu {
         // Create the Gui
         Gui.create();
         // Create the World
-        World.create(window, camera);
+        World.create(camera);
       } else if (exitButton.isMouseOver(window)) {
         GLFW.glfwSetWindowShouldClose(window.getWindow(), true);
       }

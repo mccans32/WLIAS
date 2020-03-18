@@ -23,10 +23,9 @@ public class Mesh {
   static final int COLOUR_DIMENSION = 3;
   static final int TEXTURE_DIMENSION = 2;
   static final int TEXTURE_INDEX = COLOUR_INDEX + 1;
-  static final String DEFAULT_MATERIAL_PATH = "/images/default_texture.png";
   protected Vertex3D[] vertices;
   protected int[] indices;
-  private Material material = new Material(DEFAULT_MATERIAL_PATH);
+  private Material material;
   // Vertex Array Object
   private int vao;
   // Position Buffer Object
@@ -57,6 +56,7 @@ public class Mesh {
   public Mesh(Vertex3D[] vertices, int[] indices) {
     this.vertices = vertices.clone();
     this.indices = indices.clone();
+    this.material = new Material(Material.getDefaultPath());
   }
 
   /**
@@ -95,7 +95,7 @@ public class Mesh {
     this.indices = indices.clone();
   }
 
-  public Mesh(Material material) {
+  protected Mesh(Material material) {
     this.material = material;
   }
 

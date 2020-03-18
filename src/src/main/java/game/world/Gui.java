@@ -19,7 +19,6 @@ public class Gui {
   private static final int NUM_ROWS = 16;
   private static GuiImage tempGui;
   private static GuiText tempText;
-  private static GuiObject tempObject;
   private static float[] TEMP_GUI_VALUES = {-1, 0.1f, 1, -0.1f};
 
   public static void create() {
@@ -51,11 +50,6 @@ public class Gui {
   }
 
   private static void createTempObject() {
-    tempObject = new GuiObject(
-        new RectangleMesh(0.4f, 0.6f, new Material("/images/button_texture.jpg")),
-        TEMP_SENTENCE, 1f, FONT_FILE_DIRECTORY, NUM_COLUMNS, NUM_ROWS, DEFAULT_TEXT_COLOUR,
-        0, 0, 0.5f, 0, true, true);
-    tempObject.create();
   }
 
   /**
@@ -80,13 +74,10 @@ public class Gui {
   }
 
   private static void renderObjects(GuiRenderer guiRenderer, TextRenderer textRenderer) {
-    guiRenderer.renderObject(tempObject.getGuiImage());
-    textRenderer.renderObject(tempObject.getGuiText());
   }
 
   public static void resize() {
     tempText.reposition();
     tempGui.reposition();
-    tempObject.reposition();
   }
 }

@@ -21,6 +21,11 @@ public class RectangleMesh extends Mesh {
     this.indices = DEFAULT_INDICES;
   }
 
+  public RectangleMesh(float width, float height) {
+    this(width, height, new Material(Material.getDefaultPath()));
+  }
+
+
   public float getWidth() {
     return width;
   }

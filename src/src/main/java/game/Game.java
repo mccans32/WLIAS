@@ -110,7 +110,7 @@ public class Game {
     } else if (state == GameState.GAME) {
       //  create Gui
       Gui.create();
-      World.create(window, camera);
+      World.create(camera);
     }
 
   }

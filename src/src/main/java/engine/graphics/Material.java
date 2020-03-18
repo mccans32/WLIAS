@@ -9,6 +9,7 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 public class Material {
+  private static final String DEFAULT_PATH = "/images/default_texture.png";
   private String path;
   private float width;
   private float imageWidth;
@@ -24,6 +25,14 @@ public class Material {
    */
   public Material(String path) {
     this.path = path;
+  }
+
+  public static String getDefaultPath() {
+    return DEFAULT_PATH;
+  }
+
+  public String getPath() {
+    return path;
   }
 
   /**
