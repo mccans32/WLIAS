@@ -1,6 +1,6 @@
 package engine.objects.gui;
 
-import engine.graphics.mesh.Mesh;
+import engine.Window;
 import engine.graphics.mesh.twoDimensional.RectangleMesh;
 import math.Vector3f;
 
@@ -12,22 +12,25 @@ public class GuiObject {
                    int numColumns, int numRows, Vector3f textColour, float edgeX, float offsetX,
                    float edgeY, float offsetY, boolean centerHorizontal, boolean centerVertical) {
     this.guiImage = new GuiImage(backgroundMesh, edgeX, offsetX, edgeY, offsetY);
+
     this.guiText = new GuiText(text, fontSize, fontFileName, numColumns, numRows, textColour, edgeX,
-        offsetX, edgeY, offsetY);
+        offsetX - (backgroundMesh.getWidth() / 2), edgeY,
+        offsetY + (backgroundMesh.getHeight() / 2));
+
+    centerText(centerHorizontal, centerVertical);
   }
 
   private void centerText(boolean centerHorizontal, boolean centerVertical) {
-    // To center the text we utilise the idea of padding.
-    // Get the total length or height of text then reposition half of this amount from the center
-    // of the GuiImage
     if (centerHorizontal) {
       float textWidth = guiText.getWidth();
-      float imageWidth = guiImage.getMesh().getWidth();
+      guiText.setEdgeX(guiImage.getEdgeX());
+      guiText.setOffsetX(guiImage.getOffsetX() - (textWidth / 2));
     }
 
     if (centerVertical) {
       float textHeight = guiText.getHeight();
-      float imageHeight = guiImage.getMesh().getHeight();
+      guiText.setEdgeY(guiImage.getEdgeY());
+      guiText.setOffsetY(guiImage.getOffsetY() + (textHeight / 2));
     }
   }
 
@@ -37,5 +40,15 @@ public class GuiObject {
 
   public GuiText getGuiText() {
     return guiText;
+  }
+
+  public void create() {
+    guiImage.create();
+    guiText.create();
+  }
+
+  public void reposition() {
+    guiImage.reposition();
+    guiText.reposition();
   }
 }

@@ -33,7 +33,7 @@ public class GuiImage {
     this.edgeY = edgeY;
     this.offsetY = offsetY;
     // reposition to accommodate for window span
-    reposition(Window.getSpanX(), Window.getSpanY());
+    reposition();
   }
 
   /**
@@ -144,8 +144,8 @@ public class GuiImage {
     mesh.destroy();
   }
 
-  public void reposition(float spanX, float spanY) {
-    position.setX(edgeX * spanX + offsetX);
-    position.setY(edgeY * spanY + offsetY);
+  public void reposition() {
+    position.setX(edgeX * Window.getSpanX() + offsetX);
+    position.setY(edgeY * Window.getSpanY() + offsetY);
   }
 }

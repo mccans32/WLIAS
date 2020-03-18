@@ -38,7 +38,7 @@ public class GuiText {
     this.offsetX = offsetX;
     this.edgeY = edgeY;
     this.offsetY = offsetY;
-    reposition(Window.getSpanX(), Window.getSpanY());
+    reposition();
     Material material = new Material(fontFileName);
     material.setColorOffset(textColour);
     this.setMesh(buildMesh(material, this.numColumns, this.numRows));
@@ -183,13 +183,13 @@ public class GuiText {
     }
   }
 
-  public void reposition(float spanX, float spanY) {
-    position.setX(edgeX * spanX + offsetX);
-    position.setY(edgeY * spanY + offsetY);
+  public void reposition() {
+    position.setX(edgeX * Window.getSpanX() + offsetX);
+    position.setY(edgeY * Window.getSpanY() + offsetY);
   }
 
   public void create() {
-    this.mesh.create();
+    this.mesh.createText();
   }
 
   public void destroy() {

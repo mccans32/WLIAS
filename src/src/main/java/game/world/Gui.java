@@ -6,6 +6,7 @@ import engine.graphics.mesh.twoDimensional.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.objects.gui.GuiImage;
+import engine.objects.gui.GuiObject;
 import engine.objects.gui.GuiText;
 import engine.utils.ColourUtils;
 import java.awt.Color;
@@ -19,6 +20,7 @@ public class Gui {
   private static final int NUM_ROWS = 16;
   private static GuiImage tempGui;
   private static GuiText tempText;
+  private static GuiObject tempObject;
   private static float[] TEMP_GUI_VALUES = {-1, 0.1f, 1, -0.1f};
 
   public static void create() {
@@ -26,16 +28,13 @@ public class Gui {
   }
 
   public static void update() {
-    System.out.println(tempGui.getEdgeX() + tempGui.getOffsetX());
-    System.out.println(tempText.getWidth() / 2);
-    tempText.setOffsetX(tempGui.getOffsetX() - (tempText.getWidth() / 2));
-    tempText.setOffsetY(tempGui.getOffsetY() + (tempText.getHeight() / 2));
     resize();
   }
 
   private static void createObjects() {
     createTempText();
     createTempGui();
+    createTempObject();
   }
 
   private static void createTempGui() {
@@ -49,7 +48,15 @@ public class Gui {
   private static void createTempText() {
     tempText = new GuiText(TEMP_SENTENCE, 1f, FONT_FILE_DIRECTORY, NUM_COLUMNS, NUM_ROWS,
         DEFAULT_TEXT_COLOUR, -1f, 0, 1f, 0);
-    tempText.getMesh().createText();
+    tempText.create();
+  }
+
+  private static void createTempObject() {
+    tempObject = new GuiObject(
+        new RectangleMesh(0.4f, 0.6f, new Material("/images/button_texture.jpg")),
+        TEMP_SENTENCE, 1f, FONT_FILE_DIRECTORY, NUM_COLUMNS, NUM_ROWS, DEFAULT_TEXT_COLOUR,
+        0, 0, 0.5f, 0, true, true);
+    tempObject.create();
   }
 
   /**
@@ -60,12 +67,27 @@ public class Gui {
    */
   public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
     //Render Gui Elements First to fix alpha blending on text
-    guiRenderer.renderObject(tempGui);
-    textRenderer.renderObject(tempText);
+    renderImages(guiRenderer);
+    renderTexts(textRenderer);
+    renderObjects(guiRenderer, textRenderer);
+  }
+
+  private static void renderImages(GuiRenderer renderer) {
+    renderer.renderObject(tempGui);
+  }
+
+  private static void renderTexts(TextRenderer renderer) {
+    renderer.renderObject(tempText);
+  }
+
+  private static void renderObjects(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    guiRenderer.renderObject(tempObject.getGuiImage());
+    textRenderer.renderObject(tempObject.getGuiText());
   }
 
   public static void resize() {
-    tempText.reposition(Window.getSpanX(), Window.getSpanY());
-    tempGui.reposition(Window.getSpanX(), Window.getSpanY());
+    tempText.reposition();
+    tempGui.reposition();
+    tempObject.reposition();
   }
 }

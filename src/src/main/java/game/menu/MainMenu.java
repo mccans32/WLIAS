@@ -112,7 +112,7 @@ public class MainMenu {
   }
 
   public static void resize() {
-    startButton.reposition(Window.getSpanX(), Window.getSpanY());
+    startButton.reposition();
   }
 
   private static void setBackgroundColour(Vector3f colour, Window window) {
