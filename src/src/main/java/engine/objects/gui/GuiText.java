@@ -150,11 +150,11 @@ public class GuiText {
   }
 
   private void createVectors(List<Vector3f> positions, List<Vector2f> textCoordinates, List<Integer> indices, float titleWidth, float titleHeight, int numChars, byte[] chars) {
+    height = titleHeight;
     for (int i = 0; i < numChars; i++) {
       byte currChar = chars[i];
       int column = currChar % numColumns;
       int row = currChar / numColumns;
-      height = titleHeight;
       width += titleWidth;
 
       // Top Left Vertex
