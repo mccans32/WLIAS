@@ -8,20 +8,13 @@ import java.util.Random;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-public class MapGenerationGenerationTest {
+public class MapGenerationTest {
 
   private static final int UPPER_LIMIT = 5;
   
   @AfterEach
   public void destroy() {
     MapGeneration.resetToDefaultValues();
-  }
-
-  @Test
-  public void MapCreationTest() {
-    assertNull(MapGeneration.getSimulationMap());
-    MapGeneration.createMap();
-    assertNotNull(MapGeneration.getSimulationMap());
   }
 
   private int generateRandomInt() {

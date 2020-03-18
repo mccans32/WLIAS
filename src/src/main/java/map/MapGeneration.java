@@ -18,26 +18,26 @@ public class MapGeneration {
   /**
    * The Land mass size x.
    */
-  private static final int DEFAULT_LANDMASS_SIZE_X = 50;
+  private static final int DEFAULT_LANDMASS_SIZE_X = 20;
   /**
    * The Land mass size y.
    */
-  private static final int DEFAULT_LANDMASS_SIZE_Y = 50;
+  private static final int DEFAULT_LANDMASS_SIZE_Y = 20;
   /**
    * The Number of land masses.
    */
-  private static final int DEFAULT_AMOUNT_ARID_TILES = 500;
-  private static final int DEFAULT_AMOUNT_FERTILE_TILES = 500;
-  private static final int DEFAULT_AMOUNT_WATER_TILES = 1350;
+  private static final int DEFAULT_AMOUNT_ARID_TILES = 70;
+  private static final int DEFAULT_AMOUNT_FERTILE_TILES = 155;
+  private static final int DEFAULT_AMOUNT_WATER_TILES = 25;
   private static final int DEFAULT_AMOUNT_PLAIN_TILES = 150;
   /**
    * The List of tiles.
    */
-  public static ArrayList<Tile> listOfTiles = new ArrayList<Tile>();
+  static final ArrayList<Tile> LIST_OF_TILES = new ArrayList<Tile>();
   /**
    * The Map of ordered tiles.
    */
-  public static Tile[][] simulationMap;
+  static Tile[][] simulationMap;
   /**
    * The Map size x.
    */
@@ -49,7 +49,7 @@ public class MapGeneration {
   /**
    * The Land mass maps.
    */
-  private static ArrayList<Tile[][]> landMassMaps = new ArrayList<Tile[][]>();
+  private static Tile[][] landMassMap;
   private static int landMassSizeX = DEFAULT_LANDMASS_SIZE_X;
   private static int landMassSizeY = DEFAULT_LANDMASS_SIZE_Y;
   private static int amountOfAridTiles = DEFAULT_AMOUNT_ARID_TILES;
@@ -57,13 +57,36 @@ public class MapGeneration {
   private static int amountOfWaterTiles = DEFAULT_AMOUNT_WATER_TILES;
   private static int amountOfPlainTiles = DEFAULT_AMOUNT_PLAIN_TILES;
 
-
-  public static ArrayList<Tile> getListOfTiles() {
-    return listOfTiles;
+  public static int getDefaultLandmassSizeX() {
+    return DEFAULT_LANDMASS_SIZE_X;
   }
 
-  public static ArrayList<Tile[][]> getLandMassMaps() {
-    return landMassMaps;
+  public static int getDefaultLandmassSizeY() {
+    return DEFAULT_LANDMASS_SIZE_Y;
+  }
+
+  public static int getDefaultAmountAridTiles() {
+    return DEFAULT_AMOUNT_ARID_TILES;
+  }
+
+  public static int getDefaultAmountFertileTiles() {
+    return DEFAULT_AMOUNT_FERTILE_TILES;
+  }
+
+  public static int getDefaultAmountWaterTiles() {
+    return DEFAULT_AMOUNT_WATER_TILES;
+  }
+
+  public static int getDefaultAmountPlainTiles() {
+    return DEFAULT_AMOUNT_PLAIN_TILES;
+  }
+
+  public static ArrayList<Tile> getListOfTiles() {
+    return LIST_OF_TILES;
+  }
+
+  public static Tile[][] getlandMassMap() {
+    return landMassMap.clone();
   }
 
   public static int getAmountOfAridTiles() {
@@ -138,8 +161,8 @@ public class MapGeneration {
    */
   public static void createMap() {
     generateTiles();
-    Collections.shuffle(listOfTiles);
-    landMassMaps.add(generateLandMass());
+    Collections.shuffle(LIST_OF_TILES);
+    landMassMap = generateLandMass();
     setSimulationMap();
   }
 
@@ -158,22 +181,22 @@ public class MapGeneration {
     // initialise the tiles and add them to a single array
     for (int i = 0; i < amountOfAridTiles; i++) {
       Tile tile = new AridTile();
-      listOfTiles.add(tile);
+      LIST_OF_TILES.add(tile);
     }
 
     for (int i = 0; i < amountOfFertileTiles; i++) {
       Tile tile = new FertileTile();
-      listOfTiles.add(tile);
+      LIST_OF_TILES.add(tile);
     }
 
     for (int i = 0; i < amountOfPlainTiles; i++) {
       Tile tile = new PlainTile();
-      listOfTiles.add(tile);
+      LIST_OF_TILES.add(tile);
     }
 
     for (int i = 0; i < amountOfWaterTiles; i++) {
       Tile tile = new WaterTile();
-      listOfTiles.add(tile);
+      LIST_OF_TILES.add(tile);
     }
 
   }
@@ -218,25 +241,24 @@ public class MapGeneration {
   }
 
   private static void setUpLandMass() {
-    for (Tile[][] landMass : landMassMaps) {
-      // y position of the landmass
-      int landMassYPos = 0;
-      for (int y = 1; y < landMassSizeY + 1; y++) {
-        // x position of the landmass
-        int landMassXPos = 0;
-        for (int x = HORIZONTAL_WATER_PADDING - 1;
-             x < landMassSizeY + HORIZONTAL_WATER_PADDING - 1; x++) {
-          /* places a tile from a landMass in the appropriate y,x co-ords
-          the x co-ord is calculated depending on which land mass we're working with
-          if were working with land mass 1 the x co-ord will be
-          length of landmass * landMassPointer(0) + i
-          i = (landMassPointer(0) + 1 (accommodate for water padding)) */
-          simulationMap[y][x] = landMass[landMassYPos][landMassXPos];
-          landMassXPos++;
-        }
-        landMassYPos++;
+    // y position of the landmass
+    int landMassYPos = 0;
+    for (int y = 1; y < landMassSizeY + 1; y++) {
+      // x position of the landmass
+      int landMassXPos = 0;
+      for (int x = HORIZONTAL_WATER_PADDING - 1;
+           x < landMassSizeY + HORIZONTAL_WATER_PADDING - 1; x++) {
+        /* places a tile from a landMass in the appropriate y,x co-ords
+        the x co-ord is calculated depending on which land mass we're working with
+        if were working with land mass 1 the x co-ord will be
+        length of landmass * landMassPointer(0) + i
+        i = (landMassPointer(0) + 1 (accommodate for water padding)) */
+        simulationMap[y][x] = landMassMap[landMassYPos][landMassXPos];
+        landMassXPos++;
       }
+      landMassYPos++;
     }
+
 
   }
 
@@ -247,7 +269,7 @@ public class MapGeneration {
     Tile[][] currentLandMass = new Tile[landMassSizeX][landMassSizeY];
     for (int i = 0; i < landMassSizeY; i++) {
       for (int j = 0; j < landMassSizeX; j++) {
-        currentLandMass[i][j] = listOfTiles.get(tileCounter);
+        currentLandMass[i][j] = LIST_OF_TILES.get(tileCounter);
         tileCounter++;
       }
     }
@@ -261,14 +283,22 @@ public class MapGeneration {
    * @return The 2d Array representation of the map. Tile[][].
    */
   public static Tile[][] getSimulationMap() {
-    return simulationMap;
+    return simulationMap.clone();
   }
 
-  public static void setSimulationMap(Tile[][] simulationMap) {
-    MapGeneration.simulationMap = simulationMap;
-  }
-
-  public static void setValues(int landMassSizeX, int landMassSizeY, int amountOfAridTiles, int amountOfFertileTiles, int amountOfPlainTiles, int amountOfWaterTiles, int numberOfLandMasses) {
+  /**
+   * Sets values.
+   *
+   * @param landMassSizeX        the land mass size x
+   * @param landMassSizeY        the land mass size y
+   * @param amountOfAridTiles    the amount of arid tiles
+   * @param amountOfFertileTiles the amount of fertile tiles
+   * @param amountOfPlainTiles   the amount of plain tiles
+   * @param amountOfWaterTiles   the amount of water tiles
+   */
+  public static void setValues(int landMassSizeX, int landMassSizeY, int amountOfAridTiles,
+                               int amountOfFertileTiles, int amountOfPlainTiles,
+                               int amountOfWaterTiles) {
     setLandMassSizeX(landMassSizeX);
     setLandMassSizeY(landMassSizeY);
     setAmountOfAridTiles(amountOfAridTiles);
@@ -277,6 +307,9 @@ public class MapGeneration {
     setAmountOfWaterTiles(amountOfWaterTiles);
   }
 
+  /**
+   * Reset to default values.
+   */
   public static void resetToDefaultValues() {
     setLandMassSizeX(DEFAULT_LANDMASS_SIZE_X);
     setLandMassSizeY(DEFAULT_LANDMASS_SIZE_Y);

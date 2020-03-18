@@ -30,7 +30,7 @@ public class World {
   private static ArrayList<TileWorldObject> tiles = new ArrayList<>();
 
   public static TileWorldObject[][] getWorldMap() {
-    return worldMap;
+    return worldMap.clone();
   }
 
   /**
@@ -113,6 +113,7 @@ public class World {
     // calculate the positions for the camera borders based on tiles in appropriate corners
     Vector2f botLeft = calcCentre(worldMap[worldMap.length - 1][0]);
     Vector2f topRight = calcCentre(worldMap[0][worldMap.length - 1]);
+    System.out.println(botLeft + ", " + topRight);
     // set camera borders
     camera.setCameraBorder(botLeft, topRight);
   }
@@ -141,7 +142,7 @@ public class World {
   }
 
   // creates the Vectors for a tile and assigns them to a list.
-  private static void addToVertexList(List<Vertex3D> vertexList) {
+  protected static void addToVertexList(List<Vertex3D> vertexList) {
     Vector3f topRightCoordinates = new Vector3f(UPPER_VERTEX_BAND, UPPER_VERTEX_BAND, DEFAULT_Z);
     Vector3f topLeftCoordinates = new Vector3f(LOWER_VERTEX_BAND, UPPER_VERTEX_BAND, DEFAULT_Z);
     Vector3f botRightCoordinates = new Vector3f(UPPER_VERTEX_BAND, LOWER_VERTEX_BAND, DEFAULT_Z);

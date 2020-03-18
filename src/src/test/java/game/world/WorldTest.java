@@ -2,9 +2,9 @@ package game.world;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
 import engine.graphics.Vertex3D;
@@ -15,6 +15,7 @@ import java.util.List;
 import map.MapGeneration;
 import math.Vector2f;
 import math.Vector3f;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,14 +34,27 @@ public class WorldTest {
     return new Vector2f(tile.getPosition().getX(), tile.getPosition().getY());
   }
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   public void setUp() {
+    assumeTrue(glfwInit());
     camera = new Camera(DEFAULT_POSITION, DEFAULT_ROTATION);
     window = new Window(WINDOW_X, WINDOW_Y, TITLE);
     genMap(MapGeneration.getDefaultLandmassSizeX(), MapGeneration.getDefaultLandmassSizeY(),
         MapGeneration.getDefaultAmountAridTiles(), MapGeneration.getDefaultAmountWaterTiles(),
         MapGeneration.getDefaultAmountPlainTiles(), MapGeneration.getDefaultAmountFertileTiles());
     window.create();
+  }
+
+  /**
+   * Cleanup.
+   */
+  @AfterEach
+  public void cleanup() {
+    assumeTrue(glfwInit());
+    window.destroy();
   }
 
   private void genMap(int landmassSizeX, int landmassSizeY, int amountAridTiles,
@@ -52,13 +66,6 @@ public class WorldTest {
     MapGeneration.setAmountOfPlainTiles(amountPlainTiles);
     MapGeneration.setAmountOfFertileTiles(amountFertileTiles);
     MapGeneration.createMap();
-  }
-
-  @Test
-  void createWorldMap() {
-    assertNull(World.getWorldMap());
-    World.create(window, camera);
-    assertNotNull(World.getWorldMap());
   }
 
   @Test

@@ -21,6 +21,7 @@ public class Camera {
   private Vector3f position;
   private Vector3f rotation;
   private boolean isFrozen = false;
+
   /**
    * Instantiates a new Camera.
    *
