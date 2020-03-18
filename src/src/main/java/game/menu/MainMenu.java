@@ -4,6 +4,7 @@ import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.mesh.twoDimensional.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
+import engine.graphics.renderer.TextRenderer;
 import engine.io.Input;
 import engine.objects.gui.ButtonObject;
 import engine.objects.world.Camera;
@@ -12,6 +13,7 @@ import game.Game;
 import game.GameState;
 import game.world.Gui;
 import game.world.World;
+import java.awt.Color;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
@@ -19,6 +21,10 @@ import org.lwjgl.glfw.GLFW;
 public class MainMenu {
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
+  private static final Vector3f BUTTON_TEXT_COLOUR = ColourUtils.convertColor(Color.BLACK);
+  private static final String FONT_FILE_DIRECTORY = "/text/defaultFont.png";
+  private static final int NUM_COLUMNS = 16;
+  private static final int NUM_ROWS = 16;
   private static float BUTTON_WIDTH = 0.7f;
   private static float BUTTON_HEIGHT = 0.3f;
   private static String BUTTON_TEXTURE = "/images/button_texture.jpg";
@@ -89,30 +95,29 @@ public class MainMenu {
 
   private static void createButtons(Window window) {
     // Create Start Button
-    startButton = initButton(
-        START_REPOSITION_VALUES[0],
-        START_REPOSITION_VALUES[1],
-        START_REPOSITION_VALUES[2],
-        START_REPOSITION_VALUES[3]);
+    startButton = initButton("Start", 1.2f, FONT_FILE_DIRECTORY, NUM_COLUMNS,
+        NUM_ROWS, START_REPOSITION_VALUES[0], START_REPOSITION_VALUES[1],
+        START_REPOSITION_VALUES[2], START_REPOSITION_VALUES[3]);
     startButton.create();
     buttons[0] = startButton;
     // Create Exit Button
-    exitButton = initButton(
-        EXIT_REPOSITION_VALUES[0],
-        EXIT_REPOSITION_VALUES[1],
-        EXIT_REPOSITION_VALUES[2],
+    exitButton = initButton("Exit", 1.2f, FONT_FILE_DIRECTORY, NUM_COLUMNS, NUM_ROWS,
+        EXIT_REPOSITION_VALUES[0], EXIT_REPOSITION_VALUES[1], EXIT_REPOSITION_VALUES[2],
         EXIT_REPOSITION_VALUES[3]);
     exitButton.create();
     buttons[1] = exitButton;
   }
 
-  public static void render(GuiRenderer renderer) {
-    renderer.renderObject(startButton);
-    renderer.renderObject(exitButton);
+  public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    guiRenderer.renderObject(startButton.getGuiImage());
+    textRenderer.renderObject(startButton.getGuiText());
+    guiRenderer.renderObject(exitButton.getGuiImage());
+    textRenderer.renderObject(exitButton.getGuiText());
   }
 
   public static void resize() {
     startButton.reposition();
+    exitButton.reposition();
   }
 
   private static void setBackgroundColour(Vector3f colour, Window window) {
@@ -120,12 +125,18 @@ public class MainMenu {
   }
 
   private static ButtonObject initButton(
+      String buttonText,
+      float fontSize,
+      String fontFileName,
+      int numColumns,
+      int numRows,
       float edgeX,
       float offsetX,
       float edgeY,
       float offsetY) {
     RectangleMesh tempMesh = new RectangleMesh(BUTTON_WIDTH, BUTTON_HEIGHT, new Material(BUTTON_TEXTURE));
 
-    return new ButtonObject(tempMesh, edgeX, offsetX, edgeY, offsetY);
+    return new ButtonObject(tempMesh, buttonText, fontSize, fontFileName, numColumns, numRows,
+        BUTTON_TEXT_COLOUR, edgeX, offsetX, edgeY, offsetY, true, true);
   }
 }

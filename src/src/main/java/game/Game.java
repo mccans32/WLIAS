@@ -141,7 +141,7 @@ public class Game {
    */
   public void render() {
     if (state == GameState.MAIN_MENU) {
-      MainMenu.render(guiRenderer);
+      MainMenu.render(guiRenderer, textRenderer);
     } else { // state == GameState.GAME;
       // Render world objects
       World.render(worldRenderer, camera);

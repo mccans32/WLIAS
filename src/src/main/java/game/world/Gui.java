@@ -1,6 +1,5 @@
 package game.world;
 
-import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.mesh.twoDimensional.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
