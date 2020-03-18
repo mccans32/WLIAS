@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
 /**
- * The type WorldRenderer.
+ * The Renderer for rendering {@link GuiText} objects.
  */
 public class TextRenderer {
   private static final float DEFAULT_POSITION_Z_VALUE = 1f;
