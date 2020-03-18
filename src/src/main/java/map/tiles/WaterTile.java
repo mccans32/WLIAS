@@ -1,7 +1,7 @@
 package map.tiles;
 
 public class WaterTile extends Tile {
-  private String image = "/images/water-tile.png";
+  private String image = "/images/waterTile.png";
 
   @Override
   public String getImage() {

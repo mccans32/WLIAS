@@ -1,6 +1,7 @@
 package engine.objects.world;
 
 import engine.io.Input;
+import math.Vector2f;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -8,7 +9,12 @@ public class Camera {
   private static final float MIN_CAMERA_Z = 1f;
   private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
-  private static final float MOVE_SPEED = 0.05f;
+  private static final float MOVE_SPEED = 0.1f;
+  private static final float MIN_CAMERA_BORDER = 5f;
+  private float maxCameraX;
+  private float minCameraX;
+  private float maxCameraY;
+  private float minCameraY;
   private Vector3f defaultPosition;
   private Vector3f defaultRotation;
   private float defaultDistance;
@@ -31,10 +37,34 @@ public class Camera {
     // Set Defaults, used when resetting
     this.defaultPosition = position;
     this.defaultRotation = rotation;
+    this.maxCameraX = MIN_CAMERA_BORDER;
+    this.minCameraX = -MIN_CAMERA_BORDER;
+    this.maxCameraY = MIN_CAMERA_BORDER;
+    this.minCameraY = -MIN_CAMERA_BORDER;
+  }
+
+  public static float getMinCameraBorder() {
+    return MIN_CAMERA_BORDER;
   }
 
   public static float getZoomModifier() {
     return ZOOM_MODIFIER;
+  }
+
+  public float getMaxCameraX() {
+    return maxCameraX;
+  }
+
+  public float getMinCameraX() {
+    return minCameraX;
+  }
+
+  public float getMaxCameraY() {
+    return maxCameraY;
+  }
+
+  public float getMinCameraY() {
+    return minCameraY;
   }
 
   public Vector3f getDefaultPosition() {
@@ -84,7 +114,35 @@ public class Camera {
       } else {
         position.setZ(Math.min(cameraDistance, MAX_CAMERA_Z));
       }
+
+      // Calculate if camera is within X Border
+      if (this.position.getX() > maxCameraX) {
+        position.setX(maxCameraX);
+      } else {
+        position.setX(Math.max(position.getX(), minCameraX));
+      }
+
+      // Calculate if camera is within Y Border
+      if (this.position.getY() > maxCameraY) {
+        position.setY(maxCameraY);
+      } else {
+        position.setY(Math.max(position.getY(), minCameraY));
+      }
     }
+  }
+
+  /**
+   * Sets camera border.
+   *
+   * @param botLeft  the bot left
+   * @param topRight the top right
+   */
+  public void setCameraBorder(Vector2f botLeft, Vector2f topRight) {
+    this.maxCameraX = topRight.getX();
+    this.minCameraX = botLeft.getX();
+    this.maxCameraY = topRight.getY();
+    this.minCameraY = botLeft.getY();
+
   }
 
   public Vector3f getPosition() {
