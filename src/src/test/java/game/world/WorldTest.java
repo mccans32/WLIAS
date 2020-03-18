@@ -42,9 +42,7 @@ public class WorldTest {
     assumeTrue(glfwInit());
     camera = new Camera(DEFAULT_POSITION, DEFAULT_ROTATION);
     window = new Window(WINDOW_X, WINDOW_Y, TITLE);
-    genMap(MapGeneration.getDefaultLandmassSizeX(), MapGeneration.getDefaultLandmassSizeY(),
-        MapGeneration.getDefaultAmountAridTiles(), MapGeneration.getDefaultAmountWaterTiles(),
-        MapGeneration.getDefaultAmountPlainTiles(), MapGeneration.getDefaultAmountFertileTiles());
+    MapGeneration.resetToDefaultValues();
     window.create();
   }
 
