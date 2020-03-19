@@ -1,4 +1,4 @@
-package engine.graphics.mesh.twoDimensional;
+package engine.graphics.mesh.dimension.two;
 
 import engine.graphics.Material;
 import engine.graphics.Vertex3D;
@@ -13,6 +13,13 @@ public class RectangleMesh extends Mesh {
   private float width;
   private float height;
 
+  /**
+   * Instantiates a new Rectangle mesh.
+   *
+   * @param width    the width
+   * @param height   the height
+   * @param material the material
+   */
   public RectangleMesh(float width, float height, Material material) {
     super(material);
     this.width = width;
@@ -37,13 +44,17 @@ public class RectangleMesh extends Mesh {
   private Vertex3D[] generateVertices() {
     return new Vertex3D[] {
         // Top Left Vertex
-        new Vertex3D(new Vector3f(-width / 2, height / 2, DEFAULT_Z_VALUE), DEFAULT_COLOUR, new Vector2f(0, 0)),
+        new Vertex3D(new Vector3f(-width / 2, height / 2, DEFAULT_Z_VALUE), DEFAULT_COLOUR,
+            new Vector2f(0, 0)),
         // Bottom Left Vertex
-        new Vertex3D(new Vector3f(-width / 2, -height / 2, DEFAULT_Z_VALUE), DEFAULT_COLOUR, new Vector2f(0, 1)),
+        new Vertex3D(new Vector3f(-width / 2, -height / 2, DEFAULT_Z_VALUE), DEFAULT_COLOUR,
+            new Vector2f(0, 1)),
         // Top Right Vertex
-        new Vertex3D(new Vector3f(width / 2, height / 2, DEFAULT_Z_VALUE), DEFAULT_COLOUR, new Vector2f(1, 0)),
+        new Vertex3D(new Vector3f(width / 2, height / 2, DEFAULT_Z_VALUE), DEFAULT_COLOUR,
+            new Vector2f(1, 0)),
         // Bottom Right Vertex
-        new Vertex3D(new Vector3f(width / 2, -height / 2, DEFAULT_Z_VALUE), DEFAULT_COLOUR, new Vector2f(1, 1))
+        new Vertex3D(new Vector3f(width / 2, -height / 2, DEFAULT_Z_VALUE), DEFAULT_COLOUR,
+            new Vector2f(1, 1))
     };
   }
 }

@@ -3,8 +3,8 @@ package engine.objects.world;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import engine.graphics.Material;
-import engine.graphics.mesh.Mesh;
 import engine.graphics.Vertex3D;
+import engine.graphics.mesh.Mesh;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector2f;

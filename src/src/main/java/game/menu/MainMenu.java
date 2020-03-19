@@ -2,7 +2,7 @@ package game.menu;
 
 import engine.Window;
 import engine.graphics.Material;
-import engine.graphics.mesh.twoDimensional.RectangleMesh;
+import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.io.Input;
@@ -108,6 +108,12 @@ public class MainMenu {
     buttons[1] = exitButton;
   }
 
+  /**
+   * Render.
+   *
+   * @param guiRenderer  the gui renderer
+   * @param textRenderer the text renderer
+   */
   public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
     guiRenderer.renderObject(startButton.getGuiImage());
     textRenderer.renderObject(startButton.getGuiText());
@@ -134,7 +140,8 @@ public class MainMenu {
       float offsetX,
       float edgeY,
       float offsetY) {
-    RectangleMesh tempMesh = new RectangleMesh(BUTTON_WIDTH, BUTTON_HEIGHT, new Material(BUTTON_TEXTURE));
+    RectangleMesh tempMesh = new RectangleMesh(BUTTON_WIDTH, BUTTON_HEIGHT,
+        new Material(BUTTON_TEXTURE));
 
     return new ButtonObject(tempMesh, buttonText, fontSize, fontFileName, numColumns, numRows,
         BUTTON_TEXT_COLOUR, edgeX, offsetX, edgeY, offsetY, true, true);

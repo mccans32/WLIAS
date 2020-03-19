@@ -1,6 +1,6 @@
 package game.world;
 
-import engine.graphics.mesh.twoDimensional.RectangleMesh;
+import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
 import engine.objects.world.TileWorldObject;

@@ -1,9 +1,8 @@
 package engine.objects.gui;
 
 import engine.Window;
-import engine.graphics.mesh.Mesh;
 import engine.graphics.Vertex3D;
-import engine.graphics.mesh.twoDimensional.RectangleMesh;
+import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.tools.MousePicker;
 import math.Vector2f;
 import math.Vector3f;

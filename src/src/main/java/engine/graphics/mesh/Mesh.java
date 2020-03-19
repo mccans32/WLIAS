@@ -53,6 +53,12 @@ public class Mesh {
     this.material = material;
   }
 
+  /**
+   * Instantiates a new Mesh.
+   *
+   * @param vertices the vertices
+   * @param indices  the indices
+   */
   public Mesh(Vertex3D[] vertices, int[] indices) {
     this.vertices = vertices.clone();
     this.indices = indices.clone();
@@ -132,7 +138,7 @@ public class Mesh {
   }
 
   /**
-   * Create.
+   * Create function for Text Objects.
    */
   public void createText() {
     // Create Vertex Array Object and Bind it
@@ -145,6 +151,9 @@ public class Mesh {
     initialiseIndicesBuffer();
   }
 
+  /**
+   * Create function for non-Text Objects.
+   */
   public void create() {
     //Create the Material
     material.create();

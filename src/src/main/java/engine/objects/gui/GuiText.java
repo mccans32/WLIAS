@@ -4,7 +4,7 @@ import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.Vertex3D;
 import engine.graphics.mesh.Mesh;
-import engine.utils.ListToArray;
+import engine.utils.ListUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,20 @@ public class GuiText {
   private float width;
   private float height;
 
+  /**
+   * Instantiates a new Gui text.
+   *
+   * @param text         the text
+   * @param fontSize     the font size
+   * @param fontFileName the font file name
+   * @param numColumns   the num columns
+   * @param numRows      the num rows
+   * @param textColour   the text colour
+   * @param edgeX        the edge x
+   * @param offsetX      the offset x
+   * @param edgeY        the edge y
+   * @param offsetY      the offset y
+   */
   public GuiText(String text, float fontSize, String fontFileName, int numColumns, int numRows,
                  Vector3f textColour, float edgeX, float offsetX, float edgeY, float offsetY) {
     this.fontSize = fontSize;
@@ -68,6 +82,11 @@ public class GuiText {
     return text;
   }
 
+  /**
+   * Sets text.
+   *
+   * @param text the to render.
+   */
   public void setText(String text) {
     this.text = text;
 
@@ -98,14 +117,16 @@ public class GuiText {
     float titleHeight = (material.getHeight() / (float) numRows) * fontSize;
     createVectors(positions, textCoordinates, indices, titleWidth, titleHeight, numChars, chars);
     createVertices(positions, textCoordinates, verticesList);
-    Vertex3D[] verticesArray = ListToArray.vertex3DListToArray(verticesList);
-    int[] indicesArray = ListToArray.integerListToIntArray(indices);
+    Vertex3D[] verticesArray = ListUtils.vertex3DListToArray(verticesList);
+    int[] indicesArray = ListUtils.integerListToIntArray(indices);
     return new Mesh(verticesArray, indicesArray, material);
   }
 
-  private void createVertices(List<Vector3f> positions, List<Vector2f> textCoordinates, List<Vertex3D> vertexList) {
+  private void createVertices(List<Vector3f> positions, List<Vector2f> textCoordinates,
+                              List<Vertex3D> vertexList) {
     for (int i = 0; i < positions.size(); i++) {
-      vertexList.add(new Vertex3D(positions.get(i), new Vector3f(0, 0, 0), textCoordinates.get(i)));
+      vertexList.add(new Vertex3D(positions.get(i), new Vector3f(0, 0, 0),
+          textCoordinates.get(i)));
     }
   }
 
@@ -119,6 +140,10 @@ public class GuiText {
 
   public float getOffsetX() {
     return offsetX;
+  }
+
+  public void setOffsetX(float offsetX) {
+    this.offsetX = offsetX;
   }
 
   public float getEdgeX() {
@@ -137,10 +162,6 @@ public class GuiText {
     this.edgeY = edgeY;
   }
 
-  public void setOffsetX(float offsetX) {
-    this.offsetX = offsetX;
-  }
-
   public float getOffsetY() {
     return offsetY;
   }
@@ -149,7 +170,9 @@ public class GuiText {
     this.offsetY = offsetY;
   }
 
-  private void createVectors(List<Vector3f> positions, List<Vector2f> textCoordinates, List<Integer> indices, float titleWidth, float titleHeight, int numChars, byte[] chars) {
+  private void createVectors(List<Vector3f> positions, List<Vector2f> textCoordinates,
+                             List<Integer> indices, float titleWidth, float titleHeight,
+                             int numChars, byte[] chars) {
     height = titleHeight;
     for (int i = 0; i < numChars; i++) {
       byte currChar = chars[i];
@@ -159,22 +182,26 @@ public class GuiText {
 
       // Top Left Vertex
       positions.add(new Vector3f(((float) i * titleWidth), 0.0f, Z_POS));
-      textCoordinates.add(new Vector2f((float) column / (float) numColumns, (float) row / (float) numRows));
+      textCoordinates.add(new Vector2f((float) column / (float) numColumns,
+          (float) row / (float) numRows));
       indices.add(i * VERTICES_PER_QUAD);
 
       // Bottom Left Vertex
       positions.add(new Vector3f(((float) i * titleWidth), -titleHeight, Z_POS));
-      textCoordinates.add(new Vector2f((float) column / (float) numColumns, (float) (row + 1) / (float) numRows));
+      textCoordinates.add(new Vector2f((float) column / (float) numColumns,
+          (float) (row + 1) / (float) numRows));
       indices.add(i * VERTICES_PER_QUAD + 1);
 
       // Bottom Right Vertex
       positions.add(new Vector3f(((float) i * titleWidth) + titleWidth, -titleHeight, Z_POS));
-      textCoordinates.add(new Vector2f((float) (column + 1) / (float) numColumns, (float) (row + 1) / (float) numRows));
+      textCoordinates.add(new Vector2f((float) (column + 1) / (float) numColumns,
+          (float) (row + 1) / (float) numRows));
       indices.add(i * VERTICES_PER_QUAD + 2);
 
       // Top Right Vertex
       positions.add(new Vector3f(((float) i * titleWidth) + titleWidth, 0.0f, Z_POS));
-      textCoordinates.add(new Vector2f((float) (column + 1) / (float) numColumns, (float) row / (float) numRows));
+      textCoordinates.add(new Vector2f((float) (column + 1) / (float) numColumns,
+          (float) row / (float) numRows));
       indices.add(i * VERTICES_PER_QUAD + 3);
 
       // Add indices for left top and bottom right vertices for the second triangle

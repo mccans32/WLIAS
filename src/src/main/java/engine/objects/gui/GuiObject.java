@@ -1,13 +1,29 @@
 package engine.objects.gui;
 
-import engine.Window;
-import engine.graphics.mesh.twoDimensional.RectangleMesh;
+import engine.graphics.mesh.dimension.two.RectangleMesh;
 import math.Vector3f;
 
 public class GuiObject {
   private GuiImage guiImage;
   private GuiText guiText;
 
+  /**
+   * Instantiates a new Gui object.
+   *
+   * @param backgroundMesh   the background mesh
+   * @param text             the text
+   * @param fontSize         the font size
+   * @param fontFileName     the font file name
+   * @param numColumns       the num columns
+   * @param numRows          the num rows
+   * @param textColour       the text colour
+   * @param edgeX            the edge x
+   * @param offsetX          the offset x
+   * @param edgeY            the edge y
+   * @param offsetY          the offset y
+   * @param centerHorizontal whether to centre text horizontally
+   * @param centerVertical   whether to centre text vertically.
+   */
   public GuiObject(RectangleMesh backgroundMesh, String text, float fontSize, String fontFileName,
                    int numColumns, int numRows, Vector3f textColour, float edgeX, float offsetX,
                    float edgeY, float offsetY, boolean centerHorizontal, boolean centerVertical) {

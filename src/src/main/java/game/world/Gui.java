@@ -1,11 +1,10 @@
 package game.world;
 
 import engine.graphics.Material;
-import engine.graphics.mesh.twoDimensional.RectangleMesh;
+import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.objects.gui.GuiImage;
-import engine.objects.gui.GuiObject;
 import engine.objects.gui.GuiText;
 import engine.utils.ColourUtils;
 import java.awt.Color;
@@ -36,7 +35,8 @@ public class Gui {
   }
 
   private static void createTempGui() {
-    RectangleMesh guiMesh = new RectangleMesh(0.2f, 0.2f, new Material("/images/button_texture.jpg"));
+    RectangleMesh guiMesh = new RectangleMesh(0.2f, 0.2f,
+        new Material("/images/button_texture.jpg"));
 
     tempGui = new GuiImage(guiMesh, TEMP_GUI_VALUES[0], TEMP_GUI_VALUES[1], TEMP_GUI_VALUES[2],
         TEMP_GUI_VALUES[3]);
