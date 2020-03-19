@@ -42,6 +42,11 @@ public class Text {
     this.text = text;
   }
 
+  public Text(String text, float fontSize) {
+    this(text);
+    this.fontSize = fontSize;
+  }
+
   /**
    * Instantiates a new Text.
    *
@@ -50,8 +55,7 @@ public class Text {
    * @param textColour the text colour
    */
   public Text(String text, float fontSize, Vector3f textColour) {
-    this(text);
-    this.fontSize = fontSize;
+    this(text, fontSize);
     this.textColour = textColour;
   }
 

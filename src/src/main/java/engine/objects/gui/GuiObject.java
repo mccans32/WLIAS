@@ -1,7 +1,7 @@
 package engine.objects.gui;
 
 import engine.graphics.mesh.dimension.two.RectangleMesh;
-import math.Vector3f;
+import engine.graphics.text.Text;
 
 public class GuiObject {
   private GuiImage guiImage;
@@ -10,40 +10,31 @@ public class GuiObject {
   /**
    * Instantiates a new Gui object.
    *
-   * @param backgroundMesh   the background mesh
-   * @param text             the text
-   * @param fontSize         the font size
-   * @param fontFileName     the font file name
-   * @param numColumns       the num columns
-   * @param numRows          the num rows
-   * @param textColour       the text colour
-   * @param edgeX            the edge x
-   * @param offsetX          the offset x
-   * @param edgeY            the edge y
-   * @param offsetY          the offset y
-   * @param centerHorizontal whether to centre text horizontally
-   * @param centerVertical   whether to centre text vertically.
+   * @param backgroundMesh the background mesh
+   * @param text           the text
+   * @param edgeX          the edge x
+   * @param offsetX        the offset x
+   * @param edgeY          the edge y
+   * @param offsetY        the offset y
    */
-  public GuiObject(RectangleMesh backgroundMesh, String text, float fontSize, String fontFileName,
-                   int numColumns, int numRows, Vector3f textColour, float edgeX, float offsetX,
-                   float edgeY, float offsetY, boolean centerHorizontal, boolean centerVertical) {
+  public GuiObject(RectangleMesh backgroundMesh, Text text, float edgeX, float offsetX, float edgeY,
+                   float offsetY) {
     this.guiImage = new GuiImage(backgroundMesh, edgeX, offsetX, edgeY, offsetY);
 
-    this.guiText = new GuiText(text, fontSize, fontFileName, numColumns, numRows, textColour, edgeX,
-        offsetX - (backgroundMesh.getWidth() / 2), edgeY,
+    this.guiText = new GuiText(text, edgeX, offsetX - (backgroundMesh.getWidth() / 2), edgeY,
         offsetY + (backgroundMesh.getHeight() / 2));
 
-    centerText(centerHorizontal, centerVertical);
+    centerText(text);
   }
 
-  private void centerText(boolean centerHorizontal, boolean centerVertical) {
-    if (centerHorizontal) {
+  private void centerText(Text text) {
+    if (text.isCentreHorizontal()) {
       float textWidth = guiText.getWidth();
       guiText.setEdgeX(guiImage.getEdgeX());
       guiText.setOffsetX(guiImage.getOffsetX() - (textWidth / 2));
     }
 
-    if (centerVertical) {
+    if (text.isCentreVertical()) {
       float textHeight = guiText.getHeight();
       guiText.setEdgeY(guiImage.getEdgeY());
       guiText.setOffsetY(guiImage.getOffsetY() + (textHeight / 2));
