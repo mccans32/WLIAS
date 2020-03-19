@@ -12,12 +12,12 @@ public class Text {
   private boolean centreHorizontal = false;
   private boolean centreVertical = false;
   private float fontSize = 1;
-  private String text;
+  private String string;
 
   /**
    * Instantiates a new Text.
    *
-   * @param text             the text
+   * @param string           the text
    * @param fontFile         the font file
    * @param numColumns       the num columns
    * @param numRows          the num rows
@@ -26,9 +26,9 @@ public class Text {
    * @param centreHorizontal the centre horizontal
    * @param centreVertical   the centre vertical
    */
-  public Text(String text, String fontFile, int numColumns, int numRows, Vector3f textColour,
+  public Text(String string, String fontFile, int numColumns, int numRows, Vector3f textColour,
               float fontSize, boolean centreHorizontal, boolean centreVertical) {
-    this.text = text;
+    this.string = string;
     this.fontFile = fontFile;
     this.numColumns = numColumns;
     this.numRows = numRows;
@@ -38,38 +38,38 @@ public class Text {
     this.centreVertical = centreVertical;
   }
 
-  public Text(String text) {
-    this.text = text;
+  public Text(String string) {
+    this.string = string;
   }
 
-  public Text(String text, float fontSize) {
-    this(text);
+  public Text(String string, float fontSize) {
+    this(string);
     this.fontSize = fontSize;
   }
 
   /**
    * Instantiates a new Text.
    *
-   * @param text       the text
+   * @param string     the string
    * @param fontSize   the font size
    * @param textColour the text colour
    */
-  public Text(String text, float fontSize, Vector3f textColour) {
-    this(text, fontSize);
+  public Text(String string, float fontSize, Vector3f textColour) {
+    this(string, fontSize);
     this.textColour = textColour;
   }
 
   /**
    * Instantiates a new Text.
    *
-   * @param text             the text
+   * @param string           the string
    * @param fontSize         the font size
    * @param centreHorizontal the centre horizontal
    * @param centreVertical   the centre vertical
    */
-  public Text(String text, float fontSize, Vector3f textColour, boolean centreHorizontal,
+  public Text(String string, float fontSize, Vector3f textColour, boolean centreHorizontal,
               boolean centreVertical) {
-    this(text, fontSize, textColour);
+    this(string, fontSize, textColour);
     this.centreHorizontal = centreHorizontal;
     this.centreVertical = centreVertical;
   }
@@ -118,11 +118,11 @@ public class Text {
     this.fontSize = fontSize;
   }
 
-  public String getText() {
-    return text;
+  public String getString() {
+    return string;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  public void setString(String string) {
+    this.string = string;
   }
 }

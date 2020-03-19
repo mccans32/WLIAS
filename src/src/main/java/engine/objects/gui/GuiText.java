@@ -94,7 +94,7 @@ public class GuiText {
 
   private Mesh buildMesh(Material material, int numColumns, int numRows) {
     material.create();
-    byte[] chars = text.getText().getBytes(StandardCharsets.ISO_8859_1);
+    byte[] chars = text.getString().getBytes(StandardCharsets.ISO_8859_1);
     int numChars = chars.length;
 
     List<Vector3f> positions = new ArrayList<>();
