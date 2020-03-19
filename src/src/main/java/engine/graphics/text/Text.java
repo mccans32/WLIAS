@@ -11,6 +11,7 @@ public class Text {
   private String fontFile = "/text/defaultFont.png";
   private boolean centreHorizontal = false;
   private boolean centreVertical = false;
+  private boolean shouldWrap = false;
   private float fontSize = 1;
   private String string;
 
@@ -27,7 +28,8 @@ public class Text {
    * @param centreVertical   the centre vertical
    */
   public Text(String string, String fontFile, int numColumns, int numRows, Vector3f textColour,
-              float fontSize, boolean centreHorizontal, boolean centreVertical) {
+              float fontSize, boolean centreHorizontal, boolean centreVertical,
+              boolean shouldWrap) {
     this.string = string;
     this.fontFile = fontFile;
     this.numColumns = numColumns;
@@ -36,6 +38,7 @@ public class Text {
     this.fontSize = fontSize;
     this.centreHorizontal = centreHorizontal;
     this.centreVertical = centreVertical;
+    this.shouldWrap = shouldWrap;
   }
 
   public Text(String string) {
@@ -68,10 +71,19 @@ public class Text {
    * @param centreVertical   the centre vertical
    */
   public Text(String string, float fontSize, Vector3f textColour, boolean centreHorizontal,
-              boolean centreVertical) {
+              boolean centreVertical, boolean shouldWrap) {
     this(string, fontSize, textColour);
     this.centreHorizontal = centreHorizontal;
     this.centreVertical = centreVertical;
+    this.shouldWrap = shouldWrap;
+  }
+
+  public boolean shouldWrap() {
+    return shouldWrap;
+  }
+
+  public void setShouldWrap(boolean shouldWrap) {
+    this.shouldWrap = shouldWrap;
   }
 
   public int getNumColumns() {
@@ -124,5 +136,10 @@ public class Text {
 
   public void setString(String string) {
     this.string = string;
+  }
+
+  public Text copy() {
+    return new Text(this.string, this.fontFile, this.numColumns, this.numRows, this.textColour,
+        this.fontSize, this.centreHorizontal, this.centreVertical, this.shouldWrap);
   }
 }

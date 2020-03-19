@@ -116,10 +116,8 @@ public class MainMenu {
    * @param textRenderer the text renderer
    */
   public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
-    guiRenderer.renderObject(startButton.getGuiImage());
-    textRenderer.renderObject(startButton.getGuiText());
-    guiRenderer.renderObject(exitButton.getGuiImage());
-    textRenderer.renderObject(exitButton.getGuiText());
+    startButton.render(guiRenderer, textRenderer);
+    exitButton.render(guiRenderer, textRenderer);
   }
 
   public static void resize() {

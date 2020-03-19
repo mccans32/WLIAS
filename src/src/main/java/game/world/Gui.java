@@ -55,11 +55,11 @@ public class Gui {
   }
 
   private static void renderImages(GuiRenderer renderer) {
-    renderer.renderObject(tempGui);
+    tempGui.render(renderer);
   }
 
   private static void renderTexts(TextRenderer renderer) {
-    renderer.renderObject(tempText);
+    tempText.render(renderer);
   }
 
   private static void renderObjects(GuiRenderer guiRenderer, TextRenderer textRenderer) {

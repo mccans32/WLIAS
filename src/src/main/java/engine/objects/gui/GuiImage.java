@@ -3,6 +3,7 @@ package engine.objects.gui;
 import engine.Window;
 import engine.graphics.Vertex3D;
 import engine.graphics.mesh.dimension.two.RectangleMesh;
+import engine.graphics.renderer.GuiRenderer;
 import engine.tools.MousePicker;
 import math.Vector2f;
 import math.Vector3f;
@@ -146,5 +147,9 @@ public class GuiImage {
   public void reposition() {
     position.setX(edgeX * Window.getSpanX() + offsetX);
     position.setY(edgeY * Window.getSpanY() + offsetY);
+  }
+
+  public void render(GuiRenderer renderer) {
+    renderer.renderObject(this);
   }
 }

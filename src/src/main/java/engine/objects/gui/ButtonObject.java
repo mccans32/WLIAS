@@ -50,8 +50,13 @@ public class ButtonObject extends GuiObject {
     return this.getGuiImage().isMouseOver(window);
   }
 
+  /**
+   * Destroy meshes.
+   */
   public void destroy() {
     this.getGuiImage().destroy();
-    this.getGuiText().destroy();
+    for (GuiText line : getLines()) {
+      line.destroy();
+    }
   }
 }

@@ -46,7 +46,7 @@ public class World {
 
   private static void renderTiles(WorldRenderer renderer, Camera camera) {
     for (TileWorldObject tileWorldObject : tiles) {
-      renderer.renderObject(tileWorldObject, camera);
+      tileWorldObject.render(renderer, camera);
     }
   }
 

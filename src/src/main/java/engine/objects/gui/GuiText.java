@@ -4,6 +4,7 @@ import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.Vertex3D;
 import engine.graphics.mesh.Mesh;
+import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
 import engine.utils.ListUtils;
 import java.nio.charset.StandardCharsets;
@@ -42,9 +43,36 @@ public class GuiText {
     this.edgeY = edgeY;
     this.offsetY = offsetY;
     reposition();
-    Material material = new Material(text.getFontFile());
-    material.setColorOffset(text.getTextColour());
-    this.setMesh(buildMesh(material, text.getNumColumns(), text.getNumRows()));
+    this.setMesh(buildMesh());
+  }
+
+  /**
+   * Calculate title width float.
+   *
+   * @param text the text
+   * @return the float
+   */
+  public static float calculateTitleWidth(Text text) {
+    Material tempMaterial = new Material(text.getFontFile());
+    tempMaterial.create();
+    float titleWidth = (tempMaterial.getWidth() / (float) text.getNumColumns())
+        * text.getFontSize();
+    tempMaterial.destroy();
+    return titleWidth;
+  }
+
+  /**
+   * Calculate title height float.
+   *
+   * @param text the text
+   * @return the float
+   */
+  public static float calculateTitleHeight(Text text) {
+    Material tempMaterial = new Material(text.getFontFile());
+    tempMaterial.create();
+    float titleHeight = (tempMaterial.getHeight() / (float) text.getNumRows()) * text.getFontSize();
+    tempMaterial.destroy();
+    return titleHeight;
   }
 
   public void setTextColour(Vector3f textColour) {
@@ -77,10 +105,13 @@ public class GuiText {
    * @param text the to render.
    */
   public void setText(Text text) {
+    boolean isCentreVertical = this.text.isCentreVertical();
+    boolean isCentreHorizontal = this.text.isCentreHorizontal();
     this.text = text;
-
-    Material material = this.getMesh().getMaterial();
-    this.setMesh(buildMesh(material, text.getNumColumns(), text.getNumRows()));
+    this.text.setCentreVertical(isCentreVertical);
+    this.text.setCentreHorizontal(isCentreHorizontal);
+    this.mesh.destroy();
+    this.setMesh(buildMesh());
     create();
   }
 
@@ -92,7 +123,9 @@ public class GuiText {
     this.mesh = mesh;
   }
 
-  private Mesh buildMesh(Material material, int numColumns, int numRows) {
+  private Mesh buildMesh() {
+    Material material = new Material(text.getFontFile());
+    material.setColorOffset(text.getTextColour());
     material.create();
     byte[] chars = text.getString().getBytes(StandardCharsets.ISO_8859_1);
     int numChars = chars.length;
@@ -102,8 +135,8 @@ public class GuiText {
     List<Vertex3D> verticesList = new ArrayList<>();
     List<Integer> indices = new ArrayList<>();
 
-    float titleWidth = (material.getWidth() / (float) numColumns) * text.getFontSize();
-    float titleHeight = (material.getHeight() / (float) numRows) * text.getFontSize();
+    float titleWidth = calculateTitleWidth(text);
+    float titleHeight = calculateTitleHeight(text);
     createVectors(positions, textCoordinates, indices, titleWidth, titleHeight, numChars, chars);
     createVertices(positions, textCoordinates, verticesList);
     Vertex3D[] verticesArray = ListUtils.vertex3DListToArray(verticesList);
@@ -163,6 +196,7 @@ public class GuiText {
                              List<Integer> indices, float titleWidth, float titleHeight,
                              int numChars, byte[] chars) {
     height = titleHeight;
+    width = 0;
     for (int i = 0; i < numChars; i++) {
       byte currChar = chars[i];
       int column = currChar % text.getNumColumns();
@@ -212,4 +246,7 @@ public class GuiText {
     this.mesh.destroy();
   }
 
+  public void render(TextRenderer renderer) {
+    renderer.renderObject(this);
+  }
 }
