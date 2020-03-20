@@ -37,7 +37,6 @@ public class World {
   }
 
   public static void update() {
-
   }
 
   public static TileWorldObject[][] getWorldMap() {

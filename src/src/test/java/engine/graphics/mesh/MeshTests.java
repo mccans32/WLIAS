@@ -1,10 +1,11 @@
-package engine.graphics;
+package engine.graphics.mesh;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
+import engine.graphics.Vertex3D;
 import engine.graphics.mesh.Mesh;
 import math.Vector3f;
 import org.junit.jupiter.api.Test;

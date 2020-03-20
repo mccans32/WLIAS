@@ -23,17 +23,19 @@ public class Game {
   static final String SHADERS_PATH = "/shaders/";
   static final String VERTEX_DIRECTORY = "vertex/";
   static final String FRAGMENT_DIRECTORY = "fragment/";
-  static final String VERTEX_SHADER_FILE_NAME = "mainVertex.glsl";
-  static final String FRAGMENT_SHADER_FILE_NAME = "mainFragment.glsl";
-  static final String GUI_VERTEX_SHADER_FILE_NAME = "guiVertex.glsl";
-  static final String GUI_FRAGMENT_SHADER_FILE_NAME = "guiFragment.glsl";
-  static final String TEXT_VERTEX_SHADER_FILE_NAME = "textVertex.glsl";
-  static final String TEXT_FRAGMENT_SHADER_FILE_NAME = "textFragment.glsl";
+  static final String VERTEX_SHADER = "mainVertex.glsl";
+  static final String FRAGMENT_SHADER = "mainFragment.glsl";
+  static final String GUI_VERTEX_SHADER = "guiVertex.glsl";
+  static final String GUI_FRAGMENT_SHADER = "guiFragment.glsl";
+  static final String TEXT_VERTEX_SHADER = "textVertex.glsl";
+  static final String TEXT_FRAGMENT_SHADER = "textFragment.glsl";
+  static final String BACKGROUND_SHADER = "backgroundVertex.glsl";
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
   private static TextRenderer textRenderer;
-  public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(0, 0, 0));
+  private static GuiRenderer backgroundRenderer;
+  public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   private MousePicker mousePicker;
   /**
    * The Window.
@@ -42,6 +44,7 @@ public class Game {
   private Shader worldShader;
   private Shader guiShader;
   private Shader textShader;
+  private Shader backgroundShader;
 
   public static GameState getState() {
     return state;
@@ -65,6 +68,8 @@ public class Game {
     window.destroy();
     worldShader.destroy();
     guiShader.destroy();
+    textShader.destroy();
+    backgroundShader.destroy();
   }
 
   private void gameLoop() {
@@ -79,14 +84,16 @@ public class Game {
   private void initialize() {
     System.out.println("Initializing Simulation\n");
     // Initialise the Shader
-    worldShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + VERTEX_SHADER_FILE_NAME,
-        SHADERS_PATH + FRAGMENT_DIRECTORY + FRAGMENT_SHADER_FILE_NAME);
+    worldShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + VERTEX_SHADER,
+        SHADERS_PATH + FRAGMENT_DIRECTORY + FRAGMENT_SHADER);
     // Initialise Gui Shader
-    guiShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + GUI_VERTEX_SHADER_FILE_NAME,
-        SHADERS_PATH + FRAGMENT_DIRECTORY + GUI_FRAGMENT_SHADER_FILE_NAME);
+    guiShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + GUI_VERTEX_SHADER,
+        SHADERS_PATH + FRAGMENT_DIRECTORY + GUI_FRAGMENT_SHADER);
+    backgroundShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + BACKGROUND_SHADER,
+        SHADERS_PATH + FRAGMENT_DIRECTORY + GUI_FRAGMENT_SHADER);
     // Initialise Text Shader
-    textShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + TEXT_VERTEX_SHADER_FILE_NAME,
-        SHADERS_PATH + FRAGMENT_DIRECTORY + TEXT_FRAGMENT_SHADER_FILE_NAME);
+    textShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + TEXT_VERTEX_SHADER,
+        SHADERS_PATH + FRAGMENT_DIRECTORY + TEXT_FRAGMENT_SHADER);
     // Create main window
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TILE);
 
@@ -94,6 +101,7 @@ public class Game {
     worldRenderer = new WorldRenderer(window, worldShader);
     guiRenderer = new GuiRenderer(window, guiShader);
     textRenderer = new TextRenderer(window, guiShader);
+    backgroundRenderer = new GuiRenderer(window, backgroundShader);
     window.create();
     // Create World Shader
     worldShader.create();
@@ -101,12 +109,14 @@ public class Game {
     guiShader.create();
     // Create Text Shader
     textShader.create();
+    // Create Background Shader
+    backgroundShader.create();
     // Create Mouse Picker
     mousePicker = new MousePicker(camera, window.getProjectionMatrix());
 
     if (state == GameState.MAIN_MENU) {
       // Create the Main Menu
-      MainMenu.create(window);
+      MainMenu.create(window, camera);
     } else if (state == GameState.GAME) {
       //  create Gui
       Gui.create();
@@ -119,8 +129,7 @@ public class Game {
    * Update.
    */
   public void update() {
-
-    camera.update();
+    camera.update(window);
     window.update();
 
     // Update Mouse Picker
@@ -141,7 +150,7 @@ public class Game {
    */
   public void render() {
     if (state == GameState.MAIN_MENU) {
-      MainMenu.render(guiRenderer, textRenderer);
+      MainMenu.render(guiRenderer, textRenderer, backgroundRenderer);
     } else { // state == GameState.GAME;
       // Render world objects
       World.render(worldRenderer, camera);

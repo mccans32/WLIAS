@@ -8,6 +8,7 @@ import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
 import engine.io.Input;
 import engine.objects.gui.ButtonObject;
+import engine.objects.gui.GuiImage;
 import engine.objects.world.Camera;
 import engine.utils.ColourUtils;
 import game.Game;
@@ -21,19 +22,28 @@ import org.lwjgl.glfw.GLFW;
 public class MainMenu {
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
-  private static final float BUTTON_FONT_SIZE = 2f;
-  private static float BUTTON_WIDTH = 0.7f;
-  private static float BUTTON_HEIGHT = 0.3f;
-  private static String BUTTON_TEXTURE = "/images/button_texture.jpg";
+  private static final float BUTTON_FONT_SIZE = 2.2f;
+  private static final float BUTTON_WIDTH = 0.7f;
+  private static final float BUTTON_HEIGHT = 0.3f;
+  private static final String BUTTON_TEXTURE = "/images/hudElementBackground.png";
+  private static final String BACKGROUND_TEXTURE = "/images/mainMenuBackground.jpg";
   private static float[] START_REPOSITION_VALUES = {0, 0, 1, -0.6f};
   private static float[] EXIT_REPOSITION_VALUES = {0, 0, -1, 0.6f};
   private static ButtonObject startButton;
   private static ButtonObject exitButton;
   private static ButtonObject[] buttons = new ButtonObject[2];
+  private static GuiImage backgroundImage;
 
-  public static void create(Window window) {
+  /**
+   * Create.
+   *
+   * @param window the window
+   */
+  public static void create(Window window, Camera camera) {
+    camera.freeze();
     setBackgroundColour(BACKGROUND_COLOUR, window);
     createButtons();
+    createBackground();
   }
 
   /**
@@ -115,11 +125,16 @@ public class MainMenu {
    * @param guiRenderer  the gui renderer
    * @param textRenderer the text renderer
    */
-  public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+  public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer,
+                            GuiRenderer backgroundRenderer) {
     startButton.render(guiRenderer, textRenderer);
     exitButton.render(guiRenderer, textRenderer);
+    backgroundImage.render(backgroundRenderer);
   }
 
+  /**
+   * Resize.
+   */
   public static void resize() {
     startButton.reposition();
     exitButton.reposition();
@@ -139,5 +154,11 @@ public class MainMenu {
         new Material(BUTTON_TEXTURE));
 
     return new ButtonObject(tempMesh, buttonText, edgeX, offsetX, edgeY, offsetY);
+  }
+
+  private static void createBackground() {
+    RectangleMesh backgroundMesh = new RectangleMesh(2, 2, new Material(BACKGROUND_TEXTURE));
+    backgroundImage = new GuiImage(backgroundMesh, -1, 1, 1, 1);
+    backgroundImage.create();
   }
 }

@@ -1,5 +1,6 @@
 package engine.objects.world;
 
+import engine.Window;
 import engine.io.Input;
 import math.Vector2f;
 import math.Vector3f;
@@ -9,8 +10,11 @@ public class Camera {
   private static final float MIN_CAMERA_Z = 1f;
   private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
-  private static final float MOVE_SPEED = 0.1f;
+  private static final float MOVE_SPEED = 0.2f;
   private static final float MIN_CAMERA_BORDER = 5f;
+  private static final float MOUSE_SENSITIVITY = 0.1f;
+  private static final float CAMERA_MIN_X_ROTATION = 0;
+  private static final float CAMERA_MAX_X_ROTATION = 90;
   private float maxCameraX;
   private float minCameraX;
   private float maxCameraY;
@@ -21,6 +25,8 @@ public class Camera {
   private Vector3f position;
   private Vector3f rotation;
   private boolean isFrozen = false;
+  private float oldMouseX = 0;
+  private float oldMouseY = 0;
 
   /**
    * Instantiates a new Camera.
@@ -49,6 +55,79 @@ public class Camera {
 
   public static float getZoomModifier() {
     return ZOOM_MODIFIER;
+  }
+
+  /**
+   * Update.
+   */
+  public void update(Window window) {
+    if (!isFrozen) {
+      updateRotation(window);
+      updatePosition();
+    }
+  }
+
+  private void updateRotation(Window window) {
+    float newMouseX = (float) Input.getMouseX();
+    float newMouseY = (float) Input.getMouseY();
+    float differenceX = (newMouseX - oldMouseX) * MOUSE_SENSITIVITY;
+    float differenceY = (newMouseY - oldMouseY) * MOUSE_SENSITIVITY;
+
+    //Adjust camera rotation
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT)) {
+      window.lockMouse();
+      rotation = Vector3f.add(rotation, new Vector3f(-differenceY, 0, -differenceX));
+      // Ensure X rotation stays within the limits so that we can't loop around.
+      rotation.setX(Math.max(CAMERA_MIN_X_ROTATION, rotation.getX()));
+      rotation.setX(Math.min(CAMERA_MAX_X_ROTATION, rotation.getX()));
+    } else {
+      window.unlockMouse();
+    }
+    oldMouseX = newMouseX;
+    oldMouseY = newMouseY;
+  }
+
+  private void updatePosition() {
+    // Calculate values to compensate for rotation
+    float a = (float) Math.cos(Math.toRadians(rotation.getZ())) * MOVE_SPEED;
+    float b = (float) Math.sin(Math.toRadians(rotation.getZ())) * MOVE_SPEED;
+
+    // Move Camera with keyboard
+    if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
+      position = Vector3f.add(position, new Vector3f(-a, -b, 0));
+    }
+    if (Input.isKeyDown(GLFW.GLFW_KEY_W)) {
+      position = Vector3f.add(position, new Vector3f(-b, a, 0));
+    }
+    if (Input.isKeyDown(GLFW.GLFW_KEY_S)) {
+      position = Vector3f.add(position, new Vector3f(b, -a, 0));
+    }
+    if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
+      position = Vector3f.add(position, new Vector3f(a, b, 0));
+    }
+
+    // Calculate Distance for Zoom
+    float cameraDistance = (float) -(Input.getScrollY() + defaultDistance * ZOOM_MODIFIER);
+
+    if (cameraDistance < MIN_CAMERA_Z) {
+      position.setZ(MIN_CAMERA_Z);
+    } else {
+      position.setZ(Math.min(cameraDistance, MAX_CAMERA_Z));
+    }
+
+    // Calculate if camera is within X Border
+    if (this.position.getX() > maxCameraX) {
+      position.setX(maxCameraX);
+    } else {
+      position.setX(Math.max(position.getX(), minCameraX));
+    }
+
+    // Calculate if camera is within Y Border
+    if (this.position.getY() > maxCameraY) {
+      position.setY(maxCameraY);
+    } else {
+      position.setY(Math.max(position.getY(), minCameraY));
+    }
   }
 
   public float getMaxCameraX() {
@@ -85,50 +164,6 @@ public class Camera {
 
   public void unfreeze() {
     isFrozen = false;
-  }
-
-  /**
-   * Update.
-   */
-  public void update() {
-    if (!isFrozen) {
-      // Move Camera with keyboard
-      if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
-        position = Vector3f.add(position, new Vector3f(-MOVE_SPEED, 0, 0));
-      }
-      if (Input.isKeyDown(GLFW.GLFW_KEY_W)) {
-        position = Vector3f.add(position, new Vector3f(0, MOVE_SPEED, 0));
-      }
-      if (Input.isKeyDown(GLFW.GLFW_KEY_S)) {
-        position = Vector3f.add(position, new Vector3f(0, -MOVE_SPEED, 0));
-      }
-      if (Input.isKeyDown(GLFW.GLFW_KEY_D)) {
-        position = Vector3f.add(position, new Vector3f(MOVE_SPEED, 0, 0));
-      }
-
-      // Calculate Distance for Zoom
-      float cameraDistance = (float) -(Input.getScrollY() + defaultDistance * ZOOM_MODIFIER);
-
-      if (cameraDistance < MIN_CAMERA_Z) {
-        position.setZ(MIN_CAMERA_Z);
-      } else {
-        position.setZ(Math.min(cameraDistance, MAX_CAMERA_Z));
-      }
-
-      // Calculate if camera is within X Border
-      if (this.position.getX() > maxCameraX) {
-        position.setX(maxCameraX);
-      } else {
-        position.setX(Math.max(position.getX(), minCameraX));
-      }
-
-      // Calculate if camera is within Y Border
-      if (this.position.getY() > maxCameraY) {
-        position.setY(maxCameraY);
-      } else {
-        position.setY(Math.max(position.getY(), minCameraY));
-      }
-    }
   }
 
   /**

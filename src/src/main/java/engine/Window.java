@@ -24,14 +24,11 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 
 import engine.io.Input;
 import math.Matrix4f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
@@ -47,6 +44,8 @@ public class Window {
    */
   static final boolean ENABLE_V_SYNC = true;
   private static boolean SHOULD_CENTER = false;
+  private static float spanX;
+  private static float spanY;
   /**
    * The Frames.
    */
@@ -67,7 +66,6 @@ public class Window {
   private float backgroundG;
   private float backgroundB;
   private float backgroundAlpha;
-  private GLFWWindowSizeCallback windowSizeCallback;
   private boolean hasResized = false;
   private int[] windowPosX = new int[1];
   private int[] windowPosY = new int[1];
@@ -79,8 +77,6 @@ public class Window {
   private float near = 0.1f;
   private float far = 1000f;
   private float aspect;
-  private static float spanX;
-  private static float spanY;
 
   /**
    * Instantiates a new Window.
@@ -139,7 +135,7 @@ public class Window {
   }
 
   private void setLocalCallbacks() {
-    windowSizeCallback = new GLFWWindowSizeCallback() {
+    GLFWWindowSizeCallback windowSizeCallback = new GLFWWindowSizeCallback() {
       @Override
       public void invoke(long argWindow, int argWidth, int argHeight) {
         width = argWidth;
@@ -235,6 +231,7 @@ public class Window {
       }
       hasResized = false;
     }
+
     GL11.glClearColor(backgroundR, backgroundG, backgroundB, backgroundAlpha);
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
@@ -397,4 +394,13 @@ public class Window {
       spanY = spanX / aspect;
     }
   }
+
+  public void lockMouse() {
+    GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+  }
+
+  public void unlockMouse() {
+    GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+  }
+
 }

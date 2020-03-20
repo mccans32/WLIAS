@@ -1,9 +1,12 @@
-package engine.graphics;
+package engine.graphics.renderer;
 
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
+import engine.graphics.Material;
+import engine.graphics.Shader;
+import engine.graphics.Vertex3D;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;

@@ -5,14 +5,10 @@ import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
-import engine.objects.gui.GuiImage;
-import engine.objects.gui.GuiText;
+import engine.objects.gui.GuiObject;
 
 public class Gui {
-  private static final String TEMP_SENTENCE = "0";
-  private static GuiImage tempGui;
-  private static GuiText tempText;
-  private static float[] TEMP_GUI_VALUES = {-1, 0.1f, 1, -0.1f};
+  private static GuiObject tempObject;
 
   public static void create() {
     createObjects();
@@ -23,22 +19,13 @@ public class Gui {
   }
 
   private static void createObjects() {
-    createTempText();
-    createTempGui();
-  }
-
-  private static void createTempGui() {
-    RectangleMesh guiMesh = new RectangleMesh(0.2f, 0.2f,
-        new Material("/images/button_texture.jpg"));
-
-    tempGui = new GuiImage(guiMesh, TEMP_GUI_VALUES[0], TEMP_GUI_VALUES[1], TEMP_GUI_VALUES[2],
-        TEMP_GUI_VALUES[3]);
-    tempGui.create();
-  }
-
-  private static void createTempText() {
-    tempText = new GuiText(new Text(TEMP_SENTENCE), -1f, 0, 1f, 0);
-    tempText.create();
+    RectangleMesh mesh = new RectangleMesh(0.1f, 0.1f,
+        new Material("/images/hudElementBackground.png"));
+    Text text = new Text("0");
+    text.setCentreHorizontal(true);
+    text.setCentreVertical(true);
+    tempObject = new GuiObject(mesh, text, -1f, 0.05f, 1f, -0.05f);
+    tempObject.create();
   }
 
   /**
@@ -55,18 +42,17 @@ public class Gui {
   }
 
   private static void renderImages(GuiRenderer renderer) {
-    tempGui.render(renderer);
   }
 
   private static void renderTexts(TextRenderer renderer) {
-    tempText.render(renderer);
+
   }
 
   private static void renderObjects(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    tempObject.render(guiRenderer, textRenderer);
   }
 
   public static void resize() {
-    tempText.reposition();
-    tempGui.reposition();
+    tempObject.reposition();
   }
 }

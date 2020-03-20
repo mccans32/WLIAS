@@ -16,8 +16,8 @@ import org.lwjgl.opengl.GL30;
  */
 public class GuiRenderer {
   private static Vector2f DEFAULT_ROTATION = new Vector2f(0, 0);
-  private Shader shader;
-  private Window window;
+  protected Shader shader;
+  protected Window window;
 
   public GuiRenderer(Window window, Shader shader) {
     this.shader = shader;
@@ -78,7 +78,7 @@ public class GuiRenderer {
             new Vector3f(1, 1, 1)));
   }
 
-  private void setProjectionUniform() {
+  protected void setProjectionUniform() {
     shader.setUniform("projection", window.getOrthographicMatrix());
   }
 
