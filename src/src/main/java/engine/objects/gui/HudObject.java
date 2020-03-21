@@ -6,12 +6,12 @@ import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
 import java.util.ArrayList;
 
-public class GuiObject {
-  private GuiImage guiImage;
-  private ArrayList<GuiText> lines = new ArrayList<>();
+public class HudObject {
+  private HudImage hudImage;
+  private ArrayList<HudText> lines = new ArrayList<>();
 
   /**
-   * Instantiates a new Gui object.
+   * Instantiates a new Hud object.
    *
    * @param backgroundMesh the background mesh
    * @param text           the text
@@ -20,18 +20,18 @@ public class GuiObject {
    * @param edgeY          the edge y
    * @param offsetY        the offset y
    */
-  public GuiObject(RectangleMesh backgroundMesh, Text text, float edgeX, float offsetX, float edgeY,
+  public HudObject(RectangleMesh backgroundMesh, Text text, float edgeX, float offsetX, float edgeY,
                    float offsetY) {
     // Create Background
-    this.guiImage = new GuiImage(backgroundMesh, edgeX, offsetX, edgeY, offsetY);
-    calculateLines(text, this.guiImage);
+    this.hudImage = new HudImage(backgroundMesh, edgeX, offsetX, edgeY, offsetY);
+    calculateLines(text, this.hudImage);
     centerText();
   }
 
-  private void calculateLines(Text text, GuiImage backgroundImage) {
+  private void calculateLines(Text text, HudImage backgroundImage) {
     StringBuilder currentSentence = new StringBuilder();
     if (text.shouldWrap()) {
-      float charWidth = GuiText.calculateTitleWidth(text);
+      float charWidth = HudText.calculateCharWidth(text);
       float backgroundWidth = backgroundImage.getMesh().getWidth();
       String[] stringArray = text.getString().split(" ");
 
@@ -71,7 +71,7 @@ public class GuiObject {
     }
   }
 
-  private void createNewLine(StringBuilder sentence, Text text, GuiImage backgroundImage) {
+  private void createNewLine(StringBuilder sentence, Text text, HudImage backgroundImage) {
     // Create Text
     Text lineText = text.copy();
     lineText.setString(sentence.toString());
@@ -80,39 +80,39 @@ public class GuiObject {
     sentence.setLength(0);
   }
 
-  private GuiText createGuiText(Text text, GuiImage backgroundImage, int lineNumber) {
-    return new GuiText(text, backgroundImage.getEdgeX(),
+  private HudText createGuiText(Text text, HudImage backgroundImage, int lineNumber) {
+    return new HudText(text, backgroundImage.getEdgeX(),
         backgroundImage.getOffsetX() - (backgroundImage.getMesh().getWidth() / 2),
         backgroundImage.getEdgeY(),
         backgroundImage.getOffsetY() + (backgroundImage.getMesh().getHeight() / 2)
-            - (GuiText.calculateTitleHeight(text) * lineNumber));
+            - (HudText.calculateCharHeight(text) * lineNumber));
   }
 
   private void centerText() {
-    for (GuiText line : lines) {
+    for (HudText line : lines) {
       if (line.getText().isCentreHorizontal()) {
         float textWidth = line.getWidth();
-        line.setEdgeX(guiImage.getEdgeX());
-        line.setOffsetX(guiImage.getOffsetX() - (textWidth / 2));
+        line.setEdgeX(hudImage.getEdgeX());
+        line.setOffsetX(hudImage.getOffsetX() - (textWidth / 2));
       }
       if (line.getText().isCentreVertical()) {
         float textHeight = line.getHeight();
-        line.setEdgeY(guiImage.getEdgeY());
-        line.setOffsetY(guiImage.getOffsetY() + (textHeight / 2));
+        line.setEdgeY(hudImage.getEdgeY());
+        line.setOffsetY(hudImage.getOffsetY() + (textHeight / 2));
       }
     }
   }
 
-  public GuiImage getGuiImage() {
-    return guiImage;
+  public HudImage getHudImage() {
+    return hudImage;
   }
 
   /**
    * Create the meshes.
    */
   public void create() {
-    guiImage.create();
-    for (GuiText line : lines) {
+    hudImage.create();
+    for (HudText line : lines) {
       line.create();
     }
   }
@@ -121,9 +121,9 @@ public class GuiObject {
    * Reposition.
    */
   public void reposition() {
-    guiImage.reposition();
+    hudImage.reposition();
     centerText();
-    for (GuiText line : lines) {
+    for (HudText line : lines) {
       line.reposition();
     }
   }
@@ -135,14 +135,14 @@ public class GuiObject {
    * @param textRenderer the text renderer
    */
   public void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
-    this.guiImage.render(guiRenderer);
+    this.hudImage.render(guiRenderer);
 
-    for (GuiText line : lines) {
+    for (HudText line : lines) {
       line.render(textRenderer);
     }
   }
 
-  public ArrayList<GuiText> getLines() {
+  public ArrayList<HudText> getLines() {
     return lines;
   }
 }

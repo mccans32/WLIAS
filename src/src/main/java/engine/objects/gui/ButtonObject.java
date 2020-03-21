@@ -5,9 +5,9 @@ import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.text.Text;
 import math.Vector3f;
 
-public class ButtonObject extends GuiObject {
+public class ButtonObject extends HudObject {
   /**
-   * Instantiates a new Gui object.
+   * Instantiates a new Hud object.
    *
    * @param mesh     the mesh.
    * @param edgeX    the x coordinate to offset from.
@@ -31,7 +31,7 @@ public class ButtonObject extends GuiObject {
   public ButtonObject(RectangleMesh backgroundMesh, Text text, float edgeX, float offsetX,
                       float edgeY, float offsetY) {
     super(backgroundMesh, text, edgeX, offsetX, edgeY, offsetY);
-    this.getGuiImage().getMesh().getMaterial().setColorOffset(INACTIVE_COLOUR_OFFSET);
+    this.getHudImage().getMesh().getMaterial().setColorOffset(INACTIVE_COLOUR_OFFSET);
   }
 
   public void update(Window window) {
@@ -40,22 +40,22 @@ public class ButtonObject extends GuiObject {
 
   private void updateColourOffset(Window window) {
     if (isMouseOver(window)) {
-      this.getGuiImage().getMesh().getMaterial().setColorOffset(ACTIVE_COLOUR_OFFSET);
+      this.getHudImage().getMesh().getMaterial().setColorOffset(ACTIVE_COLOUR_OFFSET);
     } else {
-      this.getGuiImage().getMesh().getMaterial().setColorOffset(INACTIVE_COLOUR_OFFSET);
+      this.getHudImage().getMesh().getMaterial().setColorOffset(INACTIVE_COLOUR_OFFSET);
     }
   }
 
   public boolean isMouseOver(Window window) {
-    return this.getGuiImage().isMouseOver(window);
+    return this.getHudImage().isMouseOver(window);
   }
 
   /**
    * Destroy meshes.
    */
   public void destroy() {
-    this.getGuiImage().destroy();
-    for (GuiText line : getLines()) {
+    this.getHudImage().destroy();
+    for (HudText line : getLines()) {
       line.destroy();
     }
   }

@@ -8,7 +8,7 @@ import engine.tools.MousePicker;
 import math.Vector2f;
 import math.Vector3f;
 
-public class GuiImage {
+public class HudImage {
   private Vector2f position = new Vector2f(0, 0);
   private Vector2f scale = new Vector2f(1, 1);
   private RectangleMesh mesh;
@@ -18,11 +18,11 @@ public class GuiImage {
   private float offsetY;
 
   /**
-   * Instantiates a new Gui object.
+   * Instantiates a new Hud object.
    *
    * @param mesh     the mesh.
    */
-  public GuiImage(RectangleMesh mesh,
+  public HudImage(RectangleMesh mesh,
                   float edgeX,
                   float offsetX,
                   float edgeY,

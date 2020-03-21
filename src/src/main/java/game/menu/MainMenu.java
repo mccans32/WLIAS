@@ -8,12 +8,12 @@ import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
 import engine.io.Input;
 import engine.objects.gui.ButtonObject;
-import engine.objects.gui.GuiImage;
+import engine.objects.gui.HudImage;
 import engine.objects.world.Camera;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
-import game.world.Gui;
+import game.world.Hud;
 import game.world.World;
 import java.awt.Color;
 import math.Vector3f;
@@ -34,7 +34,7 @@ public class MainMenu {
   private static ButtonObject startButton;
   private static ButtonObject exitButton;
   private static ButtonObject[] buttons = new ButtonObject[2];
-  private static GuiImage backgroundImage;
+  private static HudImage backgroundImage;
 
   /**
    * Create.
@@ -88,8 +88,8 @@ public class MainMenu {
         Game.setState(GameState.GAME);
         // Destroy the Main Menu
         destroy();
-        // Create the Gui
-        Gui.create();
+        // Create the Hud
+        Hud.create();
         // Create the World
         World.create(camera);
       } else if (exitButton.isMouseOver(window)) {
@@ -160,7 +160,7 @@ public class MainMenu {
 
   private static void createBackground() {
     RectangleMesh backgroundMesh = new RectangleMesh(2, 2, new Material(BACKGROUND_TEXTURE));
-    backgroundImage = new GuiImage(backgroundMesh, -1, 1, 1, 1);
+    backgroundImage = new HudImage(backgroundMesh, -1, 1, 1, 1);
     backgroundImage.create();
   }
 }

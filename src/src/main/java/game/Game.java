@@ -8,7 +8,7 @@ import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
 import engine.tools.MousePicker;
 import game.menu.MainMenu;
-import game.world.Gui;
+import game.world.Hud;
 import game.world.World;
 import math.Vector3f;
 
@@ -86,7 +86,7 @@ public class Game {
     // Initialise the Shader
     worldShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + VERTEX_SHADER,
         SHADERS_PATH + FRAGMENT_DIRECTORY + FRAGMENT_SHADER);
-    // Initialise Gui Shader
+    // Initialise Hud Shader
     guiShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + GUI_VERTEX_SHADER,
         SHADERS_PATH + FRAGMENT_DIRECTORY + GUI_FRAGMENT_SHADER);
     backgroundShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + BACKGROUND_SHADER,
@@ -105,7 +105,7 @@ public class Game {
     window.create();
     // Create World Shader
     worldShader.create();
-    // Create Gui Shader
+    // Create Hud Shader
     guiShader.create();
     // Create Text Shader
     textShader.create();
@@ -113,16 +113,8 @@ public class Game {
     backgroundShader.create();
     // Create Mouse Picker
     mousePicker = new MousePicker(camera, window.getProjectionMatrix());
-
-    if (state == GameState.MAIN_MENU) {
-      // Create the Main Menu
-      MainMenu.create(window, camera);
-    } else if (state == GameState.GAME) {
-      //  create Gui
-      Gui.create();
-      World.create(camera);
-    }
-
+    // Create the Main Menu
+    MainMenu.create(window, camera);
   }
 
   /**
@@ -140,8 +132,8 @@ public class Game {
     } else { // state == GameState.GAME
       // Update The World
       World.update();
-      // Update The Gui
-      Gui.update();
+      // Update The Hud
+      Hud.update();
     }
   }
 
@@ -155,7 +147,7 @@ public class Game {
       // Render world objects
       World.render(worldRenderer, camera);
       // Render all game objects
-      Gui.render(guiRenderer, textRenderer);
+      Hud.render(guiRenderer, textRenderer);
     }
     window.swapBuffers();
   }

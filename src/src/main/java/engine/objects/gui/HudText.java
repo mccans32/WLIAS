@@ -13,7 +13,7 @@ import java.util.List;
 import math.Vector2f;
 import math.Vector3f;
 
-public class GuiText {
+public class HudText {
   private static final float Z_POS = 0f;
   private static final int VERTICES_PER_QUAD = 4;
   private Text text;
@@ -28,7 +28,7 @@ public class GuiText {
   private float height;
 
   /**
-   * Instantiates a new Gui text.
+   * Instantiates a new Hud text.
    *
    * @param text    the text
    * @param edgeX   the edge x
@@ -36,7 +36,7 @@ public class GuiText {
    * @param edgeY   the edge y
    * @param offsetY the offset y
    */
-  public GuiText(Text text, float edgeX, float offsetX, float edgeY, float offsetY) {
+  public HudText(Text text, float edgeX, float offsetX, float edgeY, float offsetY) {
     this.text = text;
     this.edgeX = edgeX;
     this.offsetX = offsetX;
@@ -47,32 +47,32 @@ public class GuiText {
   }
 
   /**
-   * Calculate title width float.
+   * Calculate char width float.
    *
    * @param text the text
    * @return the float
    */
-  public static float calculateTitleWidth(Text text) {
+  public static float calculateCharWidth(Text text) {
     Material tempMaterial = new Material(text.getFontFile());
     tempMaterial.create();
-    float titleWidth = (tempMaterial.getWidth() / (float) text.getNumColumns())
+    float charWidth = (tempMaterial.getWidth() / (float) text.getNumColumns())
         * text.getFontSize();
     tempMaterial.destroy();
-    return titleWidth;
+    return charWidth;
   }
 
   /**
-   * Calculate title height float.
+   * Calculate char height float.
    *
    * @param text the text
    * @return the float
    */
-  public static float calculateTitleHeight(Text text) {
+  public static float calculateCharHeight(Text text) {
     Material tempMaterial = new Material(text.getFontFile());
     tempMaterial.create();
-    float titleHeight = (tempMaterial.getHeight() / (float) text.getNumRows()) * text.getFontSize();
+    float charHeight = (tempMaterial.getHeight() / (float) text.getNumRows()) * text.getFontSize();
     tempMaterial.destroy();
-    return titleHeight;
+    return charHeight;
   }
 
   public void setTextColour(Vector3f textColour) {
@@ -135,9 +135,9 @@ public class GuiText {
     List<Vertex3D> verticesList = new ArrayList<>();
     List<Integer> indices = new ArrayList<>();
 
-    float titleWidth = calculateTitleWidth(text);
-    float titleHeight = calculateTitleHeight(text);
-    createVectors(positions, textCoordinates, indices, titleWidth, titleHeight, numChars, chars);
+    float charWidth = calculateCharWidth(text);
+    float charHeight = calculateCharHeight(text);
+    createVectors(positions, textCoordinates, indices, charWidth, charHeight, numChars, chars);
     createVertices(positions, textCoordinates, verticesList);
     Vertex3D[] verticesArray = ListUtils.vertex3DListToArray(verticesList);
     int[] indicesArray = ListUtils.integerListToIntArray(indices);
@@ -193,36 +193,36 @@ public class GuiText {
   }
 
   private void createVectors(List<Vector3f> positions, List<Vector2f> textCoordinates,
-                             List<Integer> indices, float titleWidth, float titleHeight,
+                             List<Integer> indices, float charWidth, float charHeight,
                              int numChars, byte[] chars) {
-    height = titleHeight;
+    height = charHeight;
     width = 0;
     for (int i = 0; i < numChars; i++) {
       byte currChar = chars[i];
       int column = currChar % text.getNumColumns();
       int row = currChar / text.getNumColumns();
-      width += titleWidth;
+      width += charWidth;
 
       // Top Left Vertex
-      positions.add(new Vector3f(((float) i * titleWidth), 0.0f, Z_POS));
+      positions.add(new Vector3f(((float) i * charWidth), 0.0f, Z_POS));
       textCoordinates.add(new Vector2f((float) column / (float) text.getNumColumns(),
           (float) row / (float) text.getNumRows()));
       indices.add(i * VERTICES_PER_QUAD);
 
       // Bottom Left Vertex
-      positions.add(new Vector3f(((float) i * titleWidth), -titleHeight, Z_POS));
+      positions.add(new Vector3f(((float) i * charWidth), -charHeight, Z_POS));
       textCoordinates.add(new Vector2f((float) column / (float) text.getNumColumns(),
           (float) (row + 1) / (float) text.getNumRows()));
       indices.add(i * VERTICES_PER_QUAD + 1);
 
       // Bottom Right Vertex
-      positions.add(new Vector3f(((float) i * titleWidth) + titleWidth, -titleHeight, Z_POS));
+      positions.add(new Vector3f(((float) i * charWidth) + charWidth, -charHeight, Z_POS));
       textCoordinates.add(new Vector2f((float) (column + 1) / (float) text.getNumColumns(),
           (float) (row + 1) / (float) text.getNumRows()));
       indices.add(i * VERTICES_PER_QUAD + 2);
 
       // Top Right Vertex
-      positions.add(new Vector3f(((float) i * titleWidth) + titleWidth, 0.0f, Z_POS));
+      positions.add(new Vector3f(((float) i * charWidth) + charWidth, 0.0f, Z_POS));
       textCoordinates.add(new Vector2f((float) (column + 1) / (float) text.getNumColumns(),
           (float) row / (float) text.getNumRows()));
       indices.add(i * VERTICES_PER_QUAD + 3);

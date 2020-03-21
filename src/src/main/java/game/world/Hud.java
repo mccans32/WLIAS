@@ -5,10 +5,10 @@ import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
-import engine.objects.gui.GuiObject;
+import engine.objects.gui.HudObject;
 
-public class Gui {
-  private static GuiObject tempObject;
+public class Hud {
+  private static HudObject tempObject;
 
   public static void create() {
     createObjects();
@@ -24,18 +24,18 @@ public class Gui {
     Text text = new Text("0");
     text.setCentreHorizontal(true);
     text.setCentreVertical(true);
-    tempObject = new GuiObject(mesh, text, -1f, 0.05f, 1f, -0.05f);
+    tempObject = new HudObject(mesh, text, -1f, 0.05f, 1f, -0.05f);
     tempObject.create();
   }
 
   /**
-   * Render Gui Elements and Text Elements in the world setting.
+   * Render Hud Elements and Text Elements in the world setting.
    *
    * @param guiRenderer  the gui renderer
    * @param textRenderer the text renderer
    */
   public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
-    //Render Gui Elements First to fix alpha blending on text
+    //Render Hud Elements First to fix alpha blending on text
     renderImages(guiRenderer);
     renderTexts(textRenderer);
     renderObjects(guiRenderer, textRenderer);

@@ -50,7 +50,6 @@ public class World {
   }
 
   private static void createObjects(Camera camera) {
-    // TODO REPLACE WITH A MENU TO CHOOSE THE ATRIBUTES FOR THE MAP
     // calculate tile size based on vertex values
     float tileSize = UPPER_VERTEX_BAND + Math.abs(LOWER_VERTEX_BAND);
     createTileObjects(tileSize, camera);
