@@ -1,7 +1,9 @@
 package map.tiles;
 
+import engine.graphics.image.Image;
+
 public abstract class Tile {
-  private String image = "/images/default_texture.png";
+  private static Image image = new Image();
   private float positionX;
   private float positionY;
   private float terrainHealth;
@@ -39,7 +41,7 @@ public abstract class Tile {
     this.terrainHealth = terrainHealth;
   }
 
-  public String getImage() {
+  public Image getImage() {
     return image;
   }
 }

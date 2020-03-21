@@ -3,6 +3,7 @@ package engine.graphics.mesh;
 import engine.graphics.Material;
 import engine.graphics.Vertex2D;
 import engine.graphics.Vertex3D;
+import engine.graphics.image.Image;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import math.Vector3f;
@@ -62,7 +63,7 @@ public class Mesh {
   public Mesh(Vertex3D[] vertices, int[] indices) {
     this.vertices = vertices.clone();
     this.indices = indices.clone();
-    this.material = new Material(Material.getDefaultPath());
+    this.material = new Material(new Image());
   }
 
   /**

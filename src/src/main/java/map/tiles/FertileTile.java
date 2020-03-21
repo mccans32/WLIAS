@@ -1,10 +1,11 @@
 package map.tiles;
 
-public class FertileTile extends Tile {
-  private String image = "/images/fertileTile.jpg";
+import engine.graphics.image.Image;
 
-  @Override
-  public String getImage() {
+public class FertileTile extends Tile {
+  private Image image = new Image("/images/fertileTile.jpg");
+
+  public Image getImage() {
     return image;
   }
 }

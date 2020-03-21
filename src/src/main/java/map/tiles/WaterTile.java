@@ -1,10 +1,11 @@
 package map.tiles;
 
-public class WaterTile extends Tile {
-  private String image = "/images/waterTile.png";
+import engine.graphics.image.Image;
 
-  @Override
-  public String getImage() {
+public class WaterTile extends Tile {
+  private static Image image = new Image("/images/waterTile.png");
+
+  public Image getImage() {
     return image;
   }
 }

@@ -2,6 +2,7 @@ package engine.graphics.mesh.dimension.two;
 
 import engine.graphics.Material;
 import engine.graphics.Vertex3D;
+import engine.graphics.image.Image;
 import engine.graphics.mesh.Mesh;
 import math.Vector2f;
 import math.Vector3f;
@@ -29,7 +30,7 @@ public class RectangleMesh extends Mesh {
   }
 
   public RectangleMesh(float width, float height) {
-    this(width, height, new Material(Material.getDefaultPath()));
+    this(width, height, new Material(new Image()));
   }
 
 

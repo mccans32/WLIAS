@@ -2,6 +2,7 @@ package game.menu;
 
 import engine.Window;
 import engine.graphics.Material;
+import engine.graphics.image.Image;
 import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
@@ -28,7 +29,9 @@ public class MainMenu {
   private static final float BUTTON_WIDTH = 0.7f;
   private static final float BUTTON_HEIGHT = 0.3f;
   private static final String BUTTON_TEXTURE = "/images/buttonTexture.png";
+  private static final Image BUTTON_IMAGE = new Image(BUTTON_TEXTURE);
   private static final String BACKGROUND_TEXTURE = "/images/mainMenuBackground.jpg";
+  private static final Image BACKGROUND_IMAGE = new Image(BACKGROUND_TEXTURE);
   private static float[] START_REPOSITION_VALUES = {0, 0, 1, -0.6f};
   private static float[] EXIT_REPOSITION_VALUES = {0, 0, -1, 0.6f};
   private static ButtonObject startButton;
@@ -153,13 +156,13 @@ public class MainMenu {
       float edgeY,
       float offsetY) {
     RectangleMesh tempMesh = new RectangleMesh(BUTTON_WIDTH, BUTTON_HEIGHT,
-        new Material(BUTTON_TEXTURE));
+        new Material(BUTTON_IMAGE));
 
     return new ButtonObject(tempMesh, buttonText, edgeX, offsetX, edgeY, offsetY);
   }
 
   private static void createBackground() {
-    RectangleMesh backgroundMesh = new RectangleMesh(2, 2, new Material(BACKGROUND_TEXTURE));
+    RectangleMesh backgroundMesh = new RectangleMesh(2, 2, new Material(BACKGROUND_IMAGE));
     backgroundImage = new HudImage(backgroundMesh, -1, 1, 1, 1);
     backgroundImage.create();
   }

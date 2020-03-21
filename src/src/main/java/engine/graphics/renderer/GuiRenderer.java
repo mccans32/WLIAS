@@ -50,7 +50,8 @@ public class GuiRenderer {
     // Set Active Texture
     GL13.glActiveTexture(GL13.GL_TEXTURE0);
     // Bind the Texture
-    GL13.glBindTexture(GL11.GL_TEXTURE_2D, object.getMesh().getMaterial().getTextureID());
+    GL13.glBindTexture(GL11.GL_TEXTURE_2D,
+        object.getMesh().getMaterial().getImage().getTextureID());
     //Bind Shader
     shader.bind();
     // Set Uniforms

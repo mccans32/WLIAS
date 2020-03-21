@@ -3,6 +3,7 @@ package engine.objects.gui;
 import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.Vertex3D;
+import engine.graphics.image.Image;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
@@ -53,9 +54,9 @@ public class HudText {
    * @return the float
    */
   public static float calculateCharWidth(Text text) {
-    Material tempMaterial = new Material(text.getFontFile());
+    Material tempMaterial = new Material(new Image(text.getFontFile()));
     tempMaterial.create();
-    float charWidth = (tempMaterial.getWidth() / (float) text.getNumColumns())
+    float charWidth = (tempMaterial.getImage().getWidth() / (float) text.getNumColumns())
         * text.getFontSize();
     tempMaterial.destroy();
     return charWidth;
@@ -68,9 +69,10 @@ public class HudText {
    * @return the float
    */
   public static float calculateCharHeight(Text text) {
-    Material tempMaterial = new Material(text.getFontFile());
+    Material tempMaterial = new Material(new Image(text.getFontFile()));
     tempMaterial.create();
-    float charHeight = (tempMaterial.getHeight() / (float) text.getNumRows()) * text.getFontSize();
+    float charHeight =
+        (tempMaterial.getImage().getHeight() / (float) text.getNumRows()) * text.getFontSize();
     tempMaterial.destroy();
     return charHeight;
   }
@@ -124,7 +126,7 @@ public class HudText {
   }
 
   private Mesh buildMesh() {
-    Material material = new Material(text.getFontFile());
+    Material material = new Material(new Image(text.getFontFile()));
     material.setColorOffset(text.getTextColour());
     material.create();
     byte[] chars = text.getString().getBytes(StandardCharsets.ISO_8859_1);
