@@ -3,6 +3,8 @@ package engine.graphics;
 import java.io.IOException;
 import math.Vector3f;
 import org.apache.commons.io.FilenameUtils;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
@@ -11,6 +13,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 public class Material {
   private static final String DEFAULT_PATH = "/images/default_texture.png";
+  private static final float ANISOTROPIC_WEIGHT = 4f;
   private String path;
   private float width;
   private float imageWidth;
@@ -36,6 +39,20 @@ public class Material {
     GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
         GL11.GL_LINEAR_MIPMAP_LINEAR);
+  }
+
+  private static void applyAnisotropicFiltering() {
+    // check to see if we can apply anisotropic filtering
+    if (GL.getCapabilities().GL_EXT_texture_filter_anisotropic) {
+      // Compare our Anisotropic Weight against the Max Supported Weight by the system
+      float supportedWeight =
+          GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+      float weight = Math.min(ANISOTROPIC_WEIGHT, supportedWeight);
+      GL11.glTexParameterf(GL11.GL_TEXTURE_2D,
+          EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, weight);
+    } else {
+      System.out.println("Could not apply Anisotropic Filtering");
+    }
   }
 
   public String getPath() {
@@ -89,6 +106,7 @@ public class Material {
       Texture texture = TextureLoader.getTexture(FilenameUtils.getExtension(path),
           Material.class.getResourceAsStream(path), GL11.GL_NEAREST);
       applyMipMap();
+      applyAnisotropicFiltering();
       this.imageHeight = texture.getImageHeight();
       this.height = texture.getHeight();
       this.imageWidth = texture.getImageWidth();
