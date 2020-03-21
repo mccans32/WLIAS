@@ -71,7 +71,7 @@ public class WorldTest {
     assertEquals(camera.getMaxCameraX(), Camera.getMinCameraBorder());
     for (int size : LAND_MASS_SIZES) {
       genMap(size, size, (size * size), 0, 0, 0);
-      World.create(window, camera);
+      World.create(camera);
       Vector2f botLeft = calcCentre(World.getWorldMap()[World.getWorldMap().length - 1][0]);
       Vector2f topRight = calcCentre(World.getWorldMap()[0][World.getWorldMap().length - 1]);
       assertEquals(camera.getMinCameraX(), botLeft.getX());
@@ -79,13 +79,5 @@ public class WorldTest {
       assertEquals(camera.getMaxCameraY(), topRight.getY());
       assertEquals(camera.getMinCameraY(), botLeft.getY());
     }
-  }
-
-  @Test
-  void addToVertexListTest() {
-    List<Vertex3D> vertexList = new ArrayList<>();
-    assertTrue(vertexList.isEmpty());
-    World.addToVertexList(vertexList);
-    assertFalse(vertexList.isEmpty());
   }
 }

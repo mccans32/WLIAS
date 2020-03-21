@@ -1,52 +1,47 @@
 package engine.objects.gui;
 
 import engine.Window;
-import engine.graphics.Mesh;
 import engine.graphics.Vertex3D;
+import engine.graphics.mesh.dimension.two.RectangleMesh;
+import engine.graphics.renderer.GuiRenderer;
 import engine.tools.MousePicker;
 import math.Vector2f;
 import math.Vector3f;
 
-public class GuiObject {
-  private Vector2f position;
-  private Vector2f scale;
-  private Mesh mesh;
+public class HudImage {
+  private Vector2f position = new Vector2f(0, 0);
+  private Vector2f scale = new Vector2f(1, 1);
+  private RectangleMesh mesh;
   private float edgeX;
   private float offsetX;
   private float edgeY;
   private float offsetY;
 
   /**
-   * Instantiates a new Gui object.
+   * Instantiates a new Hud object.
    *
-   * @param position the position
-   * @param scale    the scale
    * @param mesh     the mesh.
    */
-  public GuiObject(Vector2f position,
-                   Vector2f scale,
-                   Mesh mesh,
-                   float edgeX,
-                   float offsetX,
-                   float edgeY,
-                   float offsetY) {
-    this.position = position;
-    this.scale = scale;
+  public HudImage(RectangleMesh mesh,
+                  float edgeX,
+                  float offsetX,
+                  float edgeY,
+                  float offsetY) {
     this.mesh = mesh;
     this.edgeX = edgeX;
     this.offsetX = offsetX;
     this.edgeY = edgeY;
     this.offsetY = offsetY;
-
+    // reposition to accommodate for window span
+    reposition();
   }
 
   /**
    * Get normalised vertex positions vector 2 f [ ].
    *
-   * @param window the window
    * @return the vector 2 f [ ]
    */
-  public Vector2f[] getNormalisedVertexPositions(Window window) {
+  public Vector2f[] getNormalisedVertexPositions() {
     Vertex3D[] vertices = mesh.getVertices();
     // Get Array of X and Y offsets for all vertices
     Vector2f[] vertexPositions = new Vector2f[vertices.length];
@@ -60,7 +55,7 @@ public class GuiObject {
       vertexPositions[i] = Vector2f.add(position, vertexPositions[i]);
       vertexPositions[i] = Vector2f.divide(
           vertexPositions[i],
-          new Vector2f(window.getSpanX(), window.getSpanY()));
+          new Vector2f(Window.getSpanX(), Window.getSpanY()));
     }
 
     return vertexPositions;
@@ -76,7 +71,7 @@ public class GuiObject {
     // Get normalised Mouse Positions
     Vector2f normalisedMouse = MousePicker.getNormalisedDeviceCoordinates(window);
     // Get normalised Vertex Positions
-    Vector2f[] guiVertexPositions = getNormalisedVertexPositions(window);
+    Vector2f[] guiVertexPositions = getNormalisedVertexPositions();
 
     // Check if There are a valid amount of vertices
     if (guiVertexPositions.length >= 3) {
@@ -121,11 +116,11 @@ public class GuiObject {
     return offsetX;
   }
 
-  public float getyEdge() {
+  public float getEdgeY() {
     return edgeY;
   }
 
-  public float getYOffset() {
+  public float getOffsetY() {
     return offsetY;
   }
 
@@ -137,7 +132,7 @@ public class GuiObject {
     return scale;
   }
 
-  public Mesh getMesh() {
+  public RectangleMesh getMesh() {
     return mesh;
   }
 
@@ -149,8 +144,12 @@ public class GuiObject {
     mesh.destroy();
   }
 
-  public void reposition(float spanX, float spanY) {
-    position.setX(edgeX * spanX + offsetX);
-    position.setY(edgeY * spanY + offsetY);
+  public void reposition() {
+    position.setX(edgeX * Window.getSpanX() + offsetX);
+    position.setY(edgeY * Window.getSpanY() + offsetY);
+  }
+
+  public void render(GuiRenderer renderer) {
+    renderer.renderObject(this);
   }
 }

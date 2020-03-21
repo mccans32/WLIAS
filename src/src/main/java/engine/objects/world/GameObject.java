@@ -1,6 +1,7 @@
 package engine.objects.world;
 
-import engine.graphics.Mesh;
+import engine.graphics.mesh.Mesh;
+import engine.graphics.renderer.WorldRenderer;
 import math.Vector3f;
 
 public class GameObject {
@@ -68,5 +69,9 @@ public class GameObject {
 
   public void destroy() {
     mesh.destroy();
+  }
+
+  public void render(WorldRenderer renderer, Camera camera) {
+    renderer.renderObject(this, camera);
   }
 }

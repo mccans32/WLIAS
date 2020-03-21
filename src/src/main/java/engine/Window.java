@@ -24,9 +24,11 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.glEnable;
 
 import engine.io.Input;
 import math.Matrix4f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
@@ -42,6 +44,8 @@ public class Window {
    */
   static final boolean ENABLE_V_SYNC = true;
   private static boolean SHOULD_CENTER = false;
+  private static float spanX;
+  private static float spanY;
   /**
    * The Frames.
    */
@@ -62,7 +66,6 @@ public class Window {
   private float backgroundG;
   private float backgroundB;
   private float backgroundAlpha;
-  private GLFWWindowSizeCallback windowSizeCallback;
   private boolean hasResized = false;
   private int[] windowPosX = new int[1];
   private int[] windowPosY = new int[1];
@@ -74,8 +77,6 @@ public class Window {
   private float near = 0.1f;
   private float far = 1000f;
   private float aspect;
-  private float spanX;
-  private float spanY;
 
   /**
    * Instantiates a new Window.
@@ -101,11 +102,11 @@ public class Window {
     glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
   }
 
-  public float getSpanX() {
+  public static float getSpanX() {
     return spanX;
   }
 
-  public float getSpanY() {
+  public static float getSpanY() {
     return spanY;
   }
 
@@ -134,7 +135,7 @@ public class Window {
   }
 
   private void setLocalCallbacks() {
-    windowSizeCallback = new GLFWWindowSizeCallback() {
+    GLFWWindowSizeCallback windowSizeCallback = new GLFWWindowSizeCallback() {
       @Override
       public void invoke(long argWindow, int argWidth, int argHeight) {
         width = argWidth;
@@ -179,12 +180,12 @@ public class Window {
 
     // Center the screen
     centerScreen();
-    //Set Current Context to Window
+    //Set ds Context to Window
     glfwMakeContextCurrent(window);
     // Enables OpenGL functionality
     GL.createCapabilities();
     // Set Depth Test
-    GL11.glEnable(GL11.GL_DEPTH_TEST);
+    glEnable(GL11.GL_DEPTH_TEST);
     //Set local callbacks
     setLocalCallbacks();
     //Display Window
@@ -195,7 +196,6 @@ public class Window {
     setVSync(ENABLE_V_SYNC);
     // set timer for window
     time = currentTimeMillis();
-
   }
 
   /**
@@ -231,6 +231,7 @@ public class Window {
       }
       hasResized = false;
     }
+
     GL11.glClearColor(backgroundR, backgroundG, backgroundB, backgroundAlpha);
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
@@ -385,12 +386,21 @@ public class Window {
 
   private void setSpans() {
     // set xSpan and ySpan for orthographic projection and for repositioning gui
-    this.spanX = 1;
-    this.spanY = 1;
+    spanX = 1;
+    spanY = 1;
     if (aspect >= 1) {
-      this.spanX *= aspect;
+      spanX *= aspect;
     } else {
-      this.spanY = this.spanX / aspect;
+      spanY = spanX / aspect;
     }
   }
+
+  public void lockMouse() {
+    GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+  }
+
+  public void unlockMouse() {
+    GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+  }
+
 }

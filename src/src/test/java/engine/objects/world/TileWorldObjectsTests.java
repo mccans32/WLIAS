@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import engine.Window;
-import engine.graphics.Mesh;
 import engine.graphics.Vertex3D;
+import engine.graphics.mesh.Mesh;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
 import map.tiles.PlainTile;

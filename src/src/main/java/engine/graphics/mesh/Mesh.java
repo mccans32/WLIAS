@@ -1,5 +1,8 @@
-package engine.graphics;
+package engine.graphics.mesh;
 
+import engine.graphics.Material;
+import engine.graphics.Vertex2D;
+import engine.graphics.Vertex3D;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import math.Vector3f;
@@ -20,10 +23,9 @@ public class Mesh {
   static final int COLOUR_DIMENSION = 3;
   static final int TEXTURE_DIMENSION = 2;
   static final int TEXTURE_INDEX = COLOUR_INDEX + 1;
-  static final String DEFAULT_MATERIAL_PATH = "/images/default_texture.png";
-  private Vertex3D[] vertices;
-  private int[] indices;
-  private Material material = new Material(DEFAULT_MATERIAL_PATH);
+  protected Vertex3D[] vertices;
+  protected int[] indices;
+  private Material material;
   // Vertex Array Object
   private int vao;
   // Position Buffer Object
@@ -51,9 +53,16 @@ public class Mesh {
     this.material = material;
   }
 
+  /**
+   * Instantiates a new Mesh.
+   *
+   * @param vertices the vertices
+   * @param indices  the indices
+   */
   public Mesh(Vertex3D[] vertices, int[] indices) {
     this.vertices = vertices.clone();
     this.indices = indices.clone();
+    this.material = new Material(Material.getDefaultPath());
   }
 
   /**
@@ -92,6 +101,10 @@ public class Mesh {
     this.indices = indices.clone();
   }
 
+  protected Mesh(Material material) {
+    this.material = material;
+  }
+
   public Vertex3D[] getVertices() {
     return vertices.clone();
   }
@@ -125,7 +138,21 @@ public class Mesh {
   }
 
   /**
-   * Create.
+   * Create function for Text Objects.
+   */
+  public void createText() {
+    // Create Vertex Array Object and Bind it
+    vao = GL30.glGenVertexArrays();
+    GL30.glBindVertexArray(vao);
+    // Initialise the Buffers
+    initialisePositionBuffer();
+    initialiseColourBuffer();
+    initialiseTextureBuffer();
+    initialiseIndicesBuffer();
+  }
+
+  /**
+   * Create function for non-Text Objects.
    */
   public void create() {
     //Create the Material
@@ -155,7 +182,6 @@ public class Mesh {
   private void initialisePositionBuffer() {
     FloatBuffer positionBuffer = MemoryUtil.memAllocFloat(vertices.length * POSITION_DIMENSION);
     positionData = new float[vertices.length * POSITION_DIMENSION];
-
     storePositions();
     positionBuffer.put(positionData).flip();
     pbo = storeData(positionBuffer, POSITION_INDEX, POSITION_DIMENSION);

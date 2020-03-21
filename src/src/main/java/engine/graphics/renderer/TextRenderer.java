@@ -1,8 +1,15 @@
 package engine.graphics.renderer;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.newdawn.slick.opengl.renderer.SGL.GL_ONE_MINUS_SRC_ALPHA;
+import static org.newdawn.slick.opengl.renderer.SGL.GL_SRC_ALPHA;
+
 import engine.Window;
 import engine.graphics.Shader;
-import engine.objects.gui.HudImage;
+import engine.objects.gui.HudText;
 import math.Matrix4f;
 import math.Vector2f;
 import math.Vector3f;
@@ -12,14 +19,16 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
 /**
- * The type WorldRenderer.
+ * The Renderer for rendering {@link HudText} objects.
  */
-public class GuiRenderer {
-  private static Vector2f DEFAULT_ROTATION = new Vector2f(0, 0);
-  protected Shader shader;
-  protected Window window;
+public class TextRenderer {
+  private static final float DEFAULT_POSITION_Z_VALUE = 1f;
+  private static final float DEFAULT_SCALE_Z_VALUE = 1f;
+  private static Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
+  private Shader shader;
+  private Window window;
 
-  public GuiRenderer(Window window, Shader shader) {
+  public TextRenderer(Window window, Shader shader) {
     this.shader = shader;
     this.window = window;
   }
@@ -30,13 +39,24 @@ public class GuiRenderer {
    *
    * @param object the object.
    */
-  public void renderObject(HudImage object) {
+  public void renderObject(HudText object) {
+    initialise();
     bindObject(object);
     drawObject(object);
     unbindObject();
+    terminate();
   }
 
-  private void bindObject(HudImage object) {
+  private void initialise() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  }
+
+  private void terminate() {
+    glDisable(GL_BLEND);
+  }
+
+  private void bindObject(HudText object) {
     // Bind Mesh VAO
     GL30.glBindVertexArray(object.getMesh().getVao());
     // Enable Index 0 for Shaders (Position)
@@ -58,27 +78,29 @@ public class GuiRenderer {
 
   }
 
-  private void setUniforms(HudImage object) {
+  private void setUniforms(HudText object) {
     setModelUniform(object);
     setProjectionUniform();
     setColourOffsetUniform(object);
   }
 
-  private void setColourOffsetUniform(HudImage object) {
-    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffset());
-  }
-
-  private void setModelUniform(HudImage object) {
+  private void setModelUniform(HudText object) {
+    Vector2f pos = object.getPosition();
+    Vector2f scale = object.getScale();
     shader.setUniform(
         "model",
 
         Matrix4f.transform(
-            new Vector3f(object.getPosition().getX(), object.getPosition().getY(), 0f),
-            new Vector3f(DEFAULT_ROTATION.getX(), DEFAULT_ROTATION.getY(), 0),
-            new Vector3f(1, 1, 1)));
+            new Vector3f(pos.getX(), pos.getY(), DEFAULT_POSITION_Z_VALUE),
+            DEFAULT_ROTATION,
+            new Vector3f(scale.getX(), scale.getY(), DEFAULT_SCALE_Z_VALUE)));
   }
 
-  protected void setProjectionUniform() {
+  private void setColourOffsetUniform(HudText object) {
+    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffset());
+  }
+
+  private void setProjectionUniform() {
     shader.setUniform("projection", window.getOrthographicMatrix());
   }
 
@@ -94,9 +116,9 @@ public class GuiRenderer {
     GL30.glBindVertexArray(0);
   }
 
-  private void drawObject(HudImage object) {
+  private void drawObject(HudText object) {
     GL11.glDrawElements(
-        GL11.GL_TRIANGLE_STRIP,
+        GL11.GL_TRIANGLES,
         object.getMesh().getIndices().length,
         GL11.GL_UNSIGNED_INT,
         0);
