@@ -20,7 +20,7 @@ public class TileWorldObject extends GameObject {
       Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, Tile tile) {
     super(position, rotation, scale, mesh);
     this.tile = tile;
-    this.getMesh().getMaterial().setTexture(tile.getImage());
+    this.getMesh().getMaterial().setImage((tile.getImage()));
   }
 
   public Tile getTile() {
