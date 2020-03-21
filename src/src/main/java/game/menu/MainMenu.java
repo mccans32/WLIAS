@@ -15,6 +15,7 @@ import game.Game;
 import game.GameState;
 import game.world.Gui;
 import game.world.World;
+import java.awt.Color;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
@@ -22,10 +23,11 @@ import org.lwjgl.glfw.GLFW;
 public class MainMenu {
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
+  private static final Vector3f TEXT_COLOUR = ColourUtils.convertColor(Color.WHITE);
   private static final float BUTTON_FONT_SIZE = 2.2f;
   private static final float BUTTON_WIDTH = 0.7f;
   private static final float BUTTON_HEIGHT = 0.3f;
-  private static final String BUTTON_TEXTURE = "/images/hudElementBackground.png";
+  private static final String BUTTON_TEXTURE = "/images/buttonTexture.png";
   private static final String BACKGROUND_TEXTURE = "/images/mainMenuBackground.jpg";
   private static float[] START_REPOSITION_VALUES = {0, 0, 1, -0.6f};
   private static float[] EXIT_REPOSITION_VALUES = {0, 0, -1, 0.6f};
@@ -102,7 +104,7 @@ public class MainMenu {
 
   private static void createButtons() {
     // Create Start Button
-    Text startButtonText = new Text("Start", BUTTON_FONT_SIZE);
+    Text startButtonText = new Text("Start", BUTTON_FONT_SIZE, TEXT_COLOUR);
     startButtonText.setCentreHorizontal(true);
     startButtonText.setCentreVertical(true);
     startButton = initButton(startButtonText, START_REPOSITION_VALUES[0],
@@ -110,7 +112,7 @@ public class MainMenu {
     startButton.create();
     buttons[0] = startButton;
     // Create Exit Button
-    Text exitButtonText = new Text("Exit", BUTTON_FONT_SIZE);
+    Text exitButtonText = new Text("Exit", BUTTON_FONT_SIZE, TEXT_COLOUR);
     exitButtonText.setCentreHorizontal(true);
     exitButtonText.setCentreVertical(true);
     exitButton = initButton(exitButtonText, EXIT_REPOSITION_VALUES[0],
