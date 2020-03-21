@@ -24,7 +24,7 @@ public class MainMenu {
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
       ChartColor.VERY_LIGHT_CYAN.brighter());
   private static final Vector3f TEXT_COLOUR = ColourUtils.convertColor(Color.WHITE);
-  private static final float BUTTON_FONT_SIZE = 2.2f;
+  private static final float BUTTON_FONT_SIZE = 2f;
   private static final float BUTTON_WIDTH = 0.7f;
   private static final float BUTTON_HEIGHT = 0.3f;
   private static final String BUTTON_TEXTURE = "/images/buttonTexture.png";
