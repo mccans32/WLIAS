@@ -32,7 +32,7 @@ public class HudObject {
     StringBuilder currentSentence = new StringBuilder();
     if (text.shouldWrap()) {
       float charWidth = HudText.calculateCharWidth(text);
-      float backgroundWidth = backgroundImage.getMesh().getWidth();
+      float backgroundWidth = backgroundImage.getMesh().getModel().getWidth();
       String[] stringArray = text.getString().split(" ");
 
       for (int i = 0; i < stringArray.length; i++) {
@@ -82,9 +82,9 @@ public class HudObject {
 
   private HudText createGuiText(Text text, HudImage backgroundImage, int lineNumber) {
     return new HudText(text, backgroundImage.getEdgeX(),
-        backgroundImage.getOffsetX() - (backgroundImage.getMesh().getWidth() / 2),
+        backgroundImage.getOffsetX() - (backgroundImage.getMesh().getModel().getWidth() / 2),
         backgroundImage.getEdgeY(),
-        backgroundImage.getOffsetY() + (backgroundImage.getMesh().getHeight() / 2)
+        backgroundImage.getOffsetY() + (backgroundImage.getMesh().getModel().getHeight() / 2)
             - (HudText.calculateCharHeight(text) * lineNumber));
   }
 

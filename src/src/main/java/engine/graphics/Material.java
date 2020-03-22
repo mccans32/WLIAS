@@ -5,7 +5,7 @@ import math.Vector3f;
 
 public class Material {
   private Vector3f colorOffset = new Vector3f(1, 1, 1);
-  private Image image;
+  private Image image = new Image();
 
   public Material(Image image) {
     this.image = image;
@@ -14,6 +14,9 @@ public class Material {
   public Material(Image image, Vector3f colorOffset) {
     this(image);
     this.colorOffset = colorOffset;
+  }
+
+  public Material() {
   }
 
   public Image getImage() {

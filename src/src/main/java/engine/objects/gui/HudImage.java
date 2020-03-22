@@ -42,7 +42,7 @@ public class HudImage {
    * @return the vector 2 f [ ]
    */
   public Vector2f[] getNormalisedVertexPositions() {
-    Vertex3D[] vertices = mesh.getVertices();
+    Vertex3D[] vertices = mesh.getModel().getVertices();
     // Get Array of X and Y offsets for all vertices
     Vector2f[] vertexPositions = new Vector2f[vertices.length];
     for (int i = 0; i < vertices.length; i++) {

@@ -1,6 +1,7 @@
 package game.world;
 
 import engine.graphics.mesh.dimension.two.RectangleMesh;
+import engine.graphics.model.dimension.two.RectangleModel;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
 import engine.objects.world.TileWorldObject;
@@ -66,7 +67,7 @@ public class World {
     for (int row = 0; row < MapGeneration.getMapSizeY(); row++) {
       for (int column = 0; column < MapGeneration.getMapSizeX(); column++) {
         // create a mesh for a tile
-        RectangleMesh tileMesh = new RectangleMesh(tileSize, tileSize);
+        RectangleMesh tileMesh = new RectangleMesh(new RectangleModel(tileSize, tileSize));
         // create a tileWorldObject
         TileWorldObject tempTileWorldObject = new TileWorldObject(
             new Vector3f(leftXEdge + (tileSize * (float) column),

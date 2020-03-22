@@ -5,6 +5,7 @@ import engine.graphics.Material;
 import engine.graphics.Vertex3D;
 import engine.graphics.image.Image;
 import engine.graphics.mesh.Mesh;
+import engine.graphics.model.Model;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
 import engine.utils.ListUtils;
@@ -143,7 +144,7 @@ public class HudText {
     createVertices(positions, textCoordinates, verticesList);
     Vertex3D[] verticesArray = ListUtils.vertex3DListToArray(verticesList);
     int[] indicesArray = ListUtils.integerListToIntArray(indices);
-    return new Mesh(verticesArray, indicesArray, material);
+    return new Mesh(new Model(verticesArray, indicesArray), material);
   }
 
   private void createVertices(List<Vector3f> positions, List<Vector2f> textCoordinates,

@@ -35,7 +35,7 @@ public class WorldRenderer {
 
   private void bindObject(GameObject object, Camera camera) {
     // Bind Mesh VAO
-    GL30.glBindVertexArray(object.getMesh().getVao());
+    GL30.glBindVertexArray(object.getMesh().getModel().getVao());
     // Enable Index 0 for Shaders (Position)
     GL30.glEnableVertexAttribArray(0);
     // Enable Index 1 for Shaders (Colour)
@@ -43,7 +43,7 @@ public class WorldRenderer {
     // Enable Index 2 for Shaders (Texture)
     GL30.glEnableVertexAttribArray(2);
     // Bind Indices
-    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, object.getMesh().getIbo());
+    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, object.getMesh().getModel().getIbo());
     // Set Active Texture
     GL13.glActiveTexture(GL13.GL_TEXTURE0);
     // Bind the Texture
@@ -95,7 +95,7 @@ public class WorldRenderer {
   private void drawObject(GameObject object) {
     GL11.glDrawElements(
         GL11.GL_TRIANGLE_STRIP,
-        object.getMesh().getIndices().length,
+        object.getMesh().getModel().getIndices().length,
         GL11.GL_UNSIGNED_INT,
         0);
   }

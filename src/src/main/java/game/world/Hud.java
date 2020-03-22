@@ -3,6 +3,7 @@ package game.world;
 import engine.graphics.Material;
 import engine.graphics.image.Image;
 import engine.graphics.mesh.dimension.two.RectangleMesh;
+import engine.graphics.model.dimension.two.RectangleModel;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
@@ -20,7 +21,7 @@ public class Hud {
   }
 
   private static void createObjects() {
-    RectangleMesh mesh = new RectangleMesh(0.1f, 0.1f,
+    RectangleMesh mesh = new RectangleMesh(new RectangleModel(0.1f, 0.1f),
         new Material(new Image("/images/hudElementBackground.png")));
     Text text = new Text("0");
     text.setCentreHorizontal(true);
