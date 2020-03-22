@@ -4,9 +4,14 @@ import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
+import engine.objects.world.GameObject;
 import engine.objects.world.TileWorldObject;
 import java.util.ArrayList;
 import map.MapGeneration;
+import map.tiles.AridTile;
+import map.tiles.FertileTile;
+import map.tiles.Tile;
+import map.tiles.WaterTile;
 import math.Vector2f;
 import math.Vector3f;
 
@@ -17,7 +22,10 @@ public class World {
   private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
   private static final Vector3f DEFAULT_SCALE = new Vector3f(1f, 1f, 1f);
   private static TileWorldObject[][] worldMap;
-  private static ArrayList<TileWorldObject> tiles = new ArrayList<>();
+  private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
+  private static ArrayList<GameObject> aridTiles = new ArrayList<>();
+  private static ArrayList<GameObject> plainTiles = new ArrayList<>();
+  private static ArrayList<GameObject> waterTiles = new ArrayList<>();
 
   /**
    * Create.
@@ -45,9 +53,10 @@ public class World {
   }
 
   private static void renderTiles(WorldRenderer renderer, Camera camera) {
-    for (TileWorldObject tileWorldObject : tiles) {
-      tileWorldObject.render(renderer, camera);
-    }
+    renderer.renderObjects(fertileTiles, camera);
+    renderer.renderObjects(aridTiles, camera);
+    renderer.renderObjects(plainTiles, camera);
+    renderer.renderObjects(waterTiles, camera);
   }
 
   private static void createObjects(Camera camera) {
@@ -65,21 +74,22 @@ public class World {
     RectangleModel tileModel = new RectangleModel(tileSize, tileSize);
 
     worldMap = new TileWorldObject[MapGeneration.getMapSizeX()][MapGeneration.getMapSizeY()];
+    Tile[][] tileMap = MapGeneration.getSimulationMap();
     for (int row = 0; row < MapGeneration.getMapSizeY(); row++) {
       for (int column = 0; column < MapGeneration.getMapSizeX(); column++) {
         // create a tileWorldObject
         RectangleMesh tileMesh = new RectangleMesh(tileModel);
+        Tile tile = tileMap[row][column];
         TileWorldObject tempTileWorldObject = new TileWorldObject(
             new Vector3f(leftXEdge + (tileSize * (float) column),
-                topYEdge - (tileSize * (float) row), DEFAULT_Z),
-            DEFAULT_ROTATION, DEFAULT_SCALE, tileMesh,
-            MapGeneration.getSimulationMap()[row][column]);
+                topYEdge - (tileSize * (float) row), DEFAULT_Z), DEFAULT_ROTATION, DEFAULT_SCALE,
+            tileMesh, tile);
         // assign tile ot the world map
         worldMap[row][column] = tempTileWorldObject;
         // Create the Object
         tempTileWorldObject.create();
         // Add to Current Tile List
-        tiles.add(tempTileWorldObject);
+        addTileObject(tempTileWorldObject);
       }
     }
     // calculate the positions for the camera borders based on tiles in appropriate corners
@@ -110,5 +120,18 @@ public class World {
       value += tileSize;
     }
     return value;
+  }
+
+  private static void addTileObject(TileWorldObject object) {
+    Tile tile = object.getTile();
+    if (tile instanceof FertileTile) {
+      fertileTiles.add(object);
+    } else if (tile instanceof AridTile) {
+      aridTiles.add(object);
+    } else if (tile instanceof WaterTile) {
+      waterTiles.add(object);
+    } else {
+      plainTiles.add(object);
+    }
   }
 }
