@@ -22,7 +22,7 @@ public class RectangleMeshTests {
   @Test
   public void testGetters() {
     for (float width : TEST_WIDTHS) {
-      for (float height: TEST_HEIGHTS) {
+      for (float height : TEST_HEIGHTS) {
         RectangleMesh testMesh = new RectangleMesh(new RectangleModel(width, height));
         assertEquals(testMesh.getModel().getWidth(), width);
         assertEquals(testMesh.getModel().getHeight(), height);
