@@ -62,13 +62,13 @@ public class World {
     // top edge = the position of the first tile in the Y axis. Starting at the top most edge
     float topYEdge = calcTopPos(MapGeneration.getLandMassSizeY(), tileSize);
     // initialise 2d representation of the map
+    RectangleModel tileModel = new RectangleModel(tileSize, tileSize);
 
     worldMap = new TileWorldObject[MapGeneration.getMapSizeX()][MapGeneration.getMapSizeY()];
     for (int row = 0; row < MapGeneration.getMapSizeY(); row++) {
       for (int column = 0; column < MapGeneration.getMapSizeX(); column++) {
-        // create a mesh for a tile
-        RectangleMesh tileMesh = new RectangleMesh(new RectangleModel(tileSize, tileSize));
         // create a tileWorldObject
+        RectangleMesh tileMesh = new RectangleMesh(tileModel);
         TileWorldObject tempTileWorldObject = new TileWorldObject(
             new Vector3f(leftXEdge + (tileSize * (float) column),
                 topYEdge - (tileSize * (float) row), DEFAULT_Z),
