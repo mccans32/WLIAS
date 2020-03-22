@@ -7,7 +7,7 @@ import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class Camera {
-  private static final float MIN_CAMERA_Z = 1f;
+  private static final float MIN_CAMERA_Z = 5f;
   private static final float MAX_CAMERA_Z = 30f;
   private static final float ZOOM_MODIFIER = 0.05f;
   private static final float MOVE_SPEED = 0.2f;
