@@ -7,8 +7,9 @@ import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.Shader;
 import engine.graphics.Vertex3D;
+import engine.graphics.image.Image;
 import engine.graphics.mesh.Mesh;
-import engine.graphics.renderer.WorldRenderer;
+import engine.graphics.model.Model;
 import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
 import engine.utils.ColourUtils;
@@ -105,7 +106,7 @@ public class WorldRendererTests {
   @Test
   public void testRectangle() throws InterruptedException {
     setupWindow(VERTEX_COLOUR_SHADER_FILE_NAME, FRAGMENT_COLOUR_SHADER_FILE_NAME);
-    Mesh testMesh = new Mesh(rectangleVertices, rectangleIndices);
+    Mesh testMesh = new Mesh(new Model(rectangleVertices, rectangleIndices), new Material());
     GameObject testObject = new GameObject(testMesh);
     drawObject(testObject);
   }
@@ -113,7 +114,7 @@ public class WorldRendererTests {
   @Test
   public void testTriangle() throws InterruptedException {
     setupWindow(VERTEX_COLOUR_SHADER_FILE_NAME, FRAGMENT_COLOUR_SHADER_FILE_NAME);
-    Mesh testMesh = new Mesh(triangleVertices, triangleIndices);
+    Mesh testMesh = new Mesh(new Model(triangleVertices, triangleIndices), new Material());
     GameObject testObject = new GameObject(testMesh);
     drawObject(testObject);
     testMesh.destroy();
@@ -123,12 +124,10 @@ public class WorldRendererTests {
   @Test
   public void testBoth() {
     setupWindow(VERTEX_COLOUR_SHADER_FILE_NAME, FRAGMENT_COLOUR_SHADER_FILE_NAME);
-    Mesh rectangleMesh = new Mesh(rectangleVertices, rectangleIndices);
-    rectangleMesh.setColour(ColourUtils.convertColor(ChartColor.BLUE));
+    Mesh rectangleMesh = new Mesh(new Model(rectangleVertices, rectangleIndices), new Material());
     GameObject rectangleObject = new GameObject(rectangleMesh);
-    Mesh triangleMesh = new Mesh(triangleVertices, triangleIndices);
+    Mesh triangleMesh = new Mesh(new Model(triangleVertices, triangleIndices), new Material());
     GameObject triangleObject = new GameObject(triangleMesh);
-    triangleMesh.setColour(ColourUtils.convertColor(ChartColor.YELLOW));
 
     for (int i = 0; i < 100; i++) {
       triangleMesh.create();
@@ -147,8 +146,8 @@ public class WorldRendererTests {
   @Test
   void testBlueSquare() throws InterruptedException {
     setupWindow(VERTEX_COLOUR_SHADER_FILE_NAME, FRAGMENT_COLOUR_SHADER_FILE_NAME);
-    Mesh testMesh = new Mesh(rectangleVertices, rectangleIndices);
-    testMesh.setColour(ColourUtils.convertColor(ChartColor.BLUE));
+    Mesh testMesh = new Mesh(new Model(rectangleVertices, rectangleIndices), new Material());
+    testMesh.getModel().setColour(ColourUtils.convertColor(ChartColor.BLUE));
     GameObject testObject = new GameObject(testMesh);
     drawObject(testObject);
     testMesh.destroy();
@@ -158,8 +157,8 @@ public class WorldRendererTests {
   @Test
   void testPinkTriangle() throws InterruptedException {
     setupWindow(VERTEX_COLOUR_SHADER_FILE_NAME, FRAGMENT_COLOUR_SHADER_FILE_NAME);
-    Mesh testMesh = new Mesh(triangleVertices, triangleIndices);
-    testMesh.setColour(ColourUtils.convertColor(ChartColor.PINK));
+    Mesh testMesh = new Mesh(new Model(triangleVertices, triangleIndices), new Material());
+    testMesh.getModel().setColour(ColourUtils.convertColor(ChartColor.PINK));
     GameObject testObject = new GameObject(testMesh);
     drawObject(testObject);
     testMesh.destroy();
@@ -169,7 +168,8 @@ public class WorldRendererTests {
   @Test
   void testDefaultImage() throws InterruptedException {
     setupWindow(VERTEX_IMAGE_SHADER_FILE_NAME, FRAGMENT_IMAGE_SHADER_FILE_NAME);
-    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
+    Mesh testMesh = new Mesh(new Model(imageRectangleVertices, imageRectangleIndices),
+        new Material());
     GameObject testObject = new GameObject(testMesh);
     drawObject(testObject);
     testMesh.destroy();
@@ -180,8 +180,8 @@ public class WorldRendererTests {
   void testExistingImages() throws InterruptedException {
     for (String testImage : TEST_IMAGES_NAMES) {
       setupWindow(VERTEX_IMAGE_SHADER_FILE_NAME, FRAGMENT_IMAGE_SHADER_FILE_NAME);
-      Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices,
-          new Material(TEST_IMAGES_DIRECTORY + testImage));
+      Mesh testMesh = new Mesh(new Model(imageRectangleVertices, imageRectangleIndices),
+          new Material(new Image(TEST_IMAGES_DIRECTORY + testImage)));
       GameObject testObject = new GameObject(testMesh);
       drawObject(testObject);
       testMesh.destroy();
@@ -193,7 +193,8 @@ public class WorldRendererTests {
   @Test
   public void testUniformScale() throws InterruptedException {
     setupWindow(VERTEX_IMAGE_SHADER_FILE_NAME, FRAGMENT_IMAGE_SHADER_FILE_NAME);
-    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
+    Mesh testMesh = new Mesh(new Model(imageRectangleVertices, imageRectangleIndices),
+        new Material());
     this.sleepTime = 0;
     double scale = 0.1;
     for (int i = 0; i < LOOP_MAX; i++) {
@@ -212,7 +213,8 @@ public class WorldRendererTests {
   @Test
   public void testScaleMatrix() throws InterruptedException {
     setupWindow(VERTEX_MATRICES_FILE_NAME, FRAGMENT_MATRICES_FILE_NAME);
-    Mesh testMesh = new Mesh(imageRectangleVertices, imageRectangleIndices);
+    Mesh testMesh = new Mesh(new Model(imageRectangleVertices, imageRectangleIndices),
+        new Material());
     GameObject testObject = new GameObject(testMesh);
     this.sleepTime = 0;
     for (int i = 0; i < LOOP_MAX; i++) {

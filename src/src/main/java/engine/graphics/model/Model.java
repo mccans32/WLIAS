@@ -36,12 +36,12 @@ public class Model {
   private int[] indices;
 
   public Model(Vertex3D[] vertices, int[] indices) {
-    this.vertices = vertices;
-    this.indices = indices;
+    this.vertices = vertices.clone();
+    this.indices = indices.clone();
   }
 
-  protected Model(int[] indices) {
-    this.indices = indices;
+  public Model(int[] indices) {
+    this.indices = indices.clone();
   }
 
   public float getWidth() {
@@ -61,19 +61,19 @@ public class Model {
   }
 
   public Vertex3D[] getVertices() {
-    return vertices;
+    return vertices.clone();
   }
 
   public void setVertices(Vertex3D[] vertices) {
-    this.vertices = vertices;
+    this.vertices = vertices.clone();
   }
 
   public int[] getIndices() {
-    return indices;
+    return indices.clone();
   }
 
   public void setIndices(int[] indices) {
-    this.indices = indices;
+    this.indices = indices.clone();
   }
 
   private void initialisePositionBuffer() {

@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import engine.Window;
+import engine.graphics.Material;
 import engine.graphics.Vertex3D;
 import engine.graphics.mesh.Mesh;
+import engine.graphics.model.Model;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
 import map.tiles.PlainTile;
@@ -37,9 +39,9 @@ public class TileWorldObjectsTests {
   @BeforeEach
   public void setup() {
     assumeTrue(GLFW.glfwInit());
-    defaultMesh = new Mesh(
+    defaultMesh = new Mesh(new Model(
         new Vertex3D[] {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT},
-        INDICES);
+        INDICES), new Material());
 
     window = new Window(100, 100, "Test Window");
     window.setVisible(false);

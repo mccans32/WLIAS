@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
+import engine.graphics.Material;
 import engine.graphics.Vertex3D;
 import engine.graphics.mesh.Mesh;
+import engine.graphics.model.Model;
 import math.Vector3f;
 import org.junit.jupiter.api.Test;
 
@@ -26,11 +28,11 @@ public class MeshTests {
     window = new Window(600, 800, "Test Window");
     window.setVisible(false);
     window.create();
-    Mesh testMesh = new Mesh(testVertices, testIndices);
+    Mesh testMesh = new Mesh(new Model(testVertices, testIndices), new Material());
     testMesh.create();
-    assertTrue(testMesh.getIbo() != 0);
-    assertTrue(testMesh.getPbo() != 0);
-    assertTrue(testMesh.getVao() != 0);
+    assertTrue(testMesh.getModel().getIbo() != 0);
+    assertTrue(testMesh.getModel().getPbo() != 0);
+    assertTrue(testMesh.getModel().getVao() != 0);
     window.destroy();
   }
 }

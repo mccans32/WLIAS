@@ -3,6 +3,8 @@ package engine.graphics.mesh.dimension.two;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import engine.graphics.Material;
+import engine.graphics.image.Image;
+import engine.graphics.model.dimension.two.RectangleModel;
 import org.junit.jupiter.api.Test;
 
 public class RectangleMeshTests {
@@ -12,19 +14,18 @@ public class RectangleMeshTests {
 
   @Test
   public void testConstructor() {
-    RectangleMesh testMesh = new RectangleMesh(TEST_HEIGHTS[0], TEST_WIDTHS[0]);
-    assertEquals(testMesh.getMaterial().getPath(), Material.getDefaultPath());
-    testMesh = new RectangleMesh(TEST_WIDTHS[0], TEST_HEIGHTS[0], new Material(TEST_MATERIAL_PATH));
-    assertEquals(testMesh.getMaterial().getPath(), TEST_MATERIAL_PATH);
+    RectangleMesh testMesh = new RectangleMesh(new RectangleModel(TEST_WIDTHS[0], TEST_HEIGHTS[0]),
+        new Material(new Image(TEST_MATERIAL_PATH)));
+    assertEquals(testMesh.getMaterial().getImage().getTexturePath(), TEST_MATERIAL_PATH);
   }
 
   @Test
   public void testGetters() {
     for (float width : TEST_WIDTHS) {
       for (float height: TEST_HEIGHTS) {
-        RectangleMesh testMesh = new RectangleMesh(width, height);
-        assertEquals(testMesh.getWidth(), width);
-        assertEquals(testMesh.getHeight(), height);
+        RectangleMesh testMesh = new RectangleMesh(new RectangleModel(width, height));
+        assertEquals(testMesh.getModel().getWidth(), width);
+        assertEquals(testMesh.getModel().getHeight(), height);
       }
     }
   }
