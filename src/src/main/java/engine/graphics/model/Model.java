@@ -195,6 +195,11 @@ public class Model {
     return tbo;
   }
 
+  /**
+   * Update vertex buffers for the model's VAO.
+   *
+   * @param vertices the vertices
+   */
   public void updateVertexBuffers(Vertex3D[] vertices) {
     setVertices(vertices);
     updatePositionBuffer();
@@ -224,7 +229,6 @@ public class Model {
     if ((vertices.length * TEXTURE_DIMENSION) > textureBuffer.capacity()) {
       textureBuffer = MemoryUtil.memAllocFloat(vertices.length * TEXTURE_DIMENSION);
     }
-    System.out.println(vertices.length * TEXTURE_DIMENSION + ", " + textureBuffer.capacity());
     textureData = new float[vertices.length * TEXTURE_DIMENSION];
     storeTextures();
     textureBuffer.clear();
