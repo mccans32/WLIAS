@@ -32,6 +32,8 @@ public class HudText {
   private List<Vector2f> textCoordinates = new ArrayList<>();
   private List<Vertex3D> verticesList = new ArrayList<>();
   private List<Integer> indices = new ArrayList<>();
+  private Vertex3D[] verticesArray;
+  private int[] indicesArray;
 
   /**
    * Instantiates a new Hud text.
@@ -112,24 +114,14 @@ public class HudText {
    * @param text the to render.
    */
   public void setText(Text text) {
+    // Assign new Text Object
     boolean isCentreVertical = this.text.isCentreVertical();
     boolean isCentreHorizontal = this.text.isCentreHorizontal();
     this.text = text;
     this.text.setCentreVertical(isCentreVertical);
     this.text.setCentreHorizontal(isCentreHorizontal);
     // Update the Vertices and the Indices
-    positions.clear();
-    textCoordinates.clear();
-    verticesList.clear();
-    indices.clear();
-    byte[] chars = text.getString().getBytes(StandardCharsets.ISO_8859_1);
-    int numChars = chars.length;
-    float charWidth = calculateCharWidth(text);
-    float charHeight = calculateCharHeight(text);
-    createVectors(charWidth, charHeight, numChars, chars);
-    createVertices();
-    Vertex3D[] verticesArray = ListUtils.vertex3DListToArray(verticesList);
-    int[] indicesArray = ListUtils.integerListToIntArray(indices);
+    calculateArrays();
     updateBuffers(verticesArray, indicesArray);
   }
 
@@ -145,15 +137,7 @@ public class HudText {
     Material material = new Material(new Image(text.getFontFile()));
     material.setColorOffset(text.getTextColour());
     material.create();
-    byte[] chars = text.getString().getBytes(StandardCharsets.ISO_8859_1);
-    int numChars = chars.length;
-
-    float charWidth = calculateCharWidth(text);
-    float charHeight = calculateCharHeight(text);
-    createVectors(charWidth, charHeight, numChars, chars);
-    createVertices();
-    Vertex3D[] verticesArray = ListUtils.vertex3DListToArray(verticesList);
-    int[] indicesArray = ListUtils.integerListToIntArray(indices);
+    calculateArrays();
     return new Mesh(new Model(verticesArray, indicesArray), material);
   }
 
@@ -263,6 +247,25 @@ public class HudText {
 
   public void render(TextRenderer renderer) {
     renderer.renderObject(this);
+  }
+
+  private void clearArrays() {
+    positions.clear();
+    textCoordinates.clear();
+    verticesList.clear();
+    indices.clear();
+  }
+
+  private void calculateArrays() {
+    byte[] chars = text.getString().getBytes(StandardCharsets.ISO_8859_1);
+    int numChars = chars.length;
+    float charWidth = calculateCharWidth(text);
+    float charHeight = calculateCharHeight(text);
+    clearArrays();
+    createVectors(charWidth, charHeight, numChars, chars);
+    createVertices();
+    verticesArray = ListUtils.vertex3DListToArray(verticesList);
+    indicesArray = ListUtils.integerListToIntArray(indices);
   }
 
 }
