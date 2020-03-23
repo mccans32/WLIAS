@@ -33,6 +33,8 @@ public class WorldRenderer {
    * @param object the mesh
    */
   public void renderObject(GameObject object, Camera camera) {
+    GL11.glEnable(GL11.GL_CULL_FACE);
+    GL11.glCullFace(GL11.GL_BACK);
     this.model = object.getMesh().getModel();
     this.textureID = object.getMesh().getMaterial().getImage().getTextureID();
     bindModel();
@@ -57,8 +59,10 @@ public class WorldRenderer {
       bindModel();
       bindTexture();
       shader.bind();
+      setProjectionUniform();
+      setViewUniform(camera);
       for (GameObject object : objects) {
-        setUniforms(object, camera);
+        setModelUniform(object);
         drawObject();
       }
       unbindModel();
