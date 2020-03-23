@@ -18,6 +18,8 @@ spotbugs {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
+sourceCompatibility = 1.8
+
 project.ext.lwjglVersion = "3.2.3"
 switch (OperatingSystem.current()) {
     case OperatingSystem.LINUX:
