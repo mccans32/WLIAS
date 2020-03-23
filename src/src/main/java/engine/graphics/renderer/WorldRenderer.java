@@ -2,13 +2,16 @@ package engine.graphics.renderer;
 
 import engine.Window;
 import engine.graphics.Shader;
+import engine.graphics.model.Model;
 import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
+import java.util.ArrayList;
 import math.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL31;
 
 /**
  * The type WorldRenderer.
@@ -16,6 +19,8 @@ import org.lwjgl.opengl.GL30;
 public class WorldRenderer {
   private Shader shader;
   private Window window;
+  private Model model;
+  private int textureID;
 
   public WorldRenderer(Window window, Shader shader) {
     this.shader = shader;
@@ -28,14 +33,46 @@ public class WorldRenderer {
    * @param object the mesh
    */
   public void renderObject(GameObject object, Camera camera) {
-    bindObject(object, camera);
-    drawObject(object);
-    unbindObject();
+    GL11.glEnable(GL11.GL_CULL_FACE);
+    GL11.glCullFace(GL11.GL_BACK);
+    this.model = object.getMesh().getModel();
+    this.textureID = object.getMesh().getMaterial().getImage().getTextureID();
+    bindModel();
+    bindTexture();
+    shader.bind();
+    setUniforms(object, camera);
+    drawObject();
+    unbindModel();
+    shader.unbind();
   }
 
-  private void bindObject(GameObject object, Camera camera) {
+  /**
+   * Render multiple objects with the same model and image.
+   *
+   * @param objects the objects
+   * @param camera  the camera
+   */
+  public void renderObjects(ArrayList<GameObject> objects, Camera camera) {
+    if (objects.size() > 0) {
+      this.model = objects.get(0).getMesh().getModel();
+      this.textureID = objects.get(0).getMesh().getMaterial().getImage().getTextureID();
+      bindModel();
+      bindTexture();
+      shader.bind();
+      setProjectionUniform();
+      setViewUniform(camera);
+      for (GameObject object : objects) {
+        setModelUniform(object);
+        drawObject();
+      }
+      unbindModel();
+      shader.unbind();
+    }
+  }
+
+  private void bindModel() {
     // Bind Mesh VAO
-    GL30.glBindVertexArray(object.getMesh().getVao());
+    GL30.glBindVertexArray(model.getVao());
     // Enable Index 0 for Shaders (Position)
     GL30.glEnableVertexAttribArray(0);
     // Enable Index 1 for Shaders (Colour)
@@ -43,16 +80,14 @@ public class WorldRenderer {
     // Enable Index 2 for Shaders (Texture)
     GL30.glEnableVertexAttribArray(2);
     // Bind Indices
-    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, object.getMesh().getIbo());
+    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, model.getIbo());
+  }
+
+  private void bindTexture() {
     // Set Active Texture
     GL13.glActiveTexture(GL13.GL_TEXTURE0);
     // Bind the Texture
-    GL13.glBindTexture(GL11.GL_TEXTURE_2D, object.getMesh().getMaterial().getTextureID());
-    //Bind Shader
-    shader.bind();
-    // Set Uniforms
-    setUniforms(object, camera);
-
+    GL13.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
   }
 
   private void setUniforms(GameObject object, Camera camera) {
@@ -79,9 +114,7 @@ public class WorldRenderer {
   }
 
 
-  private void unbindObject() {
-    //Unbind Shader
-    shader.unbind();
+  private void unbindModel() {
     // Unbind Indices
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
     GL30.glDisableVertexAttribArray(0);
@@ -91,11 +124,8 @@ public class WorldRenderer {
     GL30.glBindVertexArray(0);
   }
 
-  private void drawObject(GameObject object) {
-    GL11.glDrawElements(
-        GL11.GL_TRIANGLE_STRIP,
-        object.getMesh().getIndices().length,
-        GL11.GL_UNSIGNED_INT,
+  private void drawObject() {
+    GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, model.getIndices().length, GL11.GL_UNSIGNED_INT,
         0);
   }
 }

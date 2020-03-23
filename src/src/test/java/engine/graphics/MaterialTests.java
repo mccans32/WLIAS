@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 import engine.Window;
+import engine.graphics.image.Image;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,11 +47,11 @@ public class MaterialTests {
   @Test
   public void testGetters() {
     for (String testFilesName : TEST_FILES_NAMES) {
-      Material testMaterial = new Material(TEST_FILE_DIRECTORY + testFilesName);
+      Material testMaterial = new Material(new Image(TEST_FILE_DIRECTORY + testFilesName));
       testMaterial.create();
-      assertTrue(testMaterial.getTextureID() > 0);
-      assertTrue(testMaterial.getWidth() > 0);
-      assertTrue(testMaterial.getHeight() > 0);
+      assertTrue(testMaterial.getImage().getTextureID() > 0);
+      assertTrue(testMaterial.getImage().getWidth() > 0);
+      assertTrue(testMaterial.getImage().getHeight() > 0);
       testMaterial.destroy();
     }
   }

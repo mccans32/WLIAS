@@ -75,7 +75,7 @@ public class Window {
   private Matrix4f orthographicMatrix;
   private float fov = 70.0f;
   private float near = 0.1f;
-  private float far = 1000f;
+  private float far = 100f;
   private float aspect;
 
   /**

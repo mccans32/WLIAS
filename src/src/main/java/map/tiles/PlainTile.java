@@ -1,10 +1,11 @@
 package map.tiles;
 
-public class PlainTile extends Tile {
-  private String tileImage = "/images/plainTile.jpg";
+import engine.graphics.image.Image;
 
-  @Override
-  public String getImage() {
+public class PlainTile extends Tile {
+  private static Image tileImage = new Image("/images/plainTile.jpg");
+
+  public Image getImage() {
     return tileImage;
   }
 
