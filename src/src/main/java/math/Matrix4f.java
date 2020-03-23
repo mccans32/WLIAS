@@ -1,7 +1,9 @@
 package math;
 
 import Jama.Matrix;
+import java.nio.FloatBuffer;
 import java.util.Arrays;
+import org.lwjgl.system.MemoryUtil;
 
 // A Matrix4f is visualised as a 2D Array, However the GPU requires the vector to be in 1D
 // Matrix4f is read in by Column Major Order so is set by (col, row);
@@ -357,5 +359,28 @@ public class Matrix4f {
   @Override
   public int hashCode() {
     return Arrays.hashCode(elements);
+  }
+
+  private float[] toInvertedList() {
+    float[] answer = new float[SIZE * SIZE];
+    for (int row = 0; row < SIZE; row++) {
+      for (int col = 0; col < SIZE; col++) {
+        answer[calculateIndex(row, col)] = this.get(col, row);
+      }
+    }
+    return answer;
+  }
+
+  /**
+   * Converts math.{@link Matrix4f} to a {@link org.joml.Matrix4f}.
+   *
+   * @return a new {@link org.joml.Matrix4f}
+   */
+  public org.joml.Matrix4f toJoml() {
+    float[] list = this.toInvertedList();
+    FloatBuffer buffer = MemoryUtil.memAllocFloat(SIZE * SIZE);
+    buffer.put(list);
+    buffer.flip();
+    return new org.joml.Matrix4f(buffer);
   }
 }

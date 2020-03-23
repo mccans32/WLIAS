@@ -1,15 +1,18 @@
 package engine.objects.world;
 
+import static java.lang.Math.max;
+import static org.joml.FrustumIntersection.OUTSIDE;
+
 import engine.graphics.mesh.Mesh;
 import engine.graphics.renderer.WorldRenderer;
 import math.Vector3f;
+import org.joml.FrustumIntersection;
 
 public class GameObject {
   private Vector3f position = new Vector3f(0f, 0f, 0f);
   private Vector3f rotation = new Vector3f(0f, 0f, 0f);
   private Vector3f scale = new Vector3f(1f, 1f, 1f);
   private Mesh mesh;
-
 
   public GameObject(Mesh mesh) {
     this.mesh = mesh;
@@ -73,5 +76,28 @@ public class GameObject {
 
   public void render(WorldRenderer renderer, Camera camera) {
     renderer.renderObject(this, camera);
+  }
+
+  private float calculateBoundingSphereRadius() {
+    float scaleX = scale.getX();
+    float squareSide =
+        max(mesh.getModel().getHeight() * scaleX, mesh.getModel().getWidth() * scaleX);
+    // return radius
+    return squareSide * squareSide;
+  }
+
+  /**
+   * Is contained in the frustum's view boolean.
+   *
+   * @param frustum the frustum
+   * @return the boolean
+   */
+  public boolean isContained(FrustumIntersection frustum) {
+    int isContained = frustum.intersectSphere(
+        position.getX(),
+        position.getY(),
+        position.getZ(),
+        calculateBoundingSphereRadius());
+    return isContained != OUTSIDE;
   }
 }
