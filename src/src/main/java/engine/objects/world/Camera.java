@@ -2,8 +2,10 @@ package engine.objects.world;
 
 import engine.Window;
 import engine.io.Input;
+import math.Matrix4f;
 import math.Vector2f;
 import math.Vector3f;
+import org.joml.FrustumIntersection;
 import org.lwjgl.glfw.GLFW;
 
 public class Camera {
@@ -15,6 +17,7 @@ public class Camera {
   private static final float MOUSE_SENSITIVITY = 0.1f;
   private static final float CAMERA_MIN_X_ROTATION = 30;
   private static final float CAMERA_MAX_X_ROTATION = 90;
+  public FrustumIntersection frustum = new FrustumIntersection();
   private float maxCameraX;
   private float minCameraX;
   private float maxCameraY;
@@ -57,6 +60,10 @@ public class Camera {
     return ZOOM_MODIFIER;
   }
 
+  public FrustumIntersection getFrustum() {
+    return frustum;
+  }
+
   /**
    * Update.
    */
@@ -64,7 +71,16 @@ public class Camera {
     if (!isFrozen) {
       updateRotation(window);
       updatePosition();
+      updateFrustum(window);
     }
+  }
+
+  private void updateFrustum(Window window) {
+    //Update Frustum
+    Matrix4f projection = window.getProjectionMatrix();
+    Matrix4f view = Matrix4f.view(this.getPosition(), this.getRotation());
+    Matrix4f projectionView = Matrix4f.multiply(view, projection);
+    frustum.set(projectionView.toJoml());
   }
 
   private void updateRotation(Window window) {

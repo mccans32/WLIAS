@@ -18,22 +18,22 @@ public class MapGeneration {
   /**
    * The Land mass size x.
    */
-  private static final int DEFAULT_LANDMASS_SIZE_X = 20;
+  private static final int DEFAULT_LANDMASS_SIZE_X = 50;
   /**
    * The Land mass size y.
    */
-  private static final int DEFAULT_LANDMASS_SIZE_Y = 20;
+  private static final int DEFAULT_LANDMASS_SIZE_Y = 50;
   /**
    * The Number of land masses.
    */
-  private static final int DEFAULT_AMOUNT_ARID_TILES = 70;
-  private static final int DEFAULT_AMOUNT_FERTILE_TILES = 155;
-  private static final int DEFAULT_AMOUNT_WATER_TILES = 25;
-  private static final int DEFAULT_AMOUNT_PLAIN_TILES = 150;
+  private static final int DEFAULT_AMOUNT_ARID_TILES = 500;
+  private static final int DEFAULT_AMOUNT_FERTILE_TILES = 500;
+  private static final int DEFAULT_AMOUNT_WATER_TILES = 500;
+  private static final int DEFAULT_AMOUNT_PLAIN_TILES = 1000;
   /**
    * The List of tiles.
    */
-  static final ArrayList<Tile> LIST_OF_TILES = new ArrayList<Tile>();
+  static final ArrayList<Tile> LIST_OF_TILES = new ArrayList<>();
   /**
    * The Map of ordered tiles.
    */

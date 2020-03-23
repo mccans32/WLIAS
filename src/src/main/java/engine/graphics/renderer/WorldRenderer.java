@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL31;
 
 /**
  * The type WorldRenderer.
@@ -62,8 +61,10 @@ public class WorldRenderer {
       setProjectionUniform();
       setViewUniform(camera);
       for (GameObject object : objects) {
-        setModelUniform(object);
-        drawObject();
+        if (object.isContained(camera.getFrustum())) {
+          setModelUniform(object);
+          drawObject();
+        }
       }
       unbindModel();
       shader.unbind();
