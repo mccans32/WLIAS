@@ -22,6 +22,10 @@ public class Model {
   private float[] positionData;
   private float[] colourData;
   private float[] textureData;
+  private FloatBuffer positionBuffer;
+  private FloatBuffer colourBuffer;
+  private IntBuffer indicesBuffer;
+  private FloatBuffer textureBuffer;
   // Vertex Array Object
   private int vao;
   // Position Buffer Object
@@ -77,41 +81,27 @@ public class Model {
   }
 
   private void initialisePositionBuffer() {
-    FloatBuffer positionBuffer = MemoryUtil.memAllocFloat(vertices.length * POSITION_DIMENSION);
-    positionData = new float[vertices.length * POSITION_DIMENSION];
-    storePositions();
-    positionBuffer.put(positionData).flip();
-    pbo = storeData(positionBuffer, POSITION_INDEX, POSITION_DIMENSION);
+    pbo = GL15.glGenBuffers();
+    positionBuffer = MemoryUtil.memAllocFloat(vertices.length * POSITION_DIMENSION);
+    updatePositionBuffer();
   }
 
   private void initialiseColourBuffer() {
-    FloatBuffer colourBuffer = MemoryUtil.memAllocFloat(vertices.length * COLOUR_DIMENSION);
-    colourData = new float[vertices.length * COLOUR_DIMENSION];
-
-    storeColours();
-    colourBuffer.put(colourData).flip();
-    cbo = storeData(colourBuffer, COLOUR_INDEX, COLOUR_DIMENSION);
+    cbo = GL15.glGenBuffers();
+    colourBuffer = MemoryUtil.memAllocFloat(vertices.length * COLOUR_DIMENSION);
+    updateColourBuffer();
   }
 
   private void initialiseTextureBuffer() {
-    FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(vertices.length * TEXTURE_DIMENSION);
-    textureData = new float[vertices.length * TEXTURE_DIMENSION];
-
-    storeTextures();
-    textureBuffer.put(textureData).flip();
-    tbo = storeData(textureBuffer, TEXTURE_INDEX, TEXTURE_DIMENSION);
+    tbo = GL15.glGenBuffers();
+    textureBuffer = MemoryUtil.memAllocFloat(vertices.length * TEXTURE_DIMENSION);
+    updateTextureBuffer();
   }
 
   private void initialiseIndicesBuffer() {
-    IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
-    indicesBuffer.put(indices).flip();
-    // Generate Index Buffer Object
     ibo = GL15.glGenBuffers();
-    // Bind Buffer and Set Data
-    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo);
-    GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
-    // Unbind Buffer
-    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+    indicesBuffer = MemoryUtil.memAllocInt(indices.length);
+    updateIndexBuffer();
   }
 
   private void storePositions() {
@@ -140,16 +130,13 @@ public class Model {
   }
 
 
-  private int storeData(FloatBuffer buffer, int index, int size) {
-    // Generate Position Buffer Object
-    int bufferID = GL15.glGenBuffers();
+  private void storeData(int bufferID, FloatBuffer buffer, int index, int size) {
     // Bind Buffer and Set Data
     GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferID);
     GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
     GL20.glVertexAttribPointer(index, size, GL11.GL_FLOAT, false, 0, 0);
     // Unbind Buffer
     GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-    return bufferID;
   }
 
   /**
@@ -206,5 +193,64 @@ public class Model {
 
   public int getTbo() {
     return tbo;
+  }
+
+  public void updateVertexBuffers(Vertex3D[] vertices) {
+    setVertices(vertices);
+    updatePositionBuffer();
+    updateTextureBuffer();
+    updateColourBuffer();
+  }
+
+  public void updateIndicesBuffers(int[] indices) {
+    setIndices(indices);
+    updateIndexBuffer();
+  }
+
+  private void updateIndexBuffer() {
+    if (indices.length > indicesBuffer.capacity()) {
+      indicesBuffer = MemoryUtil.memAllocInt(indices.length);
+    }
+    indicesBuffer.clear();
+    indicesBuffer.put(indices).flip();
+    // Bind Buffer and Set Data
+    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo);
+    GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
+    // Unbind Buffer
+    GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+  }
+
+  private void updateTextureBuffer() {
+    if ((vertices.length * TEXTURE_DIMENSION) > textureBuffer.capacity()) {
+      textureBuffer = MemoryUtil.memAllocFloat(vertices.length * TEXTURE_DIMENSION);
+    }
+    System.out.println(vertices.length * TEXTURE_DIMENSION + ", " + textureBuffer.capacity());
+    textureData = new float[vertices.length * TEXTURE_DIMENSION];
+    storeTextures();
+    textureBuffer.clear();
+    textureBuffer.put(textureData).flip();
+    storeData(tbo, textureBuffer, TEXTURE_INDEX, TEXTURE_DIMENSION);
+  }
+
+  private void updatePositionBuffer() {
+    if ((vertices.length * POSITION_DIMENSION) > positionBuffer.capacity()) {
+      positionBuffer = MemoryUtil.memAllocFloat(vertices.length * POSITION_DIMENSION);
+    }
+    positionData = new float[vertices.length * POSITION_DIMENSION];
+    positionBuffer.clear();
+    storePositions();
+    positionBuffer.put(positionData).flip();
+    storeData(pbo, positionBuffer, POSITION_INDEX, POSITION_DIMENSION);
+  }
+
+  private void updateColourBuffer() {
+    if ((vertices.length * COLOUR_DIMENSION) > colourBuffer.capacity()) {
+      colourBuffer = MemoryUtil.memAllocFloat(vertices.length * COLOUR_DIMENSION);
+    }
+    colourData = new float[vertices.length * COLOUR_DIMENSION];
+    storeColours();
+    colourBuffer.clear();
+    colourBuffer.put(colourData).flip();
+    storeData(cbo, colourBuffer, COLOUR_INDEX, COLOUR_DIMENSION);
   }
 }

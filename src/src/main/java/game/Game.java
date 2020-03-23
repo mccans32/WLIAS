@@ -133,7 +133,7 @@ public class Game {
       // Update The World
       World.update();
       // Update The Hud
-      Hud.update();
+      Hud.update(camera);
     }
   }
 

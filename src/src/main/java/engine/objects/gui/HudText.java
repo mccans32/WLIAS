@@ -28,6 +28,10 @@ public class HudText {
   private float edgeY;
   private float width;
   private float height;
+  private List<Vector3f> positions = new ArrayList<>();
+  private List<Vector2f> textCoordinates = new ArrayList<>();
+  private List<Vertex3D> verticesList = new ArrayList<>();
+  private List<Integer> indices = new ArrayList<>();
 
   /**
    * Instantiates a new Hud text.
@@ -113,9 +117,20 @@ public class HudText {
     this.text = text;
     this.text.setCentreVertical(isCentreVertical);
     this.text.setCentreHorizontal(isCentreHorizontal);
-    this.mesh.destroy();
-    this.setMesh(buildMesh());
-    create();
+    // Update the Vertices and the Indices
+    positions.clear();
+    textCoordinates.clear();
+    verticesList.clear();
+    indices.clear();
+    byte[] chars = text.getString().getBytes(StandardCharsets.ISO_8859_1);
+    int numChars = chars.length;
+    float charWidth = calculateCharWidth(text);
+    float charHeight = calculateCharHeight(text);
+    createVectors(charWidth, charHeight, numChars, chars);
+    createVertices();
+    Vertex3D[] verticesArray = ListUtils.vertex3DListToArray(verticesList);
+    int[] indicesArray = ListUtils.integerListToIntArray(indices);
+    updateBuffers(verticesArray, indicesArray);
   }
 
   public Mesh getMesh() {
@@ -133,24 +148,18 @@ public class HudText {
     byte[] chars = text.getString().getBytes(StandardCharsets.ISO_8859_1);
     int numChars = chars.length;
 
-    List<Vector3f> positions = new ArrayList<>();
-    List<Vector2f> textCoordinates = new ArrayList<>();
-    List<Vertex3D> verticesList = new ArrayList<>();
-    List<Integer> indices = new ArrayList<>();
-
     float charWidth = calculateCharWidth(text);
     float charHeight = calculateCharHeight(text);
-    createVectors(positions, textCoordinates, indices, charWidth, charHeight, numChars, chars);
-    createVertices(positions, textCoordinates, verticesList);
+    createVectors(charWidth, charHeight, numChars, chars);
+    createVertices();
     Vertex3D[] verticesArray = ListUtils.vertex3DListToArray(verticesList);
     int[] indicesArray = ListUtils.integerListToIntArray(indices);
     return new Mesh(new Model(verticesArray, indicesArray), material);
   }
 
-  private void createVertices(List<Vector3f> positions, List<Vector2f> textCoordinates,
-                              List<Vertex3D> vertexList) {
+  private void createVertices() {
     for (int i = 0; i < positions.size(); i++) {
-      vertexList.add(new Vertex3D(positions.get(i), new Vector3f(0, 0, 0),
+      verticesList.add(new Vertex3D(positions.get(i), new Vector3f(0, 0, 0),
           textCoordinates.get(i)));
     }
   }
@@ -195,9 +204,7 @@ public class HudText {
     this.offsetY = offsetY;
   }
 
-  private void createVectors(List<Vector3f> positions, List<Vector2f> textCoordinates,
-                             List<Integer> indices, float charWidth, float charHeight,
-                             int numChars, byte[] chars) {
+  private void createVectors(float charWidth, float charHeight, int numChars, byte[] chars) {
     height = charHeight;
     width = 0;
     for (int i = 0; i < numChars; i++) {
@@ -245,6 +252,11 @@ public class HudText {
     this.mesh.createText();
   }
 
+  public void updateBuffers(Vertex3D[] vertices, int[] indices) {
+    mesh.getModel().updateVertexBuffers(vertices);
+    mesh.getModel().updateIndicesBuffers(indices);
+  }
+
   public void destroy() {
     this.mesh.destroy();
   }
@@ -252,4 +264,5 @@ public class HudText {
   public void render(TextRenderer renderer) {
     renderer.renderObject(this);
   }
+
 }
