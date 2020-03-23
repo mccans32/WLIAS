@@ -7,24 +7,43 @@ import engine.graphics.model.dimension.two.RectangleModel;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
+import engine.io.Input;
 import engine.objects.gui.HudObject;
 import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
 import math.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 public class Hud {
+  // Sets a number of game cycles so when we press a button to toggle it is not as sensitive
+  private static final int BUTTON_LOCK_CYCLES = 5;
   private static HudObject tempObject;
-  private static Text coordText = new Text("", 0.5f, new Vector3f(1, 1, 1));
+  private static Text coordText = new Text("", 0.7f, new Vector3f(1, 1, 1));
   private static HudText coordinates;
+  private static Boolean devHudActive = false;
+  private static int hudCycleLock = 0;
 
   public static void create() {
     createObjects();
   }
 
   public static void update(Camera camera) {
-    calculateCoordText(camera);
-    coordinates.setText(coordText);
+    updateDevHud(camera);
     resize();
+  }
+
+  private static void updateDevHud(Camera camera) {
+    // check for key press to toggle
+    hudCycleLock--;
+    hudCycleLock = Math.max(hudCycleLock, 0);
+    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && (hudCycleLock == 0)) {
+      devHudActive = !devHudActive;
+      hudCycleLock = BUTTON_LOCK_CYCLES;
+    }
+    if (devHudActive) {
+      calculateCoordText(camera);
+      coordinates.setText(coordText);
+    }
   }
 
   private static void createObjects() {
@@ -56,15 +75,17 @@ public class Hud {
   }
 
   private static void renderTexts(TextRenderer renderer) {
-    coordinates.render(renderer);
+    if (devHudActive) {
+      coordinates.render(renderer);
+    }
   }
 
   private static void renderObjects(GuiRenderer guiRenderer, TextRenderer textRenderer) {
-//    tempObject.render(guiRenderer, textRenderer);
+    tempObject.render(guiRenderer, textRenderer);
   }
 
   public static void resize() {
-//    tempObject.reposition();
+    tempObject.reposition();
     coordinates.reposition();
   }
 
