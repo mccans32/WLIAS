@@ -230,6 +230,11 @@ public class World {
     }
   }
 
+  /**
+   * Generate random row index int for placing Societies.
+   *
+   * @return the int
+   */
   public static int generateRandomRowIndex() {
     Random r = new Random();
     return r.nextInt(worldMap[0].length - 1) + 1;

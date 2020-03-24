@@ -32,7 +32,6 @@ public class Material {
     this.image = image;
   }
 
-
   public Vector4f getColorOffsetRgba() {
     return colorOffset;
   }

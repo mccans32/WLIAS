@@ -33,6 +33,12 @@ public class Society {
 
   }
 
+  /**
+   * Instantiates a new Society with a unique ID and BorderColour.
+   *
+   * @param societyId    the society id
+   * @param societyColor the society color
+   */
   public Society(int societyId, Vector3f societyColor) {
     this.societyId = societyId;
     this.societyColor = societyColor;
