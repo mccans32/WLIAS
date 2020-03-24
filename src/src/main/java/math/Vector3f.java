@@ -6,7 +6,7 @@ import java.util.Objects;
  * The type Vector 3 f.
  */
 public class Vector3f extends Vector2f {
-  private float vectorZ;
+  protected float vectorZ;
 
   /**
    * Instantiates a new Vector 3 f.

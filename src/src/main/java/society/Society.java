@@ -1,11 +1,18 @@
 package society;
 
+import engine.graphics.model.dimension.two.RectangleModel;
+import engine.objects.world.TileWorldObject;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import math.Vector2f;
+import math.Vector3f;
 import society.person.Person;
 import society.person.dataobjects.Gender;
 
 public class Society {
+  private static final int DEFAULT_POPULATION_SIZE = 10;
+  private Vector3f societyColor;
   public int personIdCounter;
   private ArrayList<Person> population;
   private int societyId;
@@ -13,7 +20,7 @@ public class Society {
   private float averageMedicine;
   private float averageAgriculture;
   private int averageLifeExpectancy;
-
+  private ArrayList<TileWorldObject> territory = new ArrayList<>();
 
   /**
    * Instantiates a new Society.
@@ -21,10 +28,38 @@ public class Society {
    * @param initialPopulationSize the initial population
    * @param societyId             the society id
    */
-  public Society(int initialPopulationSize, int societyId) {
+  public Society(int initialPopulationSize, int societyId, Vector3f societyColor) {
     this.societyId = societyId;
+    this.societyColor = societyColor;
     generateInitialPopulation(initialPopulationSize);
 
+  }
+
+  public Society(int societyId, Vector3f societyColor) {
+    this.societyId = societyId;
+    this.societyColor = societyColor;
+    generateInitialPopulation(DEFAULT_POPULATION_SIZE);
+  }
+
+  /**
+   * Update the borders for each tile owned by this society.
+   *
+   * @param tileModel the tile model
+   */
+  public void updateBorders(RectangleModel tileModel) {
+    for (TileWorldObject worldTile : this.territory) {
+      if (worldTile.getBorderMesh() == null) {
+        worldTile.setBorderMesh(this.societyColor, tileModel);
+      }
+    }
+  }
+
+  public ArrayList<TileWorldObject> getTerritory() {
+    return territory;
+  }
+
+  public void claimTile(TileWorldObject worldTile) {
+    this.territory.add(worldTile);
   }
 
   private void generateInitialPopulation(int initialPopulationSize) {
@@ -93,7 +128,6 @@ public class Society {
 
   /**
    * Sets average agriculture.
-   *
    */
   public void setAverageAgriculture(ArrayList<Person> population) {
     float totalAgriculture = 0;

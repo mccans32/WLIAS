@@ -98,7 +98,7 @@ public class TextRenderer {
   }
 
   private void setColourOffsetUniform(HudText object) {
-    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffset());
+    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffsetRgb());
   }
 
   private void setProjectionUniform() {

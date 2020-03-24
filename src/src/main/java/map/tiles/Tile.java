@@ -1,12 +1,15 @@
 package map.tiles;
 
+
 import engine.graphics.image.Image;
 
 public abstract class Tile {
+  private static final String TILE_TYPE = "Generic";
   private static Image image = new Image();
   private float positionX;
   private float positionY;
   private float terrainHealth;
+  private boolean claimed;
 
   public float getPositionX() {
     return positionX;
@@ -43,5 +46,9 @@ public abstract class Tile {
 
   public Image getImage() {
     return image;
+  }
+
+  public String getTileType() {
+    return TILE_TYPE;
   }
 }

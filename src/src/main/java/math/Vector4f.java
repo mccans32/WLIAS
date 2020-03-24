@@ -10,6 +10,11 @@ public class Vector4f extends Vector3f {
     this.vectorW = w;
   }
 
+  public Vector4f(Vector3f vector, float w) {
+    super(vector.getX(), vector.getY(), vector.getZ());
+    this.vectorW = w;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -32,5 +37,10 @@ public class Vector4f extends Vector3f {
 
   public float getW() {
     return vectorW;
+  }
+
+  @Override
+  public String toString() {
+    return "(" + vectorX + ", " + vectorY + ", " + vectorZ + ", " + vectorW + ")";
   }
 }
