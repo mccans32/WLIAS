@@ -11,13 +11,12 @@ out vec4 passColourOffset;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform vec3 colourOffset;
+uniform vec4 colourOffset;
 
-float offsetAlpha = 0;
 
 void main() {
     gl_Position = projection * view * model * vec4(position, 1.0);
     passColour = color;
-    passColourOffset = vec4(colourOffset, offsetAlpha);
+    passColourOffset = colourOffset;
     passTextureCoords = textureCoords;
 }

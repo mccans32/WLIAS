@@ -3,17 +3,15 @@ package society;
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.objects.world.TileWorldObject;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import math.Vector2f;
 import math.Vector3f;
 import society.person.Person;
 import society.person.dataobjects.Gender;
 
 public class Society {
   private static final int DEFAULT_POPULATION_SIZE = 10;
-  private Vector3f societyColor;
   public int personIdCounter;
+  private Vector3f societyColor;
   private ArrayList<Person> population;
   private int societyId;
   private float averageTechnology;
@@ -148,6 +146,4 @@ public class Society {
   private int calculateLifeExpectancy() {
     return 0;
   }
-
-
 }

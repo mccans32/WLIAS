@@ -17,7 +17,6 @@ public class TileWorldObject extends GameObject {
   private boolean isClaimed = false;
   private GameObject borderObject;
   private RectangleMesh borderMesh;
-
   /**
    * Instantiates a new Tile object.
    *
@@ -41,6 +40,7 @@ public class TileWorldObject extends GameObject {
   public RectangleMesh getBorderMesh() {
     return borderMesh;
   }
+
 
   public void applyColorOffset(Vector3f societyColor) {
     this.getMesh().getMaterial().setColorOffset(societyColor);

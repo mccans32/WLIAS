@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import engine.Window;
 import engine.graphics.Shader;
 import engine.graphics.model.Model;
+import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
 import java.util.ArrayList;
