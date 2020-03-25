@@ -9,7 +9,6 @@ public abstract class Tile {
   private float positionX;
   private float positionY;
   private float terrainHealth;
-  private boolean claimed;
 
   public float getPositionX() {
     return positionX;

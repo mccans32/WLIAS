@@ -45,6 +45,14 @@ public class Society {
     generateInitialPopulation(DEFAULT_POPULATION_SIZE);
   }
 
+  public static int getDefaultPopulationSize() {
+    return DEFAULT_POPULATION_SIZE;
+  }
+
+  public Vector3f getSocietyColor() {
+    return societyColor;
+  }
+
   /**
    * Update the borders for each tile owned by this society.
    *

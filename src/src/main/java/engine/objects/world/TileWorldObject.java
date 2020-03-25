@@ -11,12 +11,13 @@ import math.Vector4f;
 
 public class TileWorldObject extends GameObject {
   private static final float BORDER_ALPHA = 1.5f;
-  private static final float BORDER_RAISE = 0.05f;
+  private static final float BORDER_RAISE = 0.0000002f;
   private static final Image borderImage = new Image("/images/tileBorder.png");
   private Tile tile;
   private boolean isClaimed = false;
   private GameObject borderObject;
   private RectangleMesh borderMesh;
+
   /**
    * Instantiates a new Tile object.
    *

@@ -49,6 +49,16 @@ public class World {
   private static boolean bordersAltered = false;
   private static Society[] societies;
   private static RectangleModel tileModel;
+  private static int turnCounter;
+  private static int totalClaimedTiles = 0;
+
+  public static RectangleModel getTileModel() {
+    return tileModel;
+  }
+
+  public static Society[] getSocieties() {
+    return societies.clone();
+  }
 
   /**
    * Create.
@@ -59,6 +69,13 @@ public class World {
     create(window, camera, DEFAULT_NUMBER_OF_SOCIETIES);
   }
 
+  /**
+   * Create.
+   *
+   * @param window            the window
+   * @param camera            the camera
+   * @param numberOfSocieties the number of societies
+   */
   public static void create(Window window, Camera camera, int numberOfSocieties) {
     MapGeneration.createMap();
     // reset the camera to its default position.
@@ -85,6 +102,7 @@ public class World {
           societies[i].claimTile(worldMap[row][column]);
           worldMap[row][column].setClaimed(true);
           bordersAltered = true;
+          totalClaimedTiles++;
           claimed = true;
         }
       }
@@ -100,10 +118,10 @@ public class World {
    */
   public static void render(WorldRenderer renderer, Camera camera, Window window) {
     renderTiles(renderer, camera);
-    renderBorder(renderer, camera);
     if (mousePicker.getCurrentSelected() != null && !window.isMouseLocked()) {
-      renderer.renderObject(selectOverlay, camera);
+      renderer.renderSelectOverlay(selectOverlay, camera);
     }
+    renderBorder(renderer, camera);
   }
 
   private static void renderBorder(WorldRenderer renderer, Camera camera) {
@@ -113,10 +131,36 @@ public class World {
         temp.add(worldTile.getBorderObject());
       }
     }
-    renderer.renderObjects(temp, camera);
+    renderer.renderTileBorders(temp, camera);
   }
 
+  /**
+   * Update.
+   *
+   * @param window the window
+   */
   public static void update(Window window) {
+    // TODO REMOVE AFTER SHOWING TO ALISTAIR
+    if (turnCounter < 100) {
+      turnCounter += 1;
+    } else {
+      turnCounter = 0;
+      for (Society society : societies) {
+        boolean claimed = false;
+        while (!claimed && totalClaimedTiles
+            < (MapGeneration.getLandMassSizeX() + 2) * (MapGeneration.getLandMassSizeY() + 2)) {
+          int row = generateRandomRowIndex();
+          int column = generateRandomColumnIndex();
+          if (!worldMap[row][column].isClaimed()) {
+            society.claimTile(worldMap[row][column]);
+            worldMap[row][column].setClaimed(true);
+            bordersAltered = true;
+            totalClaimedTiles++;
+            claimed = true;
+          }
+        }
+      }
+    }
     updateSocietyBorders();
     mousePicker.update(window, worldMap);
     updateSelectOverlay();
@@ -137,7 +181,7 @@ public class World {
       // reposition selectOverlay to tile's position
       selectOverlay.setPosition(mousePicker.getCurrentSelected().getPosition().copy());
       // Set Z Value Slightly Higher so it renders on top of tile.
-      selectOverlay.getPosition().setZ(DEFAULT_Z + 0.001f);
+      selectOverlay.getPosition().setZ(DEFAULT_Z + 0.0000001f);
     }
   }
 
@@ -146,10 +190,10 @@ public class World {
   }
 
   private static void renderTiles(WorldRenderer renderer, Camera camera) {
-    renderer.renderObjects(fertileTiles, camera);
-    renderer.renderObjects(aridTiles, camera);
-    renderer.renderObjects(plainTiles, camera);
-    renderer.renderObjects(waterTiles, camera);
+    renderer.renderTiles(fertileTiles, camera);
+    renderer.renderTiles(aridTiles, camera);
+    renderer.renderTiles(plainTiles, camera);
+    renderer.renderTiles(waterTiles, camera);
   }
 
   private static void createObjects(Camera camera) {

@@ -1,9 +1,12 @@
 package engine.graphics.renderer;
 
+import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glAlphaFunc;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -40,7 +43,6 @@ public class WorldRenderer {
    * @param object the mesh
    */
   public void renderObject(GameObject object, Camera camera) {
-    initialise();
     glEnable(GL11.GL_CULL_FACE);
     GL11.glCullFace(GL11.GL_BACK);
     this.model = object.getMesh().getModel();
@@ -52,8 +54,36 @@ public class WorldRenderer {
     drawObject();
     unbindModel();
     shader.unbind();
-    terminate();
   }
+
+  public void renderTiles(ArrayList<GameObject> objects, Camera camera) {
+    renderObjects(objects, camera);
+  }
+
+  /**
+   * Render select overlay.
+   *
+   * @param object the object
+   * @param camera the camera
+   */
+  public void renderSelectOverlay(GameObject object, Camera camera) {
+    initialiseOverlayBlending();
+    renderObject(object, camera);
+    terminateOverlayBlending();
+  }
+
+  /**
+   * Render tile borders.
+   *
+   * @param objects the objects
+   * @param camera  the camera
+   */
+  public void renderTileBorders(ArrayList<GameObject> objects, Camera camera) {
+    initialiseBorderBlending();
+    renderObjects(objects, camera);
+    terminateBorderBlending();
+  }
+
 
   /**
    * Render multiple objects with the same model and image.
@@ -62,7 +92,6 @@ public class WorldRenderer {
    * @param camera  the camera
    */
   public void renderObjects(ArrayList<GameObject> objects, Camera camera) {
-    initialise();
     glEnable(GL11.GL_CULL_FACE);
     GL11.glCullFace(GL11.GL_BACK);
     if (objects.size() > 0) {
@@ -83,7 +112,6 @@ public class WorldRenderer {
       unbindModel();
       shader.unbind();
     }
-    terminate();
   }
 
   private void bindModel() {
@@ -150,14 +178,25 @@ public class WorldRenderer {
         0);
   }
 
-  private void initialise() {
+  private void initialiseOverlayBlending() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
   }
 
-  private void terminate() {
+  private void terminateOverlayBlending() {
     glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+  }
+
+  private void initialiseBorderBlending() {
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_EQUAL, 1);
+    glDisable(GL_DEPTH_TEST);
+  }
+
+  private void terminateBorderBlending() {
+    glDisable(GL_ALPHA_TEST);
     glEnable(GL_DEPTH_TEST);
   }
 }
