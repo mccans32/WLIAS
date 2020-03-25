@@ -147,16 +147,17 @@ public class World {
       turnCounter = 0;
       for (Society society : societies) {
         boolean claimed = false;
-        while (!claimed && totalClaimedTiles
-            < (MapGeneration.getLandMassSizeX() + 2) * (MapGeneration.getLandMassSizeY() + 2)) {
-          int row = generateRandomRowIndex();
-          int column = generateRandomColumnIndex();
-          if (!worldMap[row][column].isClaimed()) {
-            society.claimTile(worldMap[row][column]);
-            worldMap[row][column].setClaimed(true);
-            bordersAltered = true;
-            totalClaimedTiles++;
-            claimed = true;
+        if (totalClaimedTiles < worldMap.length * worldMap[0].length) {
+          while (!claimed) {
+            int row = generateRandomRowIndex();
+            int column = generateRandomColumnIndex();
+            if (!worldMap[row][column].isClaimed()) {
+              society.claimTile(worldMap[row][column]);
+              worldMap[row][column].setClaimed(true);
+              bordersAltered = true;
+              totalClaimedTiles++;
+              claimed = true;
+            }
           }
         }
       }
@@ -281,12 +282,12 @@ public class World {
    */
   public static int generateRandomRowIndex() {
     Random r = new Random();
-    return r.nextInt(worldMap[0].length - 1) + 1;
+    return r.nextInt(worldMap[0].length);
 
   }
 
   public static int generateRandomColumnIndex() {
     Random r = new Random();
-    return r.nextInt(worldMap[0].length - 1) + 1;
+    return r.nextInt(worldMap[0].length);
   }
 }
