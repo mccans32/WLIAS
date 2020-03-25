@@ -318,4 +318,8 @@ public class Vector3f extends Vector2f {
   public String toString() {
     return "(" + vectorX + ", " + vectorY + ", " + vectorZ + ")";
   }
+
+  public Vector3f copy() {
+    return new Vector3f(this.getX(), this.getY(), this.getZ());
+  }
 }
