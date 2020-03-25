@@ -11,7 +11,6 @@ import math.Vector4f;
 
 public class TileWorldObject extends GameObject {
   private static final float BORDER_ALPHA = 1.5f;
-  private static final float BORDER_RAISE = 0.0000002f;
   private static final Image borderImage = new Image("/images/tileBorder2.png");
   private Tile tile;
   private boolean isClaimed = false;
@@ -64,11 +63,7 @@ public class TileWorldObject extends GameObject {
   public void setBorderMesh(Vector3f societyColor, RectangleModel model) {
     Material borderMaterial = new Material(borderImage, new Vector4f(societyColor, BORDER_ALPHA));
     borderMesh = new RectangleMesh(model, borderMaterial);
-    Vector3f borderPositions = new Vector3f(
-        this.getPosition().getX(),
-        this.getPosition().getY(),
-        this.getPosition().getZ() + BORDER_RAISE);
-    this.borderObject = new GameObject(borderPositions, borderMesh);
+    this.borderObject = new GameObject(this.getPosition(), borderMesh);
     borderObject.setScale(this.getScale());
     borderObject.setRotation(this.getRotation());
     borderObject.create();
