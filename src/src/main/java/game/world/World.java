@@ -182,8 +182,6 @@ public class World {
     if (mousePicker.getCurrentSelected() != null) {
       // reposition selectOverlay to tile's position
       selectOverlay.setPosition(mousePicker.getCurrentSelected().getPosition().copy());
-      // Set Z Value Slightly Higher so it renders on top of tile.
-      selectOverlay.getPosition().setZ(DEFAULT_Z + 0.0000001f);
     }
   }
 
