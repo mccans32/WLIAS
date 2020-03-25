@@ -77,6 +77,7 @@ public class Window {
   private float near = 0.1f;
   private float far = 100f;
   private float aspect;
+  private boolean mouseLocked = false;
 
   /**
    * Instantiates a new Window.
@@ -397,10 +398,16 @@ public class Window {
 
   public void lockMouse() {
     GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+    mouseLocked = true;
+  }
+
+  public boolean isMouseLocked() {
+    return mouseLocked;
   }
 
   public void unlockMouse() {
     GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+    mouseLocked = false;
   }
 
 }

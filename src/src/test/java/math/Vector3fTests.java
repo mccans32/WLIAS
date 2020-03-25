@@ -1,6 +1,8 @@
 package math;
 
+import static java.lang.System.identityHashCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -164,6 +166,24 @@ public class Vector3fTests {
           assertEquals(vector1.getZ(), vector3.getZ() / testXCoordinate);
           vector3 = Vector3f.divide(vector3, testXCoordinate);
           assertEquals(vector1, vector3);
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testCopy() {
+    for (float testXCoordinate : testXCoordinates) {
+      for (float testYCoordinate : testYCoordinates) {
+        for (float testZCoordinate : testZCoordinates) {
+          Vector3f vector1 = new Vector3f(testXCoordinate, testYCoordinate, testZCoordinate);
+          Vector3f vector2 = vector1.copy();
+          assertEquals(vector1.getX(), vector2.getX());
+          assertEquals(vector1.getY(), vector2.getY());
+          assertEquals(vector1.getZ(), vector2.getZ());
+          vector1.setX(vector1.getX() + 1);
+          assertNotEquals(vector1, vector2);
+          assertNotEquals(identityHashCode(vector1), identityHashCode(vector2));
         }
       }
     }

@@ -6,7 +6,6 @@ import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
-import engine.tools.MousePicker;
 import game.menu.MainMenu;
 import game.world.Hud;
 import game.world.World;
@@ -36,7 +35,6 @@ public class Game {
   private static TextRenderer textRenderer;
   private static GuiRenderer backgroundRenderer;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
-  private MousePicker mousePicker;
   /**
    * The Window.
    */
@@ -111,8 +109,6 @@ public class Game {
     textShader.create();
     // Create Background Shader
     backgroundShader.create();
-    // Create Mouse Picker
-    mousePicker = new MousePicker(camera, window.getProjectionMatrix());
     // Create the Main Menu
     MainMenu.create(window, camera);
   }
@@ -124,14 +120,11 @@ public class Game {
     camera.update(window);
     window.update();
 
-    // Update Mouse Picker
-    mousePicker.update(window);
-
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
     } else { // state == GameState.GAME
       // Update The World
-      World.update();
+      World.update(window);
       // Update The Hud
       Hud.update(camera);
     }
@@ -145,7 +138,7 @@ public class Game {
       MainMenu.render(guiRenderer, textRenderer, backgroundRenderer);
     } else { // state == GameState.GAME;
       // Render world objects
-      World.render(worldRenderer, camera);
+      World.render(worldRenderer, camera, window);
       // Render all game objects
       Hud.render(guiRenderer, textRenderer);
     }

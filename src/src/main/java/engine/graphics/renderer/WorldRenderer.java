@@ -52,6 +52,8 @@ public class WorldRenderer {
    * @param camera  the camera
    */
   public void renderObjects(ArrayList<GameObject> objects, Camera camera) {
+    GL11.glEnable(GL11.GL_CULL_FACE);
+    GL11.glCullFace(GL11.GL_BACK);
     if (objects.size() > 0) {
       this.model = objects.get(0).getMesh().getModel();
       this.textureID = objects.get(0).getMesh().getMaterial().getImage().getTextureID();

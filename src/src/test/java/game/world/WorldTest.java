@@ -71,7 +71,7 @@ public class WorldTest {
     assertEquals(camera.getMaxCameraX(), Camera.getMinCameraBorder());
     for (int size : LAND_MASS_SIZES) {
       genMap(size, size, (size * size), 0, 0, 0);
-      World.create(camera);
+      World.create(camera, window);
       Vector2f botLeft = calcCentre(World.getWorldMap()[World.getWorldMap().length - 1][0]);
       Vector2f topRight = calcCentre(World.getWorldMap()[0][World.getWorldMap().length - 1]);
       assertEquals(camera.getMinCameraX(), botLeft.getX());
