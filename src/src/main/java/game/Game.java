@@ -10,7 +10,6 @@ import game.menu.MainMenu;
 import game.world.Hud;
 import game.world.World;
 import math.Vector3f;
-import society.Society;
 
 /**
  * The type Game.
@@ -73,7 +72,6 @@ public class Game {
 
   private void gameLoop() {
     System.out.println("This is the Game Loop\n");
-    // while (true)
     while (!window.shouldClose()) {
       update();
       render();
@@ -124,10 +122,12 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
     } else { // state == GameState.GAME
+      // Update The Dev Hud
+      Hud.updateDevHud(camera);
       // Update The World
       World.update(window);
-      // Update The Hud
-      Hud.update(camera);
+      // Update the Hud
+      Hud.update();
     }
   }
 

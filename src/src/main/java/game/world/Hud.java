@@ -11,14 +11,16 @@ import engine.io.Input;
 import engine.objects.gui.HudObject;
 import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
+import engine.utils.ColourUtils;
+import java.awt.Color;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class Hud {
   // Sets a number of game cycles so when we press a button to toggle it is not as sensitive
-  private static final int BUTTON_LOCK_CYCLES = 5;
+  private static final int BUTTON_LOCK_CYCLES = 20;
   private static HudObject tempObject;
-  private static Text coordText = new Text("", 0.7f, new Vector3f(1, 1, 1));
+  private static Text coordText = new Text("", 0.9f, ColourUtils.convertColor(Color.BLACK));
   private static HudText coordinates;
   private static Boolean devHudActive = false;
   private static int hudCycleLock = 0;
@@ -27,12 +29,16 @@ public class Hud {
     createObjects();
   }
 
-  public static void update(Camera camera) {
-    updateDevHud(camera);
+  public static void update() {
     resize();
   }
 
-  private static void updateDevHud(Camera camera) {
+  /**
+   * Update dev hud, displays the camera coordinates.
+   *
+   * @param camera the camera
+   */
+  public static void updateDevHud(Camera camera) {
     // check for key press to toggle
     hudCycleLock--;
     hudCycleLock = Math.max(hudCycleLock, 0);
@@ -91,7 +97,8 @@ public class Hud {
 
   private static void calculateCoordText(Camera camera) {
     Vector3f pos = camera.getPosition();
-    String coordString = String.format("x: %f, y: %f, z: %f", pos.getX(), pos.getY(), pos.getZ());
+    String coordString = String.format("x: %.2f, y: %.2f, z: %.2f", pos.getX(), pos.getY(),
+        pos.getZ());
     coordText.setString(coordString);
   }
 }

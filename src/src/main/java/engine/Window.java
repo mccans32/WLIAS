@@ -273,11 +273,9 @@ public class Window {
 
   /**
    * Sets v sync.
-   *
-   * @param vsync the v sync
    */
-  public void setVSync(boolean vsync) {
-    glfwSwapInterval(vsync ? 1 : 0);
+  public void setVSync(Boolean set) {
+    glfwSwapInterval(set ? 1 : 0);
   }
 
   /**
