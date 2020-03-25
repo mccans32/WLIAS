@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import math.Matrix4f;
 import math.Vector2f;
 import math.Vector3f;
+import math.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
@@ -134,6 +135,11 @@ public class Shader {
 
   public void setUniform(String uniformName, Vector3f val) {
     GL20.glUniform3f(getUniformLocation(uniformName), val.getX(), val.getY(), val.getZ());
+  }
+
+  public void setUniform(String uniformName, Vector4f val) {
+    GL20.glUniform4f(getUniformLocation(uniformName), val.getX(), val.getY(), val.getZ(),
+        val.getW());
   }
 
   /**

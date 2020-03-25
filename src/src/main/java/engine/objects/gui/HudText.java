@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import math.Vector2f;
 import math.Vector3f;
+import math.Vector4f;
 
 public class HudText {
   private static final float Z_POS = 0f;
@@ -84,7 +85,7 @@ public class HudText {
     return charHeight;
   }
 
-  public void setTextColour(Vector3f textColour) {
+  public void setTextColour(Vector4f textColour) {
     this.mesh.getMaterial().setColorOffset(textColour);
   }
 

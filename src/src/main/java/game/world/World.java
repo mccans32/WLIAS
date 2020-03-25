@@ -12,6 +12,7 @@ import engine.objects.world.TileWorldObject;
 import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
 import java.util.ArrayList;
+import java.util.Random;
 import map.MapGeneration;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
@@ -19,6 +20,9 @@ import map.tiles.Tile;
 import map.tiles.WaterTile;
 import math.Vector2f;
 import math.Vector3f;
+import math.Vector4f;
+import org.jfree.chart.ChartColor;
+import society.Society;
 
 public class World {
   private static final float LOWER_VERTEX_BAND = -0.5f;
@@ -26,6 +30,12 @@ public class World {
   private static final float DEFAULT_Z = 0;
   private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
   private static final Vector3f DEFAULT_SCALE = new Vector3f(1f, 1f, 1f);
+  private static final int DEFAULT_NUMBER_OF_SOCIETIES = 2;
+  private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
+      ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
+      ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED),
+      ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN),
+      ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED)};
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -34,14 +44,39 @@ public class World {
   private static MousePicker mousePicker;
   private static GameObject selectOverlay;
   private static Image selectOverlayImage = new Image("/images/blankFace.png");
-  private static Material selectOverlayMaterial = new Material(selectOverlayImage);
+  private static Vector4f overlayColour = new Vector4f(new Vector3f(1, 1, 1), 0.5f);
+  private static Material selectOverlayMaterial = new Material(selectOverlayImage, overlayColour);
+  private static boolean bordersAltered = false;
+  private static Society[] societies;
+  private static RectangleModel tileModel;
+  private static int turnCounter;
+  private static int totalClaimedTiles = 0;
+
+  public static RectangleModel getTileModel() {
+    return tileModel;
+  }
+
+  public static Society[] getSocieties() {
+    return societies.clone();
+  }
 
   /**
    * Create.
    *
    * @param camera the camera
    */
-  public static void create(Camera camera, Window window) {
+  public static void create(Window window, Camera camera) {
+    create(window, camera, DEFAULT_NUMBER_OF_SOCIETIES);
+  }
+
+  /**
+   * Create.
+   *
+   * @param window            the window
+   * @param camera            the camera
+   * @param numberOfSocieties the number of societies
+   */
+  public static void create(Window window, Camera camera, int numberOfSocieties) {
     MapGeneration.createMap();
     // reset the camera to its default position.
     camera.reset();
@@ -50,6 +85,28 @@ public class World {
     createObjects(camera);
     // create the Mouse Picker
     mousePicker = new MousePicker(camera, window.getProjectionMatrix(), DEFAULT_Z);
+    generateSocieties(numberOfSocieties);
+  }
+
+  private static void generateSocieties(int numberOfSocieties) {
+    societies = new Society[numberOfSocieties];
+    for (int i = 0; i < numberOfSocieties; i++) {
+      Society society = new Society(i, BASIC_SOCIETY_COLORS[i]);
+      societies[i] = society;
+      boolean claimed = false;
+      while (!claimed) {
+        int row = generateRandomRowIndex();
+        int column = generateRandomColumnIndex();
+        if (!worldMap[row][column].isClaimed()
+            && !(worldMap[row][column].getTile() instanceof WaterTile)) {
+          societies[i].claimTile(worldMap[row][column]);
+          worldMap[row][column].setClaimed(true);
+          bordersAltered = true;
+          totalClaimedTiles++;
+          claimed = true;
+        }
+      }
+    }
   }
 
   /**
@@ -62,13 +119,60 @@ public class World {
   public static void render(WorldRenderer renderer, Camera camera, Window window) {
     renderTiles(renderer, camera);
     if (mousePicker.getCurrentSelected() != null && !window.isMouseLocked()) {
-      renderer.renderObject(selectOverlay, camera);
+      renderer.renderSelectOverlay(selectOverlay, camera);
     }
+    renderBorder(renderer, camera);
   }
 
+  private static void renderBorder(WorldRenderer renderer, Camera camera) {
+    ArrayList<GameObject> temp = new ArrayList<>();
+    for (Society society : societies) {
+      for (TileWorldObject worldTile : society.getTerritory()) {
+        temp.add(worldTile.getBorderObject());
+      }
+    }
+    renderer.renderTileBorders(temp, camera);
+  }
+
+  /**
+   * Update.
+   *
+   * @param window the window
+   */
   public static void update(Window window) {
+    // TODO REMOVE AFTER SHOWING TO ALISTAIR
+    if (turnCounter < 100) {
+      turnCounter += 1;
+    } else {
+      turnCounter = 0;
+      for (Society society : societies) {
+        boolean claimed = false;
+        while (!claimed && totalClaimedTiles
+            < (MapGeneration.getLandMassSizeX() + 2) * (MapGeneration.getLandMassSizeY() + 2)) {
+          int row = generateRandomRowIndex();
+          int column = generateRandomColumnIndex();
+          if (!worldMap[row][column].isClaimed()) {
+            society.claimTile(worldMap[row][column]);
+            worldMap[row][column].setClaimed(true);
+            bordersAltered = true;
+            totalClaimedTiles++;
+            claimed = true;
+          }
+        }
+      }
+    }
+    updateSocietyBorders();
     mousePicker.update(window, worldMap);
     updateSelectOverlay();
+  }
+
+  private static void updateSocietyBorders() {
+    if (bordersAltered) {
+      for (Society society : societies) {
+        society.updateBorders(tileModel);
+      }
+      bordersAltered = false;
+    }
   }
 
   private static void updateSelectOverlay() {
@@ -77,7 +181,7 @@ public class World {
       // reposition selectOverlay to tile's position
       selectOverlay.setPosition(mousePicker.getCurrentSelected().getPosition().copy());
       // Set Z Value Slightly Higher so it renders on top of tile.
-      selectOverlay.getPosition().setZ(DEFAULT_Z + 0.001f);
+      selectOverlay.getPosition().setZ(DEFAULT_Z + 0.0000001f);
     }
   }
 
@@ -86,10 +190,10 @@ public class World {
   }
 
   private static void renderTiles(WorldRenderer renderer, Camera camera) {
-    renderer.renderObjects(fertileTiles, camera);
-    renderer.renderObjects(aridTiles, camera);
-    renderer.renderObjects(plainTiles, camera);
-    renderer.renderObjects(waterTiles, camera);
+    renderer.renderTiles(fertileTiles, camera);
+    renderer.renderTiles(aridTiles, camera);
+    renderer.renderTiles(plainTiles, camera);
+    renderer.renderTiles(waterTiles, camera);
   }
 
   private static void createObjects(Camera camera) {
@@ -104,7 +208,7 @@ public class World {
     // top edge = the position of the first tile in the Y axis. Starting at the top most edge
     float topYEdge = calcTopPos(MapGeneration.getLandMassSizeY(), tileSize);
     // initialise 2d representation of the map
-    RectangleModel tileModel = new RectangleModel(tileSize, tileSize);
+    tileModel = new RectangleModel(tileSize, tileSize);
     // create the select overlay
     selectOverlay = new GameObject(new RectangleMesh(tileModel, selectOverlayMaterial));
     selectOverlay.create();
@@ -168,5 +272,21 @@ public class World {
     } else {
       plainTiles.add(object);
     }
+  }
+
+  /**
+   * Generate random row index int for placing Societies.
+   *
+   * @return the int
+   */
+  public static int generateRandomRowIndex() {
+    Random r = new Random();
+    return r.nextInt(worldMap[0].length - 1) + 1;
+
+  }
+
+  public static int generateRandomColumnIndex() {
+    Random r = new Random();
+    return r.nextInt(worldMap[0].length - 1) + 1;
   }
 }

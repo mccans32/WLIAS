@@ -1,5 +1,16 @@
 package engine.graphics.renderer;
 
+import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_EQUAL;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glAlphaFunc;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+
 import engine.Window;
 import engine.graphics.Shader;
 import engine.graphics.model.Model;
@@ -32,7 +43,7 @@ public class WorldRenderer {
    * @param object the mesh
    */
   public void renderObject(GameObject object, Camera camera) {
-    GL11.glEnable(GL11.GL_CULL_FACE);
+    glEnable(GL11.GL_CULL_FACE);
     GL11.glCullFace(GL11.GL_BACK);
     this.model = object.getMesh().getModel();
     this.textureID = object.getMesh().getMaterial().getImage().getTextureID();
@@ -45,6 +56,35 @@ public class WorldRenderer {
     shader.unbind();
   }
 
+  public void renderTiles(ArrayList<GameObject> objects, Camera camera) {
+    renderObjects(objects, camera);
+  }
+
+  /**
+   * Render select overlay.
+   *
+   * @param object the object
+   * @param camera the camera
+   */
+  public void renderSelectOverlay(GameObject object, Camera camera) {
+    initialiseOverlayBlending();
+    renderObject(object, camera);
+    terminateOverlayBlending();
+  }
+
+  /**
+   * Render tile borders.
+   *
+   * @param objects the objects
+   * @param camera  the camera
+   */
+  public void renderTileBorders(ArrayList<GameObject> objects, Camera camera) {
+    initialiseBorderBlending();
+    renderObjects(objects, camera);
+    terminateBorderBlending();
+  }
+
+
   /**
    * Render multiple objects with the same model and image.
    *
@@ -52,7 +92,7 @@ public class WorldRenderer {
    * @param camera  the camera
    */
   public void renderObjects(ArrayList<GameObject> objects, Camera camera) {
-    GL11.glEnable(GL11.GL_CULL_FACE);
+    glEnable(GL11.GL_CULL_FACE);
     GL11.glCullFace(GL11.GL_BACK);
     if (objects.size() > 0) {
       this.model = objects.get(0).getMesh().getModel();
@@ -65,6 +105,7 @@ public class WorldRenderer {
       for (GameObject object : objects) {
         if (object.isContained(camera.getFrustum())) {
           setModelUniform(object);
+          setColourOffsetUniform(object);
           drawObject();
         }
       }
@@ -97,6 +138,7 @@ public class WorldRenderer {
     setModelUniform(object);
     setViewUniform(camera);
     setProjectionUniform();
+    setColourOffsetUniform(object);
   }
 
   private void setModelUniform(GameObject object) {
@@ -110,6 +152,10 @@ public class WorldRenderer {
 
   private void setViewUniform(Camera camera) {
     shader.setUniform("view", Matrix4f.view(camera.getPosition(), camera.getRotation()));
+  }
+
+  private void setColourOffsetUniform(GameObject object) {
+    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffsetRgba());
   }
 
   private void setProjectionUniform() {
@@ -130,5 +176,27 @@ public class WorldRenderer {
   private void drawObject() {
     GL11.glDrawElements(GL11.GL_TRIANGLE_STRIP, model.getIndices().length, GL11.GL_UNSIGNED_INT,
         0);
+  }
+
+  private void initialiseOverlayBlending() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_DEPTH_TEST);
+  }
+
+  private void terminateOverlayBlending() {
+    glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+  }
+
+  private void initialiseBorderBlending() {
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_EQUAL, 1);
+    glDisable(GL_DEPTH_TEST);
+  }
+
+  private void terminateBorderBlending() {
+    glDisable(GL_ALPHA_TEST);
+    glEnable(GL_DEPTH_TEST);
   }
 }

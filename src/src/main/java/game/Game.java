@@ -10,6 +10,7 @@ import game.menu.MainMenu;
 import game.world.Hud;
 import game.world.World;
 import math.Vector3f;
+import society.Society;
 
 /**
  * The type Game.

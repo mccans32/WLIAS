@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static society.person.dataobjects.Gender.FEMALE;
 import static society.person.dataobjects.Gender.MALE;
 
+import engine.utils.ColourUtils;
 import java.util.Arrays;
 import java.util.Random;
+import math.Vector3f;
+import org.jfree.chart.ChartColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import society.Society;
@@ -14,6 +17,11 @@ class PersonTest {
   static final int LOWER_INT_LIMIT = 1;
   static final int UPPER_INT_LIMIT = 50;
   static final int LOOP_ITERATIONS = 5;
+  private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
+      ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
+      ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED),
+      ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN),
+      ColourUtils.convertColor(ChartColor.VERY_DARK_CYAN)};
   int[] randomIntArray;
   float[] randomFloatArray;
   float[] randomHealthArray;
@@ -22,7 +30,7 @@ class PersonTest {
 
   @BeforeEach
   public void setUp() {
-    Society society = new Society(0,LOWER_INT_LIMIT);
+    Society society = new Society(0, BASIC_SOCIETY_COLORS[0]);
     Arrays.fill(listOfSocieties, society);
     randomIntArray = new int[LOOP_ITERATIONS];
     randomFloatArray = new float[LOOP_ITERATIONS];
