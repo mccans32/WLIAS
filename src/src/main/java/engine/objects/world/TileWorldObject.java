@@ -12,7 +12,7 @@ import math.Vector4f;
 public class TileWorldObject extends GameObject {
   private static final float BORDER_ALPHA = 1.5f;
   private static final float BORDER_RAISE = 0.0000002f;
-  private static final Image borderImage = new Image("/images/tileBorder.png");
+  private static final Image borderImage = new Image("/images/tileBorder2.png");
   private Tile tile;
   private boolean isClaimed = false;
   private GameObject borderObject;
