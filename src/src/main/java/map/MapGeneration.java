@@ -213,8 +213,7 @@ public class MapGeneration {
     to create some padding we also add a layer of water between each landmass */
 
     // Sets the overall size of the Canvas(Map)
-    mapSizeX = landMassSizeX
-        + HORIZONTAL_WATER_PADDING;
+    mapSizeX = landMassSizeX + HORIZONTAL_WATER_PADDING;
     mapSizeY = landMassSizeY + VERTICAL_WATER_PADDING;
     simulationMap = new Tile[mapSizeY][mapSizeX];
 
