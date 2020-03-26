@@ -51,17 +51,6 @@ public class Society {
     return DEFAULT_POPULATION_SIZE;
   }
 
-  /**
-   * Select random tile index.
-   *
-   * @param maxIndex the max index
-   * @return the int
-   */
-  public static int selectRandomTile(int maxIndex) {
-    Random r = new Random();
-    return r.nextInt(maxIndex);
-  }
-
   public Vector3f getSocietyColor() {
     return societyColor;
   }
@@ -91,16 +80,12 @@ public class Society {
   /**
    * Claim tiles.
    */
-  public void claimTiles() {
+  public ArrayList<TileWorldObject> calculateClaimableTerritory() {
     claimableTerritory = new ArrayList<>();
     for (TileWorldObject worldTile : territory) {
       addClaimableTiles(worldTile.getRow(), worldTile.getColumn());
     }
-    if (!claimableTerritory.isEmpty()) {
-      claimTile(claimableTerritory.get(selectRandomTile(claimableTerritory.size())));
-      claimableTerritory = new ArrayList<>();
-    }
-
+    return claimableTerritory;
   }
 
   private void addClaimableTiles(int row, int column) {

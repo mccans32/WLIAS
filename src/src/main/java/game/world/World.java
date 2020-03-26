@@ -144,7 +144,10 @@ public class World {
       turnCounter += 1;
     } else {
       for (Society society : societies) {
-        society.claimTiles();
+        ArrayList<TileWorldObject> claimableTerritory = society.calculateClaimableTerritory();
+        if (!claimableTerritory.isEmpty()) {
+          society.claimTile(claimableTerritory.get(selectRandomTile(claimableTerritory.size())));
+        }
         bordersAltered = true;
         turnCounter = 0;
       }
@@ -274,5 +277,10 @@ public class World {
   public static int generateRandomColumnIndex() {
     Random r = new Random();
     return r.nextInt(worldMap[0].length - 2) + 1;
+  }
+
+  public static int selectRandomTile(int maxIndex) {
+    Random r = new Random();
+    return r.nextInt(maxIndex);
   }
 }
