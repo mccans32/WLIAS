@@ -208,7 +208,7 @@ public class World {
         TileWorldObject tempTileWorldObject = new TileWorldObject(
             new Vector3f(leftXEdge + (tileSize * (float) column),
                 topYEdge - (tileSize * (float) row), DEFAULT_Z), DEFAULT_ROTATION, DEFAULT_SCALE,
-            tileMesh, tile);
+            tileMesh, tile, row, column);
         // assign tile ot the world map
         worldMap[row][column] = tempTileWorldObject;
         // Create the Object

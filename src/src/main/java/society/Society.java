@@ -94,13 +94,7 @@ public class Society {
   public void claimTiles() {
     claimableTerritory = new ArrayList<>();
     for (TileWorldObject worldTile : territory) {
-      for (int row = 1; row < World.getWorldMap().length - 1; row++) {
-        for (int column = 1; column < World.getWorldMap().length - 1; column++) {
-          if (worldTile == World.getWorldMap()[row][column]) {
-            addClaimableTiles(row, column);
-          }
-        }
-      }
+      addClaimableTiles(worldTile.getRow(), worldTile.getColumn());
     }
     if (!claimableTerritory.isEmpty()) {
       claimTile(claimableTerritory.get(selectRandomTile(claimableTerritory.size())));
@@ -118,7 +112,6 @@ public class Society {
     }
     // Check right side of the territory
     if (!map[row][column + 1].isClaimed() & column + 1 != map.length - 1) {
-      System.out.println("hello");
       claimableTerritory.add(map[row][column + 1]);
     }
     // Check top of territory
