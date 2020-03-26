@@ -25,6 +25,8 @@ public class TileWorldObjectsTests {
   private static final Vertex3D BOTTOM_LEFT = new Vertex3D(new Vector3f(-1, -1, 0));
   private static final Vertex3D TOP_RIGHT = new Vertex3D(new Vector3f(1, 1, 0));
   private static final Vertex3D BOTTOM_RIGHT = new Vertex3D(new Vector3f(1, -1, 0));
+  private static final int DEFAULT_ROW = 0;
+  private static final int DEFAULT_COLUMN = 0;
   private static final int[] INDICES = {0, 1, 2, 3};
   private Mesh defaultMesh;
   private TileWorldObject waterTile;
@@ -48,16 +50,20 @@ public class TileWorldObjectsTests {
     window.create();
 
     waterTile = new TileWorldObject(
-        DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new WaterTile());
+        DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new WaterTile(),
+        DEFAULT_ROW, DEFAULT_COLUMN);
 
     fertileTile = new TileWorldObject(
-        DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new FertileTile());
+        DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new FertileTile(),
+        DEFAULT_ROW, DEFAULT_COLUMN);
 
     aridTile = new TileWorldObject(
-        DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new AridTile());
+        DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new AridTile(),
+        DEFAULT_ROW, DEFAULT_COLUMN);
 
     plainTile = new TileWorldObject(
-        DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new PlainTile());
+        DEFAULT_POSITION, DEFAULT_ROTATION, DEFAULT_SCALE, defaultMesh, new PlainTile(),
+        DEFAULT_ROW, DEFAULT_COLUMN);
   }
 
   @Test

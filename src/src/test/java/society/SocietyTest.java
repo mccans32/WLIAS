@@ -26,6 +26,8 @@ import society.person.dataobjects.Gender;
 class SocietyTest {
   static final int SIZE_OF_ARRAYS = 5;
   static final int UPPER_INT_LIMIT = 50;
+  private static final int DEFAULT_ROW = 0;
+  private static final int DEFAULT_COLUMN = 0;
   private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
       ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
       ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED),
@@ -133,7 +135,7 @@ class SocietyTest {
     Tile tile = new AridTile();
     society.claimTile(new TileWorldObject(new Vector3f(0, 0, 0),
         new Vector3f(0, 0, 0), new Vector3f(0, 0, 0),
-        new Mesh(tileModel, borderMaterial), tile));
+        new Mesh(tileModel, borderMaterial), tile, DEFAULT_ROW, DEFAULT_COLUMN));
     assertEquals(society.getTerritory().size(), 1);
   }
 }

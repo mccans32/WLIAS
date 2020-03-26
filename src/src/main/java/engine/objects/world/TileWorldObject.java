@@ -29,7 +29,8 @@ public class TileWorldObject extends GameObject {
    * @param tile     the tile
    */
   public TileWorldObject(
-      Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, Tile tile, int row, int column) {
+      Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, Tile tile, int row,
+      int column) {
     super(position, rotation, scale, mesh);
     this.tile = tile;
     this.getMesh().getMaterial().setImage((tile.getImage()));
