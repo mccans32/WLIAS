@@ -16,6 +16,8 @@ public class TileWorldObject extends GameObject {
   private boolean isClaimed = false;
   private GameObject borderObject;
   private RectangleMesh borderMesh;
+  private int row;
+  private int column;
 
   /**
    * Instantiates a new Tile object.
@@ -27,10 +29,29 @@ public class TileWorldObject extends GameObject {
    * @param tile     the tile
    */
   public TileWorldObject(
-      Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, Tile tile) {
+      Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, Tile tile, int row,
+      int column) {
     super(position, rotation, scale, mesh);
     this.tile = tile;
     this.getMesh().getMaterial().setImage((tile.getImage()));
+    this.row = row;
+    this.column = column;
+  }
+
+  public int getRow() {
+    return row;
+  }
+
+  public void setRow(int row) {
+    this.row = row;
+  }
+
+  public int getColumn() {
+    return column;
+  }
+
+  public void setColumn(int column) {
+    this.column = column;
   }
 
   public GameObject getBorderObject() {
