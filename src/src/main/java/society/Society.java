@@ -2,6 +2,7 @@ package society;
 
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.objects.world.TileWorldObject;
+import game.world.World;
 import java.util.ArrayList;
 import java.util.Random;
 import math.Vector3f;
@@ -19,6 +20,7 @@ public class Society {
   private float averageAgriculture;
   private int averageLifeExpectancy;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
+  private ArrayList<TileWorldObject> claimableTerritory;
 
   /**
    * Instantiates a new Society.
@@ -49,6 +51,17 @@ public class Society {
     return DEFAULT_POPULATION_SIZE;
   }
 
+  /**
+   * Select random tile index.
+   *
+   * @param maxIndex the max index
+   * @return the int
+   */
+  public static int selectRandomTile(int maxIndex) {
+    Random r = new Random();
+    return r.nextInt(maxIndex);
+  }
+
   public Vector3f getSocietyColor() {
     return societyColor;
   }
@@ -66,13 +79,58 @@ public class Society {
     }
   }
 
+  public void claimTile(TileWorldObject worldTile) {
+    worldTile.setClaimed(true);
+    this.territory.add(worldTile);
+  }
+
   public ArrayList<TileWorldObject> getTerritory() {
     return territory;
   }
 
-  public void claimTile(TileWorldObject worldTile) {
-    this.territory.add(worldTile);
+  /**
+   * Claim tiles.
+   */
+  public void claimTiles() {
+    claimableTerritory = new ArrayList<>();
+    for (TileWorldObject worldTile : territory) {
+      for (int row = 1; row < World.getWorldMap().length - 1; row++) {
+        for (int column = 1; column < World.getWorldMap().length - 1; column++) {
+          if (worldTile == World.getWorldMap()[row][column]) {
+            addClaimableTiles(row, column);
+          }
+        }
+      }
+    }
+    if (!claimableTerritory.isEmpty()) {
+      claimTile(claimableTerritory.get(selectRandomTile(claimableTerritory.size())));
+      claimableTerritory = new ArrayList<>();
+    }
+
   }
+
+  private void addClaimableTiles(int row, int column) {
+
+    TileWorldObject[][] map = World.getWorldMap();
+    // Check left side of the territory
+    if (!map[row][column - 1].isClaimed() & column - 1 != 0) {
+      claimableTerritory.add(map[row][column - 1]);
+    }
+    // Check right side of the territory
+    if (!map[row][column + 1].isClaimed() & column + 1 != map.length - 1) {
+      System.out.println("hello");
+      claimableTerritory.add(map[row][column + 1]);
+    }
+    // Check top of territory
+    if (!map[row - 1][column].isClaimed() & row - 1 != 0) {
+      claimableTerritory.add(map[row - 1][column]);
+    }
+    // check bottom of territory
+    if (!map[row + 1][column].isClaimed() & row + 1 != map.length - 1) {
+      claimableTerritory.add(map[row + 1][column]);
+    }
+  }
+
 
   private void generateInitialPopulation(int initialPopulationSize) {
     population = new ArrayList<>();
