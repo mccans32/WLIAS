@@ -100,7 +100,6 @@ public class World {
         if (!worldMap[row][column].isClaimed()
             && !(worldMap[row][column].getTile() instanceof WaterTile)) {
           societies[i].claimTile(worldMap[row][column]);
-          worldMap[row][column].setClaimed(true);
           bordersAltered = true;
           totalClaimedTiles++;
           claimed = true;
@@ -144,23 +143,10 @@ public class World {
     if (turnCounter < 100) {
       turnCounter += 1;
     } else {
-      turnCounter = 0;
       for (Society society : societies) {
-        boolean claimed = false;
-        if (totalClaimedTiles < MapGeneration.getLandMassSizeX()
-            * MapGeneration.getLandMassSizeY()) {
-          while (!claimed) {
-            int row = generateRandomRowIndex();
-            int column = generateRandomColumnIndex();
-            if (!worldMap[row][column].isClaimed()) {
-              society.claimTile(worldMap[row][column]);
-              worldMap[row][column].setClaimed(true);
-              bordersAltered = true;
-              totalClaimedTiles++;
-              claimed = true;
-            }
-          }
-        }
+        society.claimTiles();
+        bordersAltered = true;
+        turnCounter = 0;
       }
     }
     updateSocietyBorders();
