@@ -2,11 +2,13 @@ package engine.audio;
 
 import static org.lwjgl.openal.AL10.AL_BUFFER;
 import static org.lwjgl.openal.AL10.AL_FALSE;
+import static org.lwjgl.openal.AL10.AL_LOOPING;
 import static org.lwjgl.openal.AL10.AL_SOURCE_RELATIVE;
 import static org.lwjgl.openal.AL10.AL_TRUE;
 import static org.lwjgl.openal.AL10.alDeleteSources;
 import static org.lwjgl.openal.AL10.alGenSources;
 import static org.lwjgl.openal.AL10.alSourcePlay;
+import static org.lwjgl.openal.AL10.alSourcef;
 import static org.lwjgl.openal.AL10.alSourcei;
 
 import math.Vector3f;
@@ -21,6 +23,10 @@ public class Source {
 
   public void setRelative(Boolean isRelative) {
     alSourcei(sourceId, AL_SOURCE_RELATIVE, isRelative ? AL_TRUE : AL_FALSE);
+  }
+
+  public void setLooping(Boolean shouldLoop) {
+    alSourcei(sourceId, AL_LOOPING, shouldLoop ? AL_TRUE : AL_FALSE);
   }
 
   public void setGain(float gain) {

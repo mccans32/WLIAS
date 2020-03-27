@@ -162,7 +162,8 @@ public class Game {
   private void playMusic() {
     musicSource = new Source();
     musicSource.setRelative(true);
-    musicSource.setGain(0.03f);
+    musicSource.setLooping(true);
+    musicSource.setGain(0.02f);
     int musicBuffer =
         AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
     musicSource.playSound(musicBuffer);

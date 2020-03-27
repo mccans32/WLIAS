@@ -135,12 +135,21 @@ public class World {
   }
 
   /**
-   * Update.
+   * Update the world including the openGL listener.
    *
    * @param window the window
    */
   public static void update(Window window, Camera camera) {
     AudioMaster.setListener(camera.getPosition());
+    updateBorders(window);
+  }
+
+  /**
+   * Update the world.
+   *
+   * @param window the window
+   */
+  public static void updateBorders(Window window) {
     // TODO REMOVE AFTER SHOWING TO ALISTAIR
     if (turnCounter < 100) {
       turnCounter += 1;
