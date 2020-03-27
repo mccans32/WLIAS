@@ -1,6 +1,8 @@
 package game;
 
 import engine.Window;
+import engine.audio.AudioMaster;
+import engine.audio.Source;
 import engine.graphics.Shader;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
@@ -34,6 +36,7 @@ public class Game {
   private static GuiRenderer guiRenderer;
   private static TextRenderer textRenderer;
   private static GuiRenderer backgroundRenderer;
+  private static Source musicSource;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   /**
    * The Window.
@@ -68,6 +71,8 @@ public class Game {
     guiShader.destroy();
     textShader.destroy();
     backgroundShader.destroy();
+    musicSource.destroy();
+    AudioMaster.cleanUp();
   }
 
   private void gameLoop() {
@@ -109,6 +114,9 @@ public class Game {
     // Create Background Shader
     backgroundShader.create();
     // Create the Main Menu
+    // init Audio
+    initAudio();
+    playMusic();
     MainMenu.create(window, camera);
   }
 
@@ -125,7 +133,7 @@ public class Game {
       // Update The Dev Hud
       Hud.updateDevHud(camera);
       // Update The World
-      World.update(window);
+      World.update(window, camera);
       // Update the Hud
       Hud.update();
     }
@@ -144,5 +152,19 @@ public class Game {
       Hud.render(guiRenderer, textRenderer);
     }
     window.swapBuffers();
+  }
+
+  private void initAudio() {
+    AudioMaster.init();
+    AudioMaster.setListener(new Vector3f(0, 0, 0));
+  }
+
+  private void playMusic() {
+    musicSource = new Source();
+    musicSource.setRelative(true);
+    musicSource.setGain(0.03f);
+    int musicBuffer =
+        AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
+    musicSource.playSound(musicBuffer);
   }
 }

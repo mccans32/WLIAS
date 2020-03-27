@@ -1,6 +1,7 @@
 package game.world;
 
 import engine.Window;
+import engine.audio.AudioMaster;
 import engine.graphics.Material;
 import engine.graphics.image.Image;
 import engine.graphics.mesh.dimension.two.RectangleMesh;
@@ -138,7 +139,8 @@ public class World {
    *
    * @param window the window
    */
-  public static void update(Window window) {
+  public static void update(Window window, Camera camera) {
+    AudioMaster.setListener(camera.getPosition());
     // TODO REMOVE AFTER SHOWING TO ALISTAIR
     if (turnCounter < 100) {
       turnCounter += 1;

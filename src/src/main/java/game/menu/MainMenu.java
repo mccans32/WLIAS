@@ -99,7 +99,7 @@ public class MainMenu {
         Hud.create();
         // Create the World
         World.create(window, camera);
-        World.update(window);
+        World.update(window, camera);
       } else if (exitButton.isMouseOver(window)) {
         GLFW.glfwSetWindowShouldClose(window.getWindow(), true);
       }
