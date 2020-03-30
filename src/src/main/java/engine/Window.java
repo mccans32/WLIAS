@@ -235,7 +235,11 @@ public class Window {
 
     GL11.glClearColor(backgroundR, backgroundG, backgroundB, backgroundAlpha);
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-    glfwPollEvents();
+    try {
+      glfwPollEvents();
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.err.println("Unknown Input");
+    }
     updateFrameCounter();
   }
 

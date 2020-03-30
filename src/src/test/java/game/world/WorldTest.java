@@ -118,7 +118,7 @@ public class WorldTest {
         assertNull(worldTile.getBorderObject());
       }
     }
-    World.update(window);
+    World.updateBorders(window);
     for (Society society : World.getSocieties()) {
       for (TileWorldObject worldTile : society.getTerritory()) {
         assertNotNull(worldTile.getBorderObject());
