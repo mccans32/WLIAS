@@ -13,6 +13,10 @@ import map.tiles.WaterTile;
  */
 public class MapGeneration {
 
+  /**
+   * The List of tiles.
+   */
+  static final ArrayList<Tile> LIST_OF_TILES = new ArrayList<>();
   private static final int HORIZONTAL_WATER_PADDING = 2;
   private static final int VERTICAL_WATER_PADDING = 2;
   /**
@@ -30,10 +34,6 @@ public class MapGeneration {
   private static final int DEFAULT_AMOUNT_FERTILE_TILES = 4;
   private static final int DEFAULT_AMOUNT_WATER_TILES = 2;
   private static final int DEFAULT_AMOUNT_PLAIN_TILES = 15;
-  /**
-   * The List of tiles.
-   */
-  static final ArrayList<Tile> LIST_OF_TILES = new ArrayList<>();
   /**
    * The Map of ordered tiles.
    */
