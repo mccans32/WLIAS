@@ -1,8 +1,6 @@
 package society.person;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static society.person.dataobjects.Gender.FEMALE;
-import static society.person.dataobjects.Gender.MALE;
 
 import engine.utils.ColourUtils;
 import java.util.Arrays;
@@ -38,7 +36,7 @@ class PersonTest {
       randomIntArray[i] = generateRandomInt();
       randomFloatArray[i] = generateRandomFloat();
     }
-    person = new Person(1, 0, MALE, 0.0f, 0.0f, 0.0f, listOfSocieties);
+    person = new Person(1, 0, 0.0f, 0.0f, listOfSocieties);
   }
 
   private float generateRandomFloat() {
@@ -89,15 +87,7 @@ class PersonTest {
 
 
   @Test
-  void genderTest() {
-    assertEquals(person.getGender(), MALE);
-    person.setGender(FEMALE);
-    assertEquals(person.getGender(), FEMALE);
-  }
-
-
-  @Test
-  void getAggressiveness() {
+  void getAggressivenessTest() {
     assertEquals(person.getAggressiveness(), 0.0f);
     for (float value : randomFloatArray) {
       person.setAggressiveness(value);
@@ -106,47 +96,29 @@ class PersonTest {
   }
 
   @Test
-  void fertilityTest() {
-    assertEquals(person.getFertility(), 0.0f);
+  void getProductivityTest() {
+    assertEquals(person.getProductiveness(), 0.0f);
     for (float value : randomFloatArray) {
-      person.setFertility(value);
-      assertEquals(person.getFertility(), value);
+      person.setProductiveness(value);
+      assertEquals(person.getProductiveness(), value);
+    }
+  }
+
+  @Test
+  void fertilityTest() {
+    assertEquals(person.getAttractiveness(), 0.0f);
+    for (float value : randomFloatArray) {
+      person.setAttractiveness(value);
+      assertEquals(person.getAttractiveness(), value);
     }
   }
 
   @Test
   void pathFindingTest() {
-    assertEquals(person.getPathFinding(), 0.0f);
+    assertEquals(person.getAggressiveness(), 0.0f);
     for (float value : randomFloatArray) {
-      person.setPathFinding(value);
-      assertEquals(person.getPathFinding(), value);
-    }
-  }
-
-  @Test
-  void technologyTest() {
-    assertEquals(person.getTechnology(), 0.0f);
-    for (float value : randomFloatArray) {
-      person.setTechnology(value);
-      assertEquals(person.getTechnology(), value);
-    }
-  }
-
-  @Test
-  void agricultureTest() {
-    assertEquals(person.getAgriculture(), 0.0f);
-    for (float value : randomFloatArray) {
-      person.setAgriculture(value);
-      assertEquals(person.getAgriculture(), value);
-    }
-  }
-
-  @Test
-  void medicineTest() {
-    assertEquals(person.getMedicine(), 0.0f);
-    for (float value : randomFloatArray) {
-      person.setMedicine(value);
-      assertEquals(person.getMedicine(), value);
+      person.setAggressiveness(value);
+      assertEquals(person.getAggressiveness(), value);
     }
   }
 }

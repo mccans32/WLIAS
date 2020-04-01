@@ -1,6 +1,5 @@
 package society.person;
 
-import java.util.ArrayList;
 import society.Society;
 import society.person.dataobjects.Gender;
 import society.person.dataobjects.SocietyOpinion;
@@ -9,19 +8,15 @@ public class Person {
   private static final float MAX_HEALTH = 100;
   private static final float MIN_HEALTH = 1;
   private static final float MAX_INDEX = 1.0f;
-  private static final float MIN_INDEX = -1.0f;
+  private static final float MIN_INDEX = 0f;
   private static final float DEFAULT_INDEX = (MAX_INDEX + MIN_INDEX) / 2;
   private int id;
   private float health;
   private int age;
-  private Gender gender;
   private float aggressiveness;
-  private float fertility;
-  private float pathFinding;
-  private float technology;
-  private float agriculture;
-  private float medicine;
+  private float attractiveness;
   private float opinionOfLeader;
+  private float productiveness;
   private SocietyOpinion[] opinionsOfSocieties;
 
   /**
@@ -34,10 +29,9 @@ public class Person {
     this.id = id;
     this.health = MAX_HEALTH;
     this.age = 0;
-    this.gender = gender;
+    this.productiveness = DEFAULT_INDEX;
     this.aggressiveness = DEFAULT_INDEX;
-    this.fertility = DEFAULT_INDEX;
-    this.pathFinding = DEFAULT_INDEX;;
+    this.attractiveness = DEFAULT_INDEX;
   }
 
   /**
@@ -45,25 +39,19 @@ public class Person {
    *
    * @param id             the id
    * @param age            the age
-   * @param gender         the gender
    * @param aggressiveness the aggressiveness
-   * @param fertility      the fertility
-   * @param pathFinding    the path finding
+   * @param attractiveness the fertility
    */
   public Person(int id,
                 int age,
-                Gender gender,
                 float aggressiveness,
-                float fertility,
-                float pathFinding,
+                float attractiveness,
                 Society[] listOfSocieties) {
     this.id = id;
     this.health = MAX_HEALTH;
     this.age = age;
-    this.gender = gender;
     this.aggressiveness = aggressiveness;
-    this.fertility = fertility;
-    this.pathFinding = pathFinding;
+    this.attractiveness = attractiveness;
     setOpinions(listOfSocieties);
 
   }
@@ -88,6 +76,14 @@ public class Person {
     return DEFAULT_INDEX;
   }
 
+  public float getProductiveness() {
+    return productiveness;
+  }
+
+  public void setProductiveness(float productiveness) {
+    this.productiveness = productiveness;
+  }
+
   public void setOpinions(Society[] listOfSocieties) {
     setOpinionOfLeader();
     setOpinionsOfSocieties(listOfSocieties);
@@ -95,6 +91,10 @@ public class Person {
 
   public float getOpinionOfLeader() {
     return opinionOfLeader;
+  }
+
+  public void setOpinionOfLeader(float opinionOfLeader) {
+    this.opinionOfLeader = opinionOfLeader;
   }
 
   public void setOpinionOfLeader() {
@@ -109,6 +109,10 @@ public class Person {
     return opinionsOfSocieties.clone();
   }
 
+  public void setOpinionsOfSocieties(SocietyOpinion[] opinionsOfSocieties) {
+    this.opinionsOfSocieties = opinionsOfSocieties.clone();
+  }
+
   /**
    * Sets opinions of societies.
    *
@@ -118,7 +122,7 @@ public class Person {
     this.opinionsOfSocieties = new SocietyOpinion[listOfSocieties.length - 1];
     for (int i = 0; i < listOfSocieties.length - 1; i++) {
       SocietyOpinion opinion = new SocietyOpinion(listOfSocieties[i].getSocietyId(),
-              calculateOpinionOfSociety(listOfSocieties[i]));
+          calculateOpinionOfSociety(listOfSocieties[i]));
       this.opinionsOfSocieties[i] = opinion;
     }
   }
@@ -151,14 +155,6 @@ public class Person {
     this.age = age;
   }
 
-  public Gender getGender() {
-    return gender;
-  }
-
-  public void setGender(Gender gender) {
-    this.gender = gender;
-  }
-
   public float getAggressiveness() {
     return aggressiveness;
   }
@@ -167,43 +163,11 @@ public class Person {
     this.aggressiveness = aggressiveness;
   }
 
-  public float getFertility() {
-    return fertility;
+  public float getAttractiveness() {
+    return attractiveness;
   }
 
-  public void setFertility(float fertility) {
-    this.fertility = fertility;
-  }
-
-  public float getPathFinding() {
-    return pathFinding;
-  }
-
-  public void setPathFinding(float pathFinding) {
-    this.pathFinding = pathFinding;
-  }
-
-  public float getTechnology() {
-    return technology;
-  }
-
-  public void setTechnology(float technology) {
-    this.technology = technology;
-  }
-
-  public float getAgriculture() {
-    return agriculture;
-  }
-
-  public void setAgriculture(float agriculture) {
-    this.agriculture = agriculture;
-  }
-
-  public float getMedicine() {
-    return medicine;
-  }
-
-  public void setMedicine(float medicine) {
-    this.medicine = medicine;
+  public void setAttractiveness(float attractiveness) {
+    this.attractiveness = attractiveness;
   }
 }
