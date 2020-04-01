@@ -9,6 +9,7 @@ import engine.graphics.renderer.TextRenderer;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
 import game.menu.MainMenu;
+import game.menu.PauseMenu;
 import game.world.Hud;
 import game.world.World;
 import math.Vector3f;
@@ -136,6 +137,10 @@ public class Game {
       World.update(window, camera);
       // Update the Hud
       Hud.update();
+      if (state == GameState.GAME_PAUSE) {
+        //update the Pause Menu
+        PauseMenu.update(window, camera);
+      }
     }
   }
 
@@ -150,6 +155,10 @@ public class Game {
       World.render(worldRenderer, camera, window);
       // Render all game objects
       Hud.render(guiRenderer, textRenderer);
+      if (state == GameState.GAME_PAUSE) {
+        // Render the PauseMenu
+        PauseMenu.render(guiRenderer, textRenderer);
+      }
     }
     window.swapBuffers();
   }

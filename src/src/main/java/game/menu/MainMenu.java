@@ -92,11 +92,14 @@ public class MainMenu {
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
       if (startButton.isMouseOver(window)) {
         // Change the Game State
-        Game.setState(GameState.GAME);
+        Game.setState(GameState.GAME_MAIN);
         // Destroy the Main Menu
         destroy();
         // Create the Hud
         Hud.create();
+        // Create the Pause Menu
+        PauseMenu.create();
+        PauseMenu.update(window, camera);
         // Create the World
         World.create(window, camera);
         World.update(window, camera);
