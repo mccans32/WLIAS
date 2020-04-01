@@ -19,6 +19,8 @@ public class Society {
   private float averageMedicine;
   private float averageAgriculture;
   private int averageLifeExpectancy;
+  private int totalFoodResource = 0;
+  private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
   private ArrayList<TileWorldObject> claimableTerritory;
 
@@ -51,6 +53,22 @@ public class Society {
     return DEFAULT_POPULATION_SIZE;
   }
 
+  public int getTotalFoodResource() {
+    return totalFoodResource;
+  }
+
+  public void setTotalFoodResource(int totalFoodResource) {
+    this.totalFoodResource = totalFoodResource;
+  }
+
+  public int getTotalRawMaterialResource() {
+    return totalRawMaterialResource;
+  }
+
+  public void setTotalRawMaterialResource(int totalRawMaterialResource) {
+    this.totalRawMaterialResource = totalRawMaterialResource;
+  }
+
   public Vector3f getSocietyColor() {
     return societyColor;
   }
@@ -61,11 +79,26 @@ public class Society {
    * @param tileModel the tile model
    */
   public void updateBorders(RectangleModel tileModel) {
+    calculateResources();
     for (TileWorldObject worldTile : this.territory) {
       if (worldTile.getBorderMesh() == null) {
         worldTile.setBorderMesh(this.societyColor, tileModel);
       }
     }
+  }
+
+  /**
+   * Calculate Food and Raw Material resource values.
+   */
+  public void calculateResources() {
+    int foodTotal = 0;
+    int rawMaterials = 0;
+    for (TileWorldObject worldTile : this.territory) {
+      foodTotal += worldTile.getFoodResource();
+      rawMaterials += worldTile.getRawMaterialResource();
+    }
+    setTotalFoodResource(foodTotal);
+    setTotalRawMaterialResource(rawMaterials);
   }
 
   public void claimTile(TileWorldObject worldTile) {

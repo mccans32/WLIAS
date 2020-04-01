@@ -18,6 +18,8 @@ public class TileWorldObject extends GameObject {
   private RectangleMesh borderMesh;
   private int row;
   private int column;
+  private int foodResource;
+  private int rawMaterialResource;
 
   /**
    * Instantiates a new Tile object.
@@ -36,6 +38,22 @@ public class TileWorldObject extends GameObject {
     this.getMesh().getMaterial().setImage((tile.getImage()));
     this.row = row;
     this.column = column;
+  }
+
+  public int getFoodResource() {
+    return foodResource;
+  }
+
+  public void setFoodResource(int foodResource) {
+    this.foodResource = foodResource;
+  }
+
+  public int getRawMaterialResource() {
+    return rawMaterialResource;
+  }
+
+  public void setRawMaterialResource(int rawMaterialResource) {
+    this.rawMaterialResource = rawMaterialResource;
   }
 
   public int getRow() {
@@ -93,10 +111,5 @@ public class TileWorldObject extends GameObject {
   public Tile getTile() {
     return tile;
   }
-
-  public String getTileType() {
-    return this.tile.getTileType();
-  }
-
 
 }
