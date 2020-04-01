@@ -20,6 +20,8 @@ public class Society {
   private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
   private ArrayList<TileWorldObject> claimableTerritory;
+  private float averageAggressiveness;
+  private float averageProductivity;
 
   /**
    * Instantiates a new Society.
@@ -48,6 +50,36 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public float getAverageAggressiveness() {
+    return averageAggressiveness;
+  }
+
+  /**
+   * Sets average aggressiveness.
+   */
+  public void setAverageAggressiveness() {
+    float totalAggressiveness = 0;
+    for (Person person : population) {
+      totalAggressiveness += person.getAggressiveness();
+    }
+    this.averageAggressiveness = totalAggressiveness / population.size();
+  }
+
+  public float getAverageProductivity() {
+    return averageProductivity;
+  }
+
+  /**
+   * Sets average productivity.
+   */
+  public void setAverageProductivity() {
+    float totalProductivity = 0;
+    for (Person person : population) {
+      totalProductivity += person.getProductiveness();
+    }
+    this.averageProductivity = totalProductivity / population.size();
   }
 
   public int getTotalFoodResource() {
