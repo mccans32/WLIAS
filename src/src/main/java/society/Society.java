@@ -16,10 +16,10 @@ public class Society {
   private ArrayList<Person> population;
   private int societyId;
   private int averageLifeExpectancy;
+  private int totalFoodResource = 0;
+  private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
   private ArrayList<TileWorldObject> claimableTerritory;
-  private float averageAggressiveness;
-  private float averageProductivity;
 
   /**
    * Instantiates a new Society.
@@ -50,34 +50,20 @@ public class Society {
     return DEFAULT_POPULATION_SIZE;
   }
 
-  public float getAverageAggressiveness() {
-    return averageAggressiveness;
+  public int getTotalFoodResource() {
+    return totalFoodResource;
   }
 
-  /**
-   * Sets average aggressiveness.
-   */
-  public void setAverageAggressiveness() {
-    float totalAggressiveness = 0;
-    for (Person person : population) {
-      totalAggressiveness += person.getAggressiveness();
-    }
-    this.averageAggressiveness = totalAggressiveness / population.size();
+  public void setTotalFoodResource(int totalFoodResource) {
+    this.totalFoodResource = totalFoodResource;
   }
 
-  public float getAverageProductivity() {
-    return averageProductivity;
+  public int getTotalRawMaterialResource() {
+    return totalRawMaterialResource;
   }
 
-  /**
-   * Sets average productivity.
-   */
-  public void setAverageProductivity() {
-    float totalProductivity = 0;
-    for (Person person : population) {
-      totalProductivity += person.getProductiveness();
-    }
-    this.averageProductivity = totalProductivity / population.size();
+  public void setTotalRawMaterialResource(int totalRawMaterialResource) {
+    this.totalRawMaterialResource = totalRawMaterialResource;
   }
 
   public Vector3f getSocietyColor() {
@@ -90,11 +76,26 @@ public class Society {
    * @param tileModel the tile model
    */
   public void updateBorders(RectangleModel tileModel) {
+    calculateResources();
     for (TileWorldObject worldTile : this.territory) {
       if (worldTile.getBorderMesh() == null) {
         worldTile.setBorderMesh(this.societyColor, tileModel);
       }
     }
+  }
+
+  /**
+   * Calculate Food and Raw Material resource values.
+   */
+  public void calculateResources() {
+    int foodTotal = 0;
+    int rawMaterials = 0;
+    for (TileWorldObject worldTile : this.territory) {
+      foodTotal += worldTile.getFoodResource();
+      rawMaterials += worldTile.getRawMaterialResource();
+    }
+    setTotalFoodResource(foodTotal);
+    setTotalRawMaterialResource(rawMaterials);
   }
 
   public void claimTile(TileWorldObject worldTile) {

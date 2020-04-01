@@ -3,6 +3,7 @@ package game.world;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
@@ -26,6 +27,7 @@ public class WorldTest {
   private static final String TITLE = "test";
   private static final Vector3f DEFAULT_POSITION = new Vector3f(0, 0, 10f);
   private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
+  private static final int FOOD_AND_RAW_MATERIAL_VALUE = 10;
   private static final int[] LAND_MASS_SIZES = new int[] {5, 6, 7, 10};
   private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
       ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
@@ -124,5 +126,29 @@ public class WorldTest {
         assertNotNull(worldTile.getBorderObject());
       }
     }
+  }
+
+  @Test
+  void genFoodResourceTest() {
+    World.create(window, camera);
+    TileWorldObject temp = World.getWorldMap()[genRandomInt(World.getWorldMap().length)]
+        [genRandomInt(World.getWorldMap().length)];
+    assertTrue(temp.getFoodResource() < FOOD_AND_RAW_MATERIAL_VALUE);
+    temp.setFoodResource(FOOD_AND_RAW_MATERIAL_VALUE);
+    assertEquals(temp.getFoodResource(), FOOD_AND_RAW_MATERIAL_VALUE);
+    World.generateResources(temp);
+    assertTrue(temp.getFoodResource() < FOOD_AND_RAW_MATERIAL_VALUE);
+  }
+
+  @Test
+  void genRawMaterialTest() {
+    World.create(window, camera);
+    TileWorldObject temp = World.getWorldMap()[genRandomInt(World.getWorldMap().length)]
+        [genRandomInt(World.getWorldMap().length)];
+    assertTrue(temp.getRawMaterialResource() < FOOD_AND_RAW_MATERIAL_VALUE);
+    temp.setRawMaterialResource(FOOD_AND_RAW_MATERIAL_VALUE);
+    assertEquals(temp.getRawMaterialResource(), FOOD_AND_RAW_MATERIAL_VALUE);
+    World.generateResources(temp);
+    assertTrue(temp.getRawMaterialResource() < FOOD_AND_RAW_MATERIAL_VALUE);
   }
 }

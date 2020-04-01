@@ -1,5 +1,7 @@
 package game.world;
 
+import static java.lang.Math.max;
+
 import engine.Window;
 import engine.audio.AudioMaster;
 import engine.graphics.Material;
@@ -7,25 +9,33 @@ import engine.graphics.image.Image;
 import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.graphics.renderer.WorldRenderer;
+import engine.io.Input;
 import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
 import engine.objects.world.TileWorldObject;
 import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
+import game.Game;
+import game.GameState;
+import game.menu.PauseMenu;
 import java.util.ArrayList;
 import java.util.Random;
 import map.MapGeneration;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
+import map.tiles.PlainTile;
 import map.tiles.Tile;
 import map.tiles.WaterTile;
 import math.Vector2f;
 import math.Vector3f;
 import math.Vector4f;
 import org.jfree.chart.ChartColor;
+import org.lwjgl.glfw.GLFW;
 import society.Society;
 
 public class World {
+  private static final int BUTTON_LOCK_CYCLES = 20;
+  private static int button_lock = BUTTON_LOCK_CYCLES;
   private static final float LOWER_VERTEX_BAND = -0.5f;
   private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
@@ -37,6 +47,14 @@ public class World {
       ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED),
       ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN),
       ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED)};
+  private static final int FERTILE_MAX_FOOD_RESOURCE = 5;
+  private static final int FERTILE_MAX_RAW_MATERIALS = 1;
+  private static final int ARID_MAX_FOOD_RESOURCE = 1;
+  private static final int ARID_MAX_RAW_MATERIALS = 5;
+  private static final int PLAIN_MAX_FOOD_RESOURCE = 3;
+  private static final int PLAIN_MAX_RAW_MATERIALS = 2;
+  private static final int WATER_MAX_FOOD_RESOURCE = 1;
+  private static final int WATER_MAX_RAW_MATERIALS = 0;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -96,8 +114,8 @@ public class World {
       societies[i] = society;
       boolean claimed = false;
       while (!claimed) {
-        int row = generateRandomRowIndex();
-        int column = generateRandomColumnIndex();
+        int row = genRandomInt(worldMap[0].length - 2, 1);
+        int column = genRandomInt(worldMap[0].length - 2, 1);
         if (!worldMap[row][column].isClaimed()
             && !(worldMap[row][column].getTile() instanceof WaterTile)) {
           societies[i].claimTile(worldMap[row][column]);
@@ -140,8 +158,22 @@ public class World {
    * @param window the window
    */
   public static void update(Window window, Camera camera) {
-    AudioMaster.setListener(camera.getPosition());
-    updateBorders(window);
+    // check for game pause
+    button_lock--;
+    button_lock = max(0,button_lock);
+    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (button_lock == 0)) {
+      button_lock = BUTTON_LOCK_CYCLES;
+      if (Game.getState() == GameState.GAME_MAIN) {
+        PauseMenu.pauseGame(window, camera);
+      } else {
+        PauseMenu.unpauseGame(camera);
+      }
+    }
+
+    if (Game.getState() == GameState.GAME_MAIN) {
+      AudioMaster.setListener(camera.getPosition());
+      updateBorders(window);
+    }
   }
 
   /**
@@ -157,7 +189,7 @@ public class World {
       for (Society society : societies) {
         ArrayList<TileWorldObject> claimableTerritory = society.calculateClaimableTerritory();
         if (!claimableTerritory.isEmpty()) {
-          society.claimTile(claimableTerritory.get(selectRandomTile(claimableTerritory.size())));
+          society.claimTile(claimableTerritory.get(genRandomInt(claimableTerritory.size())));
         }
         bordersAltered = true;
         turnCounter = 0;
@@ -223,6 +255,7 @@ public class World {
             new Vector3f(leftXEdge + (tileSize * (float) column),
                 topYEdge - (tileSize * (float) row), DEFAULT_Z), DEFAULT_ROTATION, DEFAULT_SCALE,
             tileMesh, tile, row, column);
+        generateResources(tempTileWorldObject);
         // assign tile ot the world map
         worldMap[row][column] = tempTileWorldObject;
         // Create the Object
@@ -236,6 +269,27 @@ public class World {
     Vector2f topRight = calcCentre(worldMap[0][worldMap.length - 1]);
     // set camera borders
     camera.setCameraBorder(botLeft, topRight);
+  }
+
+  /**
+   * Generate resources.
+   *
+   * @param tempTileWorldObject A TileWorldObject
+   */
+  public static void generateResources(TileWorldObject tempTileWorldObject) {
+    if (tempTileWorldObject.getTile() instanceof WaterTile) {
+      tempTileWorldObject.setFoodResource(genRandomInt(WATER_MAX_FOOD_RESOURCE));
+      tempTileWorldObject.setRawMaterialResource(WATER_MAX_RAW_MATERIALS);
+    } else if (tempTileWorldObject.getTile() instanceof FertileTile) {
+      tempTileWorldObject.setFoodResource(genRandomInt(FERTILE_MAX_FOOD_RESOURCE));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(FERTILE_MAX_RAW_MATERIALS));
+    } else if (tempTileWorldObject.getTile() instanceof AridTile) {
+      tempTileWorldObject.setFoodResource(genRandomInt(ARID_MAX_FOOD_RESOURCE));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(ARID_MAX_RAW_MATERIALS));
+    } else if (tempTileWorldObject.getTile() instanceof PlainTile) {
+      tempTileWorldObject.setFoodResource(genRandomInt(PLAIN_MAX_FOOD_RESOURCE));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(PLAIN_MAX_RAW_MATERIALS));
+    }
   }
 
   // function that returns Vector2f positions which are the centres of the tiles
@@ -274,24 +328,13 @@ public class World {
     }
   }
 
-  /**
-   * Generate random row index int for placing Societies.
-   *
-   * @return the int
-   */
-  public static int generateRandomRowIndex() {
+  public static int genRandomInt(int maxValue) {
     Random r = new Random();
-    return r.nextInt(worldMap[0].length - 2) + 1;
-
+    return r.nextInt(maxValue);
   }
 
-  public static int generateRandomColumnIndex() {
+  public static int genRandomInt(int maxValue, int minValue) {
     Random r = new Random();
-    return r.nextInt(worldMap[0].length - 2) + 1;
-  }
-
-  public static int selectRandomTile(int maxIndex) {
-    Random r = new Random();
-    return r.nextInt(maxIndex);
+    return r.nextInt(maxValue) + minValue;
   }
 }
