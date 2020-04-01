@@ -18,6 +18,7 @@ import map.tiles.Tile;
 import math.Vector3f;
 import math.Vector4f;
 import org.jfree.chart.ChartColor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import society.person.Person;
@@ -39,12 +40,17 @@ class SocietyTest {
   Society society;
   int[] differentValues;
   float[] differentIndexValues;
-
+  private TileWorldObject temp;
 
   private int generateRandomInt() {
     Random r = new Random();
     return r.nextInt(UPPER_INT_LIMIT - DEFAULT_POPULATION_SIZE)
         + DEFAULT_POPULATION_SIZE;
+  }
+
+  private int generateRandomInt(int maxInt, int minInt) {
+    Random r = new Random();
+    return r.nextInt(maxInt) + minInt;
   }
 
   private float generateRandomFloat() {
@@ -54,6 +60,7 @@ class SocietyTest {
 
   @BeforeEach
   public void setUp() {
+    temp = new TileWorldObject(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Mesh(tileModel, new Material(new Image("resources/images/default_texture.png"))), new AridTile(), 0, 0);
     society = new Society(1, BASIC_SOCIETY_COLORS[0]);
     differentValues = new int[SIZE_OF_ARRAYS];
     for (int i = 0; i < SIZE_OF_ARRAYS; i++) {
@@ -63,6 +70,11 @@ class SocietyTest {
     for (int i = 0; i < SIZE_OF_ARRAYS; i++) {
       differentIndexValues[i] = generateRandomFloat();
     }
+  }
+
+  @AfterEach
+  public void restart() {
+    society = new Society(1, BASIC_SOCIETY_COLORS[0]);
   }
 
   @Test
@@ -137,5 +149,18 @@ class SocietyTest {
         new Vector3f(0, 0, 0), new Vector3f(0, 0, 0),
         new Mesh(tileModel, borderMaterial), tile, DEFAULT_ROW, DEFAULT_COLUMN));
     assertEquals(society.getTerritory().size(), 1);
+  }
+
+  @Test
+  void totalFoodResourceTest() {
+    int randomIntOne = generateRandomInt(5, 1);
+    int randomIntTwo = generateRandomInt(5, 1);
+    assertEquals(society.getTotalFoodResource(), 0);
+    temp.setFoodResource(randomIntOne);
+    temp.setRawMaterialResource(randomIntTwo);
+    society.claimTile(temp);
+    society.calculateResources();
+    assertEquals(society.getTotalFoodResource(), randomIntOne);
+    assertEquals(society.getTotalRawMaterialResource(), randomIntTwo);
   }
 }
