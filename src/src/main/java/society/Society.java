@@ -15,14 +15,13 @@ public class Society {
   private Vector3f societyColor;
   private ArrayList<Person> population;
   private int societyId;
-  private float averageTechnology;
-  private float averageMedicine;
-  private float averageAgriculture;
   private int averageLifeExpectancy;
   private int totalFoodResource = 0;
   private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
   private ArrayList<TileWorldObject> claimableTerritory;
+  private float averageAggressiveness;
+  private float averageProductivity;
 
   /**
    * Instantiates a new Society.
@@ -51,6 +50,36 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public float getAverageAggressiveness() {
+    return averageAggressiveness;
+  }
+
+  /**
+   * Sets average aggressiveness.
+   */
+  public void setAverageAggressiveness() {
+    float totalAggressiveness = 0;
+    for (Person person : population) {
+      totalAggressiveness += person.getAggressiveness();
+    }
+    this.averageAggressiveness = totalAggressiveness / population.size();
+  }
+
+  public float getAverageProductivity() {
+    return averageProductivity;
+  }
+
+  /**
+   * Sets average productivity.
+   */
+  public void setAverageProductivity() {
+    float totalProductivity = 0;
+    for (Person person : population) {
+      totalProductivity += person.getProductiveness();
+    }
+    this.averageProductivity = totalProductivity / population.size();
   }
 
   public int getTotalFoodResource() {
@@ -169,53 +198,6 @@ public class Society {
 
   public void setSocietyId(int societyId) {
     this.societyId = societyId;
-  }
-
-  public float getAverageTechnology() {
-    return averageTechnology;
-  }
-
-  /**
-   * Sets average technology.
-   *
-   * @param population the population
-   */
-  public void setAverageTechnology(ArrayList<Person> population) {
-    float totalTechnology = 0;
-    for (Person person : population) {
-      totalTechnology += person.getTechnology();
-    }
-    this.averageTechnology = totalTechnology / population.size();
-  }
-
-  public float getAverageMedicine() {
-    return averageMedicine;
-  }
-
-  /**
-   * Sets average medicine.
-   */
-  public void setAverageMedicine(ArrayList<Person> population) {
-    float totalMedicine = 0;
-    for (Person person : population) {
-      totalMedicine += person.getMedicine();
-    }
-    this.averageMedicine = totalMedicine / population.size();
-  }
-
-  public float getAverageAgriculture() {
-    return averageAgriculture;
-  }
-
-  /**
-   * Sets average agriculture.
-   */
-  public void setAverageAgriculture(ArrayList<Person> population) {
-    float totalAgriculture = 0;
-    for (Person person : population) {
-      totalAgriculture += person.getAgriculture();
-    }
-    this.averageAgriculture = totalAgriculture / population.size();
   }
 
   public int getAverageLifeExpectancy() {

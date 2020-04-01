@@ -29,6 +29,7 @@ class SocietyTest {
   static final int UPPER_INT_LIMIT = 50;
   private static final int DEFAULT_ROW = 0;
   private static final int DEFAULT_COLUMN = 0;
+  private static final float DEFAULT_FLOAT_INDEX = 0.5f;
   private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
       ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
       ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED),
@@ -110,37 +111,19 @@ class SocietyTest {
   }
 
   @Test
-  void getAverageTechnology() {
-    assertEquals(society.getAverageTechnology(), 0.0f);
-    for (float indexValue : differentIndexValues) {
-      society.getPopulation().get(0).setTechnology(indexValue);
-      society.setAverageTechnology(society.getPopulation());
-      assertEquals(society.getAverageTechnology(),
-          indexValue / society.getPopulation().size());
-    }
+  void getAverageAggressivenessTest() {
+    assertEquals(society.getAverageAggressiveness(), 0.0f);
+    society.setAverageAggressiveness();
+    assertEquals(society.getAverageAggressiveness(), DEFAULT_FLOAT_INDEX);
   }
 
   @Test
-  void getAverageMedicine() {
-    assertEquals(society.getAverageMedicine(), 0.0f);
-    for (float indexValue : differentIndexValues) {
-      society.getPopulation().get(0).setMedicine(indexValue);
-      society.setAverageMedicine(society.getPopulation());
-      assertEquals(society.getAverageMedicine(),
-          indexValue / society.getPopulation().size());
-    }
+  void getAverageProductivityTest() {
+    assertEquals(society.getAverageProductivity(), 0.0f);
+    society.setAverageProductivity();
+    assertEquals(society.getAverageProductivity(), DEFAULT_FLOAT_INDEX);
   }
 
-  @Test
-  void getAverageAgriculture() {
-    assertEquals(society.getAverageAgriculture(), 0.0f);
-    for (float indexValue : differentIndexValues) {
-      society.getPopulation().get(0).setAgriculture(indexValue);
-      society.setAverageAgriculture(society.getPopulation());
-      assertEquals(society.getAverageAgriculture(),
-          indexValue / society.getPopulation().size());
-    }
-  }
 
   @Test
   void addTerritoryTest() {
