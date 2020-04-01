@@ -60,7 +60,10 @@ class SocietyTest {
 
   @BeforeEach
   public void setUp() {
-    temp = new TileWorldObject(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Mesh(tileModel, new Material(new Image("resources/images/default_texture.png"))), new AridTile(), 0, 0);
+    temp = new TileWorldObject(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0),
+        new Vector3f(0, 0, 0), new Mesh(tileModel,
+        new Material(new Image("resources/images/default_texture.png"))),
+        new AridTile(), 0, 0);
     society = new Society(1, BASIC_SOCIETY_COLORS[0]);
     differentValues = new int[SIZE_OF_ARRAYS];
     for (int i = 0; i < SIZE_OF_ARRAYS; i++) {

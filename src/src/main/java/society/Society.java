@@ -19,8 +19,8 @@ public class Society {
   private float averageMedicine;
   private float averageAgriculture;
   private int averageLifeExpectancy;
-  private int TotalFoodResource = 0;
-  private int TotalRawMaterialResource = 0;
+  private int totalFoodResource = 0;
+  private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
   private ArrayList<TileWorldObject> claimableTerritory;
 
@@ -54,19 +54,19 @@ public class Society {
   }
 
   public int getTotalFoodResource() {
-    return TotalFoodResource;
+    return totalFoodResource;
   }
 
   public void setTotalFoodResource(int totalFoodResource) {
-    TotalFoodResource = totalFoodResource;
+    this.totalFoodResource = totalFoodResource;
   }
 
   public int getTotalRawMaterialResource() {
-    return TotalRawMaterialResource;
+    return totalRawMaterialResource;
   }
 
   public void setTotalRawMaterialResource(int totalRawMaterialResource) {
-    TotalRawMaterialResource = totalRawMaterialResource;
+    this.totalRawMaterialResource = totalRawMaterialResource;
   }
 
   public Vector3f getSocietyColor() {
@@ -87,6 +87,9 @@ public class Society {
     }
   }
 
+  /**
+   * Calculate Food and Raw Material resource values.
+   */
   public void calculateResources() {
     int foodTotal = 0;
     int rawMaterials = 0;
