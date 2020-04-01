@@ -1,5 +1,7 @@
 package game.world;
 
+import static java.lang.Math.max;
+
 import engine.Window;
 import engine.audio.AudioMaster;
 import engine.graphics.Material;
@@ -7,11 +9,15 @@ import engine.graphics.image.Image;
 import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.graphics.renderer.WorldRenderer;
+import engine.io.Input;
 import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
 import engine.objects.world.TileWorldObject;
 import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
+import game.Game;
+import game.GameState;
+import game.menu.PauseMenu;
 import java.util.ArrayList;
 import java.util.Random;
 import map.MapGeneration;
@@ -24,9 +30,12 @@ import math.Vector2f;
 import math.Vector3f;
 import math.Vector4f;
 import org.jfree.chart.ChartColor;
+import org.lwjgl.glfw.GLFW;
 import society.Society;
 
 public class World {
+  private static final int BUTTON_LOCK_CYCLES = 20;
+  private static int button_lock = BUTTON_LOCK_CYCLES;
   private static final float LOWER_VERTEX_BAND = -0.5f;
   private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
@@ -149,8 +158,22 @@ public class World {
    * @param window the window
    */
   public static void update(Window window, Camera camera) {
-    AudioMaster.setListener(camera.getPosition());
-    updateBorders(window);
+    // check for game pause
+    button_lock--;
+    button_lock = max(0,button_lock);
+    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (button_lock == 0)) {
+      button_lock = BUTTON_LOCK_CYCLES;
+      if (Game.getState() == GameState.GAME_MAIN) {
+        PauseMenu.pauseGame(window, camera);
+      } else {
+        PauseMenu.unpauseGame(camera);
+      }
+    }
+
+    if (Game.getState() == GameState.GAME_MAIN) {
+      AudioMaster.setListener(camera.getPosition());
+      updateBorders(window);
+    }
   }
 
   /**
