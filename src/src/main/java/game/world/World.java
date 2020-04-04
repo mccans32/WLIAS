@@ -35,18 +35,17 @@ import society.Society;
 
 public class World {
   private static final int BUTTON_LOCK_CYCLES = 20;
-  private static int button_lock = BUTTON_LOCK_CYCLES;
   private static final float LOWER_VERTEX_BAND = -0.5f;
   private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
   private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
   private static final Vector3f DEFAULT_SCALE = new Vector3f(1f, 1f, 1f);
-  private static final int DEFAULT_NUMBER_OF_SOCIETIES = 2;
+  private static final int DEFAULT_NUMBER_OF_SOCIETIES = 4;
   private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
       ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
-      ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED),
-      ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN),
-      ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED)};
+      ColourUtils.convertColor(ChartColor.LIGHT_RED),
+      ColourUtils.convertColor(ChartColor.LIGHT_GREEN),
+      ColourUtils.convertColor(ChartColor.LIGHT_CYAN)};
   private static final int FERTILE_MAX_FOOD_RESOURCE = 5;
   private static final int FERTILE_MAX_RAW_MATERIALS = 1;
   private static final int ARID_MAX_FOOD_RESOURCE = 1;
@@ -55,6 +54,7 @@ public class World {
   private static final int PLAIN_MAX_RAW_MATERIALS = 2;
   private static final int WATER_MAX_FOOD_RESOURCE = 1;
   private static final int WATER_MAX_RAW_MATERIALS = 0;
+  private static int button_lock = BUTTON_LOCK_CYCLES;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -160,7 +160,7 @@ public class World {
   public static void update(Window window, Camera camera) {
     // check for game pause
     button_lock--;
-    button_lock = max(0,button_lock);
+    button_lock = max(0, button_lock);
     if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (button_lock == 0)) {
       button_lock = BUTTON_LOCK_CYCLES;
       if (Game.getState() == GameState.GAME_MAIN) {
@@ -336,5 +336,33 @@ public class World {
   public static int genRandomInt(int maxValue, int minValue) {
     Random r = new Random();
     return r.nextInt(maxValue) + minValue;
+  }
+
+  public static int getDefaultNumberOfSocieties() {
+    return DEFAULT_NUMBER_OF_SOCIETIES;
+  }
+
+  /**
+   * Destroy the world elements and clear the arrays.
+   */
+  public static void destroy() {
+    // Destroy tile data
+    for (TileWorldObject[] row : worldMap) {
+      for (TileWorldObject tile : row) {
+        GameObject border = tile.getBorderObject();
+        if (border != null) {
+          border.destroy();
+        }
+        tile.destroy();
+      }
+    }
+    worldMap = null;
+    fertileTiles.clear();
+    waterTiles.clear();
+    aridTiles.clear();
+    plainTiles.clear();
+    selectOverlay.destroy();
+    // Destroy Overlay
+    selectOverlay.destroy();
   }
 }

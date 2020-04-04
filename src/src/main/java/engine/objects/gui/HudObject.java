@@ -145,4 +145,14 @@ public class HudObject {
   public ArrayList<HudText> getLines() {
     return lines;
   }
+
+  /**
+   * Destroy the background image and the lines.
+   */
+  public void destroy() {
+    hudImage.destroy();
+    for (HudText line: lines) {
+      line.destroy();
+    }
+  }
 }

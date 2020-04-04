@@ -133,10 +133,10 @@ public class Game {
     } else { // state == GameState.GAME
       // Update The Dev Hud
       Hud.updateDevHud(camera);
+      // Update the Hud
+      Hud.update(window);
       // Update The World
       World.update(window, camera);
-      // Update the Hud
-      Hud.update();
       if (state == GameState.GAME_PAUSE) {
         //update the Pause Menu
         PauseMenu.update(window, camera);
@@ -153,7 +153,7 @@ public class Game {
     } else { // state == GameState.GAME;
       // Render world objects
       World.render(worldRenderer, camera, window);
-      // Render all game objects
+      // Render all hud elements
       Hud.render(guiRenderer, textRenderer);
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
@@ -172,7 +172,7 @@ public class Game {
     musicSource = new Source();
     musicSource.setRelative(true);
     musicSource.setLooping(true);
-    musicSource.setGain(0.02f);
+    musicSource.setGain(0.01f);
     int musicBuffer =
         AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
     musicSource.playSound(musicBuffer);

@@ -102,7 +102,7 @@ public class WorldTest {
   @Test
   void generateSocietiesNoSocietySizeSpecifiedTest() {
     World.create(window, camera);
-    assertEquals(World.getSocieties().length, 2);
+    assertEquals(World.getSocieties().length, World.getDefaultNumberOfSocieties());
   }
 
   @Test
