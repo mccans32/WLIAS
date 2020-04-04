@@ -1,5 +1,9 @@
 package game.world;
 
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+
 import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.image.Image;
@@ -10,6 +14,7 @@ import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
 import engine.io.Input;
 import engine.objects.gui.ButtonObject;
+import engine.objects.gui.HudImage;
 import engine.objects.gui.HudObject;
 import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
@@ -29,6 +34,9 @@ public class Hud {
       = ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN);
   private static final Vector3f ARROW_DISABLE_COLOUR = ColourUtils.convertColor(Color.RED);
   private static final float ARROW_BUTTON_OFFSET_Y = 0.1f;
+  private static final Image PANEL_IMAGE = new Image("/images/hudPanel.png");
+  private static final Image SOCIETY_PANEL_IMAGE = new Image("/images/hudPanel2.png");
+  private static final Vector3f PANEL_COLOUR = new Vector3f(212 / 255f, 175 / 255f, 55 / 255f);
   private static HudObject turnCounter;
   private static Text coordText = new Text("", 0.9f, ColourUtils.convertColor(Color.BLACK));
   private static Text turnText = new Text("", 0.7f, new Vector3f(0, 0, 0));
@@ -38,6 +46,8 @@ public class Hud {
   private static int hudCycleLock = 0;
   private static int turn = 1;
   private static ArrayList<ButtonObject> societyButtons = new ArrayList<>();
+  private static HudImage societyButtonPanel;
+  private static HudImage arrowButtonPanel;
   private static ButtonObject arrowButton;
   private static HudText arrowTextObject;
   private static boolean canNextTurn = true;
@@ -162,13 +172,24 @@ public class Hud {
     arrowButton.create();
     arrowTextObject = new HudText(arrowText, 1, -0.3f, -1, 0.05f);
     arrowTextObject.create();
+    // create background Panel for the turn Button
+    float panelWidth = arrowTextObject.getWidth() * 1.2f;
+    float panelHeight = (height + arrowTextObject.getHeight()) * 1.4f;
+    RectangleModel panelModel = new RectangleModel(panelWidth, panelHeight);
+    Material panelMaterial = new Material(PANEL_IMAGE, PANEL_COLOUR);
+    RectangleMesh panelMesh = new RectangleMesh(panelModel, panelMaterial);
+    arrowButtonPanel = new HudImage(panelMesh, 1, -width * 1.1f, -1, height * 0.8f);
+    arrowButtonPanel.create();
   }
 
   private static void createSocietyButtons() {
+    // set the dimensions for the buttons
     float fontSize = 0.6f;
     float width = 0.4f;
     float height = 0.1f;
     float padding = 0.06f;
+    float offsetY = (height / 2) + 0.02f;
+    // set the image and the model and create the button
     Image buttonImage = new Image("/images/hudElementBackground.png");
     RectangleModel buttonModel = new RectangleModel(width, height);
     for (int i = 0; i < World.getSocieties().length; i++) {
@@ -181,10 +202,20 @@ public class Hud {
       float xoffset = calculateXOffset(World.getSocieties().length, width, padding, i + 1);
       RectangleMesh buttonMesh = new RectangleMesh(buttonModel, new Material(buttonImage));
       ButtonObject societyButton = new ButtonObject(buttonMesh, societyText, 0, xoffset,
-          -1, (height / 2) + 0.02f);
+          -1, offsetY);
+      // create the button's VAO and VBOs
       societyButton.create();
+      // add to the list of societies
       societyButtons.add(societyButton);
     }
+    // create the background panel for the buttons
+    float panelWidth = (width * societyButtons.size()) + (padding * (societyButtons.size()));
+    float panelHeight = height * 1.5f;
+    RectangleModel panelModel = new RectangleModel(panelWidth, panelHeight);
+    Material panelMaterial = new Material(SOCIETY_PANEL_IMAGE, PANEL_COLOUR);
+    RectangleMesh panelMesh = new RectangleMesh(panelModel, panelMaterial);
+    societyButtonPanel = new HudImage(panelMesh, 0, 0, -1, offsetY);
+    societyButtonPanel.create();
   }
 
   private static float calculateXOffset(int amount, float width, float padding, int number) {
@@ -229,28 +260,20 @@ public class Hud {
    * @param textRenderer the text renderer
    */
   public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    glDisable(GL_DEPTH_TEST);
+    arrowButtonPanel.render(guiRenderer);
+    glEnable(GL_DEPTH_TEST);
     //Render Hud Elements First to fix alpha blending on text
-    renderImages(guiRenderer);
-    renderTexts(textRenderer);
-    renderObjects(guiRenderer, textRenderer);
-    if (devHudActive) {
-      coordinates.render(textRenderer);
-    }
-  }
-
-  private static void renderImages(GuiRenderer renderer) {
-  }
-
-  private static void renderTexts(TextRenderer renderer) {
-    arrowTextObject.render(renderer);
-  }
-
-  private static void renderObjects(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    arrowTextObject.render(textRenderer);
     turnCounter.render(guiRenderer, textRenderer);
     for (ButtonObject button : societyButtons) {
       button.render(guiRenderer, textRenderer);
     }
     arrowButton.render(guiRenderer, textRenderer);
+    societyButtonPanel.render(guiRenderer);
+    if (devHudActive) {
+      coordinates.render(textRenderer);
+    }
   }
 
   /**
@@ -264,6 +287,8 @@ public class Hud {
     }
     arrowButton.reposition();
     arrowTextObject.reposition();
+    societyButtonPanel.reposition();
+    arrowButtonPanel.reposition();
   }
 
   private static void calculateCoordText(Camera camera) {
@@ -285,5 +310,7 @@ public class Hud {
     societyButtons.clear();
     arrowButton.destroy();
     arrowTextObject.destroy();
+    societyButtonPanel.destroy();
+    arrowButtonPanel.destroy();
   }
 }
