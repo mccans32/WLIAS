@@ -36,10 +36,12 @@ public class Hud {
   private static final float ARROW_BUTTON_OFFSET_Y = 0.1f;
   private static final Image PANEL_IMAGE = new Image("/images/hudPanel.png");
   private static final Image SOCIETY_PANEL_IMAGE = new Image("/images/hudPanel2.png");
-  private static final Vector3f PANEL_COLOUR = new Vector3f(212 / 255f, 175 / 255f, 55 / 255f);
+  private static final Vector3f PANEL_COLOUR = ColourUtils.convertColor(Color.GRAY.brighter());
   private static HudObject turnCounter;
+  private static HudObject scoreCounter;
   private static Text coordText = new Text("", 0.9f, ColourUtils.convertColor(Color.BLACK));
-  private static Text turnText = new Text("", 0.7f, new Vector3f(0, 0, 0));
+  private static Text turnText = new Text("", 0.7f);
+  private static Text scoreText = new Text("", 0.7f);
   private static Text arrowText = new Text("Next Turn", 0.5f);
   private static HudText coordinates;
   private static Boolean devHudActive = false;
@@ -147,10 +149,19 @@ public class Hud {
     turnText.setString(String.format("Turn: %d", turn));
     turnText.setCentreHorizontal(true);
     turnText.setCentreVertical(true);
-    RectangleMesh mesh = new RectangleMesh(new RectangleModel(0.45f, 0.1f),
-        new Material(new Image("/images/hudElementBackground.png")));
-    turnCounter = new HudObject(mesh, turnText, -1f, 0.2f, 1f, -0.05f);
+    Image hudImage = new Image("/images/hudElementBackground.png");
+    RectangleModel model = new RectangleModel(0.45f, 0.1f);
+    // create the turn Counter
+    RectangleMesh turnMesh = new RectangleMesh(model, new Material(hudImage));
+    turnCounter = new HudObject(turnMesh, turnText, -1f, 0.2f, 1f, -0.05f);
     turnCounter.create();
+    // Create the score counter for the player
+    scoreText.setString(String.format("Score: %d", World.getSocieties()[0].getScore()));
+    scoreText.setCentreHorizontal(true);
+    scoreText.setCentreVertical(true);
+    RectangleMesh scoreMesh = new RectangleMesh(model, new Material(hudImage));
+    scoreCounter = new HudObject(scoreMesh, scoreText, -1f, 0.2f, 1f, -0.15f);
+    scoreCounter.create();
     // Create the coordinate hud element
     coordinates = new HudText(coordText, -1, 0, 1, -1.95f);
     coordinates.create();
@@ -184,7 +195,6 @@ public class Hud {
 
   private static void createSocietyButtons() {
     // set the dimensions for the buttons
-    float fontSize = 0.6f;
     float width = 0.4f;
     float height = 0.1f;
     float padding = 0.06f;
@@ -194,7 +204,15 @@ public class Hud {
     RectangleModel buttonModel = new RectangleModel(width, height);
     for (int i = 0; i < World.getSocieties().length; i++) {
       Society society = World.getSocieties()[i];
-      String societyString = String.format("Society: %d", i + 1);
+      String societyString;
+      float fontSize;
+      if (i == 0) {
+        societyString = "Your Society";
+        fontSize = 0.5f;
+      } else {
+        societyString = String.format("Society: %d", i + 1);
+        fontSize = 0.6f;
+      }
       Text societyText = new Text(societyString, fontSize,
           Vector3f.subtract(society.getSocietyColor(), 0.2f));
       societyText.setCentreHorizontal(true);
@@ -266,6 +284,7 @@ public class Hud {
     //Render Hud Elements First to fix alpha blending on text
     arrowTextObject.render(textRenderer);
     turnCounter.render(guiRenderer, textRenderer);
+    scoreCounter.render(guiRenderer, textRenderer);
     for (ButtonObject button : societyButtons) {
       button.render(guiRenderer, textRenderer);
     }
@@ -281,6 +300,7 @@ public class Hud {
    */
   public static void resize() {
     turnCounter.reposition();
+    scoreCounter.reposition();
     coordinates.reposition();
     for (ButtonObject button : societyButtons) {
       button.reposition();
@@ -303,6 +323,7 @@ public class Hud {
    */
   public static void destroy() {
     turnCounter.destroy();
+    scoreCounter.destroy();
     coordinates.destroy();
     for (ButtonObject button : societyButtons) {
       button.destroy();
