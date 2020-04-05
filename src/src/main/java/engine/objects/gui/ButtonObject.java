@@ -25,6 +25,12 @@ public class ButtonObject extends HudObject {
     this.getHudImage().getMesh().getMaterial().setColorOffset(inactiveColourOffset);
   }
 
+  public ButtonObject(RectangleMesh backgroundMesh, float edgeX, float offsetX, float edgeY,
+                      float offsetY) {
+    this(backgroundMesh, new Text(""), edgeX, offsetX, edgeY, offsetY);
+  }
+
+
   public Vector3f getInactiveColourOffset() {
     return inactiveColourOffset;
   }

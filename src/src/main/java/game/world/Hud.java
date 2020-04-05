@@ -18,7 +18,10 @@ import engine.objects.gui.HudImage;
 import engine.objects.gui.HudObject;
 import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
+import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
+import game.Game;
+import game.GameState;
 import java.awt.Color;
 import java.util.ArrayList;
 import math.Vector3f;
@@ -57,9 +60,11 @@ public class Hud {
   private static boolean canNextTurn = true;
   private static float arrowCounter;
   private static boolean terrainPanelActive = false;
-  private static boolean societyPanelActive = true;
+  private static boolean societyPanelActive = false;
+  private static ButtonObject closeButton;
 
   public static void create() {
+    turn = 1;
     createObjects();
   }
 
@@ -72,8 +77,30 @@ public class Hud {
     hudCycleLock--;
     hudCycleLock = Math.max(hudCycleLock, 0);
     resize();
-    updateSocietyButtons(window);
-    updateArrowButton(window);
+    if (Game.getState() != GameState.GAME_PAUSE) {
+      updateSocietyButtons(window);
+      updateTerrainPanel();
+      updateArrowButton(window);
+      updatePanelCloseButton(window);
+    }
+  }
+
+  private static void updatePanelCloseButton(Window window) {
+    closeButton.update(window);
+    // check for button click
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && closeButton.isMouseOver(window)) {
+      // close the panel
+      terrainPanelActive = false;
+      societyPanelActive = false;
+    }
+  }
+
+  private static void updateTerrainPanel() {
+    if (MousePicker.getCurrentSelected() != null
+        && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+      terrainPanelActive = true;
+      societyPanelActive = false;
+    }
   }
 
   private static void updateArrowButton(Window window) {
@@ -119,6 +146,8 @@ public class Hud {
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
           && societyButtons.get(i).isMouseOver(window) && hudCycleLock == 0) {
         hudCycleLock = BUTTON_LOCK_CYCLES;
+        terrainPanelActive = false;
+        societyPanelActive = true;
         Society society = World.getSocieties()[i];
       }
     }
@@ -200,6 +229,25 @@ public class Hud {
     terrainInspectionPanel = new HudObject(terrainPanelMesh, terrainPanelText, edgeX, offsetX,
         edgeY, offsetY);
     terrainInspectionPanel.create();
+    // create the close button
+    float closeSize = 0.06f;
+    RectangleModel closeModel = new RectangleModel(closeSize, closeSize);
+    Image closeImage = new Image("/images/close-button.png");
+    RectangleMesh closeMesh = new RectangleMesh(closeModel, new Material(closeImage));
+    closeButton = new ButtonObject(closeMesh, -1, width - closeSize / 2f, 0,
+        offsetY + height / 2f + closeSize / 2f);
+    closeButton.getHudImage().getMesh().getMaterial().setAlpha(panelAlpha);
+    closeButton.create();
+  }
+
+  private static void renderInspectionPanel(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    if (societyPanelActive) {
+      societyInspectionPanel.render(guiRenderer, textRenderer);
+      closeButton.render(guiRenderer, textRenderer);
+    } else if (terrainPanelActive) {
+      terrainInspectionPanel.render(guiRenderer, textRenderer);
+      closeButton.render(guiRenderer, textRenderer);
+    }
   }
 
   private static void createTurnButton() {
@@ -324,11 +372,7 @@ public class Hud {
     if (devHudActive) {
       coordinates.render(textRenderer);
     }
-    if (societyPanelActive) {
-      societyInspectionPanel.render(guiRenderer, textRenderer);
-    } else if (terrainPanelActive) {
-      terrainInspectionPanel.render(guiRenderer, textRenderer);
-    }
+    renderInspectionPanel(guiRenderer, textRenderer);
   }
 
   /**
@@ -346,6 +390,8 @@ public class Hud {
     societyButtonPanel.reposition();
     arrowButtonPanel.reposition();
     societyInspectionPanel.reposition();
+    terrainInspectionPanel.reposition();
+    closeButton.reposition();
   }
 
   private static void calculateCoordText(Camera camera) {
@@ -372,5 +418,6 @@ public class Hud {
     arrowButtonPanel.destroy();
     societyInspectionPanel.destroy();
     terrainInspectionPanel.destroy();
+    closeButton.destroy();
   }
 }

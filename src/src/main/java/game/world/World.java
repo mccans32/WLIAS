@@ -60,7 +60,6 @@ public class World {
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
   private static ArrayList<GameObject> plainTiles = new ArrayList<>();
   private static ArrayList<GameObject> waterTiles = new ArrayList<>();
-  private static MousePicker mousePicker;
   private static GameObject selectOverlay;
   private static Image selectOverlayImage = new Image("/images/blankFace.png");
   private static Vector4f overlayColour = new Vector4f(new Vector3f(1, 1, 1), 0.5f);
@@ -103,7 +102,9 @@ public class World {
     camera.unfreeze();
     createObjects(camera);
     // create the Mouse Picker
-    mousePicker = new MousePicker(camera, window.getProjectionMatrix(), DEFAULT_Z);
+    MousePicker.setCamera(camera);
+    MousePicker.setProjectionMatrix(window.getProjectionMatrix());
+    MousePicker.setGroundZ(DEFAULT_Z);
     generateSocieties(numberOfSocieties);
   }
 
@@ -136,7 +137,7 @@ public class World {
    */
   public static void render(WorldRenderer renderer, Camera camera, Window window) {
     renderTiles(renderer, camera);
-    if (mousePicker.getCurrentSelected() != null && !window.isMouseLocked()) {
+    if (MousePicker.getCurrentSelected() != null && !window.isMouseLocked()) {
       renderer.renderSelectOverlay(selectOverlay, camera);
     }
     renderBorder(renderer, camera);
@@ -196,7 +197,7 @@ public class World {
       }
     }
     updateSocietyBorders();
-    mousePicker.update(window, worldMap);
+    MousePicker.update(window, worldMap);
     updateSelectOverlay();
   }
 
@@ -211,9 +212,9 @@ public class World {
 
   private static void updateSelectOverlay() {
     // Check if the picker is currently selecting an object and if it is, update it's position
-    if (mousePicker.getCurrentSelected() != null) {
+    if (MousePicker.getCurrentSelected() != null) {
       // reposition selectOverlay to tile's position
-      selectOverlay.setPosition(mousePicker.getCurrentSelected().getPosition().copy());
+      selectOverlay.setPosition(MousePicker.getCurrentSelected().getPosition().copy());
     }
   }
 
