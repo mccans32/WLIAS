@@ -39,6 +39,8 @@ public class Hud {
   private static final Vector3f PANEL_COLOUR = ColourUtils.convertColor(Color.GRAY.brighter());
   private static HudObject turnCounter;
   private static HudObject scoreCounter;
+  private static HudObject societyInspectionPanel;
+  private static HudObject terrainInspectionPanel;
   private static Text coordText = new Text("", 0.9f, ColourUtils.convertColor(Color.BLACK));
   private static Text turnText = new Text("", 0.7f);
   private static Text scoreText = new Text("", 0.7f);
@@ -54,6 +56,8 @@ public class Hud {
   private static HudText arrowTextObject;
   private static boolean canNextTurn = true;
   private static float arrowCounter;
+  private static boolean terrainPanelActive = false;
+  private static boolean societyPanelActive = true;
 
   public static void create() {
     createObjects();
@@ -116,7 +120,6 @@ public class Hud {
           && societyButtons.get(i).isMouseOver(window) && hudCycleLock == 0) {
         hudCycleLock = BUTTON_LOCK_CYCLES;
         Society society = World.getSocieties()[i];
-        System.out.println(String.format("Society: %d", i + 1));
       }
     }
   }
@@ -169,6 +172,34 @@ public class Hud {
     createSocietyButtons();
     // Create Next Turn Button
     createTurnButton();
+    // create Society Inspection Panel
+    createInspectionPanels();
+  }
+
+  private static void createInspectionPanels() {
+    float width = 0.75f;
+    float height = 1f;
+    float edgeX = -1;
+    float offsetX = width / 2f;
+    float edgeY = 0;
+    float offsetY = 0.2f;
+    RectangleModel panelModel = new RectangleModel(width, height);
+    Image panelImage = new Image("/images/hudElementBackground.png");
+    float panelAlpha = 0.8f;
+    // Create the society Inspection Panel
+    RectangleMesh societyPanelMesh = new RectangleMesh(panelModel, new Material(panelImage));
+    societyPanelMesh.getMaterial().setAlpha(panelAlpha);
+    Text societyPanelText = new Text("SOCIETY");
+    societyInspectionPanel = new HudObject(societyPanelMesh, societyPanelText, edgeX, offsetX,
+        edgeY, offsetY);
+    societyInspectionPanel.create();
+    // Create the terrain inspection Panel
+    RectangleMesh terrainPanelMesh = new RectangleMesh(panelModel, new Material(panelImage));
+    terrainPanelMesh.getMaterial().setAlpha(panelAlpha);
+    Text terrainPanelText = new Text("TERRAIN");
+    terrainInspectionPanel = new HudObject(terrainPanelMesh, terrainPanelText, edgeX, offsetX,
+        edgeY, offsetY);
+    terrainInspectionPanel.create();
   }
 
   private static void createTurnButton() {
@@ -293,6 +324,11 @@ public class Hud {
     if (devHudActive) {
       coordinates.render(textRenderer);
     }
+    if (societyPanelActive) {
+      societyInspectionPanel.render(guiRenderer, textRenderer);
+    } else if (terrainPanelActive) {
+      terrainInspectionPanel.render(guiRenderer, textRenderer);
+    }
   }
 
   /**
@@ -309,6 +345,7 @@ public class Hud {
     arrowTextObject.reposition();
     societyButtonPanel.reposition();
     arrowButtonPanel.reposition();
+    societyInspectionPanel.reposition();
   }
 
   private static void calculateCoordText(Camera camera) {
@@ -333,5 +370,7 @@ public class Hud {
     arrowTextObject.destroy();
     societyButtonPanel.destroy();
     arrowButtonPanel.destroy();
+    societyInspectionPanel.destroy();
+    terrainInspectionPanel.destroy();
   }
 }

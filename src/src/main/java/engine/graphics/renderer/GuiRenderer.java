@@ -84,7 +84,7 @@ public class GuiRenderer {
   }
 
   private void setColourOffsetUniform(HudImage object) {
-    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffsetRgb());
+    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffsetRgba());
   }
 
   private void setModelUniform(HudImage object) {
