@@ -53,7 +53,8 @@ public class Hud {
   private static Text scoreText = new Text("", 0.7f);
   private static Text arrowText = new Text("Next Turn", 0.5f);
   private static Text societyPanelText = new Text("", 0.5f);
-  private static Text terrainPanelText = new Text("", 0.6f);
+  private static Text terrainPanelText = new Text("", 0.5f);
+  private static Text panelTitleText = new Text("Inspection Panel", 0.8f);
   private static HudText coordinates;
   private static Boolean devHudActive = false;
   private static int hudCycleLock = 0;
@@ -61,6 +62,7 @@ public class Hud {
   private static ArrayList<ButtonObject> societyButtons = new ArrayList<>();
   private static HudImage societyButtonPanel;
   private static HudImage arrowButtonPanel;
+  private static HudText panelTitle;
   private static ButtonObject arrowButton;
   private static HudText arrowTextObject;
   private static boolean canNextTurn = true;
@@ -234,7 +236,7 @@ public class Hud {
   private static void createInspectionPanels() {
     float borderSize = 0.03f;
     float width = 0.9f;
-    float height = 1f;
+    float height = 0.8f;
     float edgeX = -1;
     float offsetX = width / 2f + borderSize;
     float edgeY = 0;
@@ -293,6 +295,10 @@ public class Hud {
     for (HudImage border : panelBorders) {
       border.getMesh().getMaterial().setAlpha(panelAlpha);
     }
+    // create the Panel Title
+    panelTitle = new HudText(panelTitleText, edgeX, 0, edgeY, offsetY + height / 2f);
+    panelTitle.setOffsetX(borderSize + (width / 2f) - (panelTitle.getWidth() / 2f));
+    panelTitle.create();
   }
 
   private static void renderInspectionPanel(GuiRenderer guiRenderer, TextRenderer textRenderer) {
@@ -309,6 +315,7 @@ public class Hud {
       for (HudImage border : panelBorders) {
         border.render(guiRenderer);
       }
+      panelTitle.render(textRenderer);
     }
   }
 
@@ -459,6 +466,7 @@ public class Hud {
     for (HudImage border : panelBorders) {
       border.reposition();
     }
+    panelTitle.reposition();
   }
 
   private static void calculateCoordText(Camera camera) {
@@ -490,10 +498,11 @@ public class Hud {
       border.destroy();
     }
     panelBorders.clear();
+    panelTitle.destroy();
   }
 
   private static String calculateSocietyPanelString(Society society) {
-    String startPadding = "\n \n \n \n";
+    String startPadding = " \n".repeat(3);
     String linePadding = "\n \n";
     return String.format("%9$s Society Id: %d %10$s Population: %d %10$s Food: %d "
             + "%10$s Raw Material: %d %10$s Territory Size: %d %10$s Average Aggressiveness: %.2f "
@@ -505,7 +514,7 @@ public class Hud {
   }
 
   private static String calculateTerrainPanelString(TileWorldObject tile) {
-    String startPadding = "\n ".repeat(12);
+    String startPadding = "\n ".repeat(7);
     String linePadding = "\n \n";
     // Calculate the tile type
     String tileType;
