@@ -48,6 +48,7 @@ public class Hud {
   private static Text turnText = new Text("", 0.7f);
   private static Text scoreText = new Text("", 0.7f);
   private static Text arrowText = new Text("Next Turn", 0.5f);
+  private static Text societyPanelText = new Text("", 0.5f);
   private static HudText coordinates;
   private static Boolean devHudActive = false;
   private static int hudCycleLock = 0;
@@ -62,9 +63,18 @@ public class Hud {
   private static boolean terrainPanelActive = false;
   private static boolean societyPanelActive = false;
   private static ButtonObject closeButton;
+  private static ArrayList<HudImage> panelBorders = new ArrayList<>();
 
+  /**
+   * Create the Hud Elements and reset the variables for if a player restarts a new world.
+   */
   public static void create() {
+    // reset variables
     turn = 1;
+    terrainPanelActive = false;
+    societyPanelActive = false;
+    canNextTurn = false;
+    devHudActive = false;
     createObjects();
   }
 
@@ -78,8 +88,8 @@ public class Hud {
     hudCycleLock = Math.max(hudCycleLock, 0);
     resize();
     if (Game.getState() != GameState.GAME_PAUSE) {
-      updateSocietyButtons(window);
       updateTerrainPanel();
+      updateSocietyButtons(window);
       updateArrowButton(window);
       updatePanelCloseButton(window);
     }
@@ -148,7 +158,12 @@ public class Hud {
         hudCycleLock = BUTTON_LOCK_CYCLES;
         terrainPanelActive = false;
         societyPanelActive = true;
+        // set the text for the panel
         Society society = World.getSocieties()[i];
+        String panelString = calculateSocietyPanelString(society);
+        societyPanelText.setString(panelString);
+        societyPanelText.setShouldWrap(true);
+        societyInspectionPanel.updateText(societyPanelText);
       }
     }
   }
@@ -206,14 +221,15 @@ public class Hud {
   }
 
   private static void createInspectionPanels() {
-    float width = 0.75f;
+    float borderSize = 0.03f;
+    float width = 0.9f;
     float height = 1f;
     float edgeX = -1;
-    float offsetX = width / 2f;
+    float offsetX = width / 2f + borderSize;
     float edgeY = 0;
-    float offsetY = 0.2f;
+    float offsetY = 0f;
     RectangleModel panelModel = new RectangleModel(width, height);
-    Image panelImage = new Image("/images/hudElementBackground.png");
+    Image panelImage = new Image("/images/blankFace.png");
     float panelAlpha = 0.8f;
     // Create the society Inspection Panel
     RectangleMesh societyPanelMesh = new RectangleMesh(panelModel, new Material(panelImage));
@@ -230,23 +246,60 @@ public class Hud {
         edgeY, offsetY);
     terrainInspectionPanel.create();
     // create the close button
-    float closeSize = 0.06f;
-    RectangleModel closeModel = new RectangleModel(closeSize, closeSize);
-    Image closeImage = new Image("/images/close-button.png");
+    RectangleModel closeModel = new RectangleModel(borderSize, borderSize);
+    Image closeImage = new Image("/images/close-button-darker.png");
     RectangleMesh closeMesh = new RectangleMesh(closeModel, new Material(closeImage));
-    closeButton = new ButtonObject(closeMesh, -1, width - closeSize / 2f, 0,
-        offsetY + height / 2f + closeSize / 2f);
+    closeButton = new ButtonObject(closeMesh, -1, width + borderSize * 1.5f, 0,
+        offsetY + height / 2f + borderSize / 2f);
     closeButton.getHudImage().getMesh().getMaterial().setAlpha(panelAlpha);
     closeButton.create();
+    // create Borders
+    Image borderImage = new Image("/images/hudBorder.png");
+    Material borderMaterial = new Material(borderImage);
+    //create top border
+    float horizontalWidth = width + (borderSize * 2);
+    RectangleModel horizontalModel = new RectangleModel(horizontalWidth, borderSize);
+    RectangleMesh horizontalMesh = new RectangleMesh(horizontalModel, borderMaterial);
+    HudImage borderTop = new HudImage(horizontalMesh, -1, horizontalWidth / 2, 0,
+        offsetY + height / 2f + borderSize / 2f);
+    borderTop.create();
+    panelBorders.add(borderTop);
+    // create bottom border
+    HudImage borderBottom = new HudImage(horizontalMesh, -1, horizontalWidth / 2, 0,
+        offsetY - height / 2f - borderSize / 2f);
+    borderBottom.create();
+    panelBorders.add(borderBottom);
+    // create left border
+    float verticalHeight = height + (borderSize * 2);
+    RectangleModel verticalModel = new RectangleModel(borderSize, verticalHeight);
+    RectangleMesh verticalMesh = new RectangleMesh(verticalModel, borderMaterial);
+    HudImage borderLeft = new HudImage(verticalMesh, -1, borderSize / 2, 0, offsetY);
+    borderLeft.create();
+    panelBorders.add(borderLeft);
+    //create right border
+    HudImage borderRight = new HudImage(verticalMesh, -1, width + (borderSize * 1.5f), 0, offsetY);
+    borderRight.create();
+    panelBorders.add(borderRight);
+    // set the alpha for the borders
+    for (HudImage border : panelBorders) {
+      border.getMesh().getMaterial().setAlpha(panelAlpha);
+    }
   }
 
   private static void renderInspectionPanel(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    boolean shouldRender = false;
     if (societyPanelActive) {
       societyInspectionPanel.render(guiRenderer, textRenderer);
-      closeButton.render(guiRenderer, textRenderer);
+      shouldRender = true;
     } else if (terrainPanelActive) {
       terrainInspectionPanel.render(guiRenderer, textRenderer);
+      shouldRender = true;
+    }
+    if (shouldRender) {
       closeButton.render(guiRenderer, textRenderer);
+      for (HudImage border : panelBorders) {
+        border.render(guiRenderer);
+      }
     }
   }
 
@@ -296,7 +349,8 @@ public class Hud {
           Vector3f.subtract(society.getSocietyColor(), 0.2f));
       societyText.setCentreHorizontal(true);
       societyText.setCentreVertical(true);
-      float xoffset = calculateXOffset(World.getSocieties().length, width, padding, i + 1);
+      float xoffset = calculateSocietyButtonXOffset(World.getSocieties().length, width, padding,
+          i + 1);
       RectangleMesh buttonMesh = new RectangleMesh(buttonModel, new Material(buttonImage));
       ButtonObject societyButton = new ButtonObject(buttonMesh, societyText, 0, xoffset,
           -1, offsetY);
@@ -315,7 +369,8 @@ public class Hud {
     societyButtonPanel.create();
   }
 
-  private static float calculateXOffset(int amount, float width, float padding, int number) {
+  private static float calculateSocietyButtonXOffset(int amount, float width, float padding,
+                                                     int number) {
     // determine if odd or even
     int amountSide = amount / 2;
     int amountCenter;
@@ -392,6 +447,9 @@ public class Hud {
     societyInspectionPanel.reposition();
     terrainInspectionPanel.reposition();
     closeButton.reposition();
+    for (HudImage border : panelBorders) {
+      border.reposition();
+    }
   }
 
   private static void calculateCoordText(Camera camera) {
@@ -419,5 +477,21 @@ public class Hud {
     societyInspectionPanel.destroy();
     terrainInspectionPanel.destroy();
     closeButton.destroy();
+    for (HudImage border : panelBorders) {
+      border.destroy();
+    }
+    panelBorders.clear();
+  }
+
+  private static String calculateSocietyPanelString(Society society) {
+    String startPadding = "\n \n \n \n";
+    String linePadding = "\n \n";
+    return String.format("%9$s Society Id: %d %10$s Population: %d %10$s Food: %d %10$s"
+            + "Raw Material: %d %10$s Territory Size: %d %10$s Average Aggressiveness: %.2f %10$s "
+            + "Average Productivity: %.2f %10$s Average Lifespan: %.2f",
+        society.getSocietyId(), society.getPopulation().size(), society.getTotalFoodResource(),
+        society.getTotalRawMaterialResource(), society.getTerritory().size(),
+        society.getAverageAggressiveness(), society.getAverageLifeExpectancy(),
+        society.getAverageLifeExpectancy(), startPadding, linePadding);
   }
 }

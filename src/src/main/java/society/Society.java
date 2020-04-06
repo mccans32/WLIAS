@@ -15,7 +15,7 @@ public class Society {
   private Vector3f societyColor;
   private ArrayList<Person> population;
   private int societyId;
-  private int averageLifeExpectancy;
+  private float averageLifeExpectancy;
   private int totalFoodResource = 0;
   private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
@@ -210,7 +210,7 @@ public class Society {
     this.societyId = societyId;
   }
 
-  public int getAverageLifeExpectancy() {
+  public float getAverageLifeExpectancy() {
     return averageLifeExpectancy;
   }
 

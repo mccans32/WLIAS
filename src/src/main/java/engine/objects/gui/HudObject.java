@@ -154,5 +154,23 @@ public class HudObject {
     for (HudText line: lines) {
       line.destroy();
     }
+    lines.clear();
+  }
+
+  /**
+   * Sets the text.
+   *
+   * @param text the text
+   */
+  public void updateText(Text text) {
+    for (HudText line: lines) {
+      line.destroy();
+    }
+    lines.clear();
+    calculateLines(text, this.hudImage);
+    centerText();
+    for (HudText line: lines) {
+      line.create();
+    }
   }
 }
