@@ -19,6 +19,9 @@ import game.Game;
 import game.GameState;
 import game.menu.PauseMenu;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import map.MapGeneration;
 import map.tiles.AridTile;
@@ -35,7 +38,6 @@ import society.Society;
 
 public class World {
   private static final int BUTTON_LOCK_CYCLES = 20;
-  private static int button_lock = BUTTON_LOCK_CYCLES;
   private static final float LOWER_VERTEX_BAND = -0.5f;
   private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
@@ -55,6 +57,7 @@ public class World {
   private static final int PLAIN_MAX_RAW_MATERIALS = 2;
   private static final int WATER_MAX_FOOD_RESOURCE = 1;
   private static final int WATER_MAX_RAW_MATERIALS = 0;
+  private static int button_lock = BUTTON_LOCK_CYCLES;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -160,7 +163,7 @@ public class World {
   public static void update(Window window, Camera camera) {
     // check for game pause
     button_lock--;
-    button_lock = max(0,button_lock);
+    button_lock = max(0, button_lock);
     if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (button_lock == 0)) {
       button_lock = BUTTON_LOCK_CYCLES;
       if (Game.getState() == GameState.GAME_MAIN) {
@@ -336,5 +339,51 @@ public class World {
   public static int genRandomInt(int maxValue, int minValue) {
     Random r = new Random();
     return r.nextInt(maxValue) + minValue;
+  }
+
+  public static void calcMoves() {
+    List<Society> turnOrder = Arrays.asList(societies);
+    Collections.shuffle(turnOrder);
+    for (Society currentSociety : turnOrder) {
+      if (currentSociety.getSocietyId() == 0) {
+        playerTurn();
+      } else {
+        AiTurn();
+      }
+    }
+  }
+
+  private static void AiTurn() {
+
+  }
+
+  private static void playerTurn() {
+    String move = selectMove();
+    if (move.equals("war")) {
+      warMove();
+    }
+  }
+
+  private static String selectMove() {
+    drawChoiceButtons();
+    boolean selected = false;
+    String move = null;
+    while (!selected) {
+      move = checkChoice();
+      selected = true;
+    }
+    return move;
+  }
+
+  private static String checkChoice() {
+    return null;
+  }
+
+  private static void drawChoiceButtons() {
+
+  }
+
+  private static void warMove() {
+
   }
 }

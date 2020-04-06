@@ -79,6 +79,7 @@ public class Game {
   private void gameLoop() {
     System.out.println("This is the Game Loop\n");
     while (!window.shouldClose()) {
+      World.calcMoves();
       update();
       render();
     }
