@@ -199,7 +199,7 @@ public class Hud {
         societyPanelActive = true;
         // set the text for the panel
         Society society = World.getSocieties()[i];
-        String panelString = calculateSocietyPanelString(society);
+        String panelString = calculateSocietyPanelString(society, i);
         societyPanelText.setString(panelString);
         societyPanelText.setShouldWrap(true);
         societyInspectionPanel.updateText(societyPanelText);
@@ -536,13 +536,19 @@ public class Hud {
     terrainTileImage.destroy();
   }
 
-  private static String calculateSocietyPanelString(Society society) {
+  private static String calculateSocietyPanelString(Society society, int index) {
+    String societyString;
+    if (index == 0) {
+      societyString = "Your Society";
+    } else {
+      societyString = "Society " + (index + 1);
+    }
     String startPadding = StringUtils.repeat(" \n", 3);
     String linePadding = "\n \n";
-    return String.format("%9$s Society Id: %d %10$s Population: %d %10$s Food: %d "
+    return String.format("%9$s Society Name: %s %10$s Population: %d %10$s Food: %d "
             + "%10$s Raw Material: %d %10$s Territory Size: %d %10$s Average Aggressiveness: %.2f "
             + "%10$s Average Productivity: %.2f %10$s Average Lifespan: %.2f",
-        society.getSocietyId(), society.getPopulation().size(), society.getTotalFoodResource(),
+        societyString, society.getPopulation().size(), society.getTotalFoodResource(),
         society.getTotalRawMaterialResource(), society.getTerritory().size(),
         society.getAverageAggressiveness(), society.getAverageLifeExpectancy(),
         society.getAverageLifeExpectancy(), startPadding, linePadding);
