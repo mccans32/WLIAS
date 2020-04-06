@@ -6,17 +6,8 @@ import engine.graphics.text.Text;
 import math.Vector3f;
 
 public class ButtonObject extends HudObject {
-  /**
-   * Instantiates a new Hud object.
-   *
-   * @param mesh     the mesh.
-   * @param edgeX    the x coordinate to offset from.
-   * @param offsetX  amount to offset from the xEdge.
-   * @param edgeY    the y coordinate to offset from.
-   * @param offsetY  amount to offset from the yEdge.
-   */
-  private static final Vector3f INACTIVE_COLOUR_OFFSET = new Vector3f(1, 1, 1);
-  private static final Vector3f ACTIVE_COLOUR_OFFSET = new Vector3f(0.6f, 0.6f, 0.6f);
+  private Vector3f inactiveColourOffset = new Vector3f(1, 1, 1);
+  private Vector3f activeColourOffset = new Vector3f(0.6f, 0.6f, 0.6f);
 
   /**
    * Instantiates a new Button object.
@@ -31,7 +22,29 @@ public class ButtonObject extends HudObject {
   public ButtonObject(RectangleMesh backgroundMesh, Text text, float edgeX, float offsetX,
                       float edgeY, float offsetY) {
     super(backgroundMesh, text, edgeX, offsetX, edgeY, offsetY);
-    this.getHudImage().getMesh().getMaterial().setColorOffset(INACTIVE_COLOUR_OFFSET);
+    this.getHudImage().getMesh().getMaterial().setColorOffset(inactiveColourOffset);
+  }
+
+  public ButtonObject(RectangleMesh backgroundMesh, float edgeX, float offsetX, float edgeY,
+                      float offsetY) {
+    this(backgroundMesh, new Text(""), edgeX, offsetX, edgeY, offsetY);
+  }
+
+
+  public Vector3f getInactiveColourOffset() {
+    return inactiveColourOffset;
+  }
+
+  public void setInactiveColourOffset(Vector3f inactiveColourOffset) {
+    this.inactiveColourOffset = inactiveColourOffset;
+  }
+
+  public Vector3f getActiveColourOffset() {
+    return activeColourOffset;
+  }
+
+  public void setActiveColourOffset(Vector3f activeColourOffset) {
+    this.activeColourOffset = activeColourOffset;
   }
 
   public void update(Window window) {
@@ -40,9 +53,9 @@ public class ButtonObject extends HudObject {
 
   private void updateColourOffset(Window window) {
     if (isMouseOver(window)) {
-      this.getHudImage().getMesh().getMaterial().setColorOffset(ACTIVE_COLOUR_OFFSET);
+      this.getHudImage().getMesh().getMaterial().setColorOffset(activeColourOffset);
     } else {
-      this.getHudImage().getMesh().getMaterial().setColorOffset(INACTIVE_COLOUR_OFFSET);
+      this.getHudImage().getMesh().getMaterial().setColorOffset(inactiveColourOffset);
     }
   }
 

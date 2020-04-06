@@ -15,6 +15,8 @@ import engine.objects.world.Camera;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
+import game.world.Hud;
+import game.world.World;
 import java.awt.Color;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -120,6 +122,8 @@ public class PauseMenu {
         unpauseGame(camera);
       } else if (exitButton.isMouseOver(window)) {
         destroy();
+        Hud.destroy();
+        World.destroy();
         Game.setState(GameState.MAIN_MENU);
         MainMenu.create(window, camera);
       }

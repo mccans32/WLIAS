@@ -43,12 +43,12 @@ public class World {
   private static final float DEFAULT_Z = 0;
   private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
   private static final Vector3f DEFAULT_SCALE = new Vector3f(1f, 1f, 1f);
-  private static final int DEFAULT_NUMBER_OF_SOCIETIES = 2;
+  private static final int DEFAULT_NUMBER_OF_SOCIETIES = 4;
   private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
       ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
-      ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED),
-      ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN),
-      ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED)};
+      ColourUtils.convertColor(ChartColor.LIGHT_RED),
+      ColourUtils.convertColor(ChartColor.LIGHT_GREEN),
+      ColourUtils.convertColor(ChartColor.LIGHT_CYAN)};
   private static final int FERTILE_MAX_FOOD_RESOURCE = 5;
   private static final int FERTILE_MAX_RAW_MATERIALS = 1;
   private static final int ARID_MAX_FOOD_RESOURCE = 1;
@@ -63,7 +63,6 @@ public class World {
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
   private static ArrayList<GameObject> plainTiles = new ArrayList<>();
   private static ArrayList<GameObject> waterTiles = new ArrayList<>();
-  private static MousePicker mousePicker;
   private static GameObject selectOverlay;
   private static Image selectOverlayImage = new Image("/images/blankFace.png");
   private static Vector4f overlayColour = new Vector4f(new Vector3f(1, 1, 1), 0.5f);
@@ -106,7 +105,9 @@ public class World {
     camera.unfreeze();
     createObjects(camera);
     // create the Mouse Picker
-    mousePicker = new MousePicker(camera, window.getProjectionMatrix(), DEFAULT_Z);
+    MousePicker.setCamera(camera);
+    MousePicker.setProjectionMatrix(window.getProjectionMatrix());
+    MousePicker.setGroundZ(DEFAULT_Z);
     generateSocieties(numberOfSocieties);
   }
 
@@ -139,7 +140,7 @@ public class World {
    */
   public static void render(WorldRenderer renderer, Camera camera, Window window) {
     renderTiles(renderer, camera);
-    if (mousePicker.getCurrentSelected() != null && !window.isMouseLocked()) {
+    if (MousePicker.getCurrentSelected() != null && !window.isMouseLocked()) {
       renderer.renderSelectOverlay(selectOverlay, camera);
     }
     renderBorder(renderer, camera);
@@ -166,7 +167,11 @@ public class World {
     button_lock = max(0, button_lock);
     if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (button_lock == 0)) {
       button_lock = BUTTON_LOCK_CYCLES;
-      if (Game.getState() == GameState.GAME_MAIN) {
+      // close inspection panel if currently open
+      if (Hud.isSocietyPanelActive() || Hud.isTerrainPanelActive()) {
+        Hud.setSocietyPanelActive(false);
+        Hud.setTerrainPanelActive(false);
+      } else if (Game.getState() == GameState.GAME_MAIN) {
         PauseMenu.pauseGame(window, camera);
       } else {
         PauseMenu.unpauseGame(camera);
@@ -199,7 +204,7 @@ public class World {
       }
     }
     updateSocietyBorders();
-    mousePicker.update(window, worldMap);
+    MousePicker.update(window, worldMap);
     updateSelectOverlay();
   }
 
@@ -214,9 +219,9 @@ public class World {
 
   private static void updateSelectOverlay() {
     // Check if the picker is currently selecting an object and if it is, update it's position
-    if (mousePicker.getCurrentSelected() != null) {
+    if (MousePicker.getCurrentSelected() != null) {
       // reposition selectOverlay to tile's position
-      selectOverlay.setPosition(mousePicker.getCurrentSelected().getPosition().copy());
+      selectOverlay.setPosition(MousePicker.getCurrentSelected().getPosition().copy());
     }
   }
 
@@ -339,6 +344,34 @@ public class World {
   public static int genRandomInt(int maxValue, int minValue) {
     Random r = new Random();
     return r.nextInt(maxValue) + minValue;
+  }
+
+  public static int getDefaultNumberOfSocieties() {
+    return DEFAULT_NUMBER_OF_SOCIETIES;
+  }
+
+  /**
+   * Destroy the world elements and clear the arrays.
+   */
+  public static void destroy() {
+    // Destroy tile data
+    for (TileWorldObject[] row : worldMap) {
+      for (TileWorldObject tile : row) {
+        GameObject border = tile.getBorderObject();
+        if (border != null) {
+          border.destroy();
+        }
+        tile.destroy();
+      }
+    }
+    worldMap = null;
+    fertileTiles.clear();
+    waterTiles.clear();
+    aridTiles.clear();
+    plainTiles.clear();
+    selectOverlay.destroy();
+    // Destroy Overlay
+    selectOverlay.destroy();
   }
 
   public static void calcMoves() {

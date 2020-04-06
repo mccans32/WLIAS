@@ -55,4 +55,8 @@ public class Material {
   public void destroy() {
     image.destroy();
   }
+
+  public void setAlpha(float alpha) {
+    this.colorOffset.setW(alpha);
+  }
 }

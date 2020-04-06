@@ -65,6 +65,7 @@ dependencies {
     implementation 'gov.nist.math:jama:1.0.3'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.joml:joml:1.9.22"
+    implementation "org.apache.commons:commons-lang3:3.9"
 }
 
 test {

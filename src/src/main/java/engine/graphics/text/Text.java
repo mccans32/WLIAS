@@ -3,11 +3,12 @@ package engine.graphics.text;
 import engine.utils.ColourUtils;
 import java.awt.Color;
 import math.Vector3f;
+import math.Vector4f;
 
 public class Text {
   private int numColumns = 16;
   private int numRows = 16;
-  private Vector3f textColour = ColourUtils.convertColor(Color.BLACK);
+  private Vector4f textColour = new Vector4f(ColourUtils.convertColor(Color.BLACK), 1);
   private String fontFile = "/text/defaultFont.png";
   private boolean centreHorizontal = false;
   private boolean centreVertical = false;
@@ -27,7 +28,7 @@ public class Text {
    * @param centreHorizontal the centre horizontal
    * @param centreVertical   the centre vertical
    */
-  public Text(String string, String fontFile, int numColumns, int numRows, Vector3f textColour,
+  public Text(String string, String fontFile, int numColumns, int numRows, Vector4f textColour,
               float fontSize, boolean centreHorizontal, boolean centreVertical,
               boolean shouldWrap) {
     this.string = string;
@@ -57,9 +58,13 @@ public class Text {
    * @param fontSize   the font size
    * @param textColour the text colour
    */
-  public Text(String string, float fontSize, Vector3f textColour) {
+  public Text(String string, float fontSize, Vector4f textColour) {
     this(string, fontSize);
     this.textColour = textColour;
+  }
+
+  public Text(String string, float fontSize, Vector3f textColour) {
+    this(string, fontSize, new Vector4f(textColour, 1));
   }
 
   /**
@@ -70,12 +75,18 @@ public class Text {
    * @param centreHorizontal the centre horizontal
    * @param centreVertical   the centre vertical
    */
-  public Text(String string, float fontSize, Vector3f textColour, boolean centreHorizontal,
+  public Text(String string, float fontSize, Vector4f textColour, boolean centreHorizontal,
               boolean centreVertical, boolean shouldWrap) {
     this(string, fontSize, textColour);
     this.centreHorizontal = centreHorizontal;
     this.centreVertical = centreVertical;
     this.shouldWrap = shouldWrap;
+  }
+
+  public Text(String string, float fontSize, Vector3f textColour, boolean centreHorizontal,
+              boolean centreVertical, boolean shouldWrap) {
+    this(string, fontSize, new Vector4f(textColour, 1), centreHorizontal, centreVertical,
+        shouldWrap);
   }
 
   public boolean shouldWrap() {
@@ -110,11 +121,11 @@ public class Text {
     this.centreVertical = centreVertical;
   }
 
-  public Vector3f getTextColour() {
+  public Vector4f getTextColour() {
     return textColour;
   }
 
-  public void setTextColour(Vector3f textColour) {
+  public void setTextColour(Vector4f textColour) {
     this.textColour = textColour;
   }
 
@@ -141,5 +152,9 @@ public class Text {
   public Text copy() {
     return new Text(this.string, this.fontFile, this.numColumns, this.numRows, this.textColour,
         this.fontSize, this.centreHorizontal, this.centreVertical, this.shouldWrap);
+  }
+
+  public void setAlpha(float alpha) {
+    this.textColour.setW(alpha);
   }
 }
