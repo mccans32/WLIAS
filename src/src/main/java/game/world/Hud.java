@@ -18,12 +18,16 @@ import engine.objects.gui.HudImage;
 import engine.objects.gui.HudObject;
 import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
+import engine.objects.world.TileWorldObject;
 import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
 import java.awt.Color;
 import java.util.ArrayList;
+import map.tiles.AridTile;
+import map.tiles.FertileTile;
+import map.tiles.WaterTile;
 import math.Vector3f;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
@@ -49,6 +53,7 @@ public class Hud {
   private static Text scoreText = new Text("", 0.7f);
   private static Text arrowText = new Text("Next Turn", 0.5f);
   private static Text societyPanelText = new Text("", 0.5f);
+  private static Text terrainPanelText = new Text("", 0.6f);
   private static HudText coordinates;
   private static Boolean devHudActive = false;
   private static int hudCycleLock = 0;
@@ -110,6 +115,12 @@ public class Hud {
         && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
       terrainPanelActive = true;
       societyPanelActive = false;
+      // update the text
+      String panelString = calculateTerrainPanelString(MousePicker.getCurrentSelected());
+      System.out.println(panelString);
+      terrainPanelText.setString(panelString);
+      terrainPanelText.setShouldWrap(true);
+      terrainInspectionPanel.updateText(terrainPanelText);
     }
   }
 
@@ -234,14 +245,12 @@ public class Hud {
     // Create the society Inspection Panel
     RectangleMesh societyPanelMesh = new RectangleMesh(panelModel, new Material(panelImage));
     societyPanelMesh.getMaterial().setAlpha(panelAlpha);
-    Text societyPanelText = new Text("SOCIETY");
     societyInspectionPanel = new HudObject(societyPanelMesh, societyPanelText, edgeX, offsetX,
         edgeY, offsetY);
     societyInspectionPanel.create();
     // Create the terrain inspection Panel
     RectangleMesh terrainPanelMesh = new RectangleMesh(panelModel, new Material(panelImage));
     terrainPanelMesh.getMaterial().setAlpha(panelAlpha);
-    Text terrainPanelText = new Text("TERRAIN");
     terrainInspectionPanel = new HudObject(terrainPanelMesh, terrainPanelText, edgeX, offsetX,
         edgeY, offsetY);
     terrainInspectionPanel.create();
@@ -486,12 +495,49 @@ public class Hud {
   private static String calculateSocietyPanelString(Society society) {
     String startPadding = "\n \n \n \n";
     String linePadding = "\n \n";
-    return String.format("%9$s Society Id: %d %10$s Population: %d %10$s Food: %d %10$s"
-            + "Raw Material: %d %10$s Territory Size: %d %10$s Average Aggressiveness: %.2f %10$s "
-            + "Average Productivity: %.2f %10$s Average Lifespan: %.2f",
+    return String.format("%9$s Society Id: %d %10$s Population: %d %10$s Food: %d "
+            + "%10$s Raw Material: %d %10$s Territory Size: %d %10$s Average Aggressiveness: %.2f "
+            + "%10$s Average Productivity: %.2f %10$s Average Lifespan: %.2f",
         society.getSocietyId(), society.getPopulation().size(), society.getTotalFoodResource(),
         society.getTotalRawMaterialResource(), society.getTerritory().size(),
         society.getAverageAggressiveness(), society.getAverageLifeExpectancy(),
         society.getAverageLifeExpectancy(), startPadding, linePadding);
+  }
+
+  private static String calculateTerrainPanelString(TileWorldObject tile) {
+    String startPadding = "\n ".repeat(12);
+    String linePadding = "\n \n";
+    // Calculate the tile type
+    String tileType;
+    if (tile.getTile() instanceof WaterTile) {
+      tileType = "Water Tile";
+    } else if (tile.getTile() instanceof FertileTile) {
+      tileType = "Fertile Tile";
+    } else if (tile.getTile() instanceof AridTile) {
+      tileType = "Arid Tile";
+    } else {
+      tileType = "Plain Tile";
+    }
+    // check if claimed by a society
+    String claimedSocietyString = "Unclaimed";
+    boolean found = false;
+    int i = 0;
+    while (i < World.getSocieties().length && !found) {
+      Society society = World.getSocieties()[i];
+      if (society.getTerritory().contains(tile)) {
+        found = true;
+        if (i == 0) {
+          claimedSocietyString = "Your Society";
+        } else {
+          claimedSocietyString = String.format("Society %d", society.getSocietyId() + 1);
+        }
+      }
+      i++;
+    }
+    // return the string
+    return String.format("%5$s Tile Type: %s %6$s Food Resources: %d "
+            + "%6$s Raw Material: %d %6$s Claimed By: %s",
+        tileType, tile.getFoodResource(), tile.getRawMaterialResource(), claimedSocietyString,
+        startPadding, linePadding);
   }
 }

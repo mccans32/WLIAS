@@ -17,7 +17,7 @@ public class MousePicker {
   private static Matrix4f projectionMatrix;
   private static Matrix4f viewMatrix;
   private static Camera camera;
-  private static GameObject currentSelected;
+  private static TileWorldObject currentSelected;
 
   public static float getGroundZ() {
     return groundZ;
@@ -63,7 +63,7 @@ public class MousePicker {
     return new Vector2f(normalisedX, normalisedY);
   }
 
-  public static GameObject getCurrentSelected() {
+  public static TileWorldObject getCurrentSelected() {
     return currentSelected;
   }
 
