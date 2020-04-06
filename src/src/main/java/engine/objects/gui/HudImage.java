@@ -11,6 +11,7 @@ import math.Vector3f;
 public class HudImage {
   private Vector2f position = new Vector2f(0, 0);
   private Vector2f scale = new Vector2f(1, 1);
+  private Vector3f rotation = new Vector3f(0, 0, 0);
   private RectangleMesh mesh;
   private float edgeX;
   private float offsetX;
@@ -20,7 +21,7 @@ public class HudImage {
   /**
    * Instantiates a new Hud object.
    *
-   * @param mesh     the mesh.
+   * @param mesh the mesh.
    */
   public HudImage(RectangleMesh mesh,
                   float edgeX,
@@ -34,6 +35,14 @@ public class HudImage {
     this.offsetY = offsetY;
     // reposition to accommodate for window span
     reposition();
+  }
+
+  public Vector3f getRotation() {
+    return rotation;
+  }
+
+  public void setRotation(Vector3f rotation) {
+    this.rotation = rotation;
   }
 
   /**
@@ -112,24 +121,48 @@ public class HudImage {
     return edgeX;
   }
 
+  public void setEdgeX(float edgeX) {
+    this.edgeX = edgeX;
+  }
+
   public float getOffsetX() {
     return offsetX;
+  }
+
+  public void setOffsetX(float offsetX) {
+    this.offsetX = offsetX;
   }
 
   public float getEdgeY() {
     return edgeY;
   }
 
+  public void setEdgeY(float edgeY) {
+    this.edgeY = edgeY;
+  }
+
   public float getOffsetY() {
     return offsetY;
+  }
+
+  public void setOffsetY(float offsetY) {
+    this.offsetY = offsetY;
   }
 
   public Vector2f getPosition() {
     return position;
   }
 
+  public void setPosition(Vector2f position) {
+    this.position = position;
+  }
+
   public Vector2f getScale() {
     return scale;
+  }
+
+  public void setScale(Vector2f scale) {
+    this.scale = scale;
   }
 
   public RectangleMesh getMesh() {

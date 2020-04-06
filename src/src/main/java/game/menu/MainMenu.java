@@ -95,14 +95,15 @@ public class MainMenu {
         Game.setState(GameState.GAME_MAIN);
         // Destroy the Main Menu
         destroy();
-        // Create the Hud
-        Hud.create();
         // Create the Pause Menu
         PauseMenu.create();
         PauseMenu.update(window, camera);
         // Create the World
         World.create(window, camera);
         World.update(window, camera);
+        // Create the Hud
+        Hud.create();
+        Hud.update(window);
       } else if (exitButton.isMouseOver(window)) {
         GLFW.glfwSetWindowShouldClose(window.getWindow(), true);
       }

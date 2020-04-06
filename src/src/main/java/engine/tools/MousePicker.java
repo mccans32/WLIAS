@@ -12,24 +12,43 @@ import math.Vector4f;
 
 // For more information on ray casting visit http://antongerdelan.net/opengl/raycasting.html
 public class MousePicker {
-  private float groundZ;
-  private Vector3f currentRay;
-  private Matrix4f projectionMatrix;
-  private Matrix4f viewMatrix;
-  private Camera camera;
-  private GameObject currentSelected;
+  private static float groundZ;
+  private static Vector3f currentRay;
+  private static Matrix4f projectionMatrix;
+  private static Matrix4f viewMatrix;
+  private static Camera camera;
+  private static TileWorldObject currentSelected;
 
-  /**
-   * Instantiates a new Mouse picker.
-   *
-   * @param camera           the camera
-   * @param projectionMatrix the projection matrix
-   */
-  public MousePicker(Camera camera, Matrix4f projectionMatrix, float groundZ) {
-    this.camera = camera;
-    this.projectionMatrix = projectionMatrix;
-    this.viewMatrix = Matrix4f.view(camera.getPosition(), camera.getRotation());
-    this.groundZ = groundZ;
+  public static float getGroundZ() {
+    return groundZ;
+  }
+
+  public static void setGroundZ(float groundZ) {
+    MousePicker.groundZ = groundZ;
+  }
+
+  public static Matrix4f getProjectionMatrix() {
+    return projectionMatrix;
+  }
+
+  public static void setProjectionMatrix(Matrix4f projectionMatrix) {
+    MousePicker.projectionMatrix = projectionMatrix;
+  }
+
+  public static Matrix4f getViewMatrix() {
+    return viewMatrix;
+  }
+
+  public static void setViewMatrix(Matrix4f viewMatrix) {
+    MousePicker.viewMatrix = viewMatrix;
+  }
+
+  public static Camera getCamera() {
+    return camera;
+  }
+
+  public static void setCamera(Camera camera) {
+    MousePicker.camera = camera;
   }
 
   /**
@@ -44,7 +63,7 @@ public class MousePicker {
     return new Vector2f(normalisedX, normalisedY);
   }
 
-  public GameObject getCurrentSelected() {
+  public static TileWorldObject getCurrentSelected() {
     return currentSelected;
   }
 
@@ -55,18 +74,18 @@ public class MousePicker {
    *
    * @param window the window
    */
-  public void update(Window window, TileWorldObject[][] map) {
+  public static void update(Window window, TileWorldObject[][] map) {
     projectionMatrix = window.getProjectionMatrix();
     viewMatrix = Matrix4f.view(camera.getPosition(), camera.getRotation());
     currentRay = calculateMouseRay(window);
     select(map);
   }
 
-  public Vector3f getCurrentRay() {
+  public static Vector3f getCurrentRay() {
     return currentRay;
   }
 
-  private Vector3f calculateMouseRay(Window window) {
+  private static Vector3f calculateMouseRay(Window window) {
     Vector2f normalisedCoordinates = getNormalisedDeviceCoordinates(window);
     Vector4f clipCoordinates = new Vector4f(
         normalisedCoordinates.getX(),
@@ -77,25 +96,25 @@ public class MousePicker {
     return toWorldCoordinates(eyeCoordinates);
   }
 
-  private Vector3f toWorldCoordinates(Vector4f eyeCoordinates) {
+  private static Vector3f toWorldCoordinates(Vector4f eyeCoordinates) {
     Vector4f rayWorld = Matrix4f.transform(viewMatrix, eyeCoordinates);
     Vector3f mouseRay = new Vector3f(rayWorld.getX(), rayWorld.getY(), rayWorld.getZ());
     mouseRay = Vector3f.normalise(mouseRay);
     return mouseRay;
   }
 
-  private Vector4f toEyeCoordinates(Vector4f clipCoordinates) {
+  private static Vector4f toEyeCoordinates(Vector4f clipCoordinates) {
     Matrix4f invertedProjection = Matrix4f.invert(projectionMatrix);
     Vector4f eyeCoordinates = Matrix4f.transform(invertedProjection, clipCoordinates);
     return new Vector4f(eyeCoordinates.getX(), eyeCoordinates.getY(), -1f, 0f);
   }
 
-  private void select(TileWorldObject[][] map) {
+  private static void select(TileWorldObject[][] map) {
     Vector3f groundPoint = getGroundPoint(currentRay);
     currentSelected = calculateSelected(groundPoint, map);
   }
 
-  private TileWorldObject calculateSelected(Vector3f groundPoint, TileWorldObject[][] map) {
+  private static TileWorldObject calculateSelected(Vector3f groundPoint, TileWorldObject[][] map) {
     TileWorldObject selected = null;
     for (TileWorldObject[] row : map) {
       for (TileWorldObject tile : row) {
@@ -114,7 +133,7 @@ public class MousePicker {
     return selected;
   }
 
-  private Vector3f getGroundPoint(Vector3f ray) {
+  private static Vector3f getGroundPoint(Vector3f ray) {
     // Get camera position and Make it the start point
     Vector3f camPos = camera.getPosition();
     Vector3f start = new Vector3f(camPos.getX(), camPos.getY(), camPos.getZ());

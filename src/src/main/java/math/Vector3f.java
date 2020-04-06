@@ -20,6 +20,10 @@ public class Vector3f extends Vector2f {
     this.vectorZ = z;
   }
 
+  public Vector3f(Vector2f vector, float z) {
+    this(vector.getX(), vector.getY(), z);
+  }
+
   /**
    * Add vector 3 f.
    *

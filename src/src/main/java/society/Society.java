@@ -15,13 +15,14 @@ public class Society {
   private Vector3f societyColor;
   private ArrayList<Person> population;
   private int societyId;
-  private int averageLifeExpectancy;
+  private float averageLifeExpectancy;
   private int totalFoodResource = 0;
   private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
   private ArrayList<TileWorldObject> claimableTerritory;
   private float averageAggressiveness;
   private float averageProductivity;
+  private int score;
 
   /**
    * Instantiates a new Society.
@@ -32,6 +33,7 @@ public class Society {
   public Society(int initialPopulationSize, int societyId, Vector3f societyColor) {
     this.societyId = societyId;
     this.societyColor = societyColor;
+    this.score = 0;
     generateInitialPopulation(initialPopulationSize);
 
   }
@@ -50,6 +52,14 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public int getScore() {
+    return score;
+  }
+
+  public void setScore(int score) {
+    this.score = score;
   }
 
   public float getAverageAggressiveness() {
@@ -200,7 +210,7 @@ public class Society {
     this.societyId = societyId;
   }
 
-  public int getAverageLifeExpectancy() {
+  public float getAverageLifeExpectancy() {
     return averageLifeExpectancy;
   }
 

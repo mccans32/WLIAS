@@ -145,4 +145,32 @@ public class HudObject {
   public ArrayList<HudText> getLines() {
     return lines;
   }
+
+  /**
+   * Destroy the background image and the lines.
+   */
+  public void destroy() {
+    hudImage.destroy();
+    for (HudText line: lines) {
+      line.destroy();
+    }
+    lines.clear();
+  }
+
+  /**
+   * Sets the text.
+   *
+   * @param text the text
+   */
+  public void updateText(Text text) {
+    for (HudText line: lines) {
+      line.destroy();
+    }
+    lines.clear();
+    calculateLines(text, this.hudImage);
+    centerText();
+    for (HudText line: lines) {
+      line.create();
+    }
+  }
 }

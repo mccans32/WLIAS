@@ -1,5 +1,12 @@
 package engine.graphics.renderer;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.newdawn.slick.opengl.renderer.SGL.GL_ONE_MINUS_SRC_ALPHA;
+import static org.newdawn.slick.opengl.renderer.SGL.GL_SRC_ALPHA;
+
 import engine.Window;
 import engine.graphics.Shader;
 import engine.objects.gui.HudImage;
@@ -31,9 +38,20 @@ public class GuiRenderer {
    * @param object the object.
    */
   public void renderObject(HudImage object) {
+    initialise();
     bindObject(object);
     drawObject(object);
     unbindObject();
+    terminate();
+  }
+
+  private void initialise() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  }
+
+  private void terminate() {
+    glDisable(GL_BLEND);
   }
 
   private void bindObject(HudImage object) {
@@ -66,7 +84,7 @@ public class GuiRenderer {
   }
 
   private void setColourOffsetUniform(HudImage object) {
-    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffsetRgb());
+    shader.setUniform("colourOffset", object.getMesh().getMaterial().getColorOffsetRgba());
   }
 
   private void setModelUniform(HudImage object) {
@@ -75,8 +93,8 @@ public class GuiRenderer {
 
         Matrix4f.transform(
             new Vector3f(object.getPosition().getX(), object.getPosition().getY(), 0f),
-            new Vector3f(DEFAULT_ROTATION.getX(), DEFAULT_ROTATION.getY(), 0),
-            new Vector3f(1, 1, 1)));
+            object.getRotation(),
+            new Vector3f(object.getScale(), 1)));
   }
 
   protected void setProjectionUniform() {

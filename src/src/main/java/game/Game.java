@@ -29,8 +29,6 @@ public class Game {
   static final String FRAGMENT_SHADER = "mainFragment.glsl";
   static final String GUI_VERTEX_SHADER = "guiVertex.glsl";
   static final String GUI_FRAGMENT_SHADER = "guiFragment.glsl";
-  static final String TEXT_VERTEX_SHADER = "textVertex.glsl";
-  static final String TEXT_FRAGMENT_SHADER = "textFragment.glsl";
   static final String BACKGROUND_SHADER = "backgroundVertex.glsl";
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
@@ -39,13 +37,9 @@ public class Game {
   private static GuiRenderer backgroundRenderer;
   private static Source musicSource;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
-  /**
-   * The Window.
-   */
   private Window window;
   private Shader worldShader;
   private Shader guiShader;
-  private Shader textShader;
   private Shader backgroundShader;
 
   public static GameState getState() {
@@ -70,7 +64,6 @@ public class Game {
     window.destroy();
     worldShader.destroy();
     guiShader.destroy();
-    textShader.destroy();
     backgroundShader.destroy();
     musicSource.destroy();
     AudioMaster.cleanUp();
@@ -94,9 +87,6 @@ public class Game {
         SHADERS_PATH + FRAGMENT_DIRECTORY + GUI_FRAGMENT_SHADER);
     backgroundShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + BACKGROUND_SHADER,
         SHADERS_PATH + FRAGMENT_DIRECTORY + GUI_FRAGMENT_SHADER);
-    // Initialise Text Shader
-    textShader = new Shader(SHADERS_PATH + VERTEX_DIRECTORY + TEXT_VERTEX_SHADER,
-        SHADERS_PATH + FRAGMENT_DIRECTORY + TEXT_FRAGMENT_SHADER);
     // Create main window
     window = new Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TILE);
 
@@ -111,8 +101,6 @@ public class Game {
     // Create Hud Shader
     guiShader.create();
     // Create Text Shader
-    textShader.create();
-    // Create Background Shader
     backgroundShader.create();
     // Create the Main Menu
     // init Audio
@@ -133,10 +121,10 @@ public class Game {
     } else { // state == GameState.GAME
       // Update The Dev Hud
       Hud.updateDevHud(camera);
+      // Update the Hud
+      Hud.update(window);
       // Update The World
       World.update(window, camera);
-      // Update the Hud
-      Hud.update();
       if (state == GameState.GAME_PAUSE) {
         //update the Pause Menu
         PauseMenu.update(window, camera);
@@ -153,7 +141,7 @@ public class Game {
     } else { // state == GameState.GAME;
       // Render world objects
       World.render(worldRenderer, camera, window);
-      // Render all game objects
+      // Render all hud elements
       Hud.render(guiRenderer, textRenderer);
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
@@ -172,7 +160,7 @@ public class Game {
     musicSource = new Source();
     musicSource.setRelative(true);
     musicSource.setLooping(true);
-    musicSource.setGain(0.02f);
+    musicSource.setGain(0.01f);
     int musicBuffer =
         AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
     musicSource.playSound(musicBuffer);

@@ -268,5 +268,4 @@ public class HudText {
     verticesArray = ListUtils.vertex3DListToArray(verticesList);
     indicesArray = ListUtils.integerListToIntArray(indices);
   }
-
 }

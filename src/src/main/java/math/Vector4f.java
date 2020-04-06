@@ -39,6 +39,10 @@ public class Vector4f extends Vector3f {
     return vectorW;
   }
 
+  public void setW(float vectorW) {
+    this.vectorW = vectorW;
+  }
+
   @Override
   public String toString() {
     return "(" + vectorX + ", " + vectorY + ", " + vectorZ + ", " + vectorW + ")";
