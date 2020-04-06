@@ -164,7 +164,11 @@ public class World {
     button_lock = max(0, button_lock);
     if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (button_lock == 0)) {
       button_lock = BUTTON_LOCK_CYCLES;
-      if (Game.getState() == GameState.GAME_MAIN) {
+      // close inspection panel if currently open
+      if (Hud.isSocietyPanelActive() || Hud.isTerrainPanelActive()) {
+        Hud.setSocietyPanelActive(false);
+        Hud.setTerrainPanelActive(false);
+      } else if (Game.getState() == GameState.GAME_MAIN) {
         PauseMenu.pauseGame(window, camera);
       } else {
         PauseMenu.unpauseGame(camera);

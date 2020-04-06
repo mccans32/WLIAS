@@ -72,6 +72,23 @@ public class Hud {
   private static boolean societyPanelActive = false;
   private static ButtonObject closeButton;
   private static ArrayList<HudImage> panelBorders = new ArrayList<>();
+  private static boolean mouseOverHud = false;
+
+  public static boolean isTerrainPanelActive() {
+    return terrainPanelActive;
+  }
+
+  public static void setTerrainPanelActive(boolean terrainPanelActive) {
+    Hud.terrainPanelActive = terrainPanelActive;
+  }
+
+  public static boolean isSocietyPanelActive() {
+    return societyPanelActive;
+  }
+
+  public static void setSocietyPanelActive(boolean societyPanelActive) {
+    Hud.societyPanelActive = societyPanelActive;
+  }
 
   /**
    * Create the Hud Elements and reset the variables for if a player restarts a new world.
@@ -92,6 +109,7 @@ public class Hud {
    * @param window the window
    */
   public static void update(Window window) {
+    mouseOverHud = false;
     hudCycleLock--;
     hudCycleLock = Math.max(hudCycleLock, 0);
     resize();
@@ -108,6 +126,7 @@ public class Hud {
     // check for button click
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && closeButton.isMouseOver(window)) {
       // close the panel
+      mouseOverHud = true;
       terrainPanelActive = false;
       societyPanelActive = false;
     }
@@ -115,7 +134,7 @@ public class Hud {
 
   private static void updateTerrainPanel() {
     if (MousePicker.getCurrentSelected() != null
-        && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+        && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !mouseOverHud) {
       terrainPanelActive = true;
       societyPanelActive = false;
       // update the text
@@ -143,6 +162,7 @@ public class Hud {
       // Check if clicked
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && hudCycleLock == 0
           && arrowButton.isMouseOver(window)) {
+        mouseOverHud = true;
         hudCycleLock = BUTTON_LOCK_CYCLES;
         updateTurnCounter();
         // TODO Fix this bug
@@ -158,6 +178,7 @@ public class Hud {
       arrowButton.setActiveColourOffset(ARROW_DISABLE_COLOUR);
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
           && hudCycleLock == 0 && arrowButton.isMouseOver(window)) {
+        mouseOverHud = true;
         hudCycleLock = BUTTON_LOCK_CYCLES;
         canNextTurn = true;
       }
@@ -172,6 +193,7 @@ public class Hud {
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
           && societyButtons.get(i).isMouseOver(window) && hudCycleLock == 0) {
         hudCycleLock = BUTTON_LOCK_CYCLES;
+        mouseOverHud = true;
         terrainPanelActive = false;
         societyPanelActive = true;
         // set the text for the panel
