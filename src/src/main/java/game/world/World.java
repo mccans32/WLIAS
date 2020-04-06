@@ -358,21 +358,12 @@ public class World {
   }
 
   private static void playerTurn() {
-    String move = selectMove();
+    String move = checkChoice();
+    drawChoiceButtons();
+    assert move != null;
     if (move.equals("war")) {
       warMove();
     }
-  }
-
-  private static String selectMove() {
-    drawChoiceButtons();
-    boolean selected = false;
-    String move = null;
-    while (!selected) {
-      move = checkChoice();
-      selected = true;
-    }
-    return move;
   }
 
   private static String checkChoice() {
@@ -384,6 +375,49 @@ public class World {
   }
 
   private static void warMove() {
+    Society warTarget = null;
+    drawPopUp("Select your move");
+    TileWorldObject playerTile = selectTile("player");
+    TileWorldObject opponentTile = selectTile("opponent");
+    for (Society society : societies) {
+      if (society.getTerritory().contains(opponentTile)) {
+        warTarget = society;
+      }
+    }
+    simulateBattle(societies[0], warTarget, playerTile, opponentTile);
+  }
 
+  private static void simulateBattle(Society playerSociety, Society warTarget, TileWorldObject playerTile, TileWorldObject opponentTile) {
+    float playerAttack = calcAttack(playerSociety);
+    float opponentAttack = calcAttack(warTarget);
+    if (playerAttack > opponentAttack) {
+      warTarget.getTerritory().remove(opponentTile);
+      playerSociety.claimTile(opponentTile);
+      drawPopUp("Victory");
+    } else if (playerAttack < opponentAttack) {
+      playerSociety.getTerritory().remove(playerTile);
+      warTarget.claimTile(playerTile);
+      drawPopUp("Defeat");
+    }
+  }
+
+  private static float calcAttack(Society currentSociety) {
+    float populationModifier = currentSociety.getPopulation().size();
+    float productionModifier = currentSociety.getAverageProductivity();
+    float aggressivenessModifier = currentSociety.getAverageAggressiveness();
+    return populationModifier * productionModifier * aggressivenessModifier;
+  }
+
+  private static TileWorldObject selectTile(String currentPlayer) {
+    // Highlight player / opponent tiles and allow to select. Return the selected tile
+    if (currentPlayer.equals("player")) {
+      return societies[0].getTerritory().get(0);
+    } else {
+      return societies[1].getTerritory().get(0);
+    }
+  }
+
+  private static void drawPopUp(String select_your_move) {
+    // draw box which says select Tile you wish to invade
   }
 }
