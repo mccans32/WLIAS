@@ -29,6 +29,7 @@ import map.tiles.AridTile;
 import map.tiles.FertileTile;
 import map.tiles.WaterTile;
 import math.Vector3f;
+import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
 import society.Society;
@@ -536,7 +537,7 @@ public class Hud {
   }
 
   private static String calculateSocietyPanelString(Society society) {
-    String startPadding = " \n".repeat(3);
+    String startPadding = StringUtils.repeat(" \n", 3);
     String linePadding = "\n \n";
     return String.format("%9$s Society Id: %d %10$s Population: %d %10$s Food: %d "
             + "%10$s Raw Material: %d %10$s Territory Size: %d %10$s Average Aggressiveness: %.2f "
@@ -548,7 +549,7 @@ public class Hud {
   }
 
   private static String calculateTerrainPanelString(TileWorldObject tile) {
-    String startPadding = "\n ".repeat(12);
+    String startPadding = StringUtils.repeat("\n ", 12);
     String linePadding = "\n \n";
     // Calculate the tile type
     String tileType;
