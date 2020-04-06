@@ -55,6 +55,7 @@ public class Hud {
   private static Text societyPanelText = new Text("", 0.5f);
   private static Text terrainPanelText = new Text("", 0.5f);
   private static Text panelTitleText = new Text("Inspection Panel", 0.8f);
+  private static HudImage terrainTileImage;
   private static HudText coordinates;
   private static Boolean devHudActive = false;
   private static int hudCycleLock = 0;
@@ -119,10 +120,12 @@ public class Hud {
       societyPanelActive = false;
       // update the text
       String panelString = calculateTerrainPanelString(MousePicker.getCurrentSelected());
-      System.out.println(panelString);
       terrainPanelText.setString(panelString);
       terrainPanelText.setShouldWrap(true);
       terrainInspectionPanel.updateText(terrainPanelText);
+      // update Terrain Panel Image
+      Image terrainPanelImage = MousePicker.getCurrentSelected().getTile().getImage();
+      terrainTileImage.getMesh().getMaterial().setImage(terrainPanelImage);
     }
   }
 
@@ -299,6 +302,12 @@ public class Hud {
     panelTitle = new HudText(panelTitleText, edgeX, 0, edgeY, offsetY + height / 2f);
     panelTitle.setOffsetX(borderSize + (width / 2f) - (panelTitle.getWidth() / 2f));
     panelTitle.create();
+    // create the terrainTileImage
+    float terrainTileSize = 0.2f;
+    RectangleModel terrainTileModel = new RectangleModel(terrainTileSize, terrainTileSize);
+    RectangleMesh terrainTileMesh = new RectangleMesh(terrainTileModel, new Material());
+    terrainTileImage = new HudImage(terrainTileMesh, edgeX, borderSize + width / 2, 0, height / 4);
+    terrainTileImage.create();
   }
 
   private static void renderInspectionPanel(GuiRenderer guiRenderer, TextRenderer textRenderer) {
@@ -307,6 +316,7 @@ public class Hud {
       societyInspectionPanel.render(guiRenderer, textRenderer);
       shouldRender = true;
     } else if (terrainPanelActive) {
+      terrainTileImage.render(guiRenderer);
       terrainInspectionPanel.render(guiRenderer, textRenderer);
       shouldRender = true;
     }
@@ -467,6 +477,7 @@ public class Hud {
       border.reposition();
     }
     panelTitle.reposition();
+    terrainTileImage.reposition();
   }
 
   private static void calculateCoordText(Camera camera) {
@@ -499,6 +510,7 @@ public class Hud {
     }
     panelBorders.clear();
     panelTitle.destroy();
+    terrainTileImage.destroy();
   }
 
   private static String calculateSocietyPanelString(Society society) {
@@ -514,7 +526,7 @@ public class Hud {
   }
 
   private static String calculateTerrainPanelString(TileWorldObject tile) {
-    String startPadding = "\n ".repeat(7);
+    String startPadding = "\n ".repeat(12);
     String linePadding = "\n \n";
     // Calculate the tile type
     String tileType;
