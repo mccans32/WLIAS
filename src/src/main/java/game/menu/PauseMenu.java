@@ -30,6 +30,7 @@ public class PauseMenu {
   private static ButtonObject resumeButton;
   private static ButtonObject exitButton;
   private static final ButtonObject[] buttons = new ButtonObject[2];
+  private static GameState previousState;
 
   /**
    * Create the objects for the pause menu.
@@ -105,14 +106,15 @@ public class PauseMenu {
    * @param window the window
    * @param camera the camera
    */
-  public static void pauseGame(Window window, Camera camera) {
+  public static void pauseGame(Window window, Camera camera, GameState state) {
+    previousState = state;
     Game.setState(GameState.GAME_PAUSE);
     window.unlockMouse();
     camera.freeze();
   }
 
   public static void unpauseGame(Camera camera) {
-    Game.setState(GameState.GAME_MAIN);
+    Game.setState(previousState);
     camera.unfreeze();
   }
 
