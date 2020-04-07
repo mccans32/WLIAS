@@ -1,5 +1,7 @@
 package game;
 
+import static java.lang.Math.max;
+
 import engine.Window;
 import engine.audio.AudioMaster;
 import engine.audio.Source;
@@ -7,6 +9,7 @@ import engine.graphics.Shader;
 import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.renderer.WorldRenderer;
+import engine.io.Input;
 import engine.objects.world.Camera;
 import game.menu.ChoiceMenu;
 import game.menu.MainMenu;
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import math.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import society.Society;
 
 /**
@@ -35,12 +39,14 @@ public class Game {
   static final String GUI_VERTEX_SHADER = "guiVertex.glsl";
   static final String GUI_FRAGMENT_SHADER = "guiFragment.glsl";
   static final String BACKGROUND_SHADER = "backgroundVertex.glsl";
+  private static final int BUTTON_LOCK_CYCLES = 20;
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
   private static TextRenderer textRenderer;
   private static GuiRenderer backgroundRenderer;
   private static Source musicSource;
+  private static int buttonLock = BUTTON_LOCK_CYCLES;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   private Window window;
   private Shader worldShader;
@@ -144,22 +150,38 @@ public class Game {
     camera.update(window);
     window.update();
 
+    executeEscapeKeyFunctionality();
+
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
-    } else { // state == GameState.GAME
+    } else if (state == GameState.GAME_PAUSE) {
+      PauseMenu.update(window, camera);
+    } else if (state == GameState.GAME_CHOICE) {
+      ChoiceMenu.update(window);
+    } else {
       // Update The Dev Hud
       Hud.updateDevHud(camera);
       // Update the Hud
       Hud.update(window);
       // Update The World
       World.update(window, camera);
-      if (state == GameState.GAME_PAUSE) {
-        //update the Pause Menu
-        PauseMenu.update(window, camera);
-      }
-      if (state == GameState.GAME_CHOICE) {
-        // Update the Choice menu buttons
-        ChoiceMenu.update(window);
+    }
+  }
+
+  private void executeEscapeKeyFunctionality() {
+    // check for game pause
+    buttonLock--;
+    buttonLock = max(0, buttonLock);
+    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (buttonLock == 0)) {
+      buttonLock = BUTTON_LOCK_CYCLES;
+      // close inspection panel if currently open
+      if (Hud.isSocietyPanelActive() || Hud.isTerrainPanelActive()) {
+        Hud.setSocietyPanelActive(false);
+        Hud.setTerrainPanelActive(false);
+      } else if (Game.getState() == GameState.GAME_PAUSE) {
+        PauseMenu.unpauseGame(camera);
+      } else {
+        PauseMenu.pauseGame(window, camera, state);
       }
     }
   }

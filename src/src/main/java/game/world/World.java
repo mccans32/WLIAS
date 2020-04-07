@@ -162,23 +162,6 @@ public class World {
    * @param window the window
    */
   public static void update(Window window, Camera camera) {
-    // check for game pause
-    button_lock--;
-    button_lock = max(0, button_lock);
-    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (button_lock == 0)) {
-      button_lock = BUTTON_LOCK_CYCLES;
-      // close inspection panel if currently open
-      if (Hud.isSocietyPanelActive() || Hud.isTerrainPanelActive()) {
-        Hud.setSocietyPanelActive(false);
-        Hud.setTerrainPanelActive(false);
-      }
-      if (Game.getState() == GameState.GAME_PAUSE) {
-        PauseMenu.unpauseGame(camera);
-      } else {
-        PauseMenu.pauseGame(window, camera, Game.getState());
-      }
-    }
-
     if (Game.getState() == GameState.GAME_MAIN) {
       AudioMaster.setListener(camera.getPosition());
       updateBorders(window);

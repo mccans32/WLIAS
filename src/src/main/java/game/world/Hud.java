@@ -114,12 +114,10 @@ public class Hud {
     hudCycleLock--;
     hudCycleLock = Math.max(hudCycleLock, 0);
     resize();
-    if (Game.getState() != GameState.GAME_PAUSE) {
-      updateTerrainPanel();
-      updateSocietyButtons(window);
-      updateArrowButton(window);
-      updatePanelCloseButton(window);
-    }
+    updateTerrainPanel();
+    updateSocietyButtons(window);
+    updateArrowButton(window);
+    updatePanelCloseButton(window);
   }
 
   private static void updatePanelCloseButton(Window window) {
