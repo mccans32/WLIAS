@@ -13,7 +13,11 @@ import game.menu.MainMenu;
 import game.menu.PauseMenu;
 import game.world.Hud;
 import game.world.World;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import math.Vector3f;
+import society.Society;
 
 /**
  * The type Game.
@@ -73,11 +77,29 @@ public class Game {
   private void gameLoop() {
     System.out.println("This is the Game Loop\n");
     while (!window.shouldClose()) {
-      System.out.println(state);
-      update();
-      render();
-      if (state == GameState.GAME_MAIN) {
-        World.calcMoves();
+      // Main game loop where each turn is being decided
+      if (World.getSocieties().length > 0) {
+        // generates a random turn order of all the societies in play
+        List<Society> turnOrder = Arrays.asList(World.getSocieties());
+        Collections.shuffle(turnOrder);
+        // cycles thorough all societies in play
+        for (Society society : turnOrder) {
+          // set the end turn flag to false
+          society.setEndTurn(false);
+          // update and render the screen until the society finishes its move
+          // or the simulation closes
+          while (!society.isEndTurn() && !window.shouldClose()) {
+            if (society.getSocietyId() != 0) {
+              World.aiTurn(society);
+            }
+            update();
+            render();
+          }
+        }
+      } else {
+        // updating and rendering of the main menu.
+        update();
+        render();
       }
     }
   }
@@ -136,7 +158,8 @@ public class Game {
         PauseMenu.update(window, camera);
       }
       if (state == GameState.GAME_CHOICE) {
-        ChoiceMenu.update(window, camera);
+        // Update the Choice menu buttons
+        ChoiceMenu.update(window);
       }
     }
   }
@@ -145,6 +168,9 @@ public class Game {
    * Render.
    */
   public void render() {
+    if (state == GameState.GAME_CHOICE) {
+      ChoiceMenu.render(guiRenderer, textRenderer);
+    }
     if (state == GameState.MAIN_MENU) {
       MainMenu.render(guiRenderer, textRenderer, backgroundRenderer);
     } else { // state == GameState.GAME;
@@ -155,9 +181,6 @@ public class Game {
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
         PauseMenu.render(guiRenderer, textRenderer);
-      }
-      if (state == GameState.GAME_CHOICE) {
-        ChoiceMenu.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();

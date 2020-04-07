@@ -23,6 +23,7 @@ public class Society {
   private float averageAggressiveness;
   private float averageProductivity;
   private int score;
+  private boolean endTurn = false;
 
   /**
    * Instantiates a new Society.
@@ -52,6 +53,14 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public boolean isEndTurn() {
+    return endTurn;
+  }
+
+  public void setEndTurn(boolean endTurn) {
+    this.endTurn = endTurn;
   }
 
   public int getScore() {

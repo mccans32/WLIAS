@@ -17,11 +17,9 @@ import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
+import game.menu.ChoiceMenu;
 import game.menu.PauseMenu;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 import map.MapGeneration;
 import map.tiles.AridTile;
@@ -68,7 +66,7 @@ public class World {
   private static Vector4f overlayColour = new Vector4f(new Vector3f(1, 1, 1), 0.5f);
   private static Material selectOverlayMaterial = new Material(selectOverlayImage, overlayColour);
   private static boolean bordersAltered = false;
-  private static Society[] societies;
+  private static Society[] societies = new Society[] {};
   private static RectangleModel tileModel;
   private static int turnCounter;
   private static Window gameWindow;
@@ -369,11 +367,16 @@ public class World {
     selectOverlay.destroy();
     // Destroy Overlay
     selectOverlay.destroy();
+    ChoiceMenu.destroy();
   }
+
+  /**
+   * PART OF A DIFFERENT TICKET
+   * War move.
+   */
 
   public static void warMove() {
     Society warTarget = null;
-    drawPopUp("Select your move");
     TileWorldObject playerTile = selectTile("player");
     TileWorldObject opponentTile = selectTile("opponent");
     for (Society society : societies) {
@@ -382,9 +385,13 @@ public class World {
       }
     }
     simulateBattle(societies[0], warTarget, playerTile, opponentTile);
+    societies[0].setEndTurn(true);
+    Game.setState(GameState.GAME_MAIN);
   }
 
-  private static void simulateBattle(Society playerSociety, Society warTarget, TileWorldObject playerTile, TileWorldObject opponentTile) {
+  // PART OF A DIFFERENT TICKET
+  private static void simulateBattle(Society playerSociety, Society warTarget,
+                                     TileWorldObject playerTile, TileWorldObject opponentTile) {
     float playerAttack = calcAttack(playerSociety);
     float opponentAttack = calcAttack(warTarget);
     if (playerAttack > opponentAttack) {
@@ -398,6 +405,7 @@ public class World {
     }
   }
 
+  // PART OF A DIFFERENT TICKET
   private static float calcAttack(Society currentSociety) {
     float populationModifier = currentSociety.getPopulation().size();
     float productionModifier = currentSociety.getAverageProductivity();
@@ -405,6 +413,7 @@ public class World {
     return populationModifier + productionModifier + aggressivenessModifier;
   }
 
+  // PART OF A DIFFERENT TICKET
   private static TileWorldObject selectTile(String currentPlayer) {
     // Highlight player / opponent tiles and allow to select. Return the selected tile
     if (currentPlayer.equals("player")) {
@@ -414,36 +423,34 @@ public class World {
     }
   }
 
+  // PART OF A DIFFERENT TICKET
   private static void drawPopUp(String textOnPopUp) {
     // draw box which says select Tile you wish to invade
   }
 
+  /**
+   * Claim tile move.
+   */
   public static void claimTileMove() {
+    societies[0].setEndTurn(true);
+    Game.setState(GameState.GAME_MAIN);
 
   }
 
   public static void tradeMove() {
-
+    societies[0].setEndTurn(true);
+    Game.setState(GameState.GAME_MAIN);
   }
 
   public static void nothingMove() {
-
+    societies[0].setEndTurn(true);
+    Game.setState(GameState.GAME_MAIN);
   }
 
-
-  public static void calcMoves() {
-    List<Society> turnOrder = Arrays.asList(World.getSocieties());
-    Collections.shuffle(turnOrder);
-    for (Society currentSociety : turnOrder) {
-      if (currentSociety.getSocietyId() == 0) {
-        Game.setState(GameState.GAME_CHOICE);
-      } else {
-        Game.setState(GameState.GAME_MAIN);
-      }
-    }
+  // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
+  public static void aiTurn(Society society) {
+    society.setEndTurn(true);
+    Game.setState(GameState.GAME_MAIN);
   }
 
-  private static void AiTurn() {
-
-  }
 }

@@ -172,6 +172,8 @@ public class Hud {
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
         canNextTurn = false;
         arrowCounter = 0;
+        // Set the state to Game Choice to start the move select process
+        Game.setState(GameState.GAME_CHOICE);
       }
     } else {
       // Reset Y-Offset and Reset Colours
