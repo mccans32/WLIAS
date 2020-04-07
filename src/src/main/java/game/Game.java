@@ -168,9 +168,6 @@ public class Game {
    * Render.
    */
   public void render() {
-    if (state == GameState.GAME_CHOICE) {
-      ChoiceMenu.render(guiRenderer, textRenderer);
-    }
     if (state == GameState.MAIN_MENU) {
       MainMenu.render(guiRenderer, textRenderer, backgroundRenderer);
     } else { // state == GameState.GAME;
@@ -181,6 +178,9 @@ public class Game {
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
         PauseMenu.render(guiRenderer, textRenderer);
+      }
+      if (state == GameState.GAME_CHOICE) {
+        ChoiceMenu.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();
