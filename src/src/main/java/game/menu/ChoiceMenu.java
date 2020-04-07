@@ -95,6 +95,7 @@ public class ChoiceMenu {
     for (ButtonObject choiceButton : choiceButtons) {
       choiceButton.destroy();
     }
+    choiceButtons.clear();
   }
 
 
