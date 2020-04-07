@@ -98,6 +98,9 @@ public class MainMenu {
         // Create the Pause Menu
         PauseMenu.create();
         PauseMenu.update(window, camera);
+        // Create the Choice Menu
+        ChoiceMenu.create();
+        ChoiceMenu.update(window, camera);
         // Create the World
         World.create(window, camera);
         World.update(window, camera);

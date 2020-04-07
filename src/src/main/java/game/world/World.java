@@ -71,6 +71,7 @@ public class World {
   private static Society[] societies;
   private static RectangleModel tileModel;
   private static int turnCounter;
+  private static Window gameWindow;
   private static int totalClaimedTiles = 0;
 
   public static RectangleModel getTileModel() {
@@ -87,6 +88,7 @@ public class World {
    * @param camera the camera
    */
   public static void create(Window window, Camera camera) {
+    gameWindow = window;
     create(window, camera, DEFAULT_NUMBER_OF_SOCIETIES);
   }
 
@@ -190,18 +192,13 @@ public class World {
    * @param window the window
    */
   public static void updateBorders(Window window) {
-    // TODO REMOVE AFTER SHOWING TO ALISTAIR
-    if (turnCounter < 100) {
-      turnCounter += 1;
-    } else {
-      for (Society society : societies) {
-        ArrayList<TileWorldObject> claimableTerritory = society.calculateClaimableTerritory();
-        if (!claimableTerritory.isEmpty()) {
-          society.claimTile(claimableTerritory.get(genRandomInt(claimableTerritory.size())));
-        }
-        bordersAltered = true;
-        turnCounter = 0;
+    for (Society society : societies) {
+      ArrayList<TileWorldObject> claimableTerritory = society.calculateClaimableTerritory();
+      if (!claimableTerritory.isEmpty()) {
+        society.claimTile(claimableTerritory.get(genRandomInt(claimableTerritory.size())));
       }
+      bordersAltered = true;
+      turnCounter = 0;
     }
     updateSocietyBorders();
     MousePicker.update(window, worldMap);
@@ -374,40 +371,7 @@ public class World {
     selectOverlay.destroy();
   }
 
-  public static void calcMoves() {
-    List<Society> turnOrder = Arrays.asList(societies);
-    Collections.shuffle(turnOrder);
-    for (Society currentSociety : turnOrder) {
-      if (currentSociety.getSocietyId() == 0) {
-        playerTurn();
-      } else {
-        AiTurn();
-      }
-    }
-  }
-
-  private static void AiTurn() {
-
-  }
-
-  private static void playerTurn() {
-    String move = checkChoice();
-    drawChoiceButtons();
-    assert move != null;
-    if (move.equals("war")) {
-      warMove();
-    }
-  }
-
-  private static String checkChoice() {
-    return null;
-  }
-
-  private static void drawChoiceButtons() {
-
-  }
-
-  private static void warMove() {
+  public static void warMove() {
     Society warTarget = null;
     drawPopUp("Select your move");
     TileWorldObject playerTile = selectTile("player");
@@ -438,7 +402,7 @@ public class World {
     float populationModifier = currentSociety.getPopulation().size();
     float productionModifier = currentSociety.getAverageProductivity();
     float aggressivenessModifier = currentSociety.getAverageAggressiveness();
-    return populationModifier * productionModifier * aggressivenessModifier;
+    return populationModifier + productionModifier + aggressivenessModifier;
   }
 
   private static TileWorldObject selectTile(String currentPlayer) {
@@ -450,7 +414,36 @@ public class World {
     }
   }
 
-  private static void drawPopUp(String select_your_move) {
+  private static void drawPopUp(String textOnPopUp) {
     // draw box which says select Tile you wish to invade
+  }
+
+  public static void claimTileMove() {
+
+  }
+
+  public static void tradeMove() {
+
+  }
+
+  public static void nothingMove() {
+
+  }
+
+
+  public static void calcMoves() {
+    List<Society> turnOrder = Arrays.asList(World.getSocieties());
+    Collections.shuffle(turnOrder);
+    for (Society currentSociety : turnOrder) {
+      if (currentSociety.getSocietyId() == 0) {
+        Game.setState(GameState.GAME_CHOICE);
+      } else {
+        Game.setState(GameState.GAME_MAIN);
+      }
+    }
+  }
+
+  private static void AiTurn() {
+
   }
 }

@@ -8,6 +8,7 @@ import engine.graphics.renderer.GuiRenderer;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.renderer.WorldRenderer;
 import engine.objects.world.Camera;
+import game.menu.ChoiceMenu;
 import game.menu.MainMenu;
 import game.menu.PauseMenu;
 import game.world.Hud;
@@ -72,11 +73,15 @@ public class Game {
   private void gameLoop() {
     System.out.println("This is the Game Loop\n");
     while (!window.shouldClose()) {
-      World.calcMoves();
+      System.out.println(state);
       update();
       render();
+      if (state == GameState.GAME_MAIN) {
+        World.calcMoves();
+      }
     }
   }
+
 
   private void initialize() {
     System.out.println("Initializing Simulation\n");
@@ -130,6 +135,9 @@ public class Game {
         //update the Pause Menu
         PauseMenu.update(window, camera);
       }
+      if (state == GameState.GAME_CHOICE) {
+        ChoiceMenu.update(window, camera);
+      }
     }
   }
 
@@ -147,6 +155,9 @@ public class Game {
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
         PauseMenu.render(guiRenderer, textRenderer);
+      }
+      if (state == GameState.GAME_CHOICE) {
+        ChoiceMenu.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();
