@@ -114,12 +114,10 @@ public class Hud {
     hudCycleLock--;
     hudCycleLock = Math.max(hudCycleLock, 0);
     resize();
-    if (Game.getState() != GameState.GAME_PAUSE) {
-      updateTerrainPanel();
-      updateSocietyButtons(window);
-      updateArrowButton(window);
-      updatePanelCloseButton(window);
-    }
+    updateTerrainPanel();
+    updateSocietyButtons(window);
+    updateArrowButton(window);
+    updatePanelCloseButton(window);
   }
 
   private static void updatePanelCloseButton(Window window) {
@@ -172,6 +170,8 @@ public class Hud {
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
         canNextTurn = false;
         arrowCounter = 0;
+        // Set the state to Game Choice to start the move select process
+        Game.setState(GameState.GAME_CHOICE);
       }
     } else {
       // Reset Y-Offset and Reset Colours
