@@ -171,10 +171,11 @@ public class World {
       if (Hud.isSocietyPanelActive() || Hud.isTerrainPanelActive()) {
         Hud.setSocietyPanelActive(false);
         Hud.setTerrainPanelActive(false);
-      } else if (Game.getState() == GameState.GAME_MAIN || Game.getState() == GameState.GAME_CHOICE) {
-        PauseMenu.pauseGame(window, camera, Game.getState());
-      } else if (Game.getState() == GameState.GAME_PAUSE) {
+      }
+      if (Game.getState() == GameState.GAME_PAUSE) {
         PauseMenu.unpauseGame(camera);
+      } else {
+        PauseMenu.pauseGame(window, camera, Game.getState());
       }
     }
 
