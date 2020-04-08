@@ -33,7 +33,6 @@ import org.lwjgl.glfw.GLFW;
 import society.Society;
 
 public class World {
-  private static final int BUTTON_LOCK_CYCLES = 20;
   private static final float LOWER_VERTEX_BAND = -0.5f;
   private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
@@ -53,7 +52,6 @@ public class World {
   private static final int PLAIN_MAX_RAW_MATERIALS = 2;
   private static final int WATER_MAX_FOOD_RESOURCE = 1;
   private static final int WATER_MAX_RAW_MATERIALS = 0;
-  private static int button_lock = BUTTON_LOCK_CYCLES;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -365,6 +363,7 @@ public class World {
     // Destroy Overlay
     selectOverlay.destroy();
     ChoiceMenu.destroy();
+    activeSocieties.clear();
   }
 
   /**

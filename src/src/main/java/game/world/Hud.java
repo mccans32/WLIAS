@@ -45,6 +45,10 @@ public class Hud {
   private static final Image PANEL_IMAGE = new Image("/images/hudPanel.png");
   private static final Image SOCIETY_PANEL_IMAGE = new Image("/images/hudPanel2.png");
   private static final Vector3f PANEL_COLOUR = ColourUtils.convertColor(Color.GRAY.brighter());
+  private static final float SOCIETY_BUTTON_WIDTH = 0.4f;
+  private static final float SOCIETY_BUTTON_HEIGHT = 0.1f;
+  private static final float SOCIETY_BUTTON_PADDING = 0.06f;
+  private static final float SOCIETY_BUTTON_OFFSET_Y = (SOCIETY_BUTTON_HEIGHT / 2) + 0.02f;
   private static HudObject turnCounter;
   private static HudObject scoreCounter;
   private static HudObject societyInspectionPanel;
@@ -188,6 +192,7 @@ public class Hud {
   }
 
   private static void updateSocietyButtons(Window window) {
+    purgeButtons();
     for (int i = 0; i < societyButtons.size(); i++) {
       societyButtons.get(i).update(window);
       // check if mouse click
@@ -198,12 +203,52 @@ public class Hud {
         terrainPanelActive = false;
         societyPanelActive = true;
         // set the text for the panel
-        Society society = World.getSocieties()[i];
-        String panelString = calculateSocietyPanelString(society, i);
+        Society society = World.getActiveSocieties().get(i);
+        String panelString = calculateSocietyPanelString(society);
         societyPanelText.setString(panelString);
         societyPanelText.setShouldWrap(true);
         societyInspectionPanel.updateText(societyPanelText);
       }
+    }
+  }
+
+  private static void purgeButtons() {
+    // remove buttons of societies no longer in the game
+    if (World.getActiveSocieties().size() < societyButtons.size()) {
+      ArrayList<ButtonObject> buttonsToRemove = new ArrayList<>();
+      for (ButtonObject button : societyButtons) {
+        String buttonString = button.getLines().get(0).getText().getString();
+        if (!buttonString.equals("Your Society")) {
+          // It is an AI society
+          int buttonNumber = Integer.parseInt(buttonString.split(" ")[1]);
+          boolean found = false;
+          for (Society society : World.getActiveSocieties()) {
+            if (society.getSocietyId() + 1 == buttonNumber) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            buttonsToRemove.add(button);
+          }
+        } else {
+          // Check if player society is active
+          if (!World.getActiveSocieties().contains(World.getSocieties()[0])) {
+            buttonsToRemove.add(societyButtons.get(0));
+          }
+        }
+      }
+      // Remove the buttons
+      for (ButtonObject button : buttonsToRemove) {
+        societyButtons.remove(button);
+      }
+      // Reposition the buttons
+      for (int i = 0; i < societyButtons.size(); i++) {
+        float offsetX = calculateSocietyButtonXOffset(societyButtons.size(), i + 1);
+        societyButtons.get(i).getHudImage().setOffsetX(offsetX);
+      }
+      // Resize the panelBackground
+      createSocietyButtonPanel();
     }
   }
 
@@ -375,14 +420,9 @@ public class Hud {
   }
 
   private static void createSocietyButtons() {
-    // set the dimensions for the buttons
-    float width = 0.4f;
-    float height = 0.1f;
-    float padding = 0.06f;
-    float offsetY = (height / 2) + 0.02f;
     // set the image and the model and create the button
     Image buttonImage = new Image("/images/hudElementBackground.png");
-    RectangleModel buttonModel = new RectangleModel(width, height);
+    RectangleModel buttonModel = new RectangleModel(SOCIETY_BUTTON_WIDTH, SOCIETY_BUTTON_HEIGHT);
     for (int i = 0; i < World.getSocieties().length; i++) {
       Society society = World.getSocieties()[i];
       String societyString;
@@ -391,35 +431,39 @@ public class Hud {
         societyString = "Your Society";
         fontSize = 0.5f;
       } else {
-        societyString = String.format("Society: %d", i + 1);
+        societyString = String.format("Society: %d", society.getSocietyId() + 1);
         fontSize = 0.6f;
       }
       Text societyText = new Text(societyString, fontSize,
           Vector3f.subtract(society.getSocietyColor(), 0.2f));
       societyText.setCentreHorizontal(true);
       societyText.setCentreVertical(true);
-      float xoffset = calculateSocietyButtonXOffset(World.getSocieties().length, width, padding,
-          i + 1);
+      float xoffset = calculateSocietyButtonXOffset(World.getSocieties().length, i + 1);
       RectangleMesh buttonMesh = new RectangleMesh(buttonModel, new Material(buttonImage));
       ButtonObject societyButton = new ButtonObject(buttonMesh, societyText, 0, xoffset,
-          -1, offsetY);
+          -1, SOCIETY_BUTTON_OFFSET_Y);
       // create the button's VAO and VBOs
       societyButton.create();
       // add to the list of societies
       societyButtons.add(societyButton);
     }
+    createSocietyButtonPanel();
+  }
+
+  private static void createSocietyButtonPanel() {
     // create the background panel for the buttons
-    float panelWidth = (width * societyButtons.size()) + (padding * (societyButtons.size()));
-    float panelHeight = height * 1.5f;
+    float panelWidth = (SOCIETY_BUTTON_WIDTH * societyButtons.size())
+        + (SOCIETY_BUTTON_PADDING * (societyButtons.size()));
+    float panelHeight = SOCIETY_BUTTON_HEIGHT * 1.5f;
     RectangleModel panelModel = new RectangleModel(panelWidth, panelHeight);
     Material panelMaterial = new Material(SOCIETY_PANEL_IMAGE, PANEL_COLOUR);
     RectangleMesh panelMesh = new RectangleMesh(panelModel, panelMaterial);
-    societyButtonPanel = new HudImage(panelMesh, 0, 0, -1, offsetY);
+    societyButtonPanel = new HudImage(panelMesh, 0, 0, -1, SOCIETY_BUTTON_OFFSET_Y);
     societyButtonPanel.create();
   }
 
-  private static float calculateSocietyButtonXOffset(int amount, float width, float padding,
-                                                     int number) {
+
+  private static float calculateSocietyButtonXOffset(int amount, int number) {
     // determine if odd or even
     int amountSide = amount / 2;
     int amountCenter;
@@ -432,25 +476,24 @@ public class Hud {
     // Should go on left side
     if (number <= amountSide) {
       // compensate for center if amount is odd
-      offset = -(amountCenter * ((width / 2) + (padding / 2)));
+      offset = -(amountCenter * ((SOCIETY_BUTTON_WIDTH / 2) + (SOCIETY_BUTTON_PADDING / 2)));
       // find how far to place left
       int difference = amountSide - number;
-      offset = offset - (difference * (padding + width));
+      offset = offset - (difference * (SOCIETY_BUTTON_PADDING + SOCIETY_BUTTON_WIDTH));
       // add final amount
-      offset = offset - (padding / 2) - (width / 2);
+      offset = offset - (SOCIETY_BUTTON_PADDING / 2) - (SOCIETY_BUTTON_WIDTH / 2);
     } else if (number == amountSide + amountCenter) {
       // place a button in the center
       offset = 0;
     } else {
       // place buttons to the right
-      offset = amountCenter * ((width / 2) + (padding / 2));
+      offset = amountCenter * ((SOCIETY_BUTTON_WIDTH / 2) + (SOCIETY_BUTTON_PADDING / 2));
       // find how far to place right
       int difference = number - (amountSide + amountCenter + 1);
-      offset = offset + (difference * (padding + width));
+      offset = offset + (difference * (SOCIETY_BUTTON_PADDING + SOCIETY_BUTTON_WIDTH));
       // add final amount
-      offset = offset + (padding / 2) + (width / 2);
+      offset = offset + (SOCIETY_BUTTON_PADDING / 2) + (SOCIETY_BUTTON_WIDTH / 2);
     }
-
     return offset;
   }
 
@@ -536,12 +579,12 @@ public class Hud {
     terrainTileImage.destroy();
   }
 
-  private static String calculateSocietyPanelString(Society society, int index) {
+  private static String calculateSocietyPanelString(Society society) {
     String societyString;
-    if (index == 0) {
+    if (society.getSocietyId() == 0) {
       societyString = "Your Society";
     } else {
-      societyString = "Society " + (index + 1);
+      societyString = "Society " + (society.getSocietyId() + 1);
     }
     String startPadding = StringUtils.repeat(" \n", 3);
     String linePadding = "\n \n";
