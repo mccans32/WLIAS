@@ -1,7 +1,6 @@
 package society.person;
 
 import society.Society;
-import society.person.dataobjects.Gender;
 import society.person.dataobjects.SocietyOpinion;
 
 public class Person {
@@ -22,10 +21,9 @@ public class Person {
   /**
    * Instantiates a new Person.
    *
-   * @param id     the id
-   * @param gender the gender
+   * @param id the id
    */
-  public Person(int id, Gender gender) {
+  public Person(int id) {
     this.id = id;
     this.health = MAX_HEALTH;
     this.age = 0;
