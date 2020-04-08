@@ -24,6 +24,7 @@ public class ChoiceMenu {
   private static final float BUTTON_HEIGHT = 0.1f;
   private static final float BUTTON_PADDING = 0.06f;
   private static final float BUTTON_OFFSET_Y = (BUTTON_HEIGHT / 2) + 0.5f;
+  private static final float HINT_GAP = 0.05f;
   private static HudText choiceHint;
   private static ArrayList<ButtonObject> choiceButtons = new ArrayList<>();
 
@@ -63,6 +64,7 @@ public class ChoiceMenu {
     Text choiceText = new Text(choiceHintString);
     choiceHint = new HudText(choiceText, 0, 0, 0, 0);
     choiceHint.setOffsetX(-(choiceHint.getWidth() / 2f));
+    choiceHint.setOffsetY(BUTTON_OFFSET_Y + BUTTON_HEIGHT + HINT_GAP);
     choiceHint.create();
   }
 
