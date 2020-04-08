@@ -273,13 +273,10 @@ public class Society {
 
   private void generateInitialPopulation(int initialPopulationSize) {
     population = new ArrayList<>();
-    Gender[] genderList = Gender.class.getEnumConstants();
-    population.add(new Person(0, Gender.FEMALE));
-    population.add(new Person(1, Gender.MALE));
+    population.add(new Person(0));
+    population.add(new Person(1));
     for (personIdCounter = 2; personIdCounter < initialPopulationSize; personIdCounter++) {
-      Random r = new Random();
-      int randomIndex = r.nextInt(genderList.length);
-      population.add(new Person(personIdCounter, genderList[randomIndex]));
+      population.add(new Person(personIdCounter));
     }
   }
 
