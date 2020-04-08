@@ -166,7 +166,7 @@ public class World {
    */
   public static void update(Window window, Camera camera) {
     AudioMaster.setListener(camera.getPosition());
-    if (Game.getState() == GameState.GAME_MAIN) {
+    if (Game.getState() == GameState.GAME_MAIN || Game.getState() == GameState.GAME_OVER) {
       updateBorders(window);
     } else if (Game.getState() == GameState.WARRING) {
       if (attackingTile == null) {

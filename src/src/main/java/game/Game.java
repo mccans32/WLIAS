@@ -12,6 +12,7 @@ import engine.graphics.renderer.WorldRenderer;
 import engine.io.Input;
 import engine.objects.world.Camera;
 import game.menu.ChoiceMenu;
+import game.menu.GameOverMenu;
 import game.menu.MainMenu;
 import game.menu.PauseMenu;
 import game.world.Hud;
@@ -153,24 +154,37 @@ public class Game {
 
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
-    } else if (state == GameState.GAME_PAUSE) {
-      PauseMenu.update(window, camera);
-    } else if (state == GameState.GAME_CHOICE) {
-      // Update The Dev Hud
-      Hud.updateDevHud(camera);
-      // Update the Hud
-      Hud.update(window);
-      // Update The World
-      World.update(window, camera);
-      // Update Choice Menu
-      ChoiceMenu.update(window);
     } else {
-      // Update The Dev Hud
-      Hud.updateDevHud(camera);
-      // Update the Hud
-      Hud.update(window);
-      // Update The World
-      World.update(window, camera);
+      checkGameOver();
+      if (state == GameState.GAME_PAUSE) {
+        PauseMenu.update(window, camera);
+      } else if (state == GameState.GAME_CHOICE) {
+        // Update The Dev Hud
+        Hud.updateDevHud(camera);
+        // Update the Hud
+        Hud.update(window);
+        // Update The World
+        World.update(window, camera);
+        // Update Choice Menu
+        ChoiceMenu.update(window);
+      } else {
+        // Update The Dev Hud
+        Hud.updateDevHud(camera);
+        // Update the Hud
+        Hud.update(window);
+        // Update The World
+        World.update(window, camera);
+        if (state == GameState.GAME_OVER) {
+          GameOverMenu.update(window, camera);
+        }
+      }
+    }
+  }
+
+  private void checkGameOver() {
+    if (!World.getActiveSocieties().contains(World.getSocieties()[0])) {
+      // The Player's Society is not present in the active societies
+      state = GameState.GAME_OVER;
     }
   }
 
@@ -206,9 +220,10 @@ public class Game {
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
         PauseMenu.render(guiRenderer, textRenderer);
-      }
-      if (state == GameState.GAME_CHOICE) {
+      } else if (state == GameState.GAME_CHOICE) {
         ChoiceMenu.render(guiRenderer, textRenderer);
+      } else if (state == GameState.GAME_OVER) {
+        GameOverMenu.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();

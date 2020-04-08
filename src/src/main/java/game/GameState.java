@@ -5,5 +5,6 @@ public enum GameState {
   GAME_MAIN,
   GAME_PAUSE,
   GAME_CHOICE,
-  WARRING
+  WARRING,
+  GAME_OVER
 }
