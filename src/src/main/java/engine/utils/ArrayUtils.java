@@ -3,7 +3,7 @@ package engine.utils;
 import engine.graphics.Vertex3D;
 import java.util.List;
 
-public class ListUtils {
+public class ArrayUtils {
 
   /**
    * Vertex 3 d list to array vertex 3 d [ ].
