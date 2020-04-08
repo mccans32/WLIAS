@@ -10,6 +10,7 @@ import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
 import engine.io.Input;
 import engine.objects.gui.ButtonObject;
+import engine.objects.gui.HudText;
 import engine.utils.ColourUtils;
 import game.world.World;
 import java.awt.Color;
@@ -17,9 +18,13 @@ import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 
 public class ChoiceMenu {
-
   private static final String[] CHOICE_BUTTON_NAMES = new String[] {"Start War", "Claim Tile",
       "Start Trade", "Nothing"};
+  private static final float BUTTON_WIDTH = 0.44f;
+  private static final float BUTTON_HEIGHT = 0.1f;
+  private static final float BUTTON_PADDING = 0.06f;
+  private static final float BUTTON_OFFSET_Y = (BUTTON_HEIGHT / 2) + 0.5f;
+  private static HudText choiceHint;
   private static ArrayList<ButtonObject> choiceButtons = new ArrayList<>();
 
   /**
@@ -32,10 +37,12 @@ public class ChoiceMenu {
     for (ButtonObject choiceButton : choiceButtons) {
       choiceButton.render(guiRenderer, textRenderer);
     }
+    choiceHint.render(textRenderer);
   }
 
   public static void create() {
     createChoiceButtons();
+    createChoiceHint();
   }
 
   /**
@@ -49,7 +56,14 @@ public class ChoiceMenu {
     for (ButtonObject choiceButton : choiceButtons) {
       choiceButton.update(window);
     }
-    World.updateBorders(window);
+  }
+
+  private static void createChoiceHint() {
+    String choiceHintString = "Please Select A Move";
+    Text choiceText = new Text(choiceHintString);
+    choiceHint = new HudText(choiceText, 0, 0, 0, 0);
+    choiceHint.setOffsetX(-(choiceHint.getWidth() / 2f));
+    choiceHint.create();
   }
 
   private static void checkChoiceButtonClick(Window window) {
@@ -87,6 +101,7 @@ public class ChoiceMenu {
     for (ButtonObject choiceButton : choiceButtons) {
       choiceButton.reposition();
     }
+    choiceHint.reposition();
   }
 
   /**
@@ -97,6 +112,7 @@ public class ChoiceMenu {
       choiceButton.destroy();
     }
     choiceButtons.clear();
+    choiceHint.destroy();
   }
 
 
@@ -104,13 +120,8 @@ public class ChoiceMenu {
    * Create choice buttons.
    */
   public static void createChoiceButtons() {
-    // set dimensions for the choice buttons
-    float width = 0.44f;
-    float height = 0.1f;
-    float padding = 0.06f;
-    float offsetY = (height / 2) + 0.5f;
     // set the model for the choice buttons
-    RectangleModel choiceButtonModel = new RectangleModel(width, height);
+    RectangleModel choiceButtonModel = new RectangleModel(BUTTON_WIDTH, BUTTON_HEIGHT);
     // bind the image for the buttons
     Image buttonImage = new Image("/images/hudElementBackground.png");
     // cycle thorough all the button names available
@@ -119,14 +130,13 @@ public class ChoiceMenu {
       Text choiceButtonText = new Text(CHOICE_BUTTON_NAMES[i], 0.6f,
           ColourUtils.convertColor(Color.BLACK), true, true, true);
       // calculate the offset for the individual button
-      float xoffset = calculateChoiceButtonOffset(CHOICE_BUTTON_NAMES.length,
-          width, padding, i + 1);
+      float xoffset = calculateChoiceButtonOffset(CHOICE_BUTTON_NAMES.length, i + 1);
       // create the mesh for teh individual button
       RectangleMesh choiceButtonMesh = new RectangleMesh(choiceButtonModel,
           new Material(buttonImage));
       // create the button object
       ButtonObject choiceButton = new ButtonObject(choiceButtonMesh, choiceButtonText,
-          0, xoffset, 0f, offsetY);
+          0, xoffset, 0f, BUTTON_OFFSET_Y);
       // create the button and bind it
       choiceButton.create();
       // add the created button to a list of choice buttons
@@ -134,8 +144,7 @@ public class ChoiceMenu {
     }
   }
 
-  private static float calculateChoiceButtonOffset(int amount, float width, float padding,
-                                                   int number) {
+  private static float calculateChoiceButtonOffset(int amount, int number) {
     // determine if odd or even
     int amountSide = amount / 2;
     int amountCenter;
@@ -148,23 +157,23 @@ public class ChoiceMenu {
     // Should go on left side
     if (number <= amountSide) {
       // compensate for center if amount is odd
-      offset = -(amountCenter * ((width / 2) + (padding / 2)));
+      offset = -(amountCenter * ((BUTTON_WIDTH / 2) + (BUTTON_PADDING / 2)));
       // find how far to place left
       int difference = amountSide - number;
-      offset = offset - (difference * (padding + width));
+      offset = offset - (difference * (BUTTON_PADDING + BUTTON_WIDTH));
       // add final amount
-      offset = offset - (padding / 2) - (width / 2);
+      offset = offset - (BUTTON_PADDING / 2) - (BUTTON_WIDTH / 2);
     } else if (number == amountSide + amountCenter) {
       // place a button in the center
       offset = 0;
     } else {
       // place buttons to the right
-      offset = amountCenter * ((width / 2) + (padding / 2));
+      offset = amountCenter * ((BUTTON_WIDTH / 2) + (BUTTON_PADDING / 2));
       // find how far to place right
       int difference = number - (amountSide + amountCenter + 1);
-      offset = offset + (difference * (padding + width));
+      offset = offset + (difference * (BUTTON_PADDING + BUTTON_WIDTH));
       // add final amount
-      offset = offset + (padding / 2) + (width / 2);
+      offset = offset + (BUTTON_PADDING / 2) + (BUTTON_WIDTH / 2);
     }
 
     return offset;
