@@ -16,9 +16,8 @@ import game.menu.MainMenu;
 import game.menu.PauseMenu;
 import game.world.Hud;
 import game.world.World;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import society.Society;
@@ -84,9 +83,9 @@ public class Game {
     System.out.println("This is the Game Loop\n");
     while (!window.shouldClose()) {
       // Main game loop where each turn is being decided
-      if (World.getSocieties().length > 0) {
+      if (World.getActiveSocieties().size() > 0) {
         // generates a random turn order of all the societies in play
-        List<Society> turnOrder = Arrays.asList(World.getSocieties());
+        ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
         Collections.shuffle(turnOrder);
         // cycles thorough all societies in play
         for (Society society : turnOrder) {
