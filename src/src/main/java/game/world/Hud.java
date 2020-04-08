@@ -78,6 +78,7 @@ public class Hud {
   private static ButtonObject closeButton;
   private static ArrayList<HudImage> panelBorders = new ArrayList<>();
   private static boolean mouseOverHud = false;
+  private static HudText hint;
 
   public static boolean isTerrainPanelActive() {
     return terrainPanelActive;
@@ -122,6 +123,23 @@ public class Hud {
     updateSocietyButtons(window);
     updateArrowButton(window);
     updatePanelCloseButton(window);
+    updateHint();
+  }
+
+  private static void updateHint() {
+    String hintString = null;
+    if (Game.getState() == GameState.WARRING) {
+      if (World.getAttackingTile() == null) {
+        hintString = "Select an Attacking Tile";
+      } else if (World.getOpponentTile() == null) {
+        hintString = "Select an Opponent's Tile to Attack";
+      }
+    }
+    if (!hint.getText().getString().equals(hintString) && hintString != null) {
+      Text hintText = new Text(hintString);
+      hint.setText(hintText);
+      hint.setOffsetX(-(hint.getWidth() / 2));
+    }
   }
 
   private static void updatePanelCloseButton(Window window) {
@@ -302,6 +320,14 @@ public class Hud {
     createTurnButton();
     // create Society Inspection Panel
     createInspectionPanels();
+    // CreateHint
+    createHint();
+  }
+
+  private static void createHint() {
+    Text hintText = new Text("", 1f, ColourUtils.convertColor(Color.GRAY));
+    hint = new HudText(hintText, 0, 0, 1, -0.2f);
+    hint.create();
   }
 
   private static void createInspectionPanels() {
@@ -520,6 +546,9 @@ public class Hud {
       coordinates.render(textRenderer);
     }
     renderInspectionPanel(guiRenderer, textRenderer);
+    if (Game.getState() == GameState.WARRING) {
+      hint.render(textRenderer);
+    }
   }
 
   /**
@@ -544,6 +573,7 @@ public class Hud {
     }
     panelTitle.reposition();
     terrainTileImage.reposition();
+    hint.reposition();
   }
 
   private static void calculateCoordText(Camera camera) {
@@ -577,6 +607,7 @@ public class Hud {
     panelBorders.clear();
     panelTitle.destroy();
     terrainTileImage.destroy();
+    hint.destroy();
   }
 
   private static String calculateSocietyPanelString(Society society) {

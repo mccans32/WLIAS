@@ -90,7 +90,7 @@ public class Camera {
     float differenceY = (newMouseY - oldMouseY) * MOUSE_SENSITIVITY;
 
     //Adjust camera rotation
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT)) {
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_MIDDLE)) {
       window.lockMouse();
       rotation = Vector3f.add(rotation, new Vector3f(-differenceY, 0, -differenceX));
       // Ensure X rotation stays within the limits so that we can't loop around.

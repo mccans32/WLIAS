@@ -151,6 +151,14 @@ public class World {
     renderer.renderTileBorders(temp, camera);
   }
 
+  public static TileWorldObject getAttackingTile() {
+    return attackingTile;
+  }
+
+  public static TileWorldObject getOpponentTile() {
+    return opponentTile;
+  }
+
   /**
    * Update the world including the openAl listener.
    *
