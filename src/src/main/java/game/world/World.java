@@ -17,6 +17,7 @@ import game.Game;
 import game.GameState;
 import game.menu.ChoiceMenu;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import map.MapGeneration;
 import map.tiles.AridTile;
@@ -64,6 +65,7 @@ public class World {
   private static Material selectOverlayMaterial = new Material(selectOverlayImage, overlayColour);
   private static boolean bordersAltered = false;
   private static Society[] societies = new Society[] {};
+  private static ArrayList<Society> activeSocieties = new ArrayList<>();
   private static RectangleModel tileModel;
   private static TileWorldObject attackingTile;
   private static TileWorldObject opponentTile;
@@ -111,13 +113,14 @@ public class World {
     for (int i = 0; i < numberOfSocieties; i++) {
       Society society = new Society(i, BASIC_SOCIETY_COLORS[i]);
       societies[i] = society;
+      activeSocieties.add(society);
       boolean claimed = false;
       while (!claimed) {
         int row = genRandomInt(worldMap[0].length - 2, 1);
         int column = genRandomInt(worldMap[0].length - 2, 1);
         if (!worldMap[row][column].isClaimed()
             && !(worldMap[row][column].getTile() instanceof WaterTile)) {
-          societies[i].claimTile(worldMap[row][column]);
+          activeSocieties.get(i).claimTile(worldMap[row][column]);
           bordersAltered = true;
           claimed = true;
         }
@@ -142,7 +145,7 @@ public class World {
 
   private static void renderBorder(WorldRenderer renderer, Camera camera) {
     ArrayList<GameObject> temp = new ArrayList<>();
-    for (Society society : societies) {
+    for (Society society : activeSocieties) {
       for (TileWorldObject worldTile : society.getTerritory()) {
         temp.add(worldTile.getBorderObject());
       }
@@ -397,9 +400,23 @@ public class World {
       }
     }
     playerSociety.setEndTurn(true);
+    purgeSocieties();
     Game.setState(GameState.GAME_MAIN);
   }
 
+  private static void purgeSocieties() {
+    List<Society> societiesToRemove = new ArrayList<>();
+    // Find Societies to remove if any
+    for (Society society : activeSocieties) {
+      if (society.getTerritory().size() < 1) {
+        societiesToRemove.add(society);
+      }
+    }
+    // Remove the societies
+    for (Society society : societiesToRemove) {
+      activeSocieties.remove(society);
+    }
+  }
 
   private static float calcAttack(Society currentSociety, TileWorldObject worldTile) {
     float populationModifier = currentSociety.getPopulation().size();
@@ -434,4 +451,7 @@ public class World {
     Game.setState(GameState.GAME_MAIN);
   }
 
+  public static ArrayList<Society> getActiveSocieties() {
+    return activeSocieties;
+  }
 }
