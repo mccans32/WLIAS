@@ -1,7 +1,5 @@
 package game.world;
 
-import static java.lang.Math.max;
-
 import engine.Window;
 import engine.audio.AudioMaster;
 import engine.graphics.Material;
@@ -18,8 +16,8 @@ import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
 import game.menu.ChoiceMenu;
-import game.menu.PauseMenu;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import map.MapGeneration;
 import map.tiles.AridTile;
@@ -68,6 +66,8 @@ public class World {
   private static boolean bordersAltered = false;
   private static Society[] societies = new Society[] {};
   private static RectangleModel tileModel;
+  private static TileWorldObject attackingTile;
+  private static TileWorldObject opponentTile;
   private static int turnCounter;
   private static Window gameWindow;
   private static int totalClaimedTiles = 0;
@@ -157,14 +157,38 @@ public class World {
   }
 
   /**
-   * Update the world including the openGL listener.
+   * Update the world including the openAl listener.
    *
    * @param window the window
    */
   public static void update(Window window, Camera camera) {
+    AudioMaster.setListener(camera.getPosition());
     if (Game.getState() == GameState.GAME_MAIN) {
-      AudioMaster.setListener(camera.getPosition());
       updateBorders(window);
+    } else if (Game.getState() == GameState.WARRING) {
+      if (attackingTile == null) {
+        MousePicker.update(window, societies[0].getSocietyWarringTiles());
+        updateSelectOverlay();
+        attackingTile = selectWorldTile(societies[0].getSocietyWarringTiles());
+      } else if (opponentTile == null) {
+        MousePicker.update(window, societies[0].getOpponentWarringTiles());
+        updateSelectOverlay();
+        opponentTile = selectWorldTile(societies[0].getOpponentWarringTiles());
+      } else {
+        simulateBattle(societies[0], attackingTile, opponentTile);
+        attackingTile = null;
+        opponentTile = null;
+      }
+    }
+  }
+
+  private static TileWorldObject selectWorldTile(ArrayList<TileWorldObject> worldTiles) {
+    if (MousePicker.getCurrentSelected() != null
+        && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
+        && worldTiles.contains(MousePicker.getCurrentSelected())) {
+      return MousePicker.getCurrentSelected();
+    } else {
+      return null;
     }
   }
 
@@ -174,14 +198,6 @@ public class World {
    * @param window the window
    */
   public static void updateBorders(Window window) {
-    for (Society society : societies) {
-      ArrayList<TileWorldObject> claimableTerritory = society.calculateClaimableTerritory();
-      if (!claimableTerritory.isEmpty()) {
-        society.claimTile(claimableTerritory.get(genRandomInt(claimableTerritory.size())));
-      }
-      bordersAltered = true;
-      turnCounter = 0;
-    }
     updateSocietyBorders();
     MousePicker.update(window, worldMap);
     updateSelectOverlay();
@@ -359,52 +375,42 @@ public class World {
    */
 
   public static void warMove() {
+    societies[0].calculateWarringTiles();
+    if (!societies[0].getOpponentWarringTiles().isEmpty()) {
+      Game.setState(GameState.WARRING);
+    }
+  }
+
+  private static void simulateBattle(Society playerSociety,
+                                     TileWorldObject playerTile, TileWorldObject opponentTile) {
     Society warTarget = null;
-    TileWorldObject playerTile = selectTile("player");
-    TileWorldObject opponentTile = selectTile("opponent");
     for (Society society : societies) {
       if (society.getTerritory().contains(opponentTile)) {
         warTarget = society;
       }
     }
-    simulateBattle(societies[0], warTarget, playerTile, opponentTile);
-    societies[0].setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
-  }
-
-  private static void simulateBattle(Society playerSociety, Society warTarget,
-                                     TileWorldObject playerTile, TileWorldObject opponentTile) {
-    float playerAttack = calcAttack(playerSociety);
-    float opponentAttack = calcAttack(warTarget);
+    float playerAttack = calcAttack(playerSociety, playerTile);
+    float opponentAttack = calcAttack(warTarget, opponentTile);
     if (playerAttack > opponentAttack) {
       warTarget.getTerritory().remove(opponentTile);
       playerSociety.claimTile(opponentTile);
-      drawPopUp("Victory");
+      bordersAltered = true;
     } else if (playerAttack < opponentAttack) {
       playerSociety.getTerritory().remove(playerTile);
       warTarget.claimTile(playerTile);
-      drawPopUp("Defeat");
+      bordersAltered = true;
     }
+    playerSociety.setEndTurn(true);
+    Game.setState(GameState.GAME_MAIN);
   }
 
-  private static float calcAttack(Society currentSociety) {
+
+  private static float calcAttack(Society currentSociety, TileWorldObject worldTile) {
     float populationModifier = currentSociety.getPopulation().size();
     float productionModifier = currentSociety.getAverageProductivity();
     float aggressivenessModifier = currentSociety.getAverageAggressiveness();
-    return populationModifier + productionModifier + aggressivenessModifier;
-  }
-
-  private static TileWorldObject selectTile(String currentPlayer) {
-    // Highlight player / opponent tiles and allow to select. Return the selected tile
-    if (currentPlayer.equals("player")) {
-      return societies[0].getTerritory().get(0);
-    } else {
-      return societies[1].getTerritory().get(0);
-    }
-  }
-
-  private static void drawPopUp(String textOnPopUp) {
-    // draw box which says select Tile you wish to invade
+    float tileModifier = worldTile.getTile().getAttackModifier();
+    return populationModifier + productionModifier + aggressivenessModifier + tileModifier;
   }
 
   /**

@@ -133,7 +133,7 @@ public class Hud {
 
   private static void updateTerrainPanel() {
     if (MousePicker.getCurrentSelected() != null
-        && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !mouseOverHud) {
+        && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && !mouseOverHud) {
       terrainPanelActive = true;
       societyPanelActive = false;
       // update the text

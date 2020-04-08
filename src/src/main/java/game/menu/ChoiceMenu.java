@@ -49,6 +49,7 @@ public class ChoiceMenu {
     for (ButtonObject choiceButton : choiceButtons) {
       choiceButton.update(window);
     }
+    World.updateBorders(window);
   }
 
   private static void checkChoiceButtonClick(Window window) {
@@ -107,7 +108,7 @@ public class ChoiceMenu {
     float width = 0.44f;
     float height = 0.1f;
     float padding = 0.06f;
-    float offsetY = (height / 2);
+    float offsetY = (height / 2) + 0.5f;
     // set the model for the choice buttons
     RectangleModel choiceButtonModel = new RectangleModel(width, height);
     // bind the image for the buttons

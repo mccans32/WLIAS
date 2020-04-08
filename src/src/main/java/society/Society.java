@@ -19,7 +19,9 @@ public class Society {
   private int totalFoodResource = 0;
   private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
-  private ArrayList<TileWorldObject> claimableTerritory;
+  private ArrayList<TileWorldObject> claimableTerritory = new ArrayList<>();
+  private ArrayList<TileWorldObject> opponentWarringTiles = new ArrayList<>();
+  private ArrayList<TileWorldObject> societyWarringTiles = new ArrayList<>();
   private float averageAggressiveness;
   private float averageProductivity;
   private int score;
@@ -53,6 +55,22 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public ArrayList<TileWorldObject> getOpponentWarringTiles() {
+    return opponentWarringTiles;
+  }
+
+  public void setOpponentWarringTiles(ArrayList<TileWorldObject> opponentWarringTiles) {
+    this.opponentWarringTiles = opponentWarringTiles;
+  }
+
+  public ArrayList<TileWorldObject> getSocietyWarringTiles() {
+    return societyWarringTiles;
+  }
+
+  public void setSocietyWarringTiles(ArrayList<TileWorldObject> societyWarringTiles) {
+    this.societyWarringTiles = societyWarringTiles;
   }
 
   public boolean isEndTurn() {
@@ -129,7 +147,7 @@ public class Society {
   public void updateBorders(RectangleModel tileModel) {
     calculateResources();
     for (TileWorldObject worldTile : this.territory) {
-      if (worldTile.getBorderMesh() == null) {
+      if (worldTile.getBorderMesh() == null || worldTile.getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
         worldTile.setBorderMesh(this.societyColor, tileModel);
       }
     }
@@ -151,6 +169,7 @@ public class Society {
 
   public void claimTile(TileWorldObject worldTile) {
     worldTile.setClaimed(true);
+    worldTile.setClaimedBy(this);
     this.territory.add(worldTile);
   }
 
@@ -162,11 +181,59 @@ public class Society {
    * Claim tiles.
    */
   public ArrayList<TileWorldObject> calculateClaimableTerritory() {
-    claimableTerritory = new ArrayList<>();
+    claimableTerritory.clear();
     for (TileWorldObject worldTile : territory) {
       addClaimableTiles(worldTile.getRow(), worldTile.getColumn());
     }
     return claimableTerritory;
+  }
+
+  public void calculateWarringTiles() {
+    opponentWarringTiles.clear();
+    societyWarringTiles.clear();
+    for (TileWorldObject worldTile : territory) {
+      addWarringTiles(worldTile.getRow(), worldTile.getColumn());
+    }
+  }
+
+  private void addWarringTiles(int row, int column) {
+    TileWorldObject[][] map = World.getWorldMap();
+    // Check left side of the territory
+    if (map[row][column - 1].isClaimed() & column - 1 != 0 && map[row][column - 1].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+      if (!societyWarringTiles.contains(map[row][column])) {
+        societyWarringTiles.add(map[row][column]);
+      }
+      if (!opponentWarringTiles.add(map[row][column - 1])) {
+        opponentWarringTiles.add(map[row][column - 1]);
+      }
+    }
+    // Check right side of the territory
+    if (map[row][column + 1].isClaimed() & column + 1 != map.length - 1 && map[row][column + 1].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+      if (!societyWarringTiles.contains(map[row][column])) {
+        societyWarringTiles.add(map[row][column]);
+      }
+      if (!opponentWarringTiles.add(map[row][column + 1])) {
+        opponentWarringTiles.add(map[row][column + 1]);
+      }
+    }
+    // Check top of territory
+    if (map[row - 1][column].isClaimed() & row - 1 != 0 && map[row - 1][column].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+      if (!societyWarringTiles.contains(map[row][column])) {
+        societyWarringTiles.add(map[row][column]);
+      }
+      if (!opponentWarringTiles.contains(map[row - 1][column])) {
+        opponentWarringTiles.add(map[row - 1][column]);
+      }
+    }
+    // check bottom of territory
+    if (map[row + 1][column].isClaimed() & row + 1 != map.length - 1 && map[row + 1][column].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+      if (!societyWarringTiles.contains(map[row][column])) {
+        societyWarringTiles.add(map[row][column]);
+      }
+      if (!opponentWarringTiles.contains(map[row + 1][column])) {
+        opponentWarringTiles.add(map[row + 1][column]);
+      }
+    }
   }
 
   private void addClaimableTiles(int row, int column) {

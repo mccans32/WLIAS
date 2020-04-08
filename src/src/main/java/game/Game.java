@@ -157,6 +157,13 @@ public class Game {
     } else if (state == GameState.GAME_PAUSE) {
       PauseMenu.update(window, camera);
     } else if (state == GameState.GAME_CHOICE) {
+      // Update The Dev Hud
+      Hud.updateDevHud(camera);
+      // Update the Hud
+      Hud.update(window);
+      // Update The World
+      World.update(window, camera);
+      // Update Choice Menu
       ChoiceMenu.update(window);
     } else {
       // Update The Dev Hud

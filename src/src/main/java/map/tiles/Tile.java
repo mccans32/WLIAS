@@ -47,4 +47,5 @@ public abstract class Tile {
     return image;
   }
 
+  public abstract float getAttackModifier();
 }
