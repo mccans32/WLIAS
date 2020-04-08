@@ -355,7 +355,6 @@ public class World {
   }
 
   /**
-   * PART OF A DIFFERENT TICKET
    * War move.
    */
 
@@ -373,7 +372,6 @@ public class World {
     Game.setState(GameState.GAME_MAIN);
   }
 
-  // PART OF A DIFFERENT TICKET
   private static void simulateBattle(Society playerSociety, Society warTarget,
                                      TileWorldObject playerTile, TileWorldObject opponentTile) {
     float playerAttack = calcAttack(playerSociety);
@@ -389,7 +387,6 @@ public class World {
     }
   }
 
-  // PART OF A DIFFERENT TICKET
   private static float calcAttack(Society currentSociety) {
     float populationModifier = currentSociety.getPopulation().size();
     float productionModifier = currentSociety.getAverageProductivity();
@@ -397,7 +394,6 @@ public class World {
     return populationModifier + productionModifier + aggressivenessModifier;
   }
 
-  // PART OF A DIFFERENT TICKET
   private static TileWorldObject selectTile(String currentPlayer) {
     // Highlight player / opponent tiles and allow to select. Return the selected tile
     if (currentPlayer.equals("player")) {
@@ -407,7 +403,6 @@ public class World {
     }
   }
 
-  // PART OF A DIFFERENT TICKET
   private static void drawPopUp(String textOnPopUp) {
     // draw box which says select Tile you wish to invade
   }
