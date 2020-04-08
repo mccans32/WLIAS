@@ -147,7 +147,8 @@ public class Society {
   public void updateBorders(RectangleModel tileModel) {
     calculateResources();
     for (TileWorldObject worldTile : this.territory) {
-      if (worldTile.getBorderMesh() == null || worldTile.getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+      if (worldTile.getBorderMesh() == null
+          || worldTile.getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
         worldTile.setBorderMesh(this.societyColor, tileModel);
       }
     }
@@ -167,6 +168,11 @@ public class Society {
     setTotalRawMaterialResource(rawMaterials);
   }
 
+  /**
+   * This society claims a tile.
+   *
+   * @param worldTile the world tile
+   */
   public void claimTile(TileWorldObject worldTile) {
     worldTile.setClaimed(true);
     worldTile.setClaimedBy(this);
@@ -188,6 +194,9 @@ public class Society {
     return claimableTerritory;
   }
 
+  /**
+   * Calculate warring tiles.
+   */
   public void calculateWarringTiles() {
     opponentWarringTiles.clear();
     societyWarringTiles.clear();
@@ -199,7 +208,8 @@ public class Society {
   private void addWarringTiles(int row, int column) {
     TileWorldObject[][] map = World.getWorldMap();
     // Check left side of the territory
-    if (map[row][column - 1].isClaimed() & column - 1 != 0 && map[row][column - 1].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+    if (map[row][column - 1].isClaimed() && column - 1 != 0
+        && map[row][column - 1].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
@@ -208,7 +218,8 @@ public class Society {
       }
     }
     // Check right side of the territory
-    if (map[row][column + 1].isClaimed() & column + 1 != map.length - 1 && map[row][column + 1].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+    if (map[row][column + 1].isClaimed() && column + 1 != map.length - 1
+        && map[row][column + 1].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
@@ -217,7 +228,8 @@ public class Society {
       }
     }
     // Check top of territory
-    if (map[row - 1][column].isClaimed() & row - 1 != 0 && map[row - 1][column].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+    if (map[row - 1][column].isClaimed() && row - 1 != 0
+        && map[row - 1][column].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
@@ -226,7 +238,8 @@ public class Society {
       }
     }
     // check bottom of territory
-    if (map[row + 1][column].isClaimed() & row + 1 != map.length - 1 && map[row + 1][column].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+    if (map[row + 1][column].isClaimed() && row + 1 != map.length - 1
+        && map[row + 1][column].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }

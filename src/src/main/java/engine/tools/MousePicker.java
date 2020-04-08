@@ -81,6 +81,12 @@ public class MousePicker {
     select(map);
   }
 
+  /**
+   * Update the MousePicker.
+   *
+   * @param window the window
+   * @param map    the map
+   */
   public static void update(Window window, ArrayList<TileWorldObject> map) {
     projectionMatrix = window.getProjectionMatrix();
     viewMatrix = Matrix4f.view(camera.getPosition(), camera.getRotation());
@@ -145,7 +151,8 @@ public class MousePicker {
     return selected;
   }
 
-  private static TileWorldObject calculateSelected(Vector3f groundPoint, ArrayList<TileWorldObject> map) {
+  private static TileWorldObject calculateSelected(Vector3f groundPoint,
+                                                   ArrayList<TileWorldObject> map) {
     TileWorldObject selected = null;
     for (TileWorldObject worldTile : map) {
       Vector3f worldTilePos = worldTile.getPosition();

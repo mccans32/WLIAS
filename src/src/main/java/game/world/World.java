@@ -17,7 +17,6 @@ import game.Game;
 import game.GameState;
 import game.menu.ChoiceMenu;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import map.MapGeneration;
 import map.tiles.AridTile;
@@ -68,9 +67,6 @@ public class World {
   private static RectangleModel tileModel;
   private static TileWorldObject attackingTile;
   private static TileWorldObject opponentTile;
-  private static int turnCounter;
-  private static Window gameWindow;
-  private static int totalClaimedTiles = 0;
 
   public static RectangleModel getTileModel() {
     return tileModel;
@@ -86,7 +82,6 @@ public class World {
    * @param camera the camera
    */
   public static void create(Window window, Camera camera) {
-    gameWindow = window;
     create(window, camera, DEFAULT_NUMBER_OF_SOCIETIES);
   }
 
@@ -124,7 +119,6 @@ public class World {
             && !(worldMap[row][column].getTile() instanceof WaterTile)) {
           societies[i].claimTile(worldMap[row][column]);
           bordersAltered = true;
-          totalClaimedTiles++;
           claimed = true;
         }
       }
@@ -389,16 +383,18 @@ public class World {
         warTarget = society;
       }
     }
-    float playerAttack = calcAttack(playerSociety, playerTile);
-    float opponentAttack = calcAttack(warTarget, opponentTile);
-    if (playerAttack > opponentAttack) {
-      warTarget.getTerritory().remove(opponentTile);
-      playerSociety.claimTile(opponentTile);
-      bordersAltered = true;
-    } else if (playerAttack < opponentAttack) {
-      playerSociety.getTerritory().remove(playerTile);
-      warTarget.claimTile(playerTile);
-      bordersAltered = true;
+    if (warTarget != null) {
+      float playerAttack = calcAttack(playerSociety, playerTile);
+      float opponentAttack = calcAttack(warTarget, opponentTile);
+      if (playerAttack > opponentAttack) {
+        warTarget.getTerritory().remove(opponentTile);
+        playerSociety.claimTile(opponentTile);
+        bordersAltered = true;
+      } else if (playerAttack < opponentAttack) {
+        playerSociety.getTerritory().remove(playerTile);
+        warTarget.claimTile(playerTile);
+        bordersAltered = true;
+      }
     }
     playerSociety.setEndTurn(true);
     Game.setState(GameState.GAME_MAIN);
