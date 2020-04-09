@@ -422,8 +422,10 @@ public class World {
   }
 
   public static void tradeMove() {
-    societies[0].setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
+    societies[0].calculatePossibleTradingSocieties();
+    if (!societies[0].getPossibleTradingSocieties().isEmpty()){
+      Game.setState(GameState.TRADING);
+    }
   }
 
   public static void nothingMove() {

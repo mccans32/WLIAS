@@ -24,6 +24,7 @@ public class Society {
   private float averageProductivity;
   private int score;
   private boolean endTurn = false;
+  private ArrayList<Society> possibleTradingSocieties = new ArrayList<>();
 
   /**
    * Instantiates a new Society.
@@ -53,6 +54,14 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public ArrayList<Society> getPossibleTradingSocieties() {
+    return possibleTradingSocieties;
+  }
+
+  public void setPossibleTradingSocieties(ArrayList<Society> possibleTradingSocieties) {
+    this.possibleTradingSocieties = possibleTradingSocieties;
   }
 
   public boolean isEndTurn() {
@@ -229,5 +238,14 @@ public class Society {
 
   private int calculateLifeExpectancy() {
     return 0;
+  }
+
+  public void calculatePossibleTradingSocieties() {
+    for (TileWorldObject worldTile : territory){
+      checkPossibleTrading(worldTile);
+    }
+  }
+
+  private void checkPossibleTrading(TileWorldObject worldTile) {
   }
 }
