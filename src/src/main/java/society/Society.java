@@ -4,10 +4,8 @@ import engine.graphics.model.dimension.two.RectangleModel;
 import engine.objects.world.TileWorldObject;
 import game.world.World;
 import java.util.ArrayList;
-import java.util.Random;
 import math.Vector3f;
 import society.person.Person;
-import society.person.dataobjects.Gender;
 
 public class Society {
   private static final int DEFAULT_POPULATION_SIZE = 10;
@@ -209,7 +207,7 @@ public class Society {
     TileWorldObject[][] map = World.getWorldMap();
     // Check left side of the territory
     if (map[row][column - 1].isClaimed() && column - 1 != 0
-        && map[row][column - 1].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+        && map[row][column - 1].getClaimedBy().getSocietyId() != societyId) {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
@@ -219,7 +217,7 @@ public class Society {
     }
     // Check right side of the territory
     if (map[row][column + 1].isClaimed() && column + 1 != map.length - 1
-        && map[row][column + 1].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+        && map[row][column + 1].getClaimedBy().getSocietyId() != societyId) {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
@@ -229,7 +227,7 @@ public class Society {
     }
     // Check top of territory
     if (map[row - 1][column].isClaimed() && row - 1 != 0
-        && map[row - 1][column].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+        && map[row - 1][column].getClaimedBy().getSocietyId() != societyId) {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
@@ -239,7 +237,7 @@ public class Society {
     }
     // check bottom of territory
     if (map[row + 1][column].isClaimed() && row + 1 != map.length - 1
-        && map[row + 1][column].getBorderMesh().getMaterial().getColorOffsetRgb() != societyColor) {
+        && map[row + 1][column].getClaimedBy().getSocietyId() != societyId) {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
@@ -306,5 +304,10 @@ public class Society {
 
   private int calculateLifeExpectancy() {
     return 0;
+  }
+
+  public void clearWarringLists() {
+    societyWarringTiles.clear();
+    opponentWarringTiles.clear();
   }
 }

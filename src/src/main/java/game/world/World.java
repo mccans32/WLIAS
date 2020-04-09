@@ -407,6 +407,7 @@ public class World {
       }
     }
     playerSociety.setEndTurn(true);
+    playerSociety.clearWarringLists();
     purgeSocieties();
     Game.setState(GameState.GAME_MAIN);
   }
@@ -426,6 +427,7 @@ public class World {
   }
 
   private static float calcAttack(Society currentSociety, TileWorldObject worldTile) {
+    // TODO NORMALISE THESE VALUES FOR THE PURPOSE OF BALANCING
     float populationModifier = currentSociety.getPopulation().size();
     float productionModifier = currentSociety.getAverageProductivity();
     float aggressivenessModifier = currentSociety.getAverageAggressiveness();
