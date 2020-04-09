@@ -16,7 +16,7 @@ public class Camera {
   private static final float MIN_CAMERA_BORDER = 5f;
   private static final float MOUSE_SENSITIVITY = 0.1f;
   private static final float CAMERA_MIN_X_ROTATION = 30;
-  private static final float CAMERA_MAX_X_ROTATION = 90;
+  private static final float CAMERA_MAX_X_ROTATION = 30;
   public FrustumIntersection frustum = new FrustumIntersection();
   private float maxCameraX;
   private float minCameraX;
