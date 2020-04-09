@@ -67,6 +67,7 @@ public class World {
   private static RectangleModel tileModel;
   private static TileWorldObject attackingTile;
   private static TileWorldObject opponentTile;
+  private static TileWorldObject claimedTile;
 
   public static RectangleModel getTileModel() {
     return tileModel;
@@ -168,26 +169,49 @@ public class World {
     AudioMaster.setListener(camera.getPosition());
     updateBorders(window);
     if (Game.getState() == GameState.WARRING) {
-      if (attackingTile == null) {
-        MousePicker.update(window, societies[0].getSocietyWarringTiles());
-        updateSelectOverlay();
-        attackingTile = selectWorldTile(societies[0].getSocietyWarringTiles());
-      } else if (opponentTile == null) {
-        MousePicker.update(window, societies[0].getOpponentWarringTiles());
-        updateSelectOverlay();
-        opponentTile = selectWorldTile(societies[0].getOpponentWarringTiles());
-      } else {
-        simulateBattle(societies[0], attackingTile, opponentTile);
-        attackingTile = null;
-        opponentTile = null;
-      }
+      selectWarTiles(window);
+    } else if (Game.getState() == GameState.CLAIM_TILE) {
+      selectClaimableTile(window);
+    }
+  }
+
+  private static void selectClaimableTile(Window window) {
+    if (claimedTile == null) {
+      MousePicker.update(window, societies[0].getClaimableTerritory());
+      updateSelectOverlay();
+      claimedTile = selectWorldTile(societies[0].getClaimableTerritory());
+    } else {
+      societies[0].claimTile(claimedTile);
+      bordersAltered = true;
+      updateSocietyBorders();
+      claimedTile = null;
+      societies[0].setEndTurn(true);
+      Game.setState(GameState.GAME_MAIN);
+    }
+  }
+
+  private static void selectWarTiles(Window window) {
+    if (attackingTile == null) {
+      MousePicker.update(window, societies[0].getSocietyWarringTiles());
+      updateSelectOverlay();
+      attackingTile = selectWorldTile(societies[0].getSocietyWarringTiles());
+    } else if (opponentTile == null) {
+      MousePicker.update(window, societies[0].getOpponentWarringTiles());
+      updateSelectOverlay();
+      opponentTile = selectWorldTile(societies[0].getOpponentWarringTiles());
+    } else {
+      simulateBattle(societies[0], attackingTile, opponentTile);
+      attackingTile = null;
+      opponentTile = null;
     }
   }
 
   private static TileWorldObject selectWorldTile(ArrayList<TileWorldObject> worldTiles) {
     if (MousePicker.getCurrentSelected() != null
         && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-        && worldTiles.contains(MousePicker.getCurrentSelected())) {
+        && worldTiles.contains(MousePicker.getCurrentSelected())
+        && Game.canClick()) {
+      Game.resetButtonLock();
       return MousePicker.getCurrentSelected();
     } else {
       return null;
@@ -437,9 +461,11 @@ public class World {
    * Claim tile move.
    */
   public static void claimTileMove() {
-    societies[0].setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
-
+    // Calculate claimable tiles
+    societies[0].calculateClaimableTerritory();
+    if (societies[0].getClaimableTerritory() != null) {
+      Game.setState(GameState.CLAIM_TILE);
+    }
   }
 
   public static void tradeMove() {

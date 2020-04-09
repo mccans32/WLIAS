@@ -36,7 +36,6 @@ import society.Society;
 
 public class Hud {
   // Sets a number of game cycles so when we press a button to toggle it is not as sensitive
-  private static final int BUTTON_LOCK_CYCLES = 20;
   private static final Vector3f ARROW_ENABLE_COLOUR = ColourUtils.convertColor(Color.GREEN);
   private static final Vector3f ARROW_ENABLE_HOVER
       = ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN);
@@ -63,7 +62,6 @@ public class Hud {
   private static HudImage terrainTileImage;
   private static HudText coordinates;
   private static Boolean devHudActive = false;
-  private static int hudCycleLock = 0;
   private static int turn = 1;
   private static ArrayList<ButtonObject> societyButtons = new ArrayList<>();
   private static HudImage societyButtonPanel;
@@ -116,8 +114,6 @@ public class Hud {
    */
   public static void update(Window window) {
     mouseOverHud = false;
-    hudCycleLock--;
-    hudCycleLock = Math.max(hudCycleLock, 0);
     resize();
     updateTerrainPanel();
     updateSocietyButtons(window);
@@ -134,6 +130,8 @@ public class Hud {
       } else if (World.getOpponentTile() == null) {
         hintString = "Select an Opponent's Tile to Attack";
       }
+    } else if (Game.getState() == GameState.CLAIM_TILE) {
+      hintString = "Select a Tile to Claim";
     }
     if (!hint.getText().getString().equals(hintString) && hintString != null) {
       Text hintText = new Text(hintString);
@@ -181,10 +179,10 @@ public class Hud {
       float offsetY = arrowButton.getHudImage().getOffsetY();
       arrowButton.getHudImage().setOffsetY(offsetY + newValue);
       // Check if clicked
-      if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && hudCycleLock == 0
+      if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()
           && arrowButton.isMouseOver(window)) {
         mouseOverHud = true;
-        hudCycleLock = BUTTON_LOCK_CYCLES;
+        Game.resetButtonLock();
         updateTurnCounter();
         // TODO Fix this bug
         // If we don't reset here then for some reason the arrow text is overwritten
@@ -200,9 +198,9 @@ public class Hud {
       arrowButton.setInactiveColourOffset(ARROW_DISABLE_COLOUR);
       arrowButton.setActiveColourOffset(ARROW_DISABLE_COLOUR);
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-          && hudCycleLock == 0 && arrowButton.isMouseOver(window)) {
+          && Game.canClick() && arrowButton.isMouseOver(window)) {
         mouseOverHud = true;
-        hudCycleLock = BUTTON_LOCK_CYCLES;
+        Game.resetButtonLock();
         canNextTurn = true;
       }
     }
@@ -215,8 +213,8 @@ public class Hud {
       societyButtons.get(i).update(window);
       // check if mouse click
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-          && societyButtons.get(i).isMouseOver(window) && hudCycleLock == 0) {
-        hudCycleLock = BUTTON_LOCK_CYCLES;
+          && societyButtons.get(i).isMouseOver(window) && Game.canClick()) {
+        Game.resetButtonLock();
         mouseOverHud = true;
         terrainPanelActive = false;
         societyPanelActive = true;
@@ -283,9 +281,9 @@ public class Hud {
    */
   public static void updateDevHud(Camera camera) {
     // check for key press to toggle
-    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && (hudCycleLock == 0)) {
+    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && Game.canClick()) {
       devHudActive = !devHudActive;
-      hudCycleLock = BUTTON_LOCK_CYCLES;
+      Game.resetButtonLock();
     }
     if (devHudActive) {
       calculateCoordText(camera);
@@ -325,7 +323,7 @@ public class Hud {
   }
 
   private static void createHint() {
-    Text hintText = new Text("", 1f, ColourUtils.convertColor(Color.GRAY));
+    Text hintText = new Text("", 1.2f, ColourUtils.convertColor(Color.WHITE));
     hint = new HudText(hintText, 0, 0, 1, -0.2f);
     hint.create();
   }
@@ -546,7 +544,7 @@ public class Hud {
       coordinates.render(textRenderer);
     }
     renderInspectionPanel(guiRenderer, textRenderer);
-    if (Game.getState() == GameState.WARRING) {
+    if (Game.getState() == GameState.WARRING || Game.getState() == GameState.CLAIM_TILE) {
       hint.render(textRenderer);
     }
   }

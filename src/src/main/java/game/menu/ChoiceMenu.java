@@ -12,6 +12,7 @@ import engine.io.Input;
 import engine.objects.gui.ButtonObject;
 import engine.objects.gui.HudText;
 import engine.utils.ColourUtils;
+import game.Game;
 import game.world.World;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class ChoiceMenu {
 
   private static void createChoiceHint() {
     String choiceHintString = "Please Select A Move";
-    Text choiceText = new Text(choiceHintString);
+    Text choiceText = new Text(choiceHintString, 1f, ColourUtils.convertColor(Color.WHITE));
     choiceHint = new HudText(choiceText, 0, 0, 0, 0);
     choiceHint.setOffsetX(-(choiceHint.getWidth() / 2f));
     choiceHint.setOffsetY(BUTTON_OFFSET_Y + BUTTON_HEIGHT + HINT_GAP);
@@ -70,7 +71,8 @@ public class ChoiceMenu {
 
   private static void checkChoiceButtonClick(Window window) {
     // Check if left button is down
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()) {
+      Game.resetButtonLock();
       // cycle thorough all buttons in out list of choice buttons
       for (ButtonObject choiceButton : choiceButtons) {
         // check if the mouse is over the button

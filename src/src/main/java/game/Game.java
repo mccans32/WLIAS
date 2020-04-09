@@ -1,7 +1,5 @@
 package game;
 
-import static java.lang.Math.max;
-
 import engine.Window;
 import engine.audio.AudioMaster;
 import engine.audio.Source;
@@ -61,6 +59,23 @@ public class Game {
     Game.state = state;
   }
 
+  public static int getButtonLock() {
+    return buttonLock;
+  }
+
+  public static boolean canClick() {
+    return buttonLock == 0;
+  }
+
+  public static void resetButtonLock() {
+    buttonLock = BUTTON_LOCK_CYCLES;
+  }
+
+  private static void updateButtonLock() {
+    buttonLock--;
+    buttonLock = Math.max(0, buttonLock);
+  }
+
   /**
    * Start.
    */
@@ -110,7 +125,6 @@ public class Game {
     }
   }
 
-
   private void initialize() {
     System.out.println("Initializing Simulation\n");
     // Initialise the Shader
@@ -147,6 +161,7 @@ public class Game {
    * Update.
    */
   public void update() {
+    updateButtonLock();
     camera.update(window);
     window.update();
 
@@ -189,11 +204,8 @@ public class Game {
   }
 
   private void executeEscapeKeyFunctionality() {
-    // check for game pause
-    buttonLock--;
-    buttonLock = max(0, buttonLock);
-    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && (buttonLock == 0)) {
-      buttonLock = BUTTON_LOCK_CYCLES;
+    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && canClick()) {
+      resetButtonLock();
       // close inspection panel if currently open
       if (Hud.isSocietyPanelActive() || Hud.isTerrainPanelActive()) {
         Hud.setSocietyPanelActive(false);

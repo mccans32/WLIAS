@@ -55,6 +55,10 @@ public class Society {
     return DEFAULT_POPULATION_SIZE;
   }
 
+  public ArrayList<TileWorldObject> getClaimableTerritory() {
+    return claimableTerritory;
+  }
+
   public ArrayList<TileWorldObject> getOpponentWarringTiles() {
     return opponentWarringTiles;
   }
@@ -184,12 +188,11 @@ public class Society {
   /**
    * Claim tiles.
    */
-  public ArrayList<TileWorldObject> calculateClaimableTerritory() {
+  public void calculateClaimableTerritory() {
     claimableTerritory.clear();
     for (TileWorldObject worldTile : territory) {
       addClaimableTiles(worldTile.getRow(), worldTile.getColumn());
     }
-    return claimableTerritory;
   }
 
   /**
