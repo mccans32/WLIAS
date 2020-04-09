@@ -13,31 +13,31 @@ import map.tiles.WaterTile;
  */
 public class MapGeneration {
 
-  /**
-   * The List of tiles.
-   */
-  static final ArrayList<Tile> LIST_OF_TILES = new ArrayList<>();
   private static final int HORIZONTAL_WATER_PADDING = 2;
   private static final int VERTICAL_WATER_PADDING = 2;
   /**
    * The Land mass size x.
    */
-  private static final int DEFAULT_LANDMASS_SIZE_X = 5;
+  private static final int DEFAULT_LANDMASS_SIZE_X = 2;
   /**
    * The Land mass size y.
    */
-  private static final int DEFAULT_LANDMASS_SIZE_Y = 5;
+  private static final int DEFAULT_LANDMASS_SIZE_Y = 2;
   /**
    * The Number of land masses.
    */
-  private static final int DEFAULT_AMOUNT_ARID_TILES = 4;
-  private static final int DEFAULT_AMOUNT_FERTILE_TILES = 4;
-  private static final int DEFAULT_AMOUNT_WATER_TILES = 2;
-  private static final int DEFAULT_AMOUNT_PLAIN_TILES = 15;
+  private static final int DEFAULT_AMOUNT_ARID_TILES = 1;
+  private static final int DEFAULT_AMOUNT_FERTILE_TILES = 2;
+  private static final int DEFAULT_AMOUNT_WATER_TILES = 0;
+  private static final int DEFAULT_AMOUNT_PLAIN_TILES = 1;
   /**
    * The Map of ordered tiles.
    */
   static Tile[][] simulationMap;
+  /**
+   * The List of tiles.
+   */
+  private static ArrayList<Tile> tiles = new ArrayList<>();
   /**
    * The Map size x.
    */
@@ -57,32 +57,8 @@ public class MapGeneration {
   private static int amountOfWaterTiles = DEFAULT_AMOUNT_WATER_TILES;
   private static int amountOfPlainTiles = DEFAULT_AMOUNT_PLAIN_TILES;
 
-  public static int getDefaultLandmassSizeX() {
-    return DEFAULT_LANDMASS_SIZE_X;
-  }
-
-  public static int getDefaultLandmassSizeY() {
-    return DEFAULT_LANDMASS_SIZE_Y;
-  }
-
-  public static int getDefaultAmountAridTiles() {
-    return DEFAULT_AMOUNT_ARID_TILES;
-  }
-
-  public static int getDefaultAmountFertileTiles() {
-    return DEFAULT_AMOUNT_FERTILE_TILES;
-  }
-
-  public static int getDefaultAmountWaterTiles() {
-    return DEFAULT_AMOUNT_WATER_TILES;
-  }
-
-  public static int getDefaultAmountPlainTiles() {
-    return DEFAULT_AMOUNT_PLAIN_TILES;
-  }
-
-  public static ArrayList<Tile> getListOfTiles() {
-    return LIST_OF_TILES;
+  public static ArrayList<Tile> getTiles() {
+    return tiles;
   }
 
   public static Tile[][] getlandMassMap() {
@@ -161,12 +137,13 @@ public class MapGeneration {
    */
   public static void createMap() {
     generateTiles();
-    Collections.shuffle(LIST_OF_TILES);
+    Collections.shuffle(tiles);
     landMassMap = generateLandMass();
     setSimulationMap();
   }
 
   private static void generateTiles() {
+    tiles.clear();
     // stores the amount of tiles that are suppose to be in a land mass
     int reservedNumberOfTiles = landMassSizeX * landMassSizeY;
     // stores the amount of tiles that are provided to us.
@@ -181,22 +158,22 @@ public class MapGeneration {
     // initialise the tiles and add them to a single array
     for (int i = 0; i < amountOfAridTiles; i++) {
       Tile tile = new AridTile();
-      LIST_OF_TILES.add(tile);
+      tiles.add(tile);
     }
 
     for (int i = 0; i < amountOfFertileTiles; i++) {
       Tile tile = new FertileTile();
-      LIST_OF_TILES.add(tile);
+      tiles.add(tile);
     }
 
     for (int i = 0; i < amountOfPlainTiles; i++) {
       Tile tile = new PlainTile();
-      LIST_OF_TILES.add(tile);
+      tiles.add(tile);
     }
 
     for (int i = 0; i < amountOfWaterTiles; i++) {
       Tile tile = new WaterTile();
-      LIST_OF_TILES.add(tile);
+      tiles.add(tile);
     }
 
   }
@@ -268,7 +245,7 @@ public class MapGeneration {
     Tile[][] currentLandMass = new Tile[landMassSizeX][landMassSizeY];
     for (int i = 0; i < landMassSizeY; i++) {
       for (int j = 0; j < landMassSizeX; j++) {
-        currentLandMass[i][j] = LIST_OF_TILES.get(tileCounter);
+        currentLandMass[i][j] = tiles.get(tileCounter);
         tileCounter++;
       }
     }
@@ -317,5 +294,29 @@ public class MapGeneration {
     setAmountOfPlainTiles(DEFAULT_AMOUNT_PLAIN_TILES);
     setAmountOfWaterTiles(DEFAULT_AMOUNT_WATER_TILES);
 
+  }
+
+  public final int getDefaultLandmassSizeX() {
+    return DEFAULT_LANDMASS_SIZE_X;
+  }
+
+  public final int getDefaultLandmassSizeY() {
+    return DEFAULT_LANDMASS_SIZE_Y;
+  }
+
+  public final int getDefaultAmountAridTiles() {
+    return DEFAULT_AMOUNT_ARID_TILES;
+  }
+
+  public final int getDefaultAmountFertileTiles() {
+    return DEFAULT_AMOUNT_FERTILE_TILES;
+  }
+
+  public final int getDefaultAmountWaterTiles() {
+    return DEFAULT_AMOUNT_WATER_TILES;
+  }
+
+  public final int getDefaultAmountPlainTiles() {
+    return DEFAULT_AMOUNT_PLAIN_TILES;
   }
 }

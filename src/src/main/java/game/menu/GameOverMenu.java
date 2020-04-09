@@ -21,48 +21,49 @@ import java.awt.Color;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-public class PauseMenu {
+public class GameOverMenu {
+  private static final int BUTTON_lOCK_CYCLES = 20;
   private static final ButtonObject[] buttons = new ButtonObject[2];
+  private static int buttonCycleLock = BUTTON_lOCK_CYCLES;
+  private static ButtonObject restartButton;
+  private static ButtonObject mainMenuButton;
   private static RectangleModel buttonModel = new RectangleModel(0.75f, 0.3f);
   private static Image buttonImage = new Image("/images/buttonTexture.png");
   private static Vector3f buttonTextColour = new Vector3f(1, 1, 1);
-  private static Text pauseText = new Text("Paused", 2.3f, ColourUtils.convertColor(Color.RED));
-  private static HudText pauseObject = new HudText(pauseText, 0, 0, 1, -0.2f);
-  private static ButtonObject resumeButton;
-  private static ButtonObject exitButton;
-  private static GameState previousState;
+  private static HudText gameOverText;
 
   /**
-   * Create the objects for the pause menu.
+   * Create.
    */
   public static void create() {
-    createButtons();
-    pauseObject.setOffsetX(-(pauseObject.getWidth() / 2f));
-    pauseObject.create();
-  }
-
-  private static void createButtons() {
-    // Create Resume Button
+    // Create RestartButton
     RectangleMesh resumeMesh = new RectangleMesh(buttonModel, new Material(buttonImage));
-    Text resumeText = new Text("Resume", 1.5f, buttonTextColour, true, true, false);
-    resumeButton = new ButtonObject(resumeMesh, resumeText, 0, 0, 1, -0.75f);
-    resumeButton.create();
-    buttons[0] = resumeButton;
+    Text resumeText = new Text("Restart", 1.5f, buttonTextColour, true, true, false);
+    restartButton = new ButtonObject(resumeMesh, resumeText, 0, 0, 1, -0.75f);
+    restartButton.create();
+    buttons[0] = restartButton;
     // Create Exit Button
     RectangleMesh exitMesh = new RectangleMesh(buttonModel, new Material(buttonImage));
     Text exitText = new Text("Main Menu", 1.2f, buttonTextColour, true, true, true);
-    exitButton = new ButtonObject(exitMesh, exitText, 0, 0, -1, 0.75f);
-    exitButton.create();
-    buttons[1] = exitButton;
+    mainMenuButton = new ButtonObject(exitMesh, exitText, 0, 0, -1, 0.75f);
+    mainMenuButton.create();
+    buttons[1] = mainMenuButton;
+    // Create Game Over Text
+    Text text = new Text("Game Over", 2.3f, ColourUtils.convertColor(Color.RED));
+    gameOverText = new HudText(text, 0, 0, 1, -0.2f);
+    gameOverText.setOffsetX(-(gameOverText.getWidth() / 2));
+    gameOverText.create();
   }
 
   /**
-   * Update the objects and their positions and check for button clicks.
+   * Update the Elements.
    *
    * @param window the window
    * @param camera the camera
    */
   public static void update(Window window, Camera camera) {
+    buttonCycleLock--;
+    buttonCycleLock = Math.max(0, buttonCycleLock);
     checkButtonClick(window, camera);
     resize();
     for (ButtonObject button : buttons) {
@@ -70,59 +71,12 @@ public class PauseMenu {
     }
   }
 
-  private static void resize() {
-    pauseObject.reposition();
-    for (ButtonObject button : buttons) {
-      button.reposition();
-    }
-  }
-
-  /**
-   * Render the objects.
-   *
-   * @param guiRenderer  the gui renderer
-   * @param textRenderer the text renderer
-   */
-  public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
-    pauseObject.render(textRenderer);
-    for (ButtonObject button : buttons) {
-      button.render(guiRenderer, textRenderer);
-    }
-  }
-
-  /**
-   * Destroy the objects and remove them form memory.
-   */
-  public static void destroy() {
-    for (ButtonObject button : buttons) {
-      button.destroy();
-    }
-    pauseObject.destroy();
-  }
-
-  /**
-   * Pause the game.
-   *
-   * @param window the window
-   * @param camera the camera
-   */
-  public static void pauseGame(Window window, Camera camera, GameState state) {
-    previousState = state;
-    Game.setState(GameState.GAME_PAUSE);
-    window.unlockMouse();
-    camera.freeze();
-  }
-
-  public static void unpauseGame(Camera camera) {
-    Game.setState(previousState);
-    camera.unfreeze();
-  }
-
   private static void checkButtonClick(Window window, Camera camera) {
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
-      if (resumeButton.isMouseOver(window)) {
-        unpauseGame(camera);
-      } else if (exitButton.isMouseOver(window)) {
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && buttonCycleLock == 0) {
+      buttonCycleLock = BUTTON_lOCK_CYCLES;
+      if (restartButton.isMouseOver(window)) {
+        restartGame(window, camera);
+      } else if (mainMenuButton.isMouseOver(window)) {
         destroy();
         Hud.destroy();
         World.destroy();
@@ -130,5 +84,46 @@ public class PauseMenu {
         MainMenu.create(window, camera);
       }
     }
+  }
+
+  private static void restartGame(Window window, Camera camera) {
+    Game.setState(GameState.GAME_MAIN);
+    Hud.destroy();
+    World.destroy();
+    World.create(window, camera);
+    ChoiceMenu.create();
+    World.update(window, camera);
+    Hud.create();
+  }
+
+  private static void resize() {
+    for (ButtonObject button : buttons) {
+      button.reposition();
+    }
+    gameOverText.reposition();
+  }
+
+  /**
+   * Render the game over Menu.
+   *
+   * @param guiRenderer  the gui renderer
+   * @param textRenderer the text renderer
+   */
+  public static void render(GuiRenderer guiRenderer, TextRenderer textRenderer) {
+    for (ButtonObject button : buttons) {
+      button.render(guiRenderer, textRenderer);
+    }
+    gameOverText.render(textRenderer);
+  }
+
+
+  /**
+   * Destroy the elements.
+   */
+  public static void destroy() {
+    for (ButtonObject button : buttons) {
+      button.destroy();
+    }
+    gameOverText.destroy();
   }
 }

@@ -8,7 +8,7 @@ import math.Vector3f;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class ListUtilsTests {
+public class ArrayUtilsTests {
   private static final Vector3f DEFAULT_POSITION = new Vector3f(0f, 0f, 0f);
   private static ArrayList<ArrayList<Integer>> intLists = new ArrayList<>();
   private static ArrayList<ArrayList<Vertex3D>> vertexLists = new ArrayList<>();
@@ -63,7 +63,7 @@ public class ListUtilsTests {
   @Test
   public void testIntegerList() {
     for (ArrayList<Integer> list : intLists) {
-      int[] array = ListUtils.integerListToIntArray(list);
+      int[] array = ArrayUtils.integerListToIntArray(list);
       assertEquals(list.size(), array.length);
       if (list.size() > 0) {
         for (int i = 0; i < list.size(); i++) {
@@ -78,7 +78,7 @@ public class ListUtilsTests {
   @Test
   public void testVertexList() {
     for (ArrayList<Vertex3D> list : vertexLists) {
-      Vertex3D[] array = ListUtils.vertex3DListToArray(list);
+      Vertex3D[] array = ArrayUtils.vertex3DListToArray(list);
       assertEquals(list.size(), array.length);
       if (list.size() > 0) {
         for (int i = 0; i < list.size(); i++) {

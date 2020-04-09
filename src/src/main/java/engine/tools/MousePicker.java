@@ -3,8 +3,8 @@ package engine.tools;
 import engine.Window;
 import engine.io.Input;
 import engine.objects.world.Camera;
-import engine.objects.world.GameObject;
 import engine.objects.world.TileWorldObject;
+import java.util.ArrayList;
 import math.Matrix4f;
 import math.Vector2f;
 import math.Vector3f;
@@ -81,6 +81,19 @@ public class MousePicker {
     select(map);
   }
 
+  /**
+   * Update the MousePicker.
+   *
+   * @param window the window
+   * @param map    the map
+   */
+  public static void update(Window window, ArrayList<TileWorldObject> map) {
+    projectionMatrix = window.getProjectionMatrix();
+    viewMatrix = Matrix4f.view(camera.getPosition(), camera.getRotation());
+    currentRay = calculateMouseRay(window);
+    select(map);
+  }
+
   public static Vector3f getCurrentRay() {
     return currentRay;
   }
@@ -114,6 +127,11 @@ public class MousePicker {
     currentSelected = calculateSelected(groundPoint, map);
   }
 
+  private static void select(ArrayList<TileWorldObject> map) {
+    Vector3f groundPoint = getGroundPoint(currentRay);
+    currentSelected = calculateSelected(groundPoint, map);
+  }
+
   private static TileWorldObject calculateSelected(Vector3f groundPoint, TileWorldObject[][] map) {
     TileWorldObject selected = null;
     for (TileWorldObject[] row : map) {
@@ -127,6 +145,24 @@ public class MousePicker {
               && (groundPoint.getY() >= tilePos.getY() - tileWidth / 2)) {
             selected = tile;
           }
+        }
+      }
+    }
+    return selected;
+  }
+
+  private static TileWorldObject calculateSelected(Vector3f groundPoint,
+                                                   ArrayList<TileWorldObject> map) {
+    TileWorldObject selected = null;
+    for (TileWorldObject worldTile : map) {
+      Vector3f worldTilePos = worldTile.getPosition();
+      float worldTileHeight = worldTile.getMesh().getModel().getHeight();
+      float worldTileWidth = worldTile.getMesh().getModel().getWidth();
+      if (groundPoint.getX() <= (worldTilePos.getX() + worldTileHeight / 2)
+          && (groundPoint.getX() >= worldTilePos.getX() - worldTileHeight / 2)) {
+        if (groundPoint.getY() <= (worldTilePos.getY() + worldTileWidth / 2)
+            && (groundPoint.getY() >= worldTilePos.getY() - worldTileWidth / 2)) {
+          selected = worldTile;
         }
       }
     }

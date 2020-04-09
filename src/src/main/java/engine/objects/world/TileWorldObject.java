@@ -8,6 +8,7 @@ import engine.graphics.model.dimension.two.RectangleModel;
 import map.tiles.Tile;
 import math.Vector3f;
 import math.Vector4f;
+import society.Society;
 
 public class TileWorldObject extends GameObject {
   private static final float BORDER_ALPHA = 1.5f;
@@ -20,6 +21,7 @@ public class TileWorldObject extends GameObject {
   private int column;
   private int foodResource;
   private int rawMaterialResource;
+  private Society claimedBy;
 
   /**
    * Instantiates a new Tile object.
@@ -112,4 +114,11 @@ public class TileWorldObject extends GameObject {
     return tile;
   }
 
+  public Society getClaimedBy() {
+    return claimedBy;
+  }
+
+  public void setClaimedBy(Society claimedBy) {
+    this.claimedBy = claimedBy;
+  }
 }
