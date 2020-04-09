@@ -163,10 +163,10 @@ public class Game {
         Hud.updateDevHud(camera);
         // Update the Hud
         Hud.update(window);
-        // Update The World
-        World.update(window, camera);
         // Update Choice Menu
         ChoiceMenu.update(window);
+        // Update The World
+        World.update(window, camera);
       } else {
         // Update The Dev Hud
         Hud.updateDevHud(camera);

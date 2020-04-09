@@ -166,9 +166,8 @@ public class World {
    */
   public static void update(Window window, Camera camera) {
     AudioMaster.setListener(camera.getPosition());
-    if (Game.getState() == GameState.GAME_MAIN || Game.getState() == GameState.GAME_OVER) {
-      updateBorders(window);
-    } else if (Game.getState() == GameState.WARRING) {
+    updateBorders(window);
+    if (Game.getState() == GameState.WARRING) {
       if (attackingTile == null) {
         MousePicker.update(window, societies[0].getSocietyWarringTiles());
         updateSelectOverlay();
