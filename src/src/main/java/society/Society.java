@@ -305,9 +305,4 @@ public class Society {
   private int calculateLifeExpectancy() {
     return 0;
   }
-
-  public void clearWarringLists() {
-    societyWarringTiles.clear();
-    opponentWarringTiles.clear();
-  }
 }

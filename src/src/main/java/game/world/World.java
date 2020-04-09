@@ -406,7 +406,6 @@ public class World {
       }
     }
     playerSociety.setEndTurn(true);
-    playerSociety.clearWarringLists();
     purgeSocieties();
     Game.setState(GameState.GAME_MAIN);
   }
