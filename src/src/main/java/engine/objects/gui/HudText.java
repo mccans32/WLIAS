@@ -8,7 +8,7 @@ import engine.graphics.mesh.Mesh;
 import engine.graphics.model.Model;
 import engine.graphics.renderer.TextRenderer;
 import engine.graphics.text.Text;
-import engine.utils.ListUtils;
+import engine.utils.ArrayUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -265,7 +265,7 @@ public class HudText {
     clearArrays();
     createVectors(charWidth, charHeight, numChars, chars);
     createVertices();
-    verticesArray = ListUtils.vertex3DListToArray(verticesList);
-    indicesArray = ListUtils.integerListToIntArray(indices);
+    verticesArray = ArrayUtils.vertex3DListToArray(verticesList);
+    indicesArray = ArrayUtils.integerListToIntArray(indices);
   }
 }

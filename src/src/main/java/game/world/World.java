@@ -1,7 +1,5 @@
 package game.world;
 
-import static java.lang.Math.max;
-
 import engine.Window;
 import engine.audio.AudioMaster;
 import engine.graphics.Material;
@@ -18,8 +16,8 @@ import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
 import game.menu.ChoiceMenu;
-import game.menu.PauseMenu;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import map.MapGeneration;
 import map.tiles.AridTile;
@@ -35,7 +33,6 @@ import org.lwjgl.glfw.GLFW;
 import society.Society;
 
 public class World {
-  private static final int BUTTON_LOCK_CYCLES = 20;
   private static final float LOWER_VERTEX_BAND = -0.5f;
   private static final float UPPER_VERTEX_BAND = 0.5f;
   private static final float DEFAULT_Z = 0;
@@ -55,7 +52,6 @@ public class World {
   private static final int PLAIN_MAX_RAW_MATERIALS = 2;
   private static final int WATER_MAX_FOOD_RESOURCE = 1;
   private static final int WATER_MAX_RAW_MATERIALS = 0;
-  private static int button_lock = BUTTON_LOCK_CYCLES;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -67,10 +63,10 @@ public class World {
   private static Material selectOverlayMaterial = new Material(selectOverlayImage, overlayColour);
   private static boolean bordersAltered = false;
   private static Society[] societies = new Society[] {};
+  private static ArrayList<Society> activeSocieties = new ArrayList<>();
   private static RectangleModel tileModel;
-  private static int turnCounter;
-  private static Window gameWindow;
-  private static int totalClaimedTiles = 0;
+  private static TileWorldObject attackingTile;
+  private static TileWorldObject opponentTile;
 
   public static RectangleModel getTileModel() {
     return tileModel;
@@ -86,7 +82,6 @@ public class World {
    * @param camera the camera
    */
   public static void create(Window window, Camera camera) {
-    gameWindow = window;
     create(window, camera, DEFAULT_NUMBER_OF_SOCIETIES);
   }
 
@@ -116,15 +111,15 @@ public class World {
     for (int i = 0; i < numberOfSocieties; i++) {
       Society society = new Society(i, BASIC_SOCIETY_COLORS[i]);
       societies[i] = society;
+      activeSocieties.add(society);
       boolean claimed = false;
       while (!claimed) {
         int row = genRandomInt(worldMap[0].length - 2, 1);
         int column = genRandomInt(worldMap[0].length - 2, 1);
         if (!worldMap[row][column].isClaimed()
             && !(worldMap[row][column].getTile() instanceof WaterTile)) {
-          societies[i].claimTile(worldMap[row][column]);
+          activeSocieties.get(i).claimTile(worldMap[row][column]);
           bordersAltered = true;
-          totalClaimedTiles++;
           claimed = true;
         }
       }
@@ -148,7 +143,7 @@ public class World {
 
   private static void renderBorder(WorldRenderer renderer, Camera camera) {
     ArrayList<GameObject> temp = new ArrayList<>();
-    for (Society society : societies) {
+    for (Society society : activeSocieties) {
       for (TileWorldObject worldTile : society.getTerritory()) {
         temp.add(worldTile.getBorderObject());
       }
@@ -156,15 +151,46 @@ public class World {
     renderer.renderTileBorders(temp, camera);
   }
 
+  public static TileWorldObject getAttackingTile() {
+    return attackingTile;
+  }
+
+  public static TileWorldObject getOpponentTile() {
+    return opponentTile;
+  }
+
   /**
-   * Update the world including the openGL listener.
+   * Update the world including the openAl listener.
    *
    * @param window the window
    */
   public static void update(Window window, Camera camera) {
-    if (Game.getState() == GameState.GAME_MAIN) {
-      AudioMaster.setListener(camera.getPosition());
-      updateBorders(window);
+    AudioMaster.setListener(camera.getPosition());
+    updateBorders(window);
+    if (Game.getState() == GameState.WARRING) {
+      if (attackingTile == null) {
+        MousePicker.update(window, societies[0].getSocietyWarringTiles());
+        updateSelectOverlay();
+        attackingTile = selectWorldTile(societies[0].getSocietyWarringTiles());
+      } else if (opponentTile == null) {
+        MousePicker.update(window, societies[0].getOpponentWarringTiles());
+        updateSelectOverlay();
+        opponentTile = selectWorldTile(societies[0].getOpponentWarringTiles());
+      } else {
+        simulateBattle(societies[0], attackingTile, opponentTile);
+        attackingTile = null;
+        opponentTile = null;
+      }
+    }
+  }
+
+  private static TileWorldObject selectWorldTile(ArrayList<TileWorldObject> worldTiles) {
+    if (MousePicker.getCurrentSelected() != null
+        && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
+        && worldTiles.contains(MousePicker.getCurrentSelected())) {
+      return MousePicker.getCurrentSelected();
+    } else {
+      return null;
     }
   }
 
@@ -174,14 +200,6 @@ public class World {
    * @param window the window
    */
   public static void updateBorders(Window window) {
-    for (Society society : societies) {
-      ArrayList<TileWorldObject> claimableTerritory = society.calculateClaimableTerritory();
-      if (!claimableTerritory.isEmpty()) {
-        society.claimTile(claimableTerritory.get(genRandomInt(claimableTerritory.size())));
-      }
-      bordersAltered = true;
-      turnCounter = 0;
-    }
     updateSocietyBorders();
     MousePicker.update(window, worldMap);
     updateSelectOverlay();
@@ -352,64 +370,67 @@ public class World {
     // Destroy Overlay
     selectOverlay.destroy();
     ChoiceMenu.destroy();
+    activeSocieties.clear();
   }
 
   /**
-   * PART OF A DIFFERENT TICKET
    * War move.
    */
 
   public static void warMove() {
+    societies[0].calculateWarringTiles();
+    if (!societies[0].getOpponentWarringTiles().isEmpty()) {
+      Game.setState(GameState.WARRING);
+    }
+  }
+
+  private static void simulateBattle(Society playerSociety,
+                                     TileWorldObject playerTile, TileWorldObject opponentTile) {
     Society warTarget = null;
-    TileWorldObject playerTile = selectTile("player");
-    TileWorldObject opponentTile = selectTile("opponent");
     for (Society society : societies) {
       if (society.getTerritory().contains(opponentTile)) {
         warTarget = society;
       }
     }
-    simulateBattle(societies[0], warTarget, playerTile, opponentTile);
-    societies[0].setEndTurn(true);
+    if (warTarget != null) {
+      float playerAttack = calcAttack(playerSociety, playerTile);
+      float opponentAttack = calcAttack(warTarget, opponentTile);
+      if (playerAttack > opponentAttack) {
+        warTarget.getTerritory().remove(opponentTile);
+        playerSociety.claimTile(opponentTile);
+        bordersAltered = true;
+      } else if (playerAttack < opponentAttack) {
+        playerSociety.getTerritory().remove(playerTile);
+        warTarget.claimTile(playerTile);
+        bordersAltered = true;
+      }
+    }
+    playerSociety.setEndTurn(true);
+    purgeSocieties();
     Game.setState(GameState.GAME_MAIN);
   }
 
-  // PART OF A DIFFERENT TICKET
-  private static void simulateBattle(Society playerSociety, Society warTarget,
-                                     TileWorldObject playerTile, TileWorldObject opponentTile) {
-    float playerAttack = calcAttack(playerSociety);
-    float opponentAttack = calcAttack(warTarget);
-    if (playerAttack > opponentAttack) {
-      warTarget.getTerritory().remove(opponentTile);
-      playerSociety.claimTile(opponentTile);
-      drawPopUp("Victory");
-    } else if (playerAttack < opponentAttack) {
-      playerSociety.getTerritory().remove(playerTile);
-      warTarget.claimTile(playerTile);
-      drawPopUp("Defeat");
+  private static void purgeSocieties() {
+    List<Society> societiesToRemove = new ArrayList<>();
+    // Find Societies to remove if any
+    for (Society society : activeSocieties) {
+      if (society.getTerritory().size() < 1) {
+        societiesToRemove.add(society);
+      }
+    }
+    // Remove the societies
+    for (Society society : societiesToRemove) {
+      activeSocieties.remove(society);
     }
   }
 
-  // PART OF A DIFFERENT TICKET
-  private static float calcAttack(Society currentSociety) {
+  private static float calcAttack(Society currentSociety, TileWorldObject worldTile) {
+    // TODO NORMALISE THESE VALUES FOR THE PURPOSE OF BALANCING
     float populationModifier = currentSociety.getPopulation().size();
     float productionModifier = currentSociety.getAverageProductivity();
     float aggressivenessModifier = currentSociety.getAverageAggressiveness();
-    return populationModifier + productionModifier + aggressivenessModifier;
-  }
-
-  // PART OF A DIFFERENT TICKET
-  private static TileWorldObject selectTile(String currentPlayer) {
-    // Highlight player / opponent tiles and allow to select. Return the selected tile
-    if (currentPlayer.equals("player")) {
-      return societies[0].getTerritory().get(0);
-    } else {
-      return societies[1].getTerritory().get(0);
-    }
-  }
-
-  // PART OF A DIFFERENT TICKET
-  private static void drawPopUp(String textOnPopUp) {
-    // draw box which says select Tile you wish to invade
+    float tileModifier = worldTile.getTile().getAttackModifier();
+    return populationModifier + productionModifier + aggressivenessModifier + tileModifier;
   }
 
   /**
@@ -439,4 +460,7 @@ public class World {
     Game.setState(GameState.GAME_MAIN);
   }
 
+  public static ArrayList<Society> getActiveSocieties() {
+    return activeSocieties;
+  }
 }

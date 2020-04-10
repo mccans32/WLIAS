@@ -12,13 +12,13 @@ import engine.graphics.renderer.WorldRenderer;
 import engine.io.Input;
 import engine.objects.world.Camera;
 import game.menu.ChoiceMenu;
+import game.menu.GameOverMenu;
 import game.menu.MainMenu;
 import game.menu.PauseMenu;
 import game.world.Hud;
 import game.world.World;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import society.Society;
@@ -84,9 +84,9 @@ public class Game {
     System.out.println("This is the Game Loop\n");
     while (!window.shouldClose()) {
       // Main game loop where each turn is being decided
-      if (World.getSocieties().length > 0) {
+      if (World.getActiveSocieties().size() > 0) {
         // generates a random turn order of all the societies in play
-        List<Society> turnOrder = Arrays.asList(World.getSocieties());
+        ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
         Collections.shuffle(turnOrder);
         // cycles thorough all societies in play
         for (Society society : turnOrder) {
@@ -154,17 +154,37 @@ public class Game {
 
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
-    } else if (state == GameState.GAME_PAUSE) {
-      PauseMenu.update(window, camera);
-    } else if (state == GameState.GAME_CHOICE) {
-      ChoiceMenu.update(window);
     } else {
-      // Update The Dev Hud
-      Hud.updateDevHud(camera);
-      // Update the Hud
-      Hud.update(window);
-      // Update The World
-      World.update(window, camera);
+      checkGameOver();
+      if (state == GameState.GAME_PAUSE) {
+        PauseMenu.update(window, camera);
+      } else if (state == GameState.GAME_CHOICE) {
+        // Update The Dev Hud
+        Hud.updateDevHud(camera);
+        // Update the Hud
+        Hud.update(window);
+        // Update Choice Menu
+        ChoiceMenu.update(window);
+        // Update The World
+        World.update(window, camera);
+      } else {
+        // Update The Dev Hud
+        Hud.updateDevHud(camera);
+        // Update the Hud
+        Hud.update(window);
+        // Update The World
+        World.update(window, camera);
+        if (state == GameState.GAME_OVER) {
+          GameOverMenu.update(window, camera);
+        }
+      }
+    }
+  }
+
+  private void checkGameOver() {
+    if (!World.getActiveSocieties().contains(World.getSocieties()[0])) {
+      // The Player's Society is not present in the active societies
+      state = GameState.GAME_OVER;
     }
   }
 
@@ -200,9 +220,10 @@ public class Game {
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
         PauseMenu.render(guiRenderer, textRenderer);
-      }
-      if (state == GameState.GAME_CHOICE) {
+      } else if (state == GameState.GAME_CHOICE) {
         ChoiceMenu.render(guiRenderer, textRenderer);
+      } else if (state == GameState.GAME_OVER) {
+        GameOverMenu.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();
