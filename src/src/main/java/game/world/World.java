@@ -224,9 +224,11 @@ public class World {
    * @param window the window
    */
   public static void updateBorders(Window window) {
-    updateSocietyBorders();
-    MousePicker.update(window, worldMap);
-    updateSelectOverlay();
+    if (worldMap != null) {
+      updateSocietyBorders();
+      MousePicker.update(window, worldMap);
+      updateSelectOverlay();
+    }
   }
 
   private static void updateSocietyBorders() {
@@ -463,7 +465,7 @@ public class World {
   public static void claimTileMove() {
     // Calculate claimable tiles
     societies[0].calculateClaimableTerritory();
-    if (societies[0].getClaimableTerritory() != null) {
+    if (!societies[0].getClaimableTerritory().isEmpty()) {
       Game.setState(GameState.CLAIM_TILE);
     }
   }

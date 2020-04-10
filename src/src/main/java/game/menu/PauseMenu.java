@@ -12,6 +12,7 @@ import engine.io.Input;
 import engine.objects.gui.ButtonObject;
 import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
+import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;

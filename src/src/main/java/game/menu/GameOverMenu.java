@@ -60,11 +60,11 @@ public class GameOverMenu {
    * @param camera the camera
    */
   public static void update(Window window, Camera camera) {
-    checkButtonClick(window, camera);
     resize();
     for (ButtonObject button : buttons) {
       button.update(window);
     }
+    checkButtonClick(window, camera);
   }
 
   private static void checkButtonClick(Window window, Camera camera) {

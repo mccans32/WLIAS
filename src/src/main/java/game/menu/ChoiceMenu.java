@@ -53,10 +53,28 @@ public class ChoiceMenu {
    * @param window the window
    */
   public static void update(Window window) {
+    updateButtonStatus();
     checkChoiceButtonClick(window);
     resize();
     for (ButtonObject choiceButton : choiceButtons) {
       choiceButton.update(window);
+    }
+  }
+
+  private static void updateButtonStatus() {
+    // Update War Button
+    World.getSocieties()[0].calculateWarringTiles();
+    if (World.getSocieties()[0].getOpponentWarringTiles().isEmpty()) {
+      choiceButtons.get(0).disable();
+    } else {
+      choiceButtons.get(0).enable();
+    }
+    // Update Claim Tile Button
+    World.getSocieties()[0].calculateClaimableTerritory();
+    if (World.getSocieties()[0].getClaimableTerritory().isEmpty()) {
+      choiceButtons.get(1).disable();
+    } else {
+      choiceButtons.get(1).enable();
     }
   }
 

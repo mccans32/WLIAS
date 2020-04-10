@@ -29,6 +29,7 @@ import map.tiles.AridTile;
 import map.tiles.FertileTile;
 import map.tiles.WaterTile;
 import math.Vector3f;
+import math.Vector4f;
 import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
@@ -36,10 +37,12 @@ import society.Society;
 
 public class Hud {
   // Sets a number of game cycles so when we press a button to toggle it is not as sensitive
-  private static final Vector3f ARROW_ENABLE_COLOUR = ColourUtils.convertColor(Color.GREEN);
-  private static final Vector3f ARROW_ENABLE_HOVER
-      = ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN);
-  private static final Vector3f ARROW_DISABLE_COLOUR = ColourUtils.convertColor(Color.RED);
+  private static final Vector4f ARROW_ENABLE_COLOUR =
+      new Vector4f(ColourUtils.convertColor(Color.GREEN), 1);
+  private static final Vector4f ARROW_ENABLE_HOVER
+      = new Vector4f(ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN), 1);
+  private static final Vector4f ARROW_DISABLE_COLOUR
+      = new Vector4f(ColourUtils.convertColor(Color.RED), 0.5f);
   private static final float ARROW_BUTTON_OFFSET_Y = 0.1f;
   private static final Image PANEL_IMAGE = new Image("/images/hudPanel.png");
   private static final Image SOCIETY_PANEL_IMAGE = new Image("/images/hudPanel2.png");

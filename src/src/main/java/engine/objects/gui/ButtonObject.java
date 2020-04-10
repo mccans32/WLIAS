@@ -4,10 +4,13 @@ import engine.Window;
 import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.text.Text;
 import math.Vector3f;
+import math.Vector4f;
 
 public class ButtonObject extends HudObject {
-  private Vector3f inactiveColourOffset = new Vector3f(1, 1, 1);
-  private Vector3f activeColourOffset = new Vector3f(0.6f, 0.6f, 0.6f);
+  private Vector4f inactiveColourOffset = new Vector4f(1, 1, 1, 1);
+  private Vector4f activeColourOffset = new Vector4f(0.6f, 0.6f, 0.6f, 1);
+  private Vector4f disabledColourOffset = new Vector4f(1, 1, 1, 0.2f);
+  private boolean enabled = true;
 
   /**
    * Instantiates a new Button object.
@@ -35,7 +38,7 @@ public class ButtonObject extends HudObject {
     return inactiveColourOffset;
   }
 
-  public void setInactiveColourOffset(Vector3f inactiveColourOffset) {
+  public void setInactiveColourOffset(Vector4f inactiveColourOffset) {
     this.inactiveColourOffset = inactiveColourOffset;
   }
 
@@ -43,7 +46,7 @@ public class ButtonObject extends HudObject {
     return activeColourOffset;
   }
 
-  public void setActiveColourOffset(Vector3f activeColourOffset) {
+  public void setActiveColourOffset(Vector4f activeColourOffset) {
     this.activeColourOffset = activeColourOffset;
   }
 
@@ -52,10 +55,14 @@ public class ButtonObject extends HudObject {
   }
 
   private void updateColourOffset(Window window) {
-    if (isMouseOver(window)) {
-      this.getHudImage().getMesh().getMaterial().setColorOffset(activeColourOffset);
+    if (!enabled) {
+      this.getHudImage().getMesh().getMaterial().setColorOffset(disabledColourOffset);
     } else {
-      this.getHudImage().getMesh().getMaterial().setColorOffset(inactiveColourOffset);
+      if (isMouseOver(window)) {
+        this.getHudImage().getMesh().getMaterial().setColorOffset(activeColourOffset);
+      } else {
+        this.getHudImage().getMesh().getMaterial().setColorOffset(inactiveColourOffset);
+      }
     }
   }
 
@@ -70,6 +77,26 @@ public class ButtonObject extends HudObject {
     this.getHudImage().destroy();
     for (HudText line : getLines()) {
       line.destroy();
+    }
+  }
+
+  /**
+   * Enable the button.
+   */
+  public void enable() {
+    this.enabled = true;
+    for (HudText line : this.getLines()) {
+      line.getText().setAlpha(1);
+    }
+  }
+
+  /**
+   * Disable the button.
+   */
+  public void disable() {
+    this.enabled = false;
+    for (HudText line : this.getLines()) {
+      line.getText().setAlpha(disabledColourOffset.getW());
     }
   }
 }
