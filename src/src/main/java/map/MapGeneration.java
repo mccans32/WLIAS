@@ -26,10 +26,10 @@ public class MapGeneration {
   /**
    * The Number of land masses.
    */
-  private static final int DEFAULT_AMOUNT_ARID_TILES = 25;
-  private static final int DEFAULT_AMOUNT_FERTILE_TILES = 25;
-  private static final int DEFAULT_AMOUNT_WATER_TILES = 25;
-  private static final int DEFAULT_AMOUNT_PLAIN_TILES = 25;
+  private static final int DEFAULT_AMOUNT_ARID_TILES = 30;
+  private static final int DEFAULT_AMOUNT_FERTILE_TILES = 30;
+  private static final int DEFAULT_AMOUNT_WATER_TILES = 10;
+  private static final int DEFAULT_AMOUNT_PLAIN_TILES = 30;
   /**
    * The Map of ordered tiles.
    */

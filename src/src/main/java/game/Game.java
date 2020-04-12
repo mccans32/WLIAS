@@ -109,7 +109,9 @@ public class Game {
           society.setEndTurn(false);
           // update and render the screen until the society finishes its move
           // or the simulation closes
-          while (!society.isEndTurn() && !window.shouldClose()) {
+          while (!society.isEndTurn()
+              && !window.shouldClose()
+              && !World.getActiveSocieties().isEmpty()) {
             if (society.getSocietyId() != 0) {
               World.aiTurn(society);
             }

@@ -40,8 +40,8 @@ public class World {
   private static final Vector3f DEFAULT_SCALE = new Vector3f(1f, 1f, 1f);
   private static final int DEFAULT_NUMBER_OF_SOCIETIES = 4;
   private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
-      ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
-      ColourUtils.convertColor(ChartColor.LIGHT_RED),
+      ColourUtils.convertColor(ChartColor.RED),
+      ColourUtils.convertColor(ChartColor.LIGHT_YELLOW),
       ColourUtils.convertColor(ChartColor.LIGHT_GREEN),
       ColourUtils.convertColor(ChartColor.LIGHT_CYAN)};
   private static final int FERTILE_MAX_FOOD_RESOURCE = 5;
@@ -109,6 +109,7 @@ public class World {
 
   private static void generateSocieties(int numberOfSocieties) {
     societies = new Society[numberOfSocieties];
+    activeSocieties.clear();
     for (int i = 0; i < numberOfSocieties; i++) {
       Society society = new Society(i, BASIC_SOCIETY_COLORS[i]);
       societies[i] = society;
@@ -480,8 +481,22 @@ public class World {
     Game.setState(GameState.GAME_MAIN);
   }
 
+  /**
+   * The turn calculations needed for the Ai Societies to ake their turns.
+   *
+   * @param society the society
+   */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
+    // Randomly choose a tile to claim
+    society.calculateClaimableTerritory();
+    if (!society.getClaimableTerritory().isEmpty()) {
+      Random random = new Random();
+      int randomIndex = random.nextInt(society.getClaimableTerritory().size());
+      society.claimTile(society.getClaimableTerritory().get(randomIndex));
+      bordersAltered = true;
+      updateSocietyBorders();
+    }
     society.setEndTurn(true);
     Game.setState(GameState.GAME_MAIN);
   }

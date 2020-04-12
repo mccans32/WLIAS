@@ -41,6 +41,11 @@ public class Hud {
       new Vector4f(ColourUtils.convertColor(Color.GREEN), 1);
   private static final Vector4f ARROW_ENABLE_HOVER
       = new Vector4f(ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN), 1);
+
+  public static int getTurn() {
+    return turn;
+  }
+
   private static final Vector4f ARROW_DISABLE_COLOUR
       = new Vector4f(ColourUtils.convertColor(Color.RED), 0.5f);
   private static final float ARROW_BUTTON_OFFSET_Y = 0.1f;
@@ -609,6 +614,7 @@ public class Hud {
     panelTitle.destroy();
     terrainTileImage.destroy();
     hint.destroy();
+    turn = 0;
   }
 
   private static String calculateSocietyPanelString(Society society) {
