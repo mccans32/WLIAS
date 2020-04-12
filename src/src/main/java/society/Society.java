@@ -24,6 +24,7 @@ public class Society {
   private float averageProductivity;
   private int score;
   private boolean endTurn = false;
+  private boolean madeMove = false;
 
   /**
    * Instantiates a new Society.
@@ -53,6 +54,14 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public boolean isMadeMove() {
+    return madeMove;
+  }
+
+  public void setMadeMove(boolean madeMove) {
+    this.madeMove = madeMove;
   }
 
   public ArrayList<TileWorldObject> getClaimableTerritory() {

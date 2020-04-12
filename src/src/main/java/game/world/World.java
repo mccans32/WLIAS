@@ -68,6 +68,7 @@ public class World {
   private static TileWorldObject attackingTile;
   private static TileWorldObject opponentTile;
   private static TileWorldObject claimedTile;
+  private static Society activeSociety;
 
   public static RectangleModel getTileModel() {
     return tileModel;
@@ -481,6 +482,10 @@ public class World {
     Game.setState(GameState.GAME_MAIN);
   }
 
+  public static Society getActiveSociety() {
+    return activeSociety;
+  }
+
   /**
    * The turn calculations needed for the Ai Societies to ake their turns.
    *
@@ -488,17 +493,28 @@ public class World {
    */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
-    // Randomly choose a tile to claim
-    society.calculateClaimableTerritory();
-    if (!society.getClaimableTerritory().isEmpty()) {
-      Random random = new Random();
-      int randomIndex = random.nextInt(society.getClaimableTerritory().size());
-      society.claimTile(society.getClaimableTerritory().get(randomIndex));
-      bordersAltered = true;
-      updateSocietyBorders();
+
+    if (!society.isMadeMove()) {
+      // Randomly choose a tile to claim
+      society.calculateClaimableTerritory();
+      if (!society.getClaimableTerritory().isEmpty()) {
+        Random random = new Random();
+        int randomIndex = random.nextInt(society.getClaimableTerritory().size());
+        society.claimTile(society.getClaimableTerritory().get(randomIndex));
+        bordersAltered = true;
+        updateSocietyBorders();
+        society.setMadeMove(true);
+        activeSociety = society;
+        Game.setState(GameState.AI_CLAIM);
+        Game.getNotificationTimer().setDuration(2);
+      }
     }
-    society.setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
+    if (Game.getNotificationTimer().isDurationMet()) {
+      Game.getNotificationTimer().clearDuration();
+      society.setEndTurn(true);
+      activeSociety = null;
+      Game.setState(GameState.GAME_MAIN);
+    }
   }
 
   public static ArrayList<Society> getActiveSocieties() {

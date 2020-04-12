@@ -9,6 +9,7 @@ import engine.graphics.renderer.TextRenderer;
 import engine.graphics.renderer.WorldRenderer;
 import engine.io.Input;
 import engine.objects.world.Camera;
+import engine.tools.Timer;
 import game.menu.ChoiceMenu;
 import game.menu.GameOverMenu;
 import game.menu.MainMenu;
@@ -38,6 +39,7 @@ public class Game {
   static final String GUI_FRAGMENT_SHADER = "guiFragment.glsl";
   static final String BACKGROUND_SHADER = "backgroundVertex.glsl";
   private static final int BUTTON_LOCK_CYCLES = 20;
+  private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
   private static GuiRenderer guiRenderer;
@@ -76,6 +78,10 @@ public class Game {
     buttonLock = Math.max(0, buttonLock);
   }
 
+  public static Timer getNotificationTimer() {
+    return notificationTimer;
+  }
+
   /**
    * Start.
    */
@@ -107,6 +113,7 @@ public class Game {
         for (Society society : turnOrder) {
           // set the end turn flag to false
           society.setEndTurn(false);
+          society.setMadeMove(false);
           // update and render the screen until the society finishes its move
           // or the simulation closes
           while (!society.isEndTurn()
@@ -164,6 +171,7 @@ public class Game {
    */
   public void update() {
     updateButtonLock();
+    notificationTimer.update();
     camera.update(window);
     window.update();
 

@@ -41,11 +41,6 @@ public class Hud {
       new Vector4f(ColourUtils.convertColor(Color.GREEN), 1);
   private static final Vector4f ARROW_ENABLE_HOVER
       = new Vector4f(ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN), 1);
-
-  public static int getTurn() {
-    return turn;
-  }
-
   private static final Vector4f ARROW_DISABLE_COLOUR
       = new Vector4f(ColourUtils.convertColor(Color.RED), 0.5f);
   private static final float ARROW_BUTTON_OFFSET_Y = 0.1f;
@@ -85,6 +80,10 @@ public class Hud {
   private static ArrayList<HudImage> panelBorders = new ArrayList<>();
   private static boolean mouseOverHud = false;
   private static HudText hint;
+
+  public static int getTurn() {
+    return turn;
+  }
 
   public static boolean isTerrainPanelActive() {
     return terrainPanelActive;
@@ -130,7 +129,10 @@ public class Hud {
     updateHint();
   }
 
-  private static void updateHint() {
+  /**
+   * Update the hint text.
+   */
+  public static void updateHint() {
     String hintString = null;
     if (Game.getState() == GameState.WARRING) {
       if (World.getAttackingTile() == null) {
@@ -140,9 +142,12 @@ public class Hud {
       }
     } else if (Game.getState() == GameState.CLAIM_TILE) {
       hintString = "Select a Tile to Claim";
+    } else if (Game.getState() == GameState.AI_CLAIM) {
+      hintString = String.format("Society %d expands their territory",
+          World.getActiveSociety().getSocietyId() + 1);
     }
     if (!hint.getText().getString().equals(hintString) && hintString != null) {
-      Text hintText = new Text(hintString);
+      Text hintText = new Text(hintString, 1, ColourUtils.convertColor(Color.WHITE));
       hint.setText(hintText);
       hint.setOffsetX(-(hint.getWidth() / 2));
     }
@@ -331,8 +336,8 @@ public class Hud {
   }
 
   private static void createHint() {
-    Text hintText = new Text("", 1.2f, ColourUtils.convertColor(Color.WHITE));
-    hint = new HudText(hintText, 0, 0, 1, -0.2f);
+    Text hintText = new Text("");
+    hint = new HudText(hintText, 0, 0, 1, -0.25f);
     hint.create();
   }
 
@@ -552,7 +557,9 @@ public class Hud {
       coordinates.render(textRenderer);
     }
     renderInspectionPanel(guiRenderer, textRenderer);
-    if (Game.getState() == GameState.WARRING || Game.getState() == GameState.CLAIM_TILE) {
+    if (Game.getState() == GameState.WARRING
+        || Game.getState() == GameState.CLAIM_TILE
+        || Game.getState() == GameState.AI_CLAIM) {
       hint.render(textRenderer);
     }
   }
