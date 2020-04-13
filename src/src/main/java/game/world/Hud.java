@@ -190,8 +190,9 @@ public class Hud {
       float offsetY = arrowButton.getHudImage().getOffsetY();
       arrowButton.getHudImage().setOffsetY(offsetY + newValue);
       // Check if clicked
-      if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()
-          && arrowButton.isMouseOver(window)) {
+      if (((Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && arrowButton.isMouseOver(window))
+          || Input.isKeyDown(GLFW.GLFW_KEY_SPACE))
+          && Game.canClick()) {
         mouseOverHud = true;
         Game.resetButtonLock();
         updateTurnCounter();
