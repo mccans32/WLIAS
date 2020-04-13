@@ -47,6 +47,7 @@ public class Game {
   private static GuiRenderer backgroundRenderer;
   private static Source musicSource;
   private static int buttonLock = BUTTON_LOCK_CYCLES;
+  private static boolean restarted;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   private Window window;
   private Shader worldShader;
@@ -82,6 +83,14 @@ public class Game {
     return notificationTimer;
   }
 
+  public static boolean isRestarted() {
+    return restarted;
+  }
+
+  public static void setRestarted(boolean restarted) {
+    Game.restarted = restarted;
+  }
+
   /**
    * Start.
    */
@@ -104,8 +113,11 @@ public class Game {
   private void gameLoop() {
     System.out.println("This is the Game Loop\n");
     while (!window.shouldClose()) {
+      restarted = false;
       // Main game loop where each turn is being decided
-      if (World.getActiveSocieties().size() > 0 && state != GameState.TURN_END) {
+      if (World.getActiveSocieties().size() > 0
+          && state != GameState.TURN_END
+          && state != GameState.GAME_PAUSE) {
         ChoiceMenu.setChoiceMade(false);
         // generates a random turn order of all the societies in play
         ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
@@ -120,8 +132,13 @@ public class Game {
           while (!society.isEndTurn()
               && !window.shouldClose()
               && !World.getActiveSocieties().isEmpty()) {
+            // Break this loop if the game is restarted form the game over screen
+            if (restarted) {
+              break;
+            }
             if (society.getSocietyId() != 0) {
               World.aiTurn(society);
+              // If the user has not made their choice update the menu
             } else if (!ChoiceMenu.isChoiceMade() && state != GameState.GAME_PAUSE) {
               state = GameState.GAME_CHOICE;
             }
@@ -129,17 +146,17 @@ public class Game {
             render();
           }
         }
+        // End the turn if the state is appropriate
+        // If these states aren't accounted for there are game play bugs
         if (state != GameState.MAIN_MENU
-            && state != GameState.GAME_OVER) {
+            && state != GameState.GAME_OVER
+            && state != GameState.GAME_PAUSE
+            && !restarted) {
           state = GameState.TURN_END;
         }
-        update();
-        render();
-      } else {
-        // updating and rendering of the main menu.
-        update();
-        render();
       }
+      update();
+      render();
     }
   }
 
@@ -201,9 +218,7 @@ public class Game {
         // Update The World
         World.update(window, camera);
       } else {
-        if (state == GameState.GAME_MAIN) {
-          checkGameOver();
-        }
+        checkGameOver();
         // Update The Dev Hud
         Hud.updateDevHud(camera);
         // Update the Hud

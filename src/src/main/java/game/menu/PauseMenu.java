@@ -12,7 +12,6 @@ import engine.io.Input;
 import engine.objects.gui.ButtonObject;
 import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
-import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
@@ -115,6 +114,11 @@ public class PauseMenu {
     camera.freeze();
   }
 
+  /**
+   * Un-pause the game.
+   *
+   * @param camera the camera
+   */
   public static void unpauseGame(Camera camera) {
     Game.setState(previousState);
     camera.unfreeze();

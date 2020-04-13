@@ -83,6 +83,7 @@ public class GameOverMenu {
   }
 
   private static void restartGame(Window window, Camera camera) {
+    Game.setRestarted(true);
     Game.setState(GameState.GAME_MAIN);
     Hud.destroy();
     World.destroy();
