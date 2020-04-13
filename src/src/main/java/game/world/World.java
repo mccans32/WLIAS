@@ -444,7 +444,7 @@ public class World {
 
   public static void tradeMove() {
     societies[0].calculatePossibleTradingSocieties();
-    if (!societies[0].getPossibleTradingSocieties().isEmpty()){
+    if (!societies[0].getPossibleTradingSocieties().isEmpty()) {
       Game.setState(GameState.TRADING);
     }
   }

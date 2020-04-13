@@ -316,11 +316,40 @@ public class Society {
   }
 
   public void calculatePossibleTradingSocieties() {
-    for (TileWorldObject worldTile : territory){
-      checkPossibleTrading(worldTile);
+    for (TileWorldObject worldTile : territory) {
+      checkPossibleTrading(worldTile.getRow(), worldTile.getColumn());
     }
   }
 
-  private void checkPossibleTrading(TileWorldObject worldTile) {
+  private void checkPossibleTrading(int row, int column) {
+    TileWorldObject[][] map = World.getWorldMap();
+    // Check left side of the territory
+    if (map[row][column - 1].isClaimed()
+        && map[row][column - 1].getClaimedBy().getSocietyId() != societyId) {
+      if (!possibleTradingSocieties.contains(map[row][column - 1].getClaimedBy())) {
+        possibleTradingSocieties.add(map[row][column - 1].getClaimedBy());
+      }
+    }
+    // Check right side of the territory
+    if (map[row][column + 1].isClaimed()
+        && map[row][column + 1].getClaimedBy().getSocietyId() != societyId) {
+      if (!possibleTradingSocieties.contains(map[row][column + 1].getClaimedBy())) {
+        possibleTradingSocieties.add(map[row][column + 1].getClaimedBy());
+      }
+    }
+    // Check top of territory
+    if (map[row - 1][column].isClaimed()
+        && map[row - 1][column].getClaimedBy().getSocietyId() != societyId) {
+      if (!possibleTradingSocieties.contains(map[row - 1][column].getClaimedBy())) {
+        possibleTradingSocieties.add(map[row - 1][column].getClaimedBy());
+      }
+    }
+    // check bottom of territory
+    if (map[row + 1][column].isClaimed()
+        && map[row + 1][column].getClaimedBy().getSocietyId() != societyId) {
+      if (!possibleTradingSocieties.contains(map[row + 1][column].getClaimedBy())) {
+        possibleTradingSocieties.add(map[row + 1][column].getClaimedBy());
+      }
+    }
   }
 }

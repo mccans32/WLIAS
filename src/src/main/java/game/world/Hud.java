@@ -17,6 +17,7 @@ import engine.objects.gui.ButtonObject;
 import engine.objects.gui.HudImage;
 import engine.objects.gui.HudObject;
 import engine.objects.gui.HudText;
+import engine.objects.gui.SocietyButton;
 import engine.objects.world.Camera;
 import engine.objects.world.TileWorldObject;
 import engine.tools.MousePicker;
@@ -65,7 +66,7 @@ public class Hud {
   private static Boolean devHudActive = false;
   private static int hudCycleLock = 0;
   private static int turn = 1;
-  private static ArrayList<ButtonObject> societyButtons = new ArrayList<>();
+  private static ArrayList<SocietyButton> societyButtons = new ArrayList<>();
   private static HudImage societyButtonPanel;
   private static HudImage arrowButtonPanel;
   private static HudText panelTitle;
@@ -79,6 +80,10 @@ public class Hud {
   private static ArrayList<HudImage> panelBorders = new ArrayList<>();
   private static boolean mouseOverHud = false;
   private static HudText hint;
+
+  public static ArrayList<SocietyButton> getSocietyButtons() {
+    return societyButtons;
+  }
 
   public static boolean isTerrainPanelActive() {
     return terrainPanelActive;
@@ -330,6 +335,10 @@ public class Hud {
     hint.create();
   }
 
+  private static void createInspectionPanels2() {
+
+  }
+
   private static void createInspectionPanels() {
     float borderSize = 0.03f;
     float width = 0.9f;
@@ -466,8 +475,8 @@ public class Hud {
       societyText.setCentreVertical(true);
       float xoffset = calculateSocietyButtonXOffset(World.getSocieties().length, i + 1);
       RectangleMesh buttonMesh = new RectangleMesh(buttonModel, new Material(buttonImage));
-      ButtonObject societyButton = new ButtonObject(buttonMesh, societyText, 0, xoffset,
-          -1, SOCIETY_BUTTON_OFFSET_Y);
+      SocietyButton societyButton = new SocietyButton(buttonMesh, societyText, 0, xoffset,
+          -1, SOCIETY_BUTTON_OFFSET_Y, society);
       // create the button's VAO and VBOs
       societyButton.create();
       // add to the list of societies
@@ -610,7 +619,7 @@ public class Hud {
     hint.destroy();
   }
 
-  private static String calculateSocietyPanelString(Society society) {
+  public static String calculateSocietyPanelString(Society society) {
     String societyString;
     if (society.getSocietyId() == 0) {
       societyString = "Your Society";

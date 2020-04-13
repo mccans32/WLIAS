@@ -101,6 +101,8 @@ public class MainMenu {
         ChoiceMenu.create();
         // Create the Game Over Menu
         GameOverMenu.create();
+        // Create The Trading Menu
+        TradingMenu.create();
         // Create the World
         World.create(window, camera);
         World.update(window, camera);

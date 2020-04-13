@@ -15,6 +15,7 @@ import game.menu.ChoiceMenu;
 import game.menu.GameOverMenu;
 import game.menu.MainMenu;
 import game.menu.PauseMenu;
+import game.menu.TradingMenu;
 import game.world.Hud;
 import game.world.World;
 import java.util.ArrayList;
@@ -167,6 +168,8 @@ public class Game {
         ChoiceMenu.update(window);
         // Update The World
         World.update(window, camera);
+      } else if (state == GameState.TRADING) {
+        TradingMenu.update(window);
       } else {
         // Update The Dev Hud
         Hud.updateDevHud(camera);
@@ -224,6 +227,8 @@ public class Game {
         ChoiceMenu.render(guiRenderer, textRenderer);
       } else if (state == GameState.GAME_OVER) {
         GameOverMenu.render(guiRenderer, textRenderer);
+      } else if (state == GameState.TRADING) {
+        TradingMenu.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();
