@@ -129,7 +129,8 @@ public class Game {
             render();
           }
         }
-        if (state != GameState.MAIN_MENU) {
+        if (state != GameState.MAIN_MENU
+            && state != GameState.GAME_OVER) {
           state = GameState.TURN_END;
         }
         update();

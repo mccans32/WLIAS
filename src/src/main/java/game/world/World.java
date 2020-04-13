@@ -507,6 +507,9 @@ public class World {
         activeSociety = society;
         Game.setState(GameState.AI_CLAIM);
         Game.getNotificationTimer().setDuration(2);
+      } else {
+        society.setMadeMove(true);
+        Game.getNotificationTimer().setDuration(0);
       }
     }
     if (Game.getNotificationTimer().isDurationMet()) {
