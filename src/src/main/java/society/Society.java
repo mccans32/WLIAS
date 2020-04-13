@@ -9,6 +9,8 @@ import society.person.Person;
 
 public class Society {
   private static final int DEFAULT_POPULATION_SIZE = 10;
+  private static final float FOOD_PER_PERSON = 1;
+  private static final float MATERIAL_PER_PERSON = 1;
   public int personIdCounter;
   private Vector3f societyColor;
   private ArrayList<Person> population;
@@ -50,6 +52,14 @@ public class Society {
     this.societyId = societyId;
     this.societyColor = societyColor;
     generateInitialPopulation(DEFAULT_POPULATION_SIZE);
+  }
+
+  public static float getFoodPerPerson() {
+    return FOOD_PER_PERSON;
+  }
+
+  public static float getMaterialPerPerson() {
+    return MATERIAL_PER_PERSON;
   }
 
   public static int getDefaultPopulationSize() {

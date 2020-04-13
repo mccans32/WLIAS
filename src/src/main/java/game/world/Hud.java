@@ -198,8 +198,8 @@ public class Hud {
         updateTurnCounter();
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
         arrowCounter = 0;
-        // Set the state to Game Choice to start the move select process
-        Game.setState(GameState.GAME_CHOICE);
+        // change the state so the the next turn can begin the in game loop
+        Game.setState(GameState.GAME_MAIN);
       }
     } else {
       // Reset Y-Offset and Reset Colours

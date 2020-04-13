@@ -12,6 +12,7 @@ import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
 import engine.objects.world.TileWorldObject;
 import engine.tools.MousePicker;
+import engine.utils.ArrayUtils;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
@@ -44,14 +45,16 @@ public class World {
       ColourUtils.convertColor(ChartColor.LIGHT_YELLOW),
       ColourUtils.convertColor(ChartColor.LIGHT_GREEN),
       ColourUtils.convertColor(ChartColor.LIGHT_CYAN)};
+  private static final int FERTILE_MIN_FOOD_RESOURCE = 3;
   private static final int FERTILE_MAX_FOOD_RESOURCE = 5;
   private static final int FERTILE_MAX_RAW_MATERIALS = 1;
   private static final int ARID_MAX_FOOD_RESOURCE = 1;
   private static final int ARID_MAX_RAW_MATERIALS = 5;
+  private static final int ARID_MIN_RAW_MATERIALS = 3;
   private static final int PLAIN_MAX_FOOD_RESOURCE = 3;
   private static final int PLAIN_MAX_RAW_MATERIALS = 2;
   private static final int WATER_MAX_FOOD_RESOURCE = 1;
-  private static final int WATER_MAX_RAW_MATERIALS = 0;
+  private static final int WATER_MAX_RAW_MATERIALS = 1;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -314,11 +317,13 @@ public class World {
       tempTileWorldObject.setFoodResource(genRandomInt(WATER_MAX_FOOD_RESOURCE));
       tempTileWorldObject.setRawMaterialResource(WATER_MAX_RAW_MATERIALS);
     } else if (tempTileWorldObject.getTile() instanceof FertileTile) {
-      tempTileWorldObject.setFoodResource(genRandomInt(FERTILE_MAX_FOOD_RESOURCE));
+      tempTileWorldObject.setFoodResource(genRandomInt(FERTILE_MAX_FOOD_RESOURCE,
+          FERTILE_MIN_FOOD_RESOURCE));
       tempTileWorldObject.setRawMaterialResource(genRandomInt(FERTILE_MAX_RAW_MATERIALS));
     } else if (tempTileWorldObject.getTile() instanceof AridTile) {
       tempTileWorldObject.setFoodResource(genRandomInt(ARID_MAX_FOOD_RESOURCE));
-      tempTileWorldObject.setRawMaterialResource(genRandomInt(ARID_MAX_RAW_MATERIALS));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(ARID_MAX_RAW_MATERIALS,
+          ARID_MIN_RAW_MATERIALS));
     } else if (tempTileWorldObject.getTile() instanceof PlainTile) {
       tempTileWorldObject.setFoodResource(genRandomInt(PLAIN_MAX_FOOD_RESOURCE));
       tempTileWorldObject.setRawMaterialResource(genRandomInt(PLAIN_MAX_RAW_MATERIALS));
@@ -366,9 +371,17 @@ public class World {
     return r.nextInt(maxValue);
   }
 
+  /**
+   * Generate a random integer.
+   *
+   * @param maxValue the max value
+   * @param minValue the min value
+   * @return the int
+   */
   public static int genRandomInt(int maxValue, int minValue) {
     Random r = new Random();
-    return r.nextInt(maxValue) + minValue;
+    int val = r.nextInt(maxValue + 1);
+    return (val == minValue ? minValue : Math.max(val, minValue));
   }
 
   public static int getDefaultNumberOfSocieties() {
@@ -498,9 +511,9 @@ public class World {
       // Randomly choose a tile to claim
       society.calculateClaimableTerritory();
       if (!society.getClaimableTerritory().isEmpty()) {
-        Random random = new Random();
-        int randomIndex = random.nextInt(society.getClaimableTerritory().size());
-        society.claimTile(society.getClaimableTerritory().get(randomIndex));
+        // calculate Most Needed Tile
+        TileWorldObject claimTile = calculateClaimTile(society);
+        society.claimTile(claimTile);
         bordersAltered = true;
         updateSocietyBorders();
         society.setMadeMove(true);
@@ -518,6 +531,34 @@ public class World {
       activeSociety = null;
       Game.setState(GameState.GAME_MAIN);
     }
+  }
+
+  private static TileWorldObject calculateClaimTile(Society society) {
+    ArrayList<TileWorldObject> claimable = society.getClaimableTerritory();
+    float[] scores = new float[claimable.size()];
+    // Get the score for each tile
+    for (int i = 0; i < claimable.size(); i++) {
+      float score = calculateTileClaimScore(society, claimable.get(i));
+      scores[i] = score;
+    }
+    // Get the highest score
+    float highest = ArrayUtils.max(scores);
+    int index = ArrayUtils.indexOf(scores, highest);
+    return claimable.get(index);
+  }
+
+  private static float calculateTileClaimScore(Society society, TileWorldObject tile) {
+    // Decides what tile the society would most want
+    //Dictated by how much food they require, how much raw material they require;
+    float foodWeight = (society.getPopulation().size() * Society.getFoodPerPerson())
+        / (society.getTotalFoodResource() + 1);
+    float materialWeight = (society.getPopulation().size() * Society.getMaterialPerPerson())
+        / (society.getTotalRawMaterialResource() + 1);
+    float tileAttackWeight = -(society.getAverageLifeExpectancy() / 100);
+
+    return (foodWeight * tile.getFoodResource())
+        + (materialWeight * tile.getRawMaterialResource())
+        + (tileAttackWeight * tile.getTile().getAttackModifier());
   }
 
   public static ArrayList<Society> getActiveSocieties() {
