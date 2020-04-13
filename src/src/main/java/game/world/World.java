@@ -508,7 +508,6 @@ public class World {
   public static void aiTurn(Society society) {
 
     if (!society.isMadeMove()) {
-      // Randomly choose a tile to claim
       society.calculateClaimableTerritory();
       if (!society.getClaimableTerritory().isEmpty()) {
         // calculate Most Needed Tile
