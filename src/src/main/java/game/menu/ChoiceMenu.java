@@ -28,6 +28,15 @@ public class ChoiceMenu {
   private static final float HINT_GAP = 0.05f;
   private static HudText choiceHint;
   private static ArrayList<ButtonObject> choiceButtons = new ArrayList<>();
+  private static boolean choiceMade;
+
+  public static boolean isChoiceMade() {
+    return choiceMade;
+  }
+
+  public static void setChoiceMade(boolean choiceMade) {
+    ChoiceMenu.choiceMade = choiceMade;
+  }
 
   /**
    * Render.
@@ -96,18 +105,22 @@ public class ChoiceMenu {
         // check if the mouse is over the button
         if (choiceButton.isMouseOver(window)) {
           if (choiceButton.getLines().get(0).getText().getString().equals(CHOICE_BUTTON_NAMES[0])) {
+            choiceMade = true;
             // War button was highlighted
             World.warMove();
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[1])) {
+            choiceMade = true;
             // Claim Tile button was highlighted
             World.claimTileMove();
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[2])) {
+            choiceMade = true;
             // Trade move button was highlighted
             World.tradeMove();
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[3])) {
+            choiceMade = true;
             // Nothing button was highlighted
             World.nothingMove();
           }

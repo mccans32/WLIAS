@@ -105,7 +105,8 @@ public class Game {
     System.out.println("This is the Game Loop\n");
     while (!window.shouldClose()) {
       // Main game loop where each turn is being decided
-      if (World.getActiveSocieties().size() > 0) {
+      if (World.getActiveSocieties().size() > 0 && state != GameState.TURN_END) {
+        ChoiceMenu.setChoiceMade(false);
         // generates a random turn order of all the societies in play
         ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
         Collections.shuffle(turnOrder);
@@ -121,11 +122,18 @@ public class Game {
               && !World.getActiveSocieties().isEmpty()) {
             if (society.getSocietyId() != 0) {
               World.aiTurn(society);
+            } else if (!ChoiceMenu.isChoiceMade() && state != GameState.GAME_PAUSE) {
+              state = GameState.GAME_CHOICE;
             }
             update();
             render();
           }
         }
+        if (state != GameState.MAIN_MENU) {
+          state = GameState.TURN_END;
+        }
+        update();
+        render();
       } else {
         // updating and rendering of the main menu.
         update();
@@ -180,7 +188,6 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
     } else {
-      checkGameOver();
       if (state == GameState.GAME_PAUSE) {
         PauseMenu.update(window, camera);
       } else if (state == GameState.GAME_CHOICE) {
@@ -193,6 +200,9 @@ public class Game {
         // Update The World
         World.update(window, camera);
       } else {
+        if (state == GameState.GAME_MAIN) {
+          checkGameOver();
+        }
         // Update The Dev Hud
         Hud.updateDevHud(camera);
         // Update the Hud

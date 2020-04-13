@@ -72,7 +72,6 @@ public class Hud {
   private static HudText panelTitle;
   private static ButtonObject arrowButton;
   private static HudText arrowTextObject;
-  private static boolean canNextTurn = true;
   private static float arrowCounter;
   private static boolean terrainPanelActive = false;
   private static boolean societyPanelActive = false;
@@ -109,7 +108,6 @@ public class Hud {
     turn = 1;
     terrainPanelActive = false;
     societyPanelActive = false;
-    canNextTurn = false;
     devHudActive = false;
     createObjects();
   }
@@ -182,7 +180,7 @@ public class Hud {
 
   private static void updateArrowButton(Window window) {
     // Modify Arrow to make next turn clear
-    if (canNextTurn) {
+    if (Game.getState() == GameState.TURN_END) {
       // can click for next turn update colour and add animation
       arrowButton.setInactiveColourOffset(ARROW_ENABLE_COLOUR);
       arrowButton.setActiveColourOffset(ARROW_ENABLE_HOVER);
@@ -197,11 +195,7 @@ public class Hud {
         mouseOverHud = true;
         Game.resetButtonLock();
         updateTurnCounter();
-        // TODO Fix this bug
-        // If we don't reset here then for some reason the arrow text is overwritten
-        arrowTextObject.setText(arrowText);
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
-        canNextTurn = false;
         arrowCounter = 0;
         // Set the state to Game Choice to start the move select process
         Game.setState(GameState.GAME_CHOICE);
@@ -210,12 +204,6 @@ public class Hud {
       // Reset Y-Offset and Reset Colours
       arrowButton.setInactiveColourOffset(ARROW_DISABLE_COLOUR);
       arrowButton.setActiveColourOffset(ARROW_DISABLE_COLOUR);
-      if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-          && Game.canClick() && arrowButton.isMouseOver(window)) {
-        mouseOverHud = true;
-        Game.resetButtonLock();
-        canNextTurn = true;
-      }
     }
     arrowButton.update(window);
   }
