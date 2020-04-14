@@ -9,6 +9,8 @@ import society.person.Person;
 
 public class Society {
   private static final int DEFAULT_POPULATION_SIZE = 10;
+  private static final float FOOD_PER_PERSON = 1;
+  private static final float MATERIAL_PER_PERSON = 1;
   public int personIdCounter;
   private Vector3f societyColor;
   private ArrayList<Person> population;
@@ -25,6 +27,7 @@ public class Society {
   private int score;
   private boolean endTurn = false;
   private ArrayList<Society> possibleTradingSocieties = new ArrayList<>();
+  private boolean madeMove = false;
 
   /**
    * Instantiates a new Society.
@@ -52,8 +55,28 @@ public class Society {
     generateInitialPopulation(DEFAULT_POPULATION_SIZE);
   }
 
+  public static float getFoodPerPerson() {
+    return FOOD_PER_PERSON;
+  }
+
+  public static float getMaterialPerPerson() {
+    return MATERIAL_PER_PERSON;
+  }
+
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public boolean isMadeMove() {
+    return madeMove;
+  }
+
+  public void setMadeMove(boolean madeMove) {
+    this.madeMove = madeMove;
+  }
+
+  public ArrayList<TileWorldObject> getClaimableTerritory() {
+    return claimableTerritory;
   }
 
   public ArrayList<TileWorldObject> getOpponentWarringTiles() {
@@ -193,12 +216,11 @@ public class Society {
   /**
    * Claim tiles.
    */
-  public ArrayList<TileWorldObject> calculateClaimableTerritory() {
+  public void calculateClaimableTerritory() {
     claimableTerritory.clear();
     for (TileWorldObject worldTile : territory) {
       addClaimableTiles(worldTile.getRow(), worldTile.getColumn());
     }
-    return claimableTerritory;
   }
 
   /**

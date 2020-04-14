@@ -30,6 +30,7 @@ import map.tiles.AridTile;
 import map.tiles.FertileTile;
 import map.tiles.WaterTile;
 import math.Vector3f;
+import math.Vector4f;
 import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
@@ -37,11 +38,12 @@ import society.Society;
 
 public class Hud {
   // Sets a number of game cycles so when we press a button to toggle it is not as sensitive
-  private static final int BUTTON_LOCK_CYCLES = 20;
-  private static final Vector3f ARROW_ENABLE_COLOUR = ColourUtils.convertColor(Color.GREEN);
-  private static final Vector3f ARROW_ENABLE_HOVER
-      = ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN);
-  private static final Vector3f ARROW_DISABLE_COLOUR = ColourUtils.convertColor(Color.RED);
+  private static final Vector4f ARROW_ENABLE_COLOUR =
+      new Vector4f(ColourUtils.convertColor(Color.GREEN), 1);
+  private static final Vector4f ARROW_ENABLE_HOVER
+      = new Vector4f(ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN), 1);
+  private static final Vector4f ARROW_DISABLE_COLOUR
+      = new Vector4f(ColourUtils.convertColor(Color.RED), 0.5f);
   private static final float ARROW_BUTTON_OFFSET_Y = 0.1f;
   private static final Image PANEL_IMAGE = new Image("/images/hudPanel.png");
   private static final Image SOCIETY_PANEL_IMAGE = new Image("/images/hudPanel2.png");
@@ -64,7 +66,6 @@ public class Hud {
   private static HudImage terrainTileImage;
   private static HudText coordinates;
   private static Boolean devHudActive = false;
-  private static int hudCycleLock = 0;
   private static int turn = 1;
   private static ArrayList<SocietyButton> societyButtons = new ArrayList<>();
   private static HudImage societyButtonPanel;
@@ -72,7 +73,6 @@ public class Hud {
   private static HudText panelTitle;
   private static ButtonObject arrowButton;
   private static HudText arrowTextObject;
-  private static boolean canNextTurn = true;
   private static float arrowCounter;
   private static boolean terrainPanelActive = false;
   private static boolean societyPanelActive = false;
@@ -80,6 +80,10 @@ public class Hud {
   private static ArrayList<HudImage> panelBorders = new ArrayList<>();
   private static boolean mouseOverHud = false;
   private static HudText hint;
+
+  public static int getTurn() {
+    return turn;
+  }
 
   public static ArrayList<SocietyButton> getSocietyButtons() {
     return societyButtons;
@@ -109,7 +113,6 @@ public class Hud {
     turn = 1;
     terrainPanelActive = false;
     societyPanelActive = false;
-    canNextTurn = false;
     devHudActive = false;
     createObjects();
   }
@@ -121,8 +124,6 @@ public class Hud {
    */
   public static void update(Window window) {
     mouseOverHud = false;
-    hudCycleLock--;
-    hudCycleLock = Math.max(hudCycleLock, 0);
     resize();
     updateTerrainPanel();
     updateSocietyButtons(window);
@@ -131,7 +132,10 @@ public class Hud {
     updateHint();
   }
 
-  private static void updateHint() {
+  /**
+   * Update the hint text.
+   */
+  public static void updateHint() {
     String hintString = null;
     if (Game.getState() == GameState.WARRING) {
       if (World.getAttackingTile() == null) {
@@ -139,9 +143,14 @@ public class Hud {
       } else if (World.getOpponentTile() == null) {
         hintString = "Select an Opponent's Tile to Attack";
       }
+    } else if (Game.getState() == GameState.CLAIM_TILE) {
+      hintString = "Select a Tile to Claim";
+    } else if (Game.getState() == GameState.AI_CLAIM) {
+      hintString = String.format("Society %d expands their territory",
+          World.getActiveSociety().getSocietyId() + 1);
     }
     if (!hint.getText().getString().equals(hintString) && hintString != null) {
-      Text hintText = new Text(hintString);
+      Text hintText = new Text(hintString, 1, ColourUtils.convertColor(Color.WHITE));
       hint.setText(hintText);
       hint.setOffsetX(-(hint.getWidth() / 2));
     }
@@ -176,7 +185,7 @@ public class Hud {
 
   private static void updateArrowButton(Window window) {
     // Modify Arrow to make next turn clear
-    if (canNextTurn) {
+    if (Game.getState() == GameState.TURN_END) {
       // can click for next turn update colour and add animation
       arrowButton.setInactiveColourOffset(ARROW_ENABLE_COLOUR);
       arrowButton.setActiveColourOffset(ARROW_ENABLE_HOVER);
@@ -186,30 +195,21 @@ public class Hud {
       float offsetY = arrowButton.getHudImage().getOffsetY();
       arrowButton.getHudImage().setOffsetY(offsetY + newValue);
       // Check if clicked
-      if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && hudCycleLock == 0
-          && arrowButton.isMouseOver(window)) {
+      if (((Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && arrowButton.isMouseOver(window))
+          || Input.isKeyDown(GLFW.GLFW_KEY_SPACE))
+          && Game.canClick()) {
         mouseOverHud = true;
-        hudCycleLock = BUTTON_LOCK_CYCLES;
+        Game.resetButtonLock();
         updateTurnCounter();
-        // TODO Fix this bug
-        // If we don't reset here then for some reason the arrow text is overwritten
-        arrowTextObject.setText(arrowText);
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
-        canNextTurn = false;
         arrowCounter = 0;
-        // Set the state to Game Choice to start the move select process
-        Game.setState(GameState.GAME_CHOICE);
+        // change the state so the the next turn can begin the in game loop
+        Game.setState(GameState.GAME_MAIN);
       }
     } else {
       // Reset Y-Offset and Reset Colours
       arrowButton.setInactiveColourOffset(ARROW_DISABLE_COLOUR);
       arrowButton.setActiveColourOffset(ARROW_DISABLE_COLOUR);
-      if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-          && hudCycleLock == 0 && arrowButton.isMouseOver(window)) {
-        mouseOverHud = true;
-        hudCycleLock = BUTTON_LOCK_CYCLES;
-        canNextTurn = true;
-      }
     }
     arrowButton.update(window);
   }
@@ -220,8 +220,8 @@ public class Hud {
       societyButtons.get(i).update(window);
       // check if mouse click
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-          && societyButtons.get(i).isMouseOver(window) && hudCycleLock == 0) {
-        hudCycleLock = BUTTON_LOCK_CYCLES;
+          && societyButtons.get(i).isMouseOver(window) && Game.canClick()) {
+        Game.resetButtonLock();
         mouseOverHud = true;
         terrainPanelActive = false;
         societyPanelActive = true;
@@ -288,9 +288,9 @@ public class Hud {
    */
   public static void updateDevHud(Camera camera) {
     // check for key press to toggle
-    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && (hudCycleLock == 0)) {
+    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && Game.canClick()) {
       devHudActive = !devHudActive;
-      hudCycleLock = BUTTON_LOCK_CYCLES;
+      Game.resetButtonLock();
     }
     if (devHudActive) {
       calculateCoordText(camera);
@@ -330,15 +330,10 @@ public class Hud {
   }
 
   private static void createHint() {
-    Text hintText = new Text("", 1f, ColourUtils.convertColor(Color.GRAY));
-    hint = new HudText(hintText, 0, 0, 1, -0.2f);
+    Text hintText = new Text("");
+    hint = new HudText(hintText, 0, 0, 1, -0.25f);
     hint.create();
   }
-
-  private static void createInspectionPanels2() {
-
-  }
-
   private static void createInspectionPanels() {
     float borderSize = 0.03f;
     float width = 0.9f;
@@ -555,7 +550,9 @@ public class Hud {
       coordinates.render(textRenderer);
     }
     renderInspectionPanel(guiRenderer, textRenderer);
-    if (Game.getState() == GameState.WARRING) {
+    if (Game.getState() == GameState.WARRING
+        || Game.getState() == GameState.CLAIM_TILE
+        || Game.getState() == GameState.AI_CLAIM) {
       hint.render(textRenderer);
     }
   }
@@ -617,6 +614,7 @@ public class Hud {
     panelTitle.destroy();
     terrainTileImage.destroy();
     hint.destroy();
+    turn = 0;
   }
 
   public static String calculateSocietyPanelString(Society society) {

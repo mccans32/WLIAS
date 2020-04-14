@@ -7,6 +7,8 @@ public enum GameState {
   GAME_CHOICE,
   WARRING,
   GAME_OVER,
-  CHOSE_OPPONENT,
+  CLAIM_TILE,
+  AI_CLAIM,
+  TURN_END,
   TRADING
 }

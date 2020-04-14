@@ -24,7 +24,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class MainMenu {
   private static final Vector3f BACKGROUND_COLOUR = ColourUtils.convertColor(
-      ChartColor.VERY_LIGHT_CYAN.brighter());
+      ChartColor.DARK_BLUE.darker());
   private static final Vector3f TEXT_COLOUR = ColourUtils.convertColor(Color.WHITE);
   private static final float BUTTON_FONT_SIZE = 2f;
   private static final float BUTTON_WIDTH = 0.7f;

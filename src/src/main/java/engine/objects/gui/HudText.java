@@ -122,8 +122,12 @@ public class HudText {
     this.text.setCentreVertical(isCentreVertical);
     this.text.setCentreHorizontal(isCentreHorizontal);
     // Update the Vertices and the Indices
-    calculateArrays();
-    updateBuffers(verticesArray, indicesArray);
+    destroy();
+    reposition();
+    this.setMesh(buildMesh());
+    create();
+    // calculateArrays();
+    // updateBuffers(verticesArray, indicesArray);
   }
 
   public Mesh getMesh() {

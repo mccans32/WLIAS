@@ -12,6 +12,7 @@ import engine.io.Input;
 import engine.objects.gui.ButtonObject;
 import engine.objects.gui.HudText;
 import engine.utils.ColourUtils;
+import game.Game;
 import game.world.World;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -27,6 +28,15 @@ public class ChoiceMenu {
   private static final float HINT_GAP = 0.05f;
   private static HudText choiceHint;
   private static ArrayList<ButtonObject> choiceButtons = new ArrayList<>();
+  private static boolean choiceMade;
+
+  public static boolean isChoiceMade() {
+    return choiceMade;
+  }
+
+  public static void setChoiceMade(boolean choiceMade) {
+    ChoiceMenu.choiceMade = choiceMade;
+  }
 
   /**
    * Render.
@@ -52,6 +62,7 @@ public class ChoiceMenu {
    * @param window the window
    */
   public static void update(Window window) {
+    updateButtonStatus();
     checkChoiceButtonClick(window);
     resize();
     for (ButtonObject choiceButton : choiceButtons) {
@@ -59,9 +70,26 @@ public class ChoiceMenu {
     }
   }
 
+  private static void updateButtonStatus() {
+    // Update War Button
+    World.getSocieties()[0].calculateWarringTiles();
+    if (World.getSocieties()[0].getOpponentWarringTiles().isEmpty()) {
+      choiceButtons.get(0).disable();
+    } else {
+      choiceButtons.get(0).enable();
+    }
+    // Update Claim Tile Button
+    World.getSocieties()[0].calculateClaimableTerritory();
+    if (World.getSocieties()[0].getClaimableTerritory().isEmpty()) {
+      choiceButtons.get(1).disable();
+    } else {
+      choiceButtons.get(1).enable();
+    }
+  }
+
   private static void createChoiceHint() {
     String choiceHintString = "Please Select A Move";
-    Text choiceText = new Text(choiceHintString);
+    Text choiceText = new Text(choiceHintString, 1f, ColourUtils.convertColor(Color.WHITE));
     choiceHint = new HudText(choiceText, 0, 0, 0, 0);
     choiceHint.setOffsetX(-(choiceHint.getWidth() / 2f));
     choiceHint.setOffsetY(BUTTON_OFFSET_Y + BUTTON_HEIGHT + HINT_GAP);
@@ -70,24 +98,29 @@ public class ChoiceMenu {
 
   private static void checkChoiceButtonClick(Window window) {
     // Check if left button is down
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()) {
+      Game.resetButtonLock();
       // cycle thorough all buttons in out list of choice buttons
       for (ButtonObject choiceButton : choiceButtons) {
         // check if the mouse is over the button
         if (choiceButton.isMouseOver(window)) {
           if (choiceButton.getLines().get(0).getText().getString().equals(CHOICE_BUTTON_NAMES[0])) {
+            choiceMade = true;
             // War button was highlighted
             World.warMove();
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[1])) {
+            choiceMade = true;
             // Claim Tile button was highlighted
             World.claimTileMove();
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[2])) {
+            choiceMade = true;
             // Trade move button was highlighted
             World.tradeMove();
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[3])) {
+            choiceMade = true;
             // Nothing button was highlighted
             World.nothingMove();
           }
