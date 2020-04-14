@@ -29,11 +29,6 @@ public class WorldTest {
   private static final Vector3f DEFAULT_ROTATION = new Vector3f(0, 0, 0);
   private static final int FOOD_AND_RAW_MATERIAL_VALUE = 10;
   private static final int[] LAND_MASS_SIZES = new int[] {5, 6, 7, 10};
-  private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
-      ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
-      ColourUtils.convertColor(ChartColor.VERY_LIGHT_RED),
-      ColourUtils.convertColor(ChartColor.VERY_DARK_GREEN),
-      ColourUtils.convertColor(ChartColor.VERY_DARK_CYAN)};
   private static final int MAX_SOCIETY_NUMBER = 4;
 
   private Camera camera;

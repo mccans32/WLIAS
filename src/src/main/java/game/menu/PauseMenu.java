@@ -26,7 +26,8 @@ public class PauseMenu {
   private static RectangleModel buttonModel = new RectangleModel(0.75f, 0.3f);
   private static Image buttonImage = new Image("/images/buttonTexture.png");
   private static Vector3f buttonTextColour = new Vector3f(1, 1, 1);
-  private static Text pauseText = new Text("Paused", 2.3f, ColourUtils.convertColor(Color.RED));
+  private static Text pauseText = new Text("Paused", 2.3f,
+      ColourUtils.convertColor(Color.RED.brighter()));
   private static HudText pauseObject = new HudText(pauseText, 0, 0, 1, -0.2f);
   private static ButtonObject resumeButton;
   private static ButtonObject exitButton;
@@ -113,6 +114,11 @@ public class PauseMenu {
     camera.freeze();
   }
 
+  /**
+   * Un-pause the game.
+   *
+   * @param camera the camera
+   */
   public static void unpauseGame(Camera camera) {
     Game.setState(previousState);
     camera.unfreeze();

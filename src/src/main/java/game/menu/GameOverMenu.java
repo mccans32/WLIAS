@@ -22,9 +22,7 @@ import math.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class GameOverMenu {
-  private static final int BUTTON_lOCK_CYCLES = 20;
   private static final ButtonObject[] buttons = new ButtonObject[2];
-  private static int buttonCycleLock = BUTTON_lOCK_CYCLES;
   private static ButtonObject restartButton;
   private static ButtonObject mainMenuButton;
   private static RectangleModel buttonModel = new RectangleModel(0.75f, 0.3f);
@@ -49,7 +47,7 @@ public class GameOverMenu {
     mainMenuButton.create();
     buttons[1] = mainMenuButton;
     // Create Game Over Text
-    Text text = new Text("Game Over", 2.3f, ColourUtils.convertColor(Color.RED));
+    Text text = new Text("Game Over!", 2.3f, ColourUtils.convertColor(Color.RED.brighter()));
     gameOverText = new HudText(text, 0, 0, 1, -0.2f);
     gameOverText.setOffsetX(-(gameOverText.getWidth() / 2));
     gameOverText.create();
@@ -62,18 +60,16 @@ public class GameOverMenu {
    * @param camera the camera
    */
   public static void update(Window window, Camera camera) {
-    buttonCycleLock--;
-    buttonCycleLock = Math.max(0, buttonCycleLock);
-    checkButtonClick(window, camera);
     resize();
     for (ButtonObject button : buttons) {
       button.update(window);
     }
+    checkButtonClick(window, camera);
   }
 
   private static void checkButtonClick(Window window, Camera camera) {
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && buttonCycleLock == 0) {
-      buttonCycleLock = BUTTON_lOCK_CYCLES;
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()) {
+      Game.resetButtonLock();
       if (restartButton.isMouseOver(window)) {
         restartGame(window, camera);
       } else if (mainMenuButton.isMouseOver(window)) {
@@ -87,6 +83,7 @@ public class GameOverMenu {
   }
 
   private static void restartGame(Window window, Camera camera) {
+    Game.setRestarted(true);
     Game.setState(GameState.GAME_MAIN);
     Hud.destroy();
     World.destroy();

@@ -32,4 +32,38 @@ public class ArrayUtils {
     }
     return intArray;
   }
+
+  /**
+   * get the maximum value from an array of floats.
+   *
+   * @param floats the floats
+   * @return the float
+   */
+  public static float max(float[] floats) {
+    float max = floats[0];
+    for (float flt : floats) {
+      if (flt > max) {
+        max = flt;
+      }
+    }
+    return max;
+  }
+
+  /**
+   * Index of int.
+   *
+   * @param floats the floats
+   * @param value  the value
+   * @return the int
+   */
+  public static int indexOf(float[] floats, float value) {
+    int index = -1;
+    for (int i = 0; i < floats.length; i++) {
+      if (floats[i] == value) {
+        index = i;
+        break;
+      }
+    }
+    return index;
+  }
 }

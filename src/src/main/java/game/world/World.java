@@ -12,6 +12,7 @@ import engine.objects.world.Camera;
 import engine.objects.world.GameObject;
 import engine.objects.world.TileWorldObject;
 import engine.tools.MousePicker;
+import engine.utils.ArrayUtils;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
@@ -40,18 +41,20 @@ public class World {
   private static final Vector3f DEFAULT_SCALE = new Vector3f(1f, 1f, 1f);
   private static final int DEFAULT_NUMBER_OF_SOCIETIES = 4;
   private static final Vector3f[] BASIC_SOCIETY_COLORS = new Vector3f[] {
-      ColourUtils.convertColor(ChartColor.DARK_MAGENTA),
-      ColourUtils.convertColor(ChartColor.LIGHT_RED),
+      ColourUtils.convertColor(ChartColor.RED),
+      ColourUtils.convertColor(ChartColor.LIGHT_YELLOW),
       ColourUtils.convertColor(ChartColor.LIGHT_GREEN),
       ColourUtils.convertColor(ChartColor.LIGHT_CYAN)};
+  private static final int FERTILE_MIN_FOOD_RESOURCE = 3;
   private static final int FERTILE_MAX_FOOD_RESOURCE = 5;
   private static final int FERTILE_MAX_RAW_MATERIALS = 1;
   private static final int ARID_MAX_FOOD_RESOURCE = 1;
   private static final int ARID_MAX_RAW_MATERIALS = 5;
+  private static final int ARID_MIN_RAW_MATERIALS = 3;
   private static final int PLAIN_MAX_FOOD_RESOURCE = 3;
   private static final int PLAIN_MAX_RAW_MATERIALS = 2;
   private static final int WATER_MAX_FOOD_RESOURCE = 1;
-  private static final int WATER_MAX_RAW_MATERIALS = 0;
+  private static final int WATER_MAX_RAW_MATERIALS = 1;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -67,6 +70,8 @@ public class World {
   private static RectangleModel tileModel;
   private static TileWorldObject attackingTile;
   private static TileWorldObject opponentTile;
+  private static TileWorldObject claimedTile;
+  private static Society activeSociety;
 
   public static RectangleModel getTileModel() {
     return tileModel;
@@ -108,6 +113,7 @@ public class World {
 
   private static void generateSocieties(int numberOfSocieties) {
     societies = new Society[numberOfSocieties];
+    activeSocieties.clear();
     for (int i = 0; i < numberOfSocieties; i++) {
       Society society = new Society(i, BASIC_SOCIETY_COLORS[i]);
       societies[i] = society;
@@ -168,26 +174,49 @@ public class World {
     AudioMaster.setListener(camera.getPosition());
     updateBorders(window);
     if (Game.getState() == GameState.WARRING) {
-      if (attackingTile == null) {
-        MousePicker.update(window, societies[0].getSocietyWarringTiles());
-        updateSelectOverlay();
-        attackingTile = selectWorldTile(societies[0].getSocietyWarringTiles());
-      } else if (opponentTile == null) {
-        MousePicker.update(window, societies[0].getOpponentWarringTiles());
-        updateSelectOverlay();
-        opponentTile = selectWorldTile(societies[0].getOpponentWarringTiles());
-      } else {
-        simulateBattle(societies[0], attackingTile, opponentTile);
-        attackingTile = null;
-        opponentTile = null;
-      }
+      selectWarTiles(window);
+    } else if (Game.getState() == GameState.CLAIM_TILE) {
+      selectClaimableTile(window);
+    }
+  }
+
+  private static void selectClaimableTile(Window window) {
+    if (claimedTile == null) {
+      MousePicker.update(window, societies[0].getClaimableTerritory());
+      updateSelectOverlay();
+      claimedTile = selectWorldTile(societies[0].getClaimableTerritory());
+    } else {
+      societies[0].claimTile(claimedTile);
+      bordersAltered = true;
+      updateSocietyBorders();
+      claimedTile = null;
+      societies[0].setEndTurn(true);
+      Game.setState(GameState.GAME_MAIN);
+    }
+  }
+
+  private static void selectWarTiles(Window window) {
+    if (attackingTile == null) {
+      MousePicker.update(window, societies[0].getSocietyWarringTiles());
+      updateSelectOverlay();
+      attackingTile = selectWorldTile(societies[0].getSocietyWarringTiles());
+    } else if (opponentTile == null) {
+      MousePicker.update(window, societies[0].getOpponentWarringTiles());
+      updateSelectOverlay();
+      opponentTile = selectWorldTile(societies[0].getOpponentWarringTiles());
+    } else {
+      simulateBattle(societies[0], attackingTile, opponentTile);
+      attackingTile = null;
+      opponentTile = null;
     }
   }
 
   private static TileWorldObject selectWorldTile(ArrayList<TileWorldObject> worldTiles) {
     if (MousePicker.getCurrentSelected() != null
         && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-        && worldTiles.contains(MousePicker.getCurrentSelected())) {
+        && worldTiles.contains(MousePicker.getCurrentSelected())
+        && Game.canClick()) {
+      Game.resetButtonLock();
       return MousePicker.getCurrentSelected();
     } else {
       return null;
@@ -200,9 +229,11 @@ public class World {
    * @param window the window
    */
   public static void updateBorders(Window window) {
-    updateSocietyBorders();
-    MousePicker.update(window, worldMap);
-    updateSelectOverlay();
+    if (worldMap != null) {
+      updateSocietyBorders();
+      MousePicker.update(window, worldMap);
+      updateSelectOverlay();
+    }
   }
 
   private static void updateSocietyBorders() {
@@ -286,11 +317,13 @@ public class World {
       tempTileWorldObject.setFoodResource(genRandomInt(WATER_MAX_FOOD_RESOURCE));
       tempTileWorldObject.setRawMaterialResource(WATER_MAX_RAW_MATERIALS);
     } else if (tempTileWorldObject.getTile() instanceof FertileTile) {
-      tempTileWorldObject.setFoodResource(genRandomInt(FERTILE_MAX_FOOD_RESOURCE));
+      tempTileWorldObject.setFoodResource(genRandomInt(FERTILE_MAX_FOOD_RESOURCE,
+          FERTILE_MIN_FOOD_RESOURCE));
       tempTileWorldObject.setRawMaterialResource(genRandomInt(FERTILE_MAX_RAW_MATERIALS));
     } else if (tempTileWorldObject.getTile() instanceof AridTile) {
       tempTileWorldObject.setFoodResource(genRandomInt(ARID_MAX_FOOD_RESOURCE));
-      tempTileWorldObject.setRawMaterialResource(genRandomInt(ARID_MAX_RAW_MATERIALS));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(ARID_MAX_RAW_MATERIALS,
+          ARID_MIN_RAW_MATERIALS));
     } else if (tempTileWorldObject.getTile() instanceof PlainTile) {
       tempTileWorldObject.setFoodResource(genRandomInt(PLAIN_MAX_FOOD_RESOURCE));
       tempTileWorldObject.setRawMaterialResource(genRandomInt(PLAIN_MAX_RAW_MATERIALS));
@@ -338,9 +371,17 @@ public class World {
     return r.nextInt(maxValue);
   }
 
+  /**
+   * Generate a random integer.
+   *
+   * @param maxValue the max value
+   * @param minValue the min value
+   * @return the int
+   */
   public static int genRandomInt(int maxValue, int minValue) {
     Random r = new Random();
-    return r.nextInt(maxValue) + minValue;
+    int val = r.nextInt(maxValue + 1);
+    return (val == minValue ? minValue : Math.max(val, minValue));
   }
 
   public static int getDefaultNumberOfSocieties() {
@@ -437,9 +478,11 @@ public class World {
    * Claim tile move.
    */
   public static void claimTileMove() {
-    societies[0].setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
-
+    // Calculate claimable tiles
+    societies[0].calculateClaimableTerritory();
+    if (!societies[0].getClaimableTerritory().isEmpty()) {
+      Game.setState(GameState.CLAIM_TILE);
+    }
   }
 
   public static void tradeMove() {
@@ -452,10 +495,69 @@ public class World {
     Game.setState(GameState.GAME_MAIN);
   }
 
+  public static Society getActiveSociety() {
+    return activeSociety;
+  }
+
+  /**
+   * The turn calculations needed for the Ai Societies to ake their turns.
+   *
+   * @param society the society
+   */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
-    society.setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
+
+    if (!society.isMadeMove()) {
+      society.calculateClaimableTerritory();
+      if (!society.getClaimableTerritory().isEmpty()) {
+        // calculate Most Needed Tile
+        TileWorldObject claimTile = calculateClaimTile(society);
+        society.claimTile(claimTile);
+        bordersAltered = true;
+        updateSocietyBorders();
+        society.setMadeMove(true);
+        activeSociety = society;
+        Game.setState(GameState.AI_CLAIM);
+        Game.getNotificationTimer().setDuration(2);
+      } else {
+        society.setMadeMove(true);
+        Game.getNotificationTimer().setDuration(0);
+      }
+    }
+    if (Game.getNotificationTimer().isDurationMet()) {
+      Game.getNotificationTimer().clearDuration();
+      society.setEndTurn(true);
+      activeSociety = null;
+      Game.setState(GameState.GAME_MAIN);
+    }
+  }
+
+  private static TileWorldObject calculateClaimTile(Society society) {
+    ArrayList<TileWorldObject> claimable = society.getClaimableTerritory();
+    float[] scores = new float[claimable.size()];
+    // Get the score for each tile
+    for (int i = 0; i < claimable.size(); i++) {
+      float score = calculateTileClaimScore(society, claimable.get(i));
+      scores[i] = score;
+    }
+    // Get the highest score
+    float highest = ArrayUtils.max(scores);
+    int index = ArrayUtils.indexOf(scores, highest);
+    return claimable.get(index);
+  }
+
+  private static float calculateTileClaimScore(Society society, TileWorldObject tile) {
+    // Decides what tile the society would most want
+    //Dictated by how much food they require, how much raw material they require;
+    float foodWeight = (society.getPopulation().size() * Society.getFoodPerPerson())
+        / (society.getTotalFoodResource() + 1);
+    float materialWeight = (society.getPopulation().size() * Society.getMaterialPerPerson())
+        / (society.getTotalRawMaterialResource() + 1);
+    float tileAttackWeight = -(society.getAverageLifeExpectancy() / 100);
+
+    return (foodWeight * tile.getFoodResource())
+        + (materialWeight * tile.getRawMaterialResource())
+        + (tileAttackWeight * tile.getTile().getAttackModifier());
   }
 
   public static ArrayList<Society> getActiveSocieties() {
