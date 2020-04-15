@@ -33,6 +33,9 @@ public class ButtonObject extends HudObject {
     this(backgroundMesh, new Text(""), edgeX, offsetX, edgeY, offsetY);
   }
 
+  public boolean isEnabled() {
+    return enabled;
+  }
 
   public Vector3f getInactiveColourOffset() {
     return inactiveColourOffset;
