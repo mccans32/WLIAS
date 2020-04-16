@@ -497,4 +497,21 @@ public class Society {
       setActiveTradeDeals(newTradeDeals);
     }
   }
+
+  /**
+   * Check if trading boolean.
+   *
+   * @param society the society
+   * @return the boolean
+   */
+  public boolean checkIfTrading(Society society) {
+    if (society != this) {
+      for (TradeDeal tradeDeal : activeTradeDeals) {
+        if (society == tradeDeal.getSocietyB()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }

@@ -227,6 +227,15 @@ public class Hud {
   private static void updateSocietyButtons(Window window) {
     purgeButtons();
     for (int i = 0; i < societyButtons.size(); i++) {
+      if (World.getActiveSocieties().get(0).checkIfTrading(societyButtons.get(i).getSociety())) {
+        societyButtons.get(i).setActiveColourOffset(
+            new Vector4f(ColourUtils.convertColor(ChartColor.DARK_GREEN), 1.0f));
+        societyButtons.get(i).setInactiveColourOffset(new Vector4f(
+            ColourUtils.convertColor(Color.GREEN), 1.0f));
+      } else {
+        societyButtons.get(i).setActiveColourOffset(ButtonObject.getDefaultActiveColorOffset());
+        societyButtons.get(i).setInactiveColourOffset(ButtonObject.getDefaultInactiveColorOffset());
+      }
       societyButtons.get(i).update(window);
       // check if mouse click
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
