@@ -25,7 +25,22 @@ public class InspectionPanelObject extends Hud {
   private HudText panelTitle;
   private boolean isActive = false;
 
-  public InspectionPanelObject(float borderSize, float width, float height, float edgeX, float offsetX, float edgeY, float offsetY, Text panelText, Text panelTitleText) {
+  /**
+   * Instantiates a new Inspection panel object.
+   *
+   * @param borderSize     the border size
+   * @param width          the width
+   * @param height         the height
+   * @param edgeX          the edge x
+   * @param offsetX        the offset x
+   * @param edgeY          the edge y
+   * @param offsetY        the offset y
+   * @param panelText      the panel text
+   * @param panelTitleText the panel title text
+   */
+  public InspectionPanelObject(float borderSize, float width, float height, float edgeX,
+                               float offsetX, float edgeY, float offsetY, Text panelText,
+                               Text panelTitleText) {
     this.borderSize = borderSize;
     this.width = width;
     this.height = height;
@@ -39,6 +54,9 @@ public class InspectionPanelObject extends Hud {
     createPanelTitle(panelTitleText);
   }
 
+  /**
+   * Destroy panel.
+   */
   public void destroyPanel() {
     for (HudImage panelBorder : panelBorders) {
       panelBorder.destroy();
@@ -74,7 +92,8 @@ public class InspectionPanelObject extends Hud {
 
   private void createPanelTitle(Text panelTitleText) {
     // create the Panel Title
-    panelTitle = new HudText(panelTitleText, edgeX, offsetX - width / 2, edgeY, offsetY + height / 2);
+    panelTitle = new HudText(panelTitleText, edgeX, offsetX - width / 2, edgeY,
+        offsetY + height / 2);
     panelTitle.create();
   }
 
@@ -99,11 +118,13 @@ public class InspectionPanelObject extends Hud {
     float verticalHeight = height + (borderSize * 2);
     RectangleModel verticalModel = new RectangleModel(borderSize, verticalHeight);
     RectangleMesh verticalMesh = new RectangleMesh(verticalModel, borderMaterial);
-    HudImage borderLeft = new HudImage(verticalMesh, edgeX, offsetX - (width / 2) - (borderSize / 2), edgeY, offsetY);
+    HudImage borderLeft = new HudImage(verticalMesh, edgeX,
+        offsetX - (width / 2) - (borderSize / 2), edgeY, offsetY);
     borderLeft.create();
     panelBorders.add(borderLeft);
     //create right border
-    HudImage borderRight = new HudImage(verticalMesh, edgeX, offsetX + (width / 2) + (borderSize / 2), edgeY, offsetY);
+    HudImage borderRight = new HudImage(verticalMesh, edgeX,
+        offsetX + (width / 2) + (borderSize / 2), edgeY, offsetY);
     borderRight.create();
     panelBorders.add(borderRight);
     // set the alpha for the borders
@@ -130,6 +151,9 @@ public class InspectionPanelObject extends Hud {
     panel.create();
   }
 
+  /**
+   * Reposition.
+   */
   public void reposition() {
     panelTitle.reposition();
     panel.reposition();

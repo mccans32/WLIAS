@@ -637,6 +637,12 @@ public class Hud {
     turn = 0;
   }
 
+  /**
+   * Calculate society panel string string.
+   *
+   * @param society the society
+   * @return the string
+   */
   public static String calculateSocietyPanelString(Society society) {
     String societyString;
     if (society.getSocietyId() == 0) {

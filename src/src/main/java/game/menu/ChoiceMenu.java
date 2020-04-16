@@ -14,7 +14,7 @@ import engine.objects.gui.HudText;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
-import game.menu.dataObjects.TradeDeal;
+import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
 import java.awt.Color;

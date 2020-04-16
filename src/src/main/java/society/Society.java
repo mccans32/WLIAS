@@ -2,7 +2,7 @@ package society;
 
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.objects.world.TileWorldObject;
-import game.menu.dataObjects.TradeDeal;
+import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
 import java.util.ArrayList;
@@ -293,7 +293,8 @@ public class Society {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.contains(map[row - 1][column]) && checkForPeace(map[row - 1][column])) {
+      if (!opponentWarringTiles.contains(map[row - 1][column])
+          && checkForPeace(map[row - 1][column])) {
         opponentWarringTiles.add(map[row - 1][column]);
       }
     }
@@ -303,7 +304,8 @@ public class Society {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.contains(map[row + 1][column]) && checkForPeace(map[row + 1][column])) {
+      if (!opponentWarringTiles.contains(map[row + 1][column])
+          && checkForPeace(map[row + 1][column])) {
         opponentWarringTiles.add(map[row + 1][column]);
       }
     }
@@ -311,7 +313,8 @@ public class Society {
 
   private boolean checkForPeace(TileWorldObject warringTile) {
     for (TradeDeal tradeDeal : activeTradeDeals) {
-      return warringTile.getClaimedBy() != tradeDeal.getSocietyB() && warringTile.getClaimedBy() != tradeDeal.getSocietyA();
+      return warringTile.getClaimedBy() != tradeDeal.getSocietyB()
+          && warringTile.getClaimedBy() != tradeDeal.getSocietyA();
     }
     return true;
   }
@@ -375,6 +378,9 @@ public class Society {
     return 0;
   }
 
+  /**
+   * Calculate possible trading societies.
+   */
   public void calculatePossibleTradingSocieties() {
     for (TileWorldObject worldTile : territory) {
       checkPossibleTrading(worldTile.getRow(), worldTile.getColumn());
@@ -413,6 +419,12 @@ public class Society {
     }
   }
 
+  /**
+   * Examine trade deal boolean.
+   *
+   * @param tradeDeal the trade deal
+   * @return the boolean
+   */
   public boolean examineTradeDeal(TradeDeal tradeDeal) {
     if (tradeDeal.getSocietyB() == this) {
       int totalFoodReceived = tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
@@ -438,6 +450,11 @@ public class Society {
     return foodPerPerson > FOOD_PER_PERSON || foodPerPerson >= oldFoodPerPerson;
   }
 
+  /**
+   * Activate trade deal.
+   *
+   * @param tradeDeal the trade deal
+   */
   public void activateTradeDeal(TradeDeal tradeDeal) {
     activeTradeDeals.add(tradeDeal);
     if (tradeDeal.getSocietyA() == this) {
@@ -450,6 +467,11 @@ public class Society {
     calculateResources();
   }
 
+  /**
+   * Terminate trade deal.
+   *
+   * @param tradeDeal the trade deal
+   */
   public void terminateTradeDeal(TradeDeal tradeDeal) {
     if (tradeDeal.getSocietyA() == this) {
       foodFromDeals -= tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
@@ -461,6 +483,9 @@ public class Society {
     calculateResources();
   }
 
+  /**
+   * Check trade deal.
+   */
   public void checkTradeDeal() {
     ArrayList<TradeDeal> newTradeDeals = new ArrayList<>();
     for (TradeDeal tradeDeal : activeTradeDeals) {

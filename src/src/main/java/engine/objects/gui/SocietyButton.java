@@ -7,7 +7,8 @@ import society.Society;
 public class SocietyButton extends ButtonObject {
   private Society society;
 
-  public SocietyButton(RectangleMesh backgroundMesh, Text text, float edgeX, float offsetX, float edgeY, float offsetY, Society society) {
+  public SocietyButton(RectangleMesh backgroundMesh, Text text, float edgeX,
+                       float offsetX, float edgeY, float offsetY, Society society) {
     super(backgroundMesh, text, edgeX, offsetX, edgeY, offsetY);
     this.society = society;
   }

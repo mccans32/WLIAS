@@ -1,4 +1,4 @@
-package game.menu.dataObjects;
+package game.menu.data;
 
 import society.Society;
 
@@ -11,6 +11,14 @@ public class TradeDeal {
   private int rawMarsGiven;
   private int endTurnOfDeal;
 
+  /**
+   * Instantiates a new Trade deal.
+   *
+   * @param foodGiven       the food given
+   * @param foodReceived    the food received
+   * @param rawMatsReceived the raw mats received
+   * @param rawMarsGiven    the raw mars given
+   */
   public TradeDeal(int foodGiven, int foodReceived, int rawMatsReceived, int rawMarsGiven) {
     this.foodGiven = foodGiven;
     this.foodReceived = foodReceived;

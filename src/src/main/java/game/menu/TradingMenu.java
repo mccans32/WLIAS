@@ -21,7 +21,7 @@ import engine.objects.gui.InspectionPanelObject;
 import engine.objects.gui.SocietyButton;
 import engine.utils.ColourUtils;
 import game.Game;
-import game.menu.dataObjects.TradeDeal;
+import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
 import java.awt.Color;
@@ -160,30 +160,37 @@ public class TradingMenu {
     RectangleModel acceptButtonModel = new RectangleModel(0.5f, 0.1f);
     Material acceptButtonMat = new Material(new Image("/images/buttonTexture.png"));
     RectangleMesh acceptButtonMesh = new RectangleMesh(acceptButtonModel, acceptButtonMat);
-    Text acceptButtonText = new Text("Send Deal", 0.8f, ColourUtils.convertColor(Color.WHITE), true, true, false);
-    acceptButton = new ButtonObject(acceptButtonMesh, acceptButtonText, TRADE_PANEL_EDGE_X, 0.005f, 0, -0.5f);
-    acceptButton.setInactiveColourOffset(new Vector4f(ColourUtils.convertColor(Color.GREEN), 1.0f));
-    acceptButton.setActiveColourOffset(new Vector4f(ColourUtils.convertColor(ChartColor.DARK_GREEN), 1.0f));
+    Text acceptButtonText = new Text("Send Deal", 0.8f,
+        ColourUtils.convertColor(Color.WHITE), true, true, false);
+    acceptButton = new ButtonObject(acceptButtonMesh, acceptButtonText, TRADE_PANEL_EDGE_X,
+        0.005f, 0, -0.5f);
+    acceptButton.setInactiveColourOffset(new Vector4f(ColourUtils.convertColor(Color.GREEN),
+        1.0f));
+    acceptButton.setActiveColourOffset(
+        new Vector4f(ColourUtils.convertColor(ChartColor.DARK_GREEN),1.0f));
     acceptButton.create();
     acceptButton.disable();
   }
 
   private static void createLeftDealAmount() {
     // create left food amount
-    leftFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f, EDGE_Y, 0.11f);
+    leftFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f,
+        EDGE_Y, 0.11f);
     leftFoodAmount.create();
     dealNumbers.add(leftFoodAmount);
-//    dealNumbers.add(leftFoodAmount);
     // create left raw materials amount
-    leftRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f, EDGE_Y - 0.19f, 0);
+    leftRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f,
+        EDGE_Y - 0.19f, 0);
     leftRawMatsAmount.create();
     dealNumbers.add(leftRawMatsAmount);
     // create right food amount
-    rightFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f, EDGE_Y, 0.11f);
+    rightFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f,
+        EDGE_Y, 0.11f);
     rightFoodAmount.create();
     dealNumbers.add(rightFoodAmount);
     // create left raw materials amount
-    rightRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f, EDGE_Y - 0.19f, 0);
+    rightRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f,
+        EDGE_Y - 0.19f, 0);
     rightRawMatsAmount.create();
     dealNumbers.add(rightRawMatsAmount);
   }
@@ -194,27 +201,31 @@ public class TradingMenu {
   private static void createLeftDealButtons() {
     Text dealButtonText = new Text("", 0.6f,
         ColourUtils.convertColor(Color.BLACK), true, true, true);
-    RectangleMesh FoodAddMesh = new RectangleMesh(dealButtonModel,
+    RectangleMesh foodAddMesh = new RectangleMesh(dealButtonModel,
         new Material(PLUS_TEXTURE));
-    leftAddRawMatButton = new ButtonObject(FoodAddMesh, dealButtonText, -TRADE_PANEL_EDGE_X, 0.1f, EDGE_Y - 0.1f, OFFSET_Y);
+    leftAddRawMatButton = new ButtonObject(foodAddMesh, dealButtonText, -TRADE_PANEL_EDGE_X,
+        0.1f, EDGE_Y - 0.1f, OFFSET_Y);
     leftAddRawMatButton.create();
     dealButtons.add(leftAddRawMatButton);
 
     RectangleMesh foodMinusMesh = new RectangleMesh(dealButtonModel,
         new Material(MINUS_TEXTURE));
-    leftMinusRawMatButton = new ButtonObject(foodMinusMesh, dealButtonText, -TRADE_PANEL_EDGE_X, -0.1f, EDGE_Y - 0.1f, OFFSET_Y);
+    leftMinusRawMatButton = new ButtonObject(foodMinusMesh, dealButtonText, -TRADE_PANEL_EDGE_X,
+        -0.1f, EDGE_Y - 0.1f, OFFSET_Y);
     leftMinusRawMatButton.create();
     dealButtons.add(leftMinusRawMatButton);
 
     RectangleMesh rawMatAddMesh = new RectangleMesh(dealButtonModel,
         new Material(PLUS_TEXTURE));
-    leftAddFoodButton = new ButtonObject(rawMatAddMesh, dealButtonText, -TRADE_PANEL_EDGE_X, 0.1f, EDGE_Y + 0.2f, OFFSET_Y);
+    leftAddFoodButton = new ButtonObject(rawMatAddMesh, dealButtonText, -TRADE_PANEL_EDGE_X,
+        0.1f, EDGE_Y + 0.2f, OFFSET_Y);
     leftAddFoodButton.create();
     dealButtons.add(leftAddFoodButton);
 
     RectangleMesh rawMatMinusMesh = new RectangleMesh(dealButtonModel,
         new Material(MINUS_TEXTURE));
-    leftMinusFoodButton = new ButtonObject(rawMatMinusMesh, dealButtonText, -TRADE_PANEL_EDGE_X, -0.1f, EDGE_Y + 0.2f, OFFSET_Y);
+    leftMinusFoodButton = new ButtonObject(rawMatMinusMesh, dealButtonText, -TRADE_PANEL_EDGE_X,
+        -0.1f, EDGE_Y + 0.2f, OFFSET_Y);
     leftMinusFoodButton.create();
     dealButtons.add(leftMinusFoodButton);
   }
@@ -222,57 +233,74 @@ public class TradingMenu {
   private static void createRightDealButtons() {
     Text dealButtonText = new Text("", 0.6f,
         ColourUtils.convertColor(Color.BLACK), true, true, true);
-    RectangleMesh FoodAddMesh = new RectangleMesh(dealButtonModel,
+    RectangleMesh foodAddMesh = new RectangleMesh(dealButtonModel,
         new Material(PLUS_TEXTURE));
-    rightAddRawMatButton = new ButtonObject(FoodAddMesh, dealButtonText, TRADE_PANEL_EDGE_X, 0.1f, EDGE_Y - 0.1f, OFFSET_Y);
+    rightAddRawMatButton = new ButtonObject(foodAddMesh, dealButtonText, TRADE_PANEL_EDGE_X,
+        0.1f, EDGE_Y - 0.1f, OFFSET_Y);
     rightAddRawMatButton.create();
     dealButtons.add(rightAddRawMatButton);
 
     RectangleMesh foodMinusMesh = new RectangleMesh(dealButtonModel,
         new Material(MINUS_TEXTURE));
-    rightMinusRawMatButton = new ButtonObject(foodMinusMesh, dealButtonText, TRADE_PANEL_EDGE_X, -0.1f, EDGE_Y - 0.1f, OFFSET_Y);
+    rightMinusRawMatButton = new ButtonObject(foodMinusMesh, dealButtonText, TRADE_PANEL_EDGE_X,
+        -0.1f, EDGE_Y - 0.1f, OFFSET_Y);
     rightMinusRawMatButton.create();
     dealButtons.add(rightMinusRawMatButton);
 
     RectangleMesh rawMatAddMesh = new RectangleMesh(dealButtonModel,
         new Material(PLUS_TEXTURE));
-    rightAddFoodButton = new ButtonObject(rawMatAddMesh, dealButtonText, TRADE_PANEL_EDGE_X, 0.1f, EDGE_Y + 0.2f, OFFSET_Y);
+    rightAddFoodButton = new ButtonObject(rawMatAddMesh, dealButtonText, TRADE_PANEL_EDGE_X,
+        0.1f, EDGE_Y + 0.2f, OFFSET_Y);
     rightAddFoodButton.create();
     dealButtons.add(rightAddFoodButton);
 
     RectangleMesh rawMatMinusMesh = new RectangleMesh(dealButtonModel,
         new Material(MINUS_TEXTURE));
-    rightMinusFoodButton = new ButtonObject(rawMatMinusMesh, dealButtonText, TRADE_PANEL_EDGE_X, -0.1f, EDGE_Y + 0.2f, OFFSET_Y);
+    rightMinusFoodButton = new ButtonObject(rawMatMinusMesh, dealButtonText, TRADE_PANEL_EDGE_X,
+        -0.1f, EDGE_Y + 0.2f, OFFSET_Y);
     rightMinusFoodButton.create();
     dealButtons.add(rightMinusFoodButton);
   }
 
 
   private static void createTradingPanels() {
-    leftSocietyPanel = new InspectionPanelObject(BORDER_SIZE, WIDTH, HEIGHT, EDGE_X, OFFSET_X, EDGE_Y, OFFSET_Y, leftSocietyPanelText, leftPanelTitleText);
-    rightSocietyPanel = new InspectionPanelObject(BORDER_SIZE, WIDTH, HEIGHT, -EDGE_X, -OFFSET_X, EDGE_Y, OFFSET_Y, rightSocietyPanelText, rightPanelTitleText);
-    leftTradeDealPanel = new InspectionPanelObject(BORDER_SIZE, WIDTH / 1.5f, HEIGHT, -TRADE_PANEL_EDGE_X, 0, EDGE_Y, OFFSET_Y, tradeDealPanelText, leftTradeDealPanelText);
-    rightTradeDealPanel = new InspectionPanelObject(BORDER_SIZE, WIDTH / 1.5f, HEIGHT, TRADE_PANEL_EDGE_X, 0, EDGE_Y, OFFSET_Y, tradeDealPanelText, rightTradeDealPanelText);
+    leftSocietyPanel = new InspectionPanelObject(BORDER_SIZE, WIDTH, HEIGHT, EDGE_X, OFFSET_X,
+        EDGE_Y, OFFSET_Y, leftSocietyPanelText, leftPanelTitleText);
+    rightSocietyPanel = new InspectionPanelObject(BORDER_SIZE, WIDTH, HEIGHT, -EDGE_X, -OFFSET_X,
+        EDGE_Y, OFFSET_Y, rightSocietyPanelText, rightPanelTitleText);
+    leftTradeDealPanel = new InspectionPanelObject(BORDER_SIZE, WIDTH / 1.5f, HEIGHT,
+        -TRADE_PANEL_EDGE_X, 0, EDGE_Y, OFFSET_Y, tradeDealPanelText, leftTradeDealPanelText);
+    rightTradeDealPanel = new InspectionPanelObject(BORDER_SIZE, WIDTH / 1.5f, HEIGHT,
+        TRADE_PANEL_EDGE_X, 0, EDGE_Y, OFFSET_Y, tradeDealPanelText, rightTradeDealPanelText);
     RectangleMesh foodIcon = new RectangleMesh(ICON_MODEL, new Material(FOOD_ICON));
-    RectangleMesh rawMatsIcon = new RectangleMesh(ICON_MODEL, new Material(RAW_MATS_ICON));
     // create Left Food Icon
-    leftFoodIcon = new HudImage(foodIcon, -TRADE_PANEL_EDGE_X, -0.1f, EDGE_Y + 0.06f, 0);
+    leftFoodIcon = new HudImage(foodIcon, -TRADE_PANEL_EDGE_X, -0.1f,
+        EDGE_Y + 0.06f, 0);
     leftFoodIcon.create();
     icons.add(leftFoodIcon);
     // create Left Raw Materials Icon
-    leftRawMaterialsIcon = new HudImage(rawMatsIcon, -TRADE_PANEL_EDGE_X, -0.1f, EDGE_Y - 0.25f, 0);
+    RectangleMesh rawMatsIcon = new RectangleMesh(ICON_MODEL, new Material(RAW_MATS_ICON));
+    leftRawMaterialsIcon = new HudImage(rawMatsIcon, -TRADE_PANEL_EDGE_X,
+        -0.1f, EDGE_Y - 0.25f, 0);
     leftRawMaterialsIcon.create();
     icons.add(leftRawMaterialsIcon);
     // create Right food Icon
-    rightFoodIcon = new HudImage(foodIcon, TRADE_PANEL_EDGE_X, -0.1f, EDGE_Y + 0.06f, 0);
+    rightFoodIcon = new HudImage(foodIcon, TRADE_PANEL_EDGE_X, -0.1f,
+        EDGE_Y + 0.06f, 0);
     leftFoodIcon.create();
     icons.add(rightFoodIcon);
     // create Right Raw Materials Icon
-    rightRawMaterialsIcon = new HudImage(rawMatsIcon, TRADE_PANEL_EDGE_X, -0.1f, EDGE_Y - 0.25f, 0);
+    rightRawMaterialsIcon = new HudImage(rawMatsIcon, TRADE_PANEL_EDGE_X,
+        -0.1f, EDGE_Y - 0.25f, 0);
     leftRawMaterialsIcon.create();
     icons.add(rightRawMaterialsIcon);
   }
 
+  /**
+   * Update.
+   *
+   * @param window the window
+   */
   public static void update(Window window) {
     resize();
     Hud.updateHint();
@@ -298,50 +326,58 @@ public class TradingMenu {
 
           if (dealButton == leftAddFoodButton) {
             int currentFoodGiven = tradeDeal.getFoodGiven();
-            int newFoodAmount = selectMinimum(currentFoodGiven + 1, tradeDeal.getSocietyA().getTotalFoodResource());
+            int newFoodAmount = selectMinimum(currentFoodGiven + 1,
+                tradeDeal.getSocietyA().getTotalFoodResource());
             tradeDeal.setFoodGiven(newFoodAmount);
             leftFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
           } else if (dealButton == leftMinusFoodButton) {
             int currentFoodGiven = tradeDeal.getFoodGiven();
-            int newFoodAmount = selectMinimum(currentFoodGiven - 1, tradeDeal.getSocietyA().getTotalFoodResource());
+            int newFoodAmount = selectMinimum(currentFoodGiven - 1,
+                tradeDeal.getSocietyA().getTotalFoodResource());
             tradeDeal.setFoodGiven(newFoodAmount);
             leftFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
           } else if (dealButton == leftAddRawMatButton) {
             int currentRawMatsGiven = tradeDeal.getRawMarsGiven();
-            int newRawMatsAmt = selectMinimum(currentRawMatsGiven + 1, tradeDeal.getSocietyA().getTotalRawMaterialResource());
+            int newRawMatsAmt = selectMinimum(currentRawMatsGiven + 1,
+                tradeDeal.getSocietyA().getTotalRawMaterialResource());
             tradeDeal.setRawMarsGiven(newRawMatsAmt);
             leftRawMatsAmount.setText(new Text(String.valueOf(newRawMatsAmt), DEFAULT_FONT_SIZE));
 
           } else if (dealButton == leftMinusRawMatButton) {
             int currentRawMatsGiven = tradeDeal.getRawMarsGiven();
-            int newRawMatsAmt = selectMinimum(currentRawMatsGiven - 1, tradeDeal.getSocietyA().getTotalRawMaterialResource());
+            int newRawMatsAmt = selectMinimum(currentRawMatsGiven - 1,
+                tradeDeal.getSocietyA().getTotalRawMaterialResource());
             tradeDeal.setRawMarsGiven(newRawMatsAmt);
             leftRawMatsAmount.setText(new Text(String.valueOf(newRawMatsAmt), DEFAULT_FONT_SIZE));
 
 
           } else if (dealButton == rightAddFoodButton) {
             int foodReceived = tradeDeal.getFoodReceived();
-            int newFoodAmount = selectMinimum(foodReceived + 1, tradeDeal.getSocietyB().getTotalFoodResource());
+            int newFoodAmount = selectMinimum(foodReceived + 1,
+                tradeDeal.getSocietyB().getTotalFoodResource());
             tradeDeal.setFoodReceived(newFoodAmount);
             rightFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
           } else if (dealButton == rightMinusFoodButton) {
             int foodReceived = tradeDeal.getFoodReceived();
-            int newFoodAmount = selectMinimum(foodReceived - 1, tradeDeal.getSocietyB().getTotalFoodResource());
+            int newFoodAmount = selectMinimum(foodReceived - 1,
+                tradeDeal.getSocietyB().getTotalFoodResource());
             tradeDeal.setFoodReceived(newFoodAmount);
             rightFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
           } else if (dealButton == rightAddRawMatButton) {
             int rawMatsReceived = tradeDeal.getRawMatsReceived();
-            int rawMatsAmount = selectMinimum(rawMatsReceived + 1, tradeDeal.getSocietyB().getTotalRawMaterialResource());
+            int rawMatsAmount = selectMinimum(rawMatsReceived + 1,
+                tradeDeal.getSocietyB().getTotalRawMaterialResource());
             tradeDeal.setRawMatsReceived(rawMatsAmount);
             rightRawMatsAmount.setText(new Text(String.valueOf(rawMatsAmount), DEFAULT_FONT_SIZE));
 
           } else if (dealButton == rightMinusRawMatButton) {
             int rawMatsReceived = tradeDeal.getRawMatsReceived();
-            int rawMatsAmount = selectMinimum(rawMatsReceived - 1, tradeDeal.getSocietyB().getTotalRawMaterialResource());
+            int rawMatsAmount = selectMinimum(rawMatsReceived - 1,
+                tradeDeal.getSocietyB().getTotalRawMaterialResource());
             tradeDeal.setRawMatsReceived(rawMatsAmount);
             rightRawMatsAmount.setText(new Text(String.valueOf(rawMatsAmount), DEFAULT_FONT_SIZE));
           }
@@ -351,7 +387,8 @@ public class TradingMenu {
     }
     for (int i = 0; i < societyButtons.size(); i++) {
       if (!societiesChosen) {
-        if (!World.getActiveSocieties().get(0).getPossibleTradingSocieties().contains(societyButtons.get(i).getSociety())) {
+        if (!World.getActiveSocieties().get(0).getPossibleTradingSocieties()
+            .contains(societyButtons.get(i).getSociety())) {
           societyButtons.get(i).disable();
         }
         societyButtons.get(i).update(window);
@@ -390,6 +427,11 @@ public class TradingMenu {
     }
   }
 
+  /**
+   * Reset.
+   *
+   * @param window the window
+   */
   public static void reset(Window window) {
     for (HudText amountText : dealNumbers) {
       amountText.setText(new Text(String.valueOf(0), DEFAULT_FONT_SIZE));
@@ -432,6 +474,12 @@ public class TradingMenu {
     }
   }
 
+  /**
+   * Render.
+   *
+   * @param renderer     the renderer
+   * @param textRenderer the text renderer
+   */
   public static void render(GuiRenderer renderer, TextRenderer textRenderer) {
     glDisable(GL_DEPTH_TEST);
     leftTradeDealPanel.getPanel().render(renderer, textRenderer);
@@ -478,6 +526,9 @@ public class TradingMenu {
     Hud.renderHint(textRenderer);
   }
 
+  /**
+   * Destroy.
+   */
   public static void destroy() {
     leftSocietyPanel.destroyPanel();
     rightTradeDealPanel.destroyPanel();
