@@ -167,7 +167,7 @@ public class TradingMenu {
     acceptButton.setInactiveColourOffset(new Vector4f(ColourUtils.convertColor(Color.GREEN),
         1.0f));
     acceptButton.setActiveColourOffset(
-        new Vector4f(ColourUtils.convertColor(ChartColor.DARK_GREEN),1.0f));
+        new Vector4f(ColourUtils.convertColor(ChartColor.DARK_GREEN), 1.0f));
     acceptButton.create();
     acceptButton.disable();
   }
@@ -313,10 +313,10 @@ public class TradingMenu {
       leftSocietyPanel.getPanelText().setShouldWrap(true);
       leftSocietyPanel.getPanel().updateText(leftSocietyPanel.getPanelText());
     }
-    for (ButtonObject dealButton : dealButtons) {
-      dealButton.update(window);
-      // check if mouse click
-      if (societiesChosen) {
+    if (societiesChosen) {
+      for (ButtonObject dealButton : dealButtons) {
+        dealButton.update(window);
+        // check if mouse click
         acceptButton.update(window);
         tradeDeal.setSocietyA(World.getActiveSocieties().get(0));
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
@@ -481,33 +481,35 @@ public class TradingMenu {
    * @param textRenderer the text renderer
    */
   public static void render(GuiRenderer renderer, TextRenderer textRenderer) {
-    glDisable(GL_DEPTH_TEST);
-    leftTradeDealPanel.getPanel().render(renderer, textRenderer);
-    leftTradeDealPanel.getPanelTitle().render(textRenderer);
-    leftFoodAmount.render(textRenderer);
-    for (HudImage border : leftTradeDealPanel.getPanelBorders()) {
-      border.render(renderer);
+    if (societiesChosen) {
+      glDisable(GL_DEPTH_TEST);
+      leftTradeDealPanel.getPanel().render(renderer, textRenderer);
+      leftTradeDealPanel.getPanelTitle().render(textRenderer);
+      leftFoodAmount.render(textRenderer);
+      for (HudImage border : leftTradeDealPanel.getPanelBorders()) {
+        border.render(renderer);
+      }
+      rightTradeDealPanel.getPanel().render(renderer, textRenderer);
+      rightTradeDealPanel.getPanelTitle().render(textRenderer);
+      for (HudImage border : rightTradeDealPanel.getPanelBorders()) {
+        border.render(renderer);
+      }
+      glEnable(GL_DEPTH_TEST);
+      for (HudText dealNumber : dealNumbers) {
+        dealNumber.render(textRenderer);
+      }
+      for (ButtonObject dealButton : dealButtons) {
+        dealButton.render(renderer, textRenderer);
+      }
+      for (HudImage icon : icons) {
+        icon.render(renderer);
+      }
     }
-    rightTradeDealPanel.getPanel().render(renderer, textRenderer);
-    rightTradeDealPanel.getPanelTitle().render(textRenderer);
-    for (HudImage border : rightTradeDealPanel.getPanelBorders()) {
-      border.render(renderer);
-    }
-    glEnable(GL_DEPTH_TEST);
     if (acceptButton.isEnabled()) {
       acceptButton.render(renderer, textRenderer);
     }
-    for (HudText dealNumber : dealNumbers) {
-      dealNumber.render(textRenderer);
-    }
-    for (ButtonObject dealButton : dealButtons) {
-      dealButton.render(renderer, textRenderer);
-    }
     for (SocietyButton societyButton : societyButtons) {
       societyButton.render(renderer, textRenderer);
-    }
-    for (HudImage icon : icons) {
-      icon.render(renderer);
     }
     if (leftSocietyPanel.isActive()) {
       for (HudImage border : leftSocietyPanel.getPanelBorders()) {

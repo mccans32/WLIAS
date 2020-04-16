@@ -9,8 +9,8 @@ import math.Vector4f;
 public class ButtonObject extends HudObject {
   private static final Vector4f DEFAULT_INACTIVE_COLOR_OFFSET = new Vector4f(1, 1, 1, 1);
   private static final Vector4f DEFAULT_ACTIVE_COLOR_OFFSET = new Vector4f(0.6f, 0.6f, 0.6f, 1);
-  private Vector4f inactiveColourOffset = DEFAULT_INACTIVE_COLOR_OFFSET;
-  private Vector4f activeColourOffset = DEFAULT_ACTIVE_COLOR_OFFSET;
+  private Vector4f inactiveColourOffset = DEFAULT_INACTIVE_COLOR_OFFSET.copy();
+  private Vector4f activeColourOffset = DEFAULT_ACTIVE_COLOR_OFFSET.copy();
   private Vector4f disabledColourOffset = new Vector4f(1, 1, 1, 0.2f);
   private boolean enabled = true;
 
