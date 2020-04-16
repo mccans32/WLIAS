@@ -229,7 +229,7 @@ public class Hud {
     for (int i = 0; i < societyButtons.size(); i++) {
       if (World.getActiveSocieties().get(0).checkIfTrading(societyButtons.get(i).getSociety())) {
         societyButtons.get(i).setActiveColourOffset(
-            new Vector4f(ColourUtils.convertColor(ChartColor.DARK_GREEN.brighter()), 1.0f));
+            new Vector4f(ColourUtils.convertColor(ChartColor.LIGHT_GREEN), 1.0f));
         societyButtons.get(i).setInactiveColourOffset(new Vector4f(
             ColourUtils.convertColor(ChartColor.VERY_LIGHT_GREEN), 1.0f));
       } else {
