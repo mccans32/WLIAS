@@ -486,10 +486,6 @@ public class World {
   }
 
   public static void tradeMove() {
-    societies[0].calculatePossibleTradingSocieties();
-    if (!societies[0].getPossibleTradingSocieties().isEmpty()) {
-      Game.setState(GameState.TRADING);
-    }
   }
 
   public static void nothingMove() {
@@ -508,7 +504,7 @@ public class World {
    */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
-
+    activeSociety = society;
     if (!society.isMadeMove()) {
       society.calculateClaimableTerritory();
       if (!society.getClaimableTerritory().isEmpty()) {
@@ -518,13 +514,12 @@ public class World {
         bordersAltered = true;
         updateSocietyBorders();
         society.setMadeMove(true);
-        activeSociety = society;
         Game.setState(GameState.AI_CLAIM);
-        Game.getNotificationTimer().setDuration(2);
       } else {
+        Game.setState(GameState.AI_NOTHING);
         society.setMadeMove(true);
-        Game.getNotificationTimer().setDuration(0);
       }
+      Game.getNotificationTimer().setDuration(2);
     }
     if (Game.getNotificationTimer().isDurationMet()) {
       Game.getNotificationTimer().clearDuration();

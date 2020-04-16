@@ -148,6 +148,9 @@ public class Hud {
     } else if (Game.getState() == GameState.AI_CLAIM) {
       hintString = String.format("Society %d expands their territory",
           World.getActiveSociety().getSocietyId() + 1);
+    } else if (Game.getState() == GameState.AI_NOTHING) {
+      hintString = String.format("Society %d passing Turn, Nothing to do...",
+          World.getActiveSociety().getSocietyId() + 1);
     }
     if (!hint.getText().getString().equals(hintString) && hintString != null) {
       Text hintText = new Text(hintString, 1, ColourUtils.convertColor(Color.WHITE));
@@ -334,6 +337,7 @@ public class Hud {
     hint = new HudText(hintText, 0, 0, 1, -0.25f);
     hint.create();
   }
+
   private static void createInspectionPanels() {
     float borderSize = 0.03f;
     float width = 0.9f;
@@ -552,7 +556,8 @@ public class Hud {
     renderInspectionPanel(guiRenderer, textRenderer);
     if (Game.getState() == GameState.WARRING
         || Game.getState() == GameState.CLAIM_TILE
-        || Game.getState() == GameState.AI_CLAIM) {
+        || Game.getState() == GameState.AI_CLAIM
+        || Game.getState() == GameState.AI_NOTHING) {
       hint.render(textRenderer);
     }
   }

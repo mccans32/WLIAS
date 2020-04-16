@@ -39,6 +39,15 @@ public class InspectionPanelObject extends Hud {
     createPanelTitle(panelTitleText);
   }
 
+  public void destroyPanel() {
+    for (HudImage panelBorder : panelBorders) {
+      panelBorder.destroy();
+    }
+    panelBorders.clear();
+    panelTitle.destroy();
+    panel.destroy();
+  }
+
   public ArrayList<HudImage> getPanelBorders() {
     return panelBorders;
   }
@@ -66,7 +75,6 @@ public class InspectionPanelObject extends Hud {
   private void createPanelTitle(Text panelTitleText) {
     // create the Panel Title
     panelTitle = new HudText(panelTitleText, edgeX, offsetX - width / 2, edgeY, offsetY + height / 2);
-    panelTitle.setOffsetX(borderSize + (width / 2f) - (panelTitle.getWidth() / 2f));
     panelTitle.create();
   }
 
@@ -120,6 +128,14 @@ public class InspectionPanelObject extends Hud {
     panel = new HudObject(societyPanelMesh, panelText, edgeX, offsetX,
         edgeY, offsetY);
     panel.create();
+  }
+
+  public void reposition() {
+    panelTitle.reposition();
+    panel.reposition();
+    for (HudImage border : panelBorders) {
+      border.reposition();
+    }
   }
 
   public float getBorderSize() {

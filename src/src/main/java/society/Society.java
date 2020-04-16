@@ -2,6 +2,8 @@ package society;
 
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.objects.world.TileWorldObject;
+import game.menu.dataObjects.TradeDeal;
+import game.world.Hud;
 import game.world.World;
 import java.util.ArrayList;
 import math.Vector3f;
@@ -12,6 +14,7 @@ public class Society {
   private static final float FOOD_PER_PERSON = 1;
   private static final float MATERIAL_PER_PERSON = 1;
   public int personIdCounter;
+  public ArrayList<TradeDeal> activeTradeDeals = new ArrayList<>();
   private Vector3f societyColor;
   private ArrayList<Person> population;
   private int societyId;
@@ -28,6 +31,8 @@ public class Society {
   private boolean endTurn = false;
   private ArrayList<Society> possibleTradingSocieties = new ArrayList<>();
   private boolean madeMove = false;
+  private int foodFromDeals;
+  private int rawMatsFromDeals;
 
   /**
    * Instantiates a new Society.
@@ -65,6 +70,30 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public ArrayList<TradeDeal> getActiveTradeDeals() {
+    return activeTradeDeals;
+  }
+
+  public void setActiveTradeDeals(ArrayList<TradeDeal> activeTradeDeals) {
+    this.activeTradeDeals = activeTradeDeals;
+  }
+
+  public int getFoodFromDeals() {
+    return foodFromDeals;
+  }
+
+  public void setFoodFromDeals(int foodFromDeals) {
+    this.foodFromDeals = foodFromDeals;
+  }
+
+  public int getRawMatsFromDeals() {
+    return rawMatsFromDeals;
+  }
+
+  public void setRawMatsFromDeals(int rawMatsFromDeals) {
+    this.rawMatsFromDeals = rawMatsFromDeals;
   }
 
   public boolean isMadeMove() {
@@ -194,6 +223,8 @@ public class Society {
       foodTotal += worldTile.getFoodResource();
       rawMaterials += worldTile.getRawMaterialResource();
     }
+    foodTotal += foodFromDeals;
+    rawMaterials += rawMatsFromDeals;
     setTotalFoodResource(foodTotal);
     setTotalRawMaterialResource(rawMaterials);
   }
@@ -372,6 +403,66 @@ public class Society {
       if (!possibleTradingSocieties.contains(map[row + 1][column].getClaimedBy())) {
         possibleTradingSocieties.add(map[row + 1][column].getClaimedBy());
       }
+    }
+  }
+
+  public boolean examineTradeDeal(TradeDeal tradeDeal) {
+    if (tradeDeal.getSocietyB() == this) {
+      int totalFoodReceived = tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
+      int totalRawMatsReceived = tradeDeal.getRawMarsGiven() - tradeDeal.getRawMatsReceived();
+      return checkEnoughFood(totalFoodReceived) && checkEnoughMats(totalRawMatsReceived);
+    } else {
+      // TODO DRAW SCREEN FOR WHEN PLAYER SOCIETY IS PROPOSED WITH A DEAL
+      return false;
+    }
+  }
+
+  private boolean checkEnoughMats(int totalRawMatsReceived) {
+    int rawMatsResource = totalRawMaterialResource + totalRawMatsReceived;
+    float rawMatsPerPerson = (float) rawMatsResource / population.size();
+    float oldRawMatsPerPerson = ((float) getTotalRawMaterialResource() / population.size());
+    return rawMatsPerPerson > MATERIAL_PER_PERSON || rawMatsPerPerson >= oldRawMatsPerPerson;
+  }
+
+  private boolean checkEnoughFood(int totalFoodReceived) {
+    int foodResource = totalFoodResource + totalFoodReceived;
+    float foodPerPerson = (float) foodResource / population.size();
+    float oldFoodPerPerson = ((float) getTotalFoodResource() / population.size());
+    return foodPerPerson > FOOD_PER_PERSON || foodPerPerson >= oldFoodPerPerson;
+  }
+
+  public void activateTradeDeal(TradeDeal tradeDeal) {
+    activeTradeDeals.add(tradeDeal);
+    if (tradeDeal.getSocietyA() == this) {
+      foodFromDeals += tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
+      rawMatsFromDeals += tradeDeal.getRawMatsReceived() - tradeDeal.getRawMarsGiven();
+    } else {
+      foodFromDeals += tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
+      rawMatsFromDeals += tradeDeal.getRawMarsGiven() - tradeDeal.getRawMatsReceived();
+    }
+    calculateResources();
+  }
+
+  public void terminateTradeDeal(TradeDeal tradeDeal) {
+    if (tradeDeal.getSocietyA() == this) {
+      foodFromDeals -= tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
+      rawMatsFromDeals -= tradeDeal.getRawMatsReceived() - tradeDeal.getRawMarsGiven();
+    } else {
+      foodFromDeals -= tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
+      rawMatsFromDeals -= tradeDeal.getRawMarsGiven() - tradeDeal.getRawMatsReceived();
+    }
+    calculateResources();
+  }
+
+  public void checkTradeDeal() {
+    ArrayList<TradeDeal> newTradeDeals = new ArrayList<>();
+    for (TradeDeal tradeDeal : activeTradeDeals) {
+      if (!(tradeDeal.getEndTurnOfDeal() == Hud.getTurn())) {
+        newTradeDeals.add(tradeDeal);
+      } else {
+        terminateTradeDeal(tradeDeal);
+      }
+      setActiveTradeDeals(newTradeDeals);
     }
   }
 }

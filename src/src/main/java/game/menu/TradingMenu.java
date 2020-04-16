@@ -26,10 +26,13 @@ import game.world.Hud;
 import game.world.World;
 import java.awt.Color;
 import java.util.ArrayList;
+import math.Vector4f;
+import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
 import society.Society;
 
 public class TradingMenu {
+  private static final int DEFAULT_LENGTH_OF_TRADE_DEAL_IN_TURNS = 3;
   private static final Image PLUS_TEXTURE = new Image("/images/plusTexture.png");
   private static final Image MINUS_TEXTURE = new Image("/images/minusTexture.png");
   private static final Image FOOD_ICON = new Image("/images/foodIcon.png");
@@ -47,7 +50,7 @@ public class TradingMenu {
   private static final float EDGE_Y = 0;
   private static final float OFFSET_Y = 0f;
   private static final float TRADE_PANEL_EDGE_X = 0.2f;
-  private static TradeDeal tradeDeal = new TradeDeal(0, 0, 0, 0);
+  private static TradeDeal tradeDeal;
   private static ArrayList<HudImage> icons = new ArrayList<>();
   private static HudImage leftFoodIcon;
   private static HudImage rightFoodIcon;
@@ -65,6 +68,7 @@ public class TradingMenu {
   private static HudText leftRawMatsAmount;
   private static HudText rightFoodAmount;
   private static HudText rightRawMatsAmount;
+  private static ButtonObject acceptButton;
   private static ArrayList<ButtonObject> dealButtons = new ArrayList<>();
   private static Text leftSocietyPanelText = new Text("", 0.4f);
   private static Text rightSocietyPanelText = new Text("", 0.4f);
@@ -81,6 +85,10 @@ public class TradingMenu {
   private static RectangleModel dealButtonModel = new RectangleModel(BUTTON_WIDTH, BUTTON_HEIGHT);
   private static ArrayList<HudText> dealNumbers = new ArrayList<>();
   private static boolean societiesChosen = false;
+
+  public static void setTradeDeal(TradeDeal tradeDeal) {
+    TradingMenu.tradeDeal = tradeDeal;
+  }
 
   public static boolean isSocietiesChosen() {
     return societiesChosen;
@@ -150,12 +158,26 @@ public class TradingMenu {
     createRightDealButtons();
     createRightDealAmounts();
     createLeftDealAmount();
+    createAcceptButton();
+  }
+
+  private static void createAcceptButton() {
+    RectangleModel acceptButtonModel = new RectangleModel(0.5f, 0.1f);
+    Material acceptButtonMat = new Material(new Image("/images/buttonTexture.png"));
+    RectangleMesh acceptButtonMesh = new RectangleMesh(acceptButtonModel, acceptButtonMat);
+    Text acceptButtonText = new Text("Send Deal", 0.8f, ColourUtils.convertColor(Color.WHITE), true, true, false);
+    acceptButton = new ButtonObject(acceptButtonMesh, acceptButtonText, TRADE_PANEL_EDGE_X, 0.005f, 0, -0.5f);
+    acceptButton.setInactiveColourOffset(new Vector4f(ColourUtils.convertColor(Color.GREEN), 1.0f));
+    acceptButton.setActiveColourOffset(new Vector4f(ColourUtils.convertColor(ChartColor.DARK_GREEN), 1.0f));
+    acceptButton.create();
+    acceptButton.disable();
   }
 
   private static void createLeftDealAmount() {
     // create left food amount
     leftFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f, EDGE_Y, 0.11f);
     leftFoodAmount.create();
+    dealNumbers.add(leftFoodAmount);
 //    dealNumbers.add(leftFoodAmount);
     // create left raw materials amount
     leftRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f, EDGE_Y - 0.19f, 0);
@@ -257,6 +279,7 @@ public class TradingMenu {
   }
 
   public static void update(Window window) {
+    resize();
     if (!leftSocietyPanel.isActive()) {
       leftSocietyPanel.setActive(true);
       // set the text for the panel
@@ -270,6 +293,7 @@ public class TradingMenu {
       dealButton.update(window);
       // check if mouse click
       if (societiesChosen) {
+        acceptButton.update(window);
         tradeDeal.setSocietyA(World.getActiveSocieties().get(0));
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
             && Game.canClick()
@@ -340,6 +364,7 @@ public class TradingMenu {
             && societyButtons.get(i).isMouseOver(window) && societyButtons.get(i).isEnabled()) {
           if (!(societyButtons.get(i).getSociety() == World.getActiveSocieties().get(0))) {
             societiesChosen = true;
+            acceptButton.enable();
             rightSocietyPanel.setActive(true);
             // set the text for the panel
             Society rightSociety = World.getActiveSocieties().get(i);
@@ -351,6 +376,53 @@ public class TradingMenu {
           }
         }
       }
+    }
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
+        && Game.canClick()
+        && acceptButton.isMouseOver(window)) {
+      boolean accepted = tradeDeal.getSocietyB().examineTradeDeal(tradeDeal);
+      if (accepted) {
+        tradeDeal.setEndTurnOfDeal(Hud.getTurn() + DEFAULT_LENGTH_OF_TRADE_DEAL_IN_TURNS);
+        tradeDeal.getSocietyA().activateTradeDeal(tradeDeal);
+        tradeDeal.getSocietyB().activateTradeDeal(tradeDeal);
+        for (SocietyButton socButton : societyButtons) {
+          socButton.enable();
+        }
+        reset(window);
+        tradeDeal.getSocietyA().setEndTurn(true);
+      }
+    }
+  }
+
+  public static void reset(Window window) {
+    for (HudText amountText : dealNumbers) {
+      amountText.setText(new Text(String.valueOf(0), DEFAULT_FONT_SIZE));
+    }
+    for (SocietyButton societyButton : societyButtons) {
+      societyButton.enable();
+      societyButton.update(window);
+    }
+    societiesChosen = false;
+    acceptButton.disable();
+    rightSocietyPanel.setActive(false);
+    leftSocietyPanel.setActive(false);
+  }
+
+  private static void resize() {
+    Hud.resize();
+    for (ButtonObject dealButton : dealButtons) {
+      dealButton.reposition();
+    }
+    for (HudImage icon : icons) {
+      icon.reposition();
+    }
+    acceptButton.reposition();
+    leftSocietyPanel.reposition();
+    rightSocietyPanel.reposition();
+    leftTradeDealPanel.reposition();
+    rightTradeDealPanel.reposition();
+    for (HudText dealAmount : dealNumbers) {
+      dealAmount.reposition();
     }
   }
 
@@ -378,6 +450,9 @@ public class TradingMenu {
       border.render(renderer);
     }
     glEnable(GL_DEPTH_TEST);
+    if (acceptButton.isEnabled()) {
+      acceptButton.render(renderer, textRenderer);
+    }
     for (HudText dealNumber : dealNumbers) {
       dealNumber.render(textRenderer);
     }
@@ -404,5 +479,26 @@ public class TradingMenu {
       rightSocietyPanel.getPanel().render(renderer, textRenderer);
       rightSocietyPanel.getPanelTitle().render(textRenderer);
     }
+  }
+
+  public static void destroy() {
+    leftSocietyPanel.destroyPanel();
+    rightTradeDealPanel.destroyPanel();
+    leftTradeDealPanel.destroyPanel();
+    rightSocietyPanel.destroyPanel();
+    for (HudImage icon : icons) {
+      icon.destroy();
+    }
+    icons.clear();
+    leftFoodIcon.destroy();
+    for (ButtonObject dealButton : dealButtons) {
+      dealButton.destroy();
+    }
+    dealButtons.clear();
+    for (HudText dealNumber : dealNumbers) {
+      dealNumber.destroy();
+    }
+    dealNumbers.clear();
+    acceptButton.destroy();
   }
 }

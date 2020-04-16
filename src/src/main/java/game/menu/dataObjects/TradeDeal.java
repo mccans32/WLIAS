@@ -9,11 +9,21 @@ public class TradeDeal {
   private int foodReceived;
   private int rawMatsReceived;
   private int rawMarsGiven;
+  private int endTurnOfDeal;
+
   public TradeDeal(int foodGiven, int foodReceived, int rawMatsReceived, int rawMarsGiven) {
     this.foodGiven = foodGiven;
     this.foodReceived = foodReceived;
     this.rawMatsReceived = rawMatsReceived;
     this.rawMarsGiven = rawMarsGiven;
+  }
+
+  public int getEndTurnOfDeal() {
+    return endTurnOfDeal;
+  }
+
+  public void setEndTurnOfDeal(int endTurnOfDeal) {
+    this.endTurnOfDeal = endTurnOfDeal;
   }
 
   public Society getSocietyA() {

@@ -125,6 +125,8 @@ public class Game {
         Collections.shuffle(turnOrder);
         // cycles thorough all societies in play
         for (Society society : turnOrder) {
+          // check and end Trade deals
+          society.checkTradeDeal();
           // set the end turn flag to false
           society.setEndTurn(false);
           society.setMadeMove(false);
