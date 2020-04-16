@@ -273,7 +273,7 @@ public class Society {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.add(map[row][column - 1])) {
+      if (!opponentWarringTiles.add(map[row][column - 1]) && checkForPeace(map[row][column - 1])) {
         opponentWarringTiles.add(map[row][column - 1]);
       }
     }
@@ -283,7 +283,7 @@ public class Society {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.add(map[row][column + 1])) {
+      if (!opponentWarringTiles.add(map[row][column + 1]) && checkForPeace(map[row][column + 1])) {
         opponentWarringTiles.add(map[row][column + 1]);
       }
     }
@@ -293,7 +293,7 @@ public class Society {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.contains(map[row - 1][column])) {
+      if (!opponentWarringTiles.contains(map[row - 1][column]) && checkForPeace(map[row - 1][column])) {
         opponentWarringTiles.add(map[row - 1][column]);
       }
     }
@@ -303,10 +303,17 @@ public class Society {
       if (!societyWarringTiles.contains(map[row][column])) {
         societyWarringTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.contains(map[row + 1][column])) {
+      if (!opponentWarringTiles.contains(map[row + 1][column]) && checkForPeace(map[row + 1][column])) {
         opponentWarringTiles.add(map[row + 1][column]);
       }
     }
+  }
+
+  private boolean checkForPeace(TileWorldObject warringTile) {
+    for (TradeDeal tradeDeal : activeTradeDeals) {
+      return warringTile.getClaimedBy() != tradeDeal.getSocietyB() && warringTile.getClaimedBy() != tradeDeal.getSocietyA();
+    }
+    return true;
   }
 
   private void addClaimableTiles(int row, int column) {
