@@ -82,10 +82,6 @@ public class Hud {
   private static boolean mouseOverHud = false;
   private static HudText hint;
 
-  public static HudText getHint() {
-    return hint;
-  }
-
   public static int getTurn() {
     return turn;
   }

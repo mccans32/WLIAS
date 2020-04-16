@@ -485,9 +485,6 @@ public class World {
     }
   }
 
-  public static void tradeMove() {
-  }
-
   public static void nothingMove() {
     societies[0].setEndTurn(true);
     Game.setState(GameState.GAME_MAIN);
