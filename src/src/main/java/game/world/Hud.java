@@ -24,6 +24,7 @@ import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
+import game.menu.TradingMenu;
 import java.awt.Color;
 import java.util.ArrayList;
 import map.tiles.AridTile;
@@ -80,6 +81,10 @@ public class Hud {
   private static ArrayList<HudImage> panelBorders = new ArrayList<>();
   private static boolean mouseOverHud = false;
   private static HudText hint;
+
+  public static HudText getHint() {
+    return hint;
+  }
 
   public static int getTurn() {
     return turn;
@@ -151,6 +156,12 @@ public class Hud {
     } else if (Game.getState() == GameState.AI_NOTHING) {
       hintString = String.format("Society %d passing Turn, Nothing to do...",
           World.getActiveSociety().getSocietyId() + 1);
+    } else if (Game.getState() == GameState.TRADING) {
+      if (TradingMenu.isSocietiesChosen()) {
+        hintString = "Select Food and Materials to trade";
+      } else {
+        hintString = "Select society you wish to trade with.";
+      }
     }
     if (!hint.getText().getString().equals(hintString) && hintString != null) {
       Text hintText = new Text(hintString, 1, ColourUtils.convertColor(Color.WHITE));
@@ -558,8 +569,12 @@ public class Hud {
         || Game.getState() == GameState.CLAIM_TILE
         || Game.getState() == GameState.AI_CLAIM
         || Game.getState() == GameState.AI_NOTHING) {
-      hint.render(textRenderer);
+      renderHint(textRenderer);
     }
+  }
+
+  public static void renderHint(TextRenderer textRenderer) {
+    hint.render(textRenderer);
   }
 
   /**

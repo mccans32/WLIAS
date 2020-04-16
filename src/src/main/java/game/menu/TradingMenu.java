@@ -145,11 +145,6 @@ public class TradingMenu {
   public static void create() {
     societyButtons = Hud.getSocietyButtons();
     createObjects();
-    createHints();
-  }
-
-  private static void createHints() {
-
   }
 
   private static void createObjects() {
@@ -280,6 +275,7 @@ public class TradingMenu {
 
   public static void update(Window window) {
     resize();
+    Hud.updateHint();
     if (!leftSocietyPanel.isActive()) {
       leftSocietyPanel.setActive(true);
       // set the text for the panel
@@ -479,6 +475,7 @@ public class TradingMenu {
       rightSocietyPanel.getPanel().render(renderer, textRenderer);
       rightSocietyPanel.getPanelTitle().render(textRenderer);
     }
+    Hud.renderHint(textRenderer);
   }
 
   public static void destroy() {
