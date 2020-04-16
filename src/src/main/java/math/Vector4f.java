@@ -48,7 +48,7 @@ public class Vector4f extends Vector3f {
     return "(" + vectorX + ", " + vectorY + ", " + vectorZ + ", " + vectorW + ")";
   }
 
-  public Vector4f copy(){
+  public Vector4f copy() {
     return new Vector4f(vectorX, vectorY, vectorZ, vectorW);
   }
 }

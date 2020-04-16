@@ -85,6 +85,7 @@ public class TradingMenu {
   private static RectangleModel dealButtonModel = new RectangleModel(BUTTON_WIDTH, BUTTON_HEIGHT);
   private static ArrayList<HudText> dealNumbers = new ArrayList<>();
   private static boolean societiesChosen = false;
+  private static boolean updatedHint = false;
 
   public static void setTradeDeal(TradeDeal tradeDeal) {
     TradingMenu.tradeDeal = tradeDeal;
@@ -303,6 +304,9 @@ public class TradingMenu {
    */
   public static void update(Window window) {
     resize();
+    if (!updatedHint) {
+      updatedHint = true;
+    }
     Hud.updateHint();
     if (!leftSocietyPanel.isActive()) {
       leftSocietyPanel.setActive(true);
@@ -442,6 +446,7 @@ public class TradingMenu {
     }
     societiesChosen = false;
     acceptButton.disable();
+    updatedHint = false;
     rightSocietyPanel.setActive(false);
     leftSocietyPanel.setActive(false);
   }
@@ -525,7 +530,11 @@ public class TradingMenu {
       rightSocietyPanel.getPanel().render(renderer, textRenderer);
       rightSocietyPanel.getPanelTitle().render(textRenderer);
     }
-    Hud.renderHint(textRenderer);
+    // update the hint in the HUD since we don't want to update HUD
+    // only update the hint after it has been updated in the update function
+    if (updatedHint) {
+      Hud.renderHint(textRenderer);
+    }
   }
 
   /**
