@@ -144,6 +144,7 @@ public class TradingMenu {
   }
 
   public static void create() {
+    updatedHint = false;
     societyButtons = Hud.getSocietyButtons();
     createObjects();
   }
@@ -446,7 +447,6 @@ public class TradingMenu {
     }
     societiesChosen = false;
     acceptButton.disable();
-    updatedHint = false;
     rightSocietyPanel.setActive(false);
     leftSocietyPanel.setActive(false);
   }
