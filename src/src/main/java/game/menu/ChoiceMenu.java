@@ -13,10 +13,14 @@ import engine.objects.gui.ButtonObject;
 import engine.objects.gui.HudText;
 import engine.utils.ColourUtils;
 import game.Game;
+import game.GameState;
+import game.menu.data.TradeDeal;
+import game.world.Hud;
 import game.world.World;
 import java.awt.Color;
 import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
+import society.Society;
 
 public class ChoiceMenu {
   private static final String[] CHOICE_BUTTON_NAMES = new String[] {"Start War", "Claim Tile",
@@ -71,19 +75,28 @@ public class ChoiceMenu {
   }
 
   private static void updateButtonStatus() {
+    Society playerSociety = World.getActiveSocieties().get(0);
     // Update War Button
-    World.getSocieties()[0].calculateWarringTiles();
-    if (World.getSocieties()[0].getOpponentWarringTiles().isEmpty()) {
+    playerSociety.calculateWarringTiles();
+    if (playerSociety.getOpponentWarringTiles().isEmpty()) {
       choiceButtons.get(0).disable();
     } else {
       choiceButtons.get(0).enable();
     }
     // Update Claim Tile Button
-    World.getSocieties()[0].calculateClaimableTerritory();
-    if (World.getSocieties()[0].getClaimableTerritory().isEmpty()) {
+    playerSociety.calculateClaimableTerritory();
+    if (playerSociety.getClaimableTerritory().isEmpty()) {
       choiceButtons.get(1).disable();
     } else {
       choiceButtons.get(1).enable();
+    }
+
+    // Update Trade Button
+    playerSociety.calculatePossibleTradingSocieties();
+    if (playerSociety.getPossibleTradingSocieties().isEmpty()) {
+      choiceButtons.get(2).disable();
+    } else {
+      choiceButtons.get(2).enable();
     }
   }
 
@@ -103,31 +116,36 @@ public class ChoiceMenu {
       // cycle thorough all buttons in out list of choice buttons
       for (ButtonObject choiceButton : choiceButtons) {
         // check if the mouse is over the button
-        if (choiceButton.isMouseOver(window)) {
+        if (choiceButton.isMouseOver(window) && choiceButton.isEnabled()) {
           if (choiceButton.getLines().get(0).getText().getString().equals(CHOICE_BUTTON_NAMES[0])) {
             choiceMade = true;
             // War button was highlighted
-            World.warMove();
+            Game.setState(GameState.WARRING);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[1])) {
             choiceMade = true;
             // Claim Tile button was highlighted
-            World.claimTileMove();
+            Game.setState(GameState.CLAIM_TILE);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[2])) {
             choiceMade = true;
+            Hud.setTerrainPanelActive(false);
+            Hud.setSocietyPanelActive(false);
+            TradingMenu.setTradeDeal(new TradeDeal(0, 0, 0, 0));
             // Trade move button was highlighted
-            World.tradeMove();
+            Game.setState(GameState.TRADING);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[3])) {
             choiceMade = true;
             // Nothing button was highlighted
-            World.nothingMove();
+            World.getActiveSocieties().get(0).setEndTurn(true);
+            Game.setState(GameState.GAME_MAIN);
           }
         }
       }
     }
   }
+
 
   /**
    * Resize.

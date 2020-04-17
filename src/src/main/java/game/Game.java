@@ -14,6 +14,7 @@ import game.menu.ChoiceMenu;
 import game.menu.GameOverMenu;
 import game.menu.MainMenu;
 import game.menu.PauseMenu;
+import game.menu.TradingMenu;
 import game.world.Hud;
 import game.world.World;
 import java.util.ArrayList;
@@ -124,6 +125,8 @@ public class Game {
         Collections.shuffle(turnOrder);
         // cycles thorough all societies in play
         for (Society society : turnOrder) {
+          // check and end Trade deals
+          society.checkTradeDeal();
           // set the end turn flag to false
           society.setEndTurn(false);
           society.setMadeMove(false);
@@ -217,6 +220,8 @@ public class Game {
         ChoiceMenu.update(window);
         // Update The World
         World.update(window, camera);
+      } else if (state == GameState.TRADING) {
+        TradingMenu.update(window);
       } else {
         checkGameOver();
         // Update The Dev Hud
@@ -272,6 +277,8 @@ public class Game {
         ChoiceMenu.render(guiRenderer, textRenderer);
       } else if (state == GameState.GAME_OVER) {
         GameOverMenu.render(guiRenderer, textRenderer);
+      } else if (state == GameState.TRADING) {
+        TradingMenu.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();

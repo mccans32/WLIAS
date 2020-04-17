@@ -9,5 +9,7 @@ public enum GameState {
   GAME_OVER,
   CLAIM_TILE,
   AI_CLAIM,
-  TURN_END
+  TURN_END,
+  AI_NOTHING,
+  TRADING
 }

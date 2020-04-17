@@ -99,6 +99,8 @@ public class MainMenu {
         PauseMenu.create();
         // Create the Choice Menu
         ChoiceMenu.create();
+        // Create Trading menu
+        TradingMenu.create();
         // Create the Game Over Menu
         GameOverMenu.create();
         // Create the World

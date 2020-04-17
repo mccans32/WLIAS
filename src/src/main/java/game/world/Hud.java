@@ -17,12 +17,14 @@ import engine.objects.gui.ButtonObject;
 import engine.objects.gui.HudImage;
 import engine.objects.gui.HudObject;
 import engine.objects.gui.HudText;
+import engine.objects.gui.SocietyButton;
 import engine.objects.world.Camera;
 import engine.objects.world.TileWorldObject;
 import engine.tools.MousePicker;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
+import game.menu.TradingMenu;
 import java.awt.Color;
 import java.util.ArrayList;
 import map.tiles.AridTile;
@@ -66,7 +68,7 @@ public class Hud {
   private static HudText coordinates;
   private static Boolean devHudActive = false;
   private static int turn = 1;
-  private static ArrayList<ButtonObject> societyButtons = new ArrayList<>();
+  private static ArrayList<SocietyButton> societyButtons = new ArrayList<>();
   private static HudImage societyButtonPanel;
   private static HudImage arrowButtonPanel;
   private static HudText panelTitle;
@@ -82,6 +84,10 @@ public class Hud {
 
   public static int getTurn() {
     return turn;
+  }
+
+  public static ArrayList<SocietyButton> getSocietyButtons() {
+    return societyButtons;
   }
 
   public static boolean isTerrainPanelActive() {
@@ -143,6 +149,15 @@ public class Hud {
     } else if (Game.getState() == GameState.AI_CLAIM) {
       hintString = String.format("Society %d expands their territory",
           World.getActiveSociety().getSocietyId() + 1);
+    } else if (Game.getState() == GameState.AI_NOTHING) {
+      hintString = String.format("Society %d passing Turn, Nothing to do...",
+          World.getActiveSociety().getSocietyId() + 1);
+    } else if (Game.getState() == GameState.TRADING) {
+      if (TradingMenu.isSocietiesChosen()) {
+        hintString = "Select Food and Materials to trade";
+      } else {
+        hintString = "Select society you wish to trade with.";
+      }
     }
     if (!hint.getText().getString().equals(hintString) && hintString != null) {
       Text hintText = new Text(hintString, 1, ColourUtils.convertColor(Color.WHITE));
@@ -212,6 +227,15 @@ public class Hud {
   private static void updateSocietyButtons(Window window) {
     purgeButtons();
     for (int i = 0; i < societyButtons.size(); i++) {
+      if (World.getActiveSocieties().get(0).checkIfTrading(societyButtons.get(i).getSociety())) {
+        societyButtons.get(i).setActiveColourOffset(
+            new Vector4f(ColourUtils.convertColor(ChartColor.LIGHT_GREEN), 1.0f));
+        societyButtons.get(i).setInactiveColourOffset(new Vector4f(
+            ColourUtils.convertColor(ChartColor.VERY_LIGHT_GREEN), 1.0f));
+      } else {
+        societyButtons.get(i).setActiveColourOffset(ButtonObject.getDefaultActiveColorOffset());
+        societyButtons.get(i).setInactiveColourOffset(ButtonObject.getDefaultInactiveColorOffset());
+      }
       societyButtons.get(i).update(window);
       // check if mouse click
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
@@ -466,8 +490,8 @@ public class Hud {
       societyText.setCentreVertical(true);
       float xoffset = calculateSocietyButtonXOffset(World.getSocieties().length, i + 1);
       RectangleMesh buttonMesh = new RectangleMesh(buttonModel, new Material(buttonImage));
-      ButtonObject societyButton = new ButtonObject(buttonMesh, societyText, 0, xoffset,
-          -1, SOCIETY_BUTTON_OFFSET_Y);
+      SocietyButton societyButton = new SocietyButton(buttonMesh, societyText, 0, xoffset,
+          -1, SOCIETY_BUTTON_OFFSET_Y, society);
       // create the button's VAO and VBOs
       societyButton.create();
       // add to the list of societies
@@ -548,9 +572,14 @@ public class Hud {
     renderInspectionPanel(guiRenderer, textRenderer);
     if (Game.getState() == GameState.WARRING
         || Game.getState() == GameState.CLAIM_TILE
-        || Game.getState() == GameState.AI_CLAIM) {
-      hint.render(textRenderer);
+        || Game.getState() == GameState.AI_CLAIM
+        || Game.getState() == GameState.AI_NOTHING) {
+      renderHint(textRenderer);
     }
+  }
+
+  public static void renderHint(TextRenderer textRenderer) {
+    hint.render(textRenderer);
   }
 
   /**
@@ -613,7 +642,13 @@ public class Hud {
     turn = 0;
   }
 
-  private static String calculateSocietyPanelString(Society society) {
+  /**
+   * Calculate society panel string string.
+   *
+   * @param society the society
+   * @return the string
+   */
+  public static String calculateSocietyPanelString(Society society) {
     String societyString;
     if (society.getSocietyId() == 0) {
       societyString = "Your Society";

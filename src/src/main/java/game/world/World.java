@@ -414,17 +414,6 @@ public class World {
     activeSocieties.clear();
   }
 
-  /**
-   * War move.
-   */
-
-  public static void warMove() {
-    societies[0].calculateWarringTiles();
-    if (!societies[0].getOpponentWarringTiles().isEmpty()) {
-      Game.setState(GameState.WARRING);
-    }
-  }
-
   private static void simulateBattle(Society playerSociety,
                                      TileWorldObject playerTile, TileWorldObject opponentTile) {
     Society warTarget = null;
@@ -474,27 +463,6 @@ public class World {
     return populationModifier + productionModifier + aggressivenessModifier + tileModifier;
   }
 
-  /**
-   * Claim tile move.
-   */
-  public static void claimTileMove() {
-    // Calculate claimable tiles
-    societies[0].calculateClaimableTerritory();
-    if (!societies[0].getClaimableTerritory().isEmpty()) {
-      Game.setState(GameState.CLAIM_TILE);
-    }
-  }
-
-  public static void tradeMove() {
-    societies[0].setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
-  }
-
-  public static void nothingMove() {
-    societies[0].setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
-  }
-
   public static Society getActiveSociety() {
     return activeSociety;
   }
@@ -506,7 +474,7 @@ public class World {
    */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
-
+    activeSociety = society;
     if (!society.isMadeMove()) {
       society.calculateClaimableTerritory();
       if (!society.getClaimableTerritory().isEmpty()) {
@@ -516,13 +484,12 @@ public class World {
         bordersAltered = true;
         updateSocietyBorders();
         society.setMadeMove(true);
-        activeSociety = society;
         Game.setState(GameState.AI_CLAIM);
-        Game.getNotificationTimer().setDuration(2);
       } else {
+        Game.setState(GameState.AI_NOTHING);
         society.setMadeMove(true);
-        Game.getNotificationTimer().setDuration(0);
       }
+      Game.getNotificationTimer().setDuration(2);
     }
     if (Game.getNotificationTimer().isDurationMet()) {
       Game.getNotificationTimer().clearDuration();

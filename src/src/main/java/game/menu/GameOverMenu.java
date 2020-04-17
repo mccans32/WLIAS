@@ -87,7 +87,9 @@ public class GameOverMenu {
     Game.setState(GameState.GAME_MAIN);
     Hud.destroy();
     World.destroy();
+    TradingMenu.destroy();
     World.create(window, camera);
+    TradingMenu.create();
     ChoiceMenu.create();
     World.update(window, camera);
     Hud.create();
