@@ -120,12 +120,12 @@ public class ChoiceMenu {
           if (choiceButton.getLines().get(0).getText().getString().equals(CHOICE_BUTTON_NAMES[0])) {
             choiceMade = true;
             // War button was highlighted
-            World.warMove();
+            Game.setState(GameState.WARRING);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[1])) {
             choiceMade = true;
             // Claim Tile button was highlighted
-            World.claimTileMove();
+            Game.setState(GameState.CLAIM_TILE);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[2])) {
             choiceMade = true;
@@ -138,7 +138,8 @@ public class ChoiceMenu {
               .equals(CHOICE_BUTTON_NAMES[3])) {
             choiceMade = true;
             // Nothing button was highlighted
-            World.nothingMove();
+            World.getActiveSocieties().get(0).setEndTurn(true);
+            Game.setState(GameState.GAME_MAIN);
           }
         }
       }

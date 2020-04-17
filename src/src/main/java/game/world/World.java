@@ -414,17 +414,6 @@ public class World {
     activeSocieties.clear();
   }
 
-  /**
-   * War move.
-   */
-
-  public static void warMove() {
-    societies[0].calculateWarringTiles();
-    if (!societies[0].getOpponentWarringTiles().isEmpty()) {
-      Game.setState(GameState.WARRING);
-    }
-  }
-
   private static void simulateBattle(Society playerSociety,
                                      TileWorldObject playerTile, TileWorldObject opponentTile) {
     Society warTarget = null;
@@ -472,22 +461,6 @@ public class World {
     float aggressivenessModifier = currentSociety.getAverageAggressiveness();
     float tileModifier = worldTile.getTile().getAttackModifier();
     return populationModifier + productionModifier + aggressivenessModifier + tileModifier;
-  }
-
-  /**
-   * Claim tile move.
-   */
-  public static void claimTileMove() {
-    // Calculate claimable tiles
-    societies[0].calculateClaimableTerritory();
-    if (!societies[0].getClaimableTerritory().isEmpty()) {
-      Game.setState(GameState.CLAIM_TILE);
-    }
-  }
-
-  public static void nothingMove() {
-    societies[0].setEndTurn(true);
-    Game.setState(GameState.GAME_MAIN);
   }
 
   public static Society getActiveSociety() {
