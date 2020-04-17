@@ -191,6 +191,7 @@ public class World {
       updateSocietyBorders();
       claimedTile = null;
       societies[0].setEndTurn(true);
+      World.setActiveSociety(null);
       Game.setState(GameState.GAME_MAIN);
     }
   }
@@ -436,6 +437,7 @@ public class World {
       }
     }
     playerSociety.setEndTurn(true);
+    setActiveSociety(null);
     purgeSocieties();
     Game.setState(GameState.GAME_MAIN);
   }
@@ -467,6 +469,10 @@ public class World {
     return activeSociety;
   }
 
+  public static void setActiveSociety(Society activeSociety) {
+    World.activeSociety = activeSociety;
+  }
+
   /**
    * The turn calculations needed for the Ai Societies to ake their turns.
    *
@@ -474,7 +480,6 @@ public class World {
    */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
-    activeSociety = society;
     if (!society.isMadeMove()) {
       society.calculateClaimableTerritory();
       if (!society.getClaimableTerritory().isEmpty()) {
