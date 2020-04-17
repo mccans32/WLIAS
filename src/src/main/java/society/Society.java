@@ -428,7 +428,7 @@ public class Society {
   public boolean examineTradeDeal(TradeDeal tradeDeal) {
     if (tradeDeal.getSocietyB() == this) {
       int totalFoodReceived = tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
-      int totalRawMatsReceived = tradeDeal.getRawMarsGiven() - tradeDeal.getRawMatsReceived();
+      int totalRawMatsReceived = tradeDeal.getRawMatsGiven() - tradeDeal.getRawMatsReceived();
       return checkEnoughFood(totalFoodReceived) && checkEnoughMats(totalRawMatsReceived);
     } else {
       // TODO DRAW SCREEN FOR WHEN PLAYER SOCIETY IS PROPOSED WITH A DEAL
@@ -459,10 +459,10 @@ public class Society {
     activeTradeDeals.add(tradeDeal);
     if (tradeDeal.getSocietyA() == this) {
       foodFromDeals += tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
-      rawMatsFromDeals += tradeDeal.getRawMatsReceived() - tradeDeal.getRawMarsGiven();
+      rawMatsFromDeals += tradeDeal.getRawMatsReceived() - tradeDeal.getRawMatsGiven();
     } else {
       foodFromDeals += tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
-      rawMatsFromDeals += tradeDeal.getRawMarsGiven() - tradeDeal.getRawMatsReceived();
+      rawMatsFromDeals += tradeDeal.getRawMatsGiven() - tradeDeal.getRawMatsReceived();
     }
     calculateResources();
   }
@@ -475,10 +475,10 @@ public class Society {
   public void terminateTradeDeal(TradeDeal tradeDeal) {
     if (tradeDeal.getSocietyA() == this) {
       foodFromDeals -= tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
-      rawMatsFromDeals -= tradeDeal.getRawMatsReceived() - tradeDeal.getRawMarsGiven();
+      rawMatsFromDeals -= tradeDeal.getRawMatsReceived() - tradeDeal.getRawMatsGiven();
     } else {
       foodFromDeals -= tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
-      rawMatsFromDeals -= tradeDeal.getRawMarsGiven() - tradeDeal.getRawMatsReceived();
+      rawMatsFromDeals -= tradeDeal.getRawMatsGiven() - tradeDeal.getRawMatsReceived();
     }
     calculateResources();
   }

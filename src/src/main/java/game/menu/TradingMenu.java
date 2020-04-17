@@ -347,14 +347,14 @@ public class TradingMenu {
             leftFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
           } else if (dealButton == leftAddRawMatButton) {
-            int currentRawMatsGiven = tradeDeal.getRawMarsGiven();
+            int currentRawMatsGiven = tradeDeal.getRawMatsGiven();
             int newRawMatsAmt = selectMinimum(currentRawMatsGiven + 1,
                 tradeDeal.getSocietyA().getTotalRawMaterialResource());
             tradeDeal.setRawMarsGiven(newRawMatsAmt);
             leftRawMatsAmount.setText(new Text(String.valueOf(newRawMatsAmt), DEFAULT_FONT_SIZE));
 
           } else if (dealButton == leftMinusRawMatButton) {
-            int currentRawMatsGiven = tradeDeal.getRawMarsGiven();
+            int currentRawMatsGiven = tradeDeal.getRawMatsGiven();
             int newRawMatsAmt = selectMinimum(currentRawMatsGiven - 1,
                 tradeDeal.getSocietyA().getTotalRawMaterialResource());
             tradeDeal.setRawMarsGiven(newRawMatsAmt);

@@ -74,7 +74,7 @@ public class TradeDeal {
     this.rawMatsReceived = rawMatsReceived;
   }
 
-  public int getRawMarsGiven() {
+  public int getRawMatsGiven() {
     return rawMarsGiven;
   }
 
