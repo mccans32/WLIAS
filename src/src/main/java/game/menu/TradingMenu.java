@@ -143,6 +143,9 @@ public class TradingMenu {
     return leftTradeDealPanel;
   }
 
+  /**
+   * Create.
+   */
   public static void create() {
     updatedHint = false;
     societyButtons = Hud.getSocietyButtons();
