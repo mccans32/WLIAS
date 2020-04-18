@@ -11,5 +11,6 @@ public enum GameState {
   AI_CLAIM,
   TURN_END,
   AI_NOTHING,
-  TRADING
+  TRADING,
+  REPRODUCING
 }

@@ -1,5 +1,7 @@
 package society.person;
 
+import game.world.World;
+import java.util.Random;
 import society.Society;
 import society.person.dataobjects.SocietyOpinion;
 
@@ -8,8 +10,9 @@ public class Person {
   private static final float MIN_HEALTH = 1;
   private static final float MAX_INDEX = 1.0f;
   private static final float MIN_INDEX = 0f;
+  private static final float PRIME_AGE = 30;
   private static final float DEFAULT_INDEX = (MAX_INDEX + MIN_INDEX) / 2;
-  private int id;
+  private static Society[] defaultSocieties = World.getSocieties();
   private float health;
   private int age;
   private float aggressiveness;
@@ -20,11 +23,8 @@ public class Person {
 
   /**
    * Instantiates a new Person.
-   *
-   * @param id the id
    */
-  public Person(int id) {
-    this.id = id;
+  public Person() {
     this.health = MAX_HEALTH;
     this.age = 0;
     this.productiveness = DEFAULT_INDEX;
@@ -35,23 +35,23 @@ public class Person {
   /**
    * Instantiates a new Person.
    *
-   * @param id             the id
    * @param age            the age
    * @param aggressiveness the aggressiveness
    * @param attractiveness the fertility
    */
-  public Person(int id,
-                int age,
-                float aggressiveness,
-                float attractiveness,
-                Society[] listOfSocieties) {
-    this.id = id;
+  public Person(int age, float aggressiveness, float attractiveness, float productiveness) {
     this.health = MAX_HEALTH;
     this.age = age;
     this.aggressiveness = aggressiveness;
     this.attractiveness = attractiveness;
-    setOpinions(listOfSocieties);
+    this.productiveness = productiveness;
+    if (defaultSocieties != null) {
+      setOpinions(World.getSocieties());
+    }
+  }
 
+  public static Society[] getDefaultSocieties() {
+    return defaultSocieties;
   }
 
   public static float getMaxHealth() {
@@ -72,6 +72,10 @@ public class Person {
 
   public static float getDefaultIndex() {
     return DEFAULT_INDEX;
+  }
+
+  public static float getPrimeAge() {
+    return PRIME_AGE;
   }
 
   public float getProductiveness() {
@@ -125,16 +129,8 @@ public class Person {
     }
   }
 
-  private float calculateOpinionOfSociety(Society listOfSociety) {
+  private float calculateOpinionOfSociety(Society society) {
     return 0;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 
   public float getHealth() {
@@ -167,5 +163,20 @@ public class Person {
 
   public void setAttractiveness(float attractiveness) {
     this.attractiveness = attractiveness;
+  }
+
+  /**
+   * Fitness score for the person.
+   *
+   * @return the float
+   */
+  public float fitnessScore() {
+    Random r = new Random();
+    float ageDifference = Math.abs(age - PRIME_AGE);
+    float ageSubtraction = ageDifference / PRIME_AGE;
+    float healthWeight = health / MAX_HEALTH;
+    float attractivenessWeight = attractiveness;
+
+    return healthWeight + attractivenessWeight - ageSubtraction;
   }
 }

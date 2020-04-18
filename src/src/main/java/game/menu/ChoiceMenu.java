@@ -139,7 +139,6 @@ public class ChoiceMenu {
             choiceMade = true;
             // Nothing button was highlighted
             World.getActiveSocieties().get(0).setEndTurn(true);
-            World.setActiveSociety(null);
             Game.setState(GameState.GAME_MAIN);
           }
         }

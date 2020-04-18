@@ -6,14 +6,24 @@ import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
 import java.util.ArrayList;
+import java.util.Random;
 import math.Vector3f;
 import society.person.Person;
 
 public class Society {
-  private static final int DEFAULT_POPULATION_SIZE = 10;
+  private static final int DEFAULT_POPULATION_SIZE = 5;
   private static final float FOOD_PER_PERSON = 1;
   private static final float MATERIAL_PER_PERSON = 1;
-  public int personIdCounter;
+  private static final int DEFAULT_AGE = 20;
+  private static final int DEFAULT_REPRODUCTION_AGE = 18;
+  private static final float MIN_REPRODUCTION_RATIO = 0.05f;
+  private static final float MAX_REPRODUCTION_RATIO = 0.75f;
+  private static final int OFFSPRING_AMOUNT = 2;
+  private static final float DEFAULT_POPULATION_REPRODUCTION_RATIO = 0.25f;
+  private static final float MUTATION_PROBABILITY = 0.4f;
+  private static final float MUTATION_FACTOR = 0.25f;
+  private static final float UPPER_MUTATION_FACTOR = 1 + MUTATION_FACTOR;
+  private static final float LOWER_MUTATION_FACTOR = 1 - MUTATION_FACTOR;
   public ArrayList<TradeDeal> activeTradeDeals = new ArrayList<>();
   private Vector3f societyColor;
   private ArrayList<Person> population;
@@ -96,7 +106,7 @@ public class Society {
     this.rawMatsFromDeals = rawMatsFromDeals;
   }
 
-  public boolean isMadeMove() {
+  public boolean hasMadeMove() {
     return madeMove;
   }
 
@@ -343,10 +353,10 @@ public class Society {
 
   private void generateInitialPopulation(int initialPopulationSize) {
     population = new ArrayList<>();
-    population.add(new Person(0));
-    population.add(new Person(1));
-    for (personIdCounter = 2; personIdCounter < initialPopulationSize; personIdCounter++) {
-      population.add(new Person(personIdCounter));
+    for (int i = 0; i < initialPopulationSize; i++) {
+      Person person = new Person();
+      person.setAge(DEFAULT_AGE);
+      population.add(person);
     }
   }
 
@@ -513,5 +523,100 @@ public class Society {
       }
     }
     return false;
+  }
+
+  /**
+   * The society will check if it can reproduce and will do so if able.
+   */
+  public void reproduce() {
+    // Select the valid population
+    ArrayList<Person> validPeople = new ArrayList<>();
+    for (Person person : population) {
+      if (person.getAge() >= DEFAULT_REPRODUCTION_AGE) {
+        validPeople.add(person);
+      }
+    }
+    if (validPeople.size() >= 2) {
+      float reproductionRatio = DEFAULT_POPULATION_REPRODUCTION_RATIO;
+      float foodRatio = (totalFoodResource * FOOD_PER_PERSON) / population.size();
+      // Multiply the rate to get an amount based on the prosperity of the population
+      reproductionRatio *= foodRatio;
+      // Ensure the rate is within the boundaries
+      if (reproductionRatio != MIN_REPRODUCTION_RATIO) {
+        reproductionRatio = Math.max(reproductionRatio, MIN_REPRODUCTION_RATIO);
+      }
+      if (reproductionRatio != MAX_REPRODUCTION_RATIO) {
+        reproductionRatio = Math.min(reproductionRatio, MAX_REPRODUCTION_RATIO);
+      }
+      int reproducingPopulationSize = (int) Math.floor(validPeople.size() * reproductionRatio);
+      // Ensure that the reproducing population is even
+      if (reproducingPopulationSize % 2 != 0) {
+        reproducingPopulationSize = reproducingPopulationSize - 1;
+      }
+      // Ensure that it is at least 2 people this will be more likely at lower population sizes
+      if (reproducingPopulationSize < 2) {
+        reproducingPopulationSize = 2;
+      }
+      // Apply a fitness function to the valid population and sort
+      validPeople.sort((person1, person2) ->
+          Float.compare(person1.fitnessScore(), person2.fitnessScore()));
+
+      // Crossover to get the initial children
+      ArrayList<Person> offspring = new ArrayList<>();
+      for (int i = 0; i < reproducingPopulationSize; i = i + 2) {
+        offspring.addAll(crossover(validPeople.get(i), validPeople.get(i + 1)));
+      }
+      // Apply Mutation
+      mutate(offspring);
+      // Add to population
+      population.addAll(offspring);
+    }
+  }
+
+  private void mutate(ArrayList<Person> people) {
+    for (Person person : people) {
+      person.setProductiveness(calculateMutation(person.getProductiveness()));
+      person.setAggressiveness(calculateMutation(person.getAggressiveness()));
+      person.setAttractiveness(calculateMutation(person.getAttractiveness()));
+    }
+  }
+
+  private float calculateMutation(float gene) {
+    Random r = new Random();
+    // Check if a mutation should occur
+    int randomInt = r.nextInt(100);
+    if (randomInt <= (MUTATION_PROBABILITY * 100)) {
+      // Apply Mutation
+      float mutationFactor = r.nextBoolean() ? UPPER_MUTATION_FACTOR : LOWER_MUTATION_FACTOR;
+      gene *= mutationFactor;
+      // Ensure gene is between limits
+      if (gene != 1) {
+        gene = Math.min(gene, 1);
+      }
+      if (gene != 0) {
+        gene = Math.max(gene, 0);
+      }
+    }
+    return gene;
+  }
+
+  private ArrayList<Person> crossover(Person parent1, Person parent2) {
+    ArrayList<Person> offspring = new ArrayList<>();
+    ArrayList<Person> parents = new ArrayList<>();
+    parents.add(parent1);
+    parents.add(parent2);
+    Random r = new Random();
+    for (int i = 0; i < OFFSPRING_AMOUNT; i++) {
+      // Select the attributes for the child
+      Person parentToInherit = parents.get(r.nextInt(parents.size()));
+      float productiveness = parentToInherit.getProductiveness();
+      parentToInherit = parents.get(r.nextInt(parents.size()));
+      float aggressiveness = parentToInherit.getAggressiveness();
+      parentToInherit = parents.get(r.nextInt(parents.size()));
+      float attractiveness = parentToInherit.getAttractiveness();
+      Person child = new Person(0, aggressiveness, attractiveness, productiveness);
+      offspring.add(child);
+    }
+    return offspring;
   }
 }

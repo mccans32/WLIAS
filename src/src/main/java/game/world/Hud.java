@@ -152,6 +152,13 @@ public class Hud {
     } else if (Game.getState() == GameState.AI_NOTHING) {
       hintString = String.format("Society %d passing Turn, Nothing to do...",
           World.getActiveSociety().getSocietyId() + 1);
+    } else if (Game.getState() == GameState.REPRODUCING) {
+      if (World.getActiveSociety().getSocietyId() == 0) {
+        hintString = "Your Society Reproduces";
+      } else {
+        hintString = String.format("Society %d Reproduces",
+            World.getActiveSociety().getSocietyId() + 1);
+      }
     } else if (Game.getState() == GameState.TRADING) {
       if (TradingMenu.isSocietiesChosen()) {
         hintString = "Select Food and Materials to trade";
@@ -257,8 +264,8 @@ public class Hud {
   private static void purgeButtons() {
     // remove buttons of societies no longer in the game
     if (World.getActiveSocieties().size() < societyButtons.size()) {
-      ArrayList<ButtonObject> buttonsToRemove = new ArrayList<>();
-      for (ButtonObject button : societyButtons) {
+      ArrayList<SocietyButton> buttonsToRemove = new ArrayList<>();
+      for (SocietyButton button : societyButtons) {
         String buttonString = button.getLines().get(0).getText().getString();
         if (!buttonString.equals("Your Society")) {
           // It is an AI society
@@ -281,7 +288,7 @@ public class Hud {
         }
       }
       // Remove the buttons
-      for (ButtonObject button : buttonsToRemove) {
+      for (SocietyButton button : buttonsToRemove) {
         societyButtons.remove(button);
       }
       // Reposition the buttons
@@ -573,7 +580,8 @@ public class Hud {
     if (Game.getState() == GameState.WARRING
         || Game.getState() == GameState.CLAIM_TILE
         || Game.getState() == GameState.AI_CLAIM
-        || Game.getState() == GameState.AI_NOTHING) {
+        || Game.getState() == GameState.AI_NOTHING
+        || Game.getState() == GameState.REPRODUCING) {
       renderHint(textRenderer);
     }
   }

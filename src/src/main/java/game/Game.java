@@ -109,6 +109,7 @@ public class Game {
     backgroundShader.destroy();
     musicSource.destroy();
     AudioMaster.cleanUp();
+    notificationTimer.clearDuration();
   }
 
   private void gameLoop() {
@@ -148,6 +149,15 @@ public class Game {
             }
             update();
             render();
+          }
+          // Society reproduces and the notification loop is set
+          // Need to check this, if we don't the state is reset to reproducing and the main menu
+          // is not rendered.
+          if (state != GameState.MAIN_MENU
+              && state != GameState.GAME_OVER
+              && state != GameState.GAME_PAUSE) {
+            reproduceLoop(society);
+            World.setActiveSociety(null);
           }
         }
         // End the turn if the state is appropriate
@@ -201,7 +211,9 @@ public class Game {
    */
   public void update() {
     updateButtonLock();
-    notificationTimer.update();
+    if (Game.getState() != GameState.GAME_PAUSE) {
+      notificationTimer.update();
+    }
     camera.update(window);
     window.update();
 
@@ -225,13 +237,14 @@ public class Game {
         TradingMenu.update(window);
       } else {
         checkGameOver();
-        // Update The Dev Hud
-        Hud.updateDevHud(camera);
-        // Update the Hud
-        Hud.update(window);
-        // Update The World
-        World.update(window, camera);
-        if (state == GameState.GAME_OVER) {
+        if (state != GameState.GAME_OVER) {
+          // Update The Dev Hud
+          Hud.updateDevHud(camera);
+          // Update the Hud
+          Hud.update(window);
+          // Update The World
+          World.update(window, camera);
+        } else {
           GameOverMenu.update(window, camera);
         }
       }
@@ -239,7 +252,8 @@ public class Game {
   }
 
   private void checkGameOver() {
-    if (!World.getActiveSocieties().contains(World.getSocieties()[0])) {
+    if (!World.getActiveSocieties().contains(World.getSocieties()[0])
+        && !World.getActiveSocieties().isEmpty()) {
       // The Player's Society is not present in the active societies
       state = GameState.GAME_OVER;
     }
@@ -298,5 +312,22 @@ public class Game {
     int musicBuffer =
         AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
     musicSource.playSound(musicBuffer);
+  }
+
+  private void reproduceLoop(Society society) {
+    society.reproduce();
+    Game.setState(GameState.REPRODUCING);
+    Game.getNotificationTimer().setDuration(1);
+    while (!notificationTimer.isDurationMet()
+        && !window.shouldClose()
+        && !World.getActiveSocieties().isEmpty()) {
+      update();
+      render();
+    }
+    // Only change to main if the game has not been restarted during the loop
+    // If we don't then the state is set back to main and the main menu doesnt render.
+    if (state != GameState.MAIN_MENU) {
+      Game.setState(GameState.GAME_MAIN);
+    }
   }
 }

@@ -431,7 +431,6 @@ public class TradingMenu {
         }
         reset(window);
         tradeDeal.getSocietyA().setEndTurn(true);
-        World.setActiveSociety(null);
       }
     }
   }
