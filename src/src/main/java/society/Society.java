@@ -542,10 +542,10 @@ public class Society {
       // Multiply the rate to get an amount based on the prosperity of the population
       reproductionRatio *= foodRatio;
       // Ensure the rate is within the boundaries
-      if (reproductionRatio != MIN_REPRODUCTION_RATIO) {
+      if (!(Math.abs(reproductionRatio - MIN_REPRODUCTION_RATIO) < .0000001)) {
         reproductionRatio = Math.max(reproductionRatio, MIN_REPRODUCTION_RATIO);
       }
-      if (reproductionRatio != MAX_REPRODUCTION_RATIO) {
+      if (!(Math.abs(reproductionRatio - MAX_REPRODUCTION_RATIO) < .0000001)) {
         reproductionRatio = Math.min(reproductionRatio, MAX_REPRODUCTION_RATIO);
       }
       int reproducingPopulationSize = (int) Math.floor(validPeople.size() * reproductionRatio);

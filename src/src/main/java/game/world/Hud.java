@@ -150,7 +150,7 @@ public class Hud {
       hintString = String.format("Society %d expands their territory",
           World.getActiveSociety().getSocietyId() + 1);
     } else if (Game.getState() == GameState.AI_NOTHING) {
-      hintString = String.format("Society %d passing Turn, Nothing to do...",
+      hintString = String.format("Society %d decides to do nothing",
           World.getActiveSociety().getSocietyId() + 1);
     } else if (Game.getState() == GameState.REPRODUCING) {
       if (World.getActiveSociety().getSocietyId() == 0) {

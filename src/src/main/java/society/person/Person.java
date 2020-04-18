@@ -1,7 +1,6 @@
 package society.person;
 
 import game.world.World;
-import java.util.Random;
 import society.Society;
 import society.person.dataobjects.SocietyOpinion;
 
@@ -51,7 +50,7 @@ public class Person {
   }
 
   public static Society[] getDefaultSocieties() {
-    return defaultSocieties;
+    return defaultSocieties.clone();
   }
 
   public static float getMaxHealth() {
@@ -171,7 +170,6 @@ public class Person {
    * @return the float
    */
   public float fitnessScore() {
-    Random r = new Random();
     float ageDifference = Math.abs(age - PRIME_AGE);
     float ageSubtraction = ageDifference / PRIME_AGE;
     float healthWeight = health / MAX_HEALTH;

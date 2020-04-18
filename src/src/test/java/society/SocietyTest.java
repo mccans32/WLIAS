@@ -88,11 +88,11 @@ class SocietyTest {
 
   @Test
   void setPopulation() {
-    assertEquals(society.getPopulation().size(), 10);
+    assertEquals(society.getPopulation().size(), Society.getDefaultPopulationSize());
     for (int i = 0; i < SIZE_OF_ARRAYS; i++) {
       ArrayList<Person> newPopulation = new ArrayList<>();
       for (int j = 0; j < SIZE_OF_ARRAYS; j++) {
-        Person newPerson = new Person(j);
+        Person newPerson = new Person();
         newPopulation.add(newPerson);
       }
       society.setPopulation(newPopulation);
