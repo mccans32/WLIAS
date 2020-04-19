@@ -254,7 +254,6 @@ public class Society {
    * Calculate warring tiles.
    */
   public void calculateAttackingTiles() {
-//    opponentWarringTiles.clear();
     attackingTiles.clear();
     for (TileWorldObject worldTile : territory) {
       addWarringTiles(worldTile.getRow(), worldTile.getColumn());
@@ -262,6 +261,7 @@ public class Society {
   }
 
   public void calculateDefendingTiles(TileWorldObject attackingTile) {
+    defendingTiles.clear();
     int row = attackingTile.getRow();
     int column = attackingTile.getColumn();
     TileWorldObject[][] map = World.getWorldMap();
