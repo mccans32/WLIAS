@@ -40,6 +40,7 @@ public class Game {
   static final String GUI_FRAGMENT_SHADER = "guiFragment.glsl";
   static final String BACKGROUND_SHADER = "backgroundVertex.glsl";
   private static final int BUTTON_LOCK_CYCLES = 20;
+  private static final int REPRODUCE_FREQUENCY = 3;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
@@ -155,7 +156,8 @@ public class Game {
           // is not rendered.
           if (state != GameState.MAIN_MENU
               && state != GameState.GAME_OVER
-              && state != GameState.GAME_PAUSE) {
+              && state != GameState.GAME_PAUSE
+              && Hud.getTurn() % REPRODUCE_FREQUENCY == 0) {
             reproduceLoop(society);
             World.setActiveSociety(null);
           }
