@@ -11,7 +11,7 @@ import math.Vector3f;
 import society.person.Person;
 
 public class Society {
-  private static final int DEFAULT_POPULATION_SIZE = 5;
+  private static final int DEFAULT_POPULATION_SIZE = 10;
   private static final float FOOD_PER_PERSON = 1;
   private static final float MATERIAL_PER_PERSON = 1;
   private static final int DEFAULT_AGE = 20;
@@ -625,5 +625,19 @@ public class Society {
       offspring.add(child);
     }
     return offspring;
+  }
+
+  /**
+   * Age the population.
+   */
+  public void agePopulation() {
+    ArrayList<Person> passedAway = new ArrayList<>();
+    for (Person person : population) {
+      if (person.age()) {
+        passedAway.add(person);
+      }
+    }
+    // Remove everyone from the population who has died
+    population.removeAll(passedAway);
   }
 }

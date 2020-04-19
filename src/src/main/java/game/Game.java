@@ -40,7 +40,8 @@ public class Game {
   static final String GUI_FRAGMENT_SHADER = "guiFragment.glsl";
   static final String BACKGROUND_SHADER = "backgroundVertex.glsl";
   private static final int BUTTON_LOCK_CYCLES = 20;
-  private static final int REPRODUCE_FREQUENCY = 3;
+  private static final int REPRODUCE_FREQUENCY = 2;
+  private static final int AGE_FREQUENCY = 2;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
@@ -122,6 +123,13 @@ public class Game {
           && state != GameState.TURN_END
           && state != GameState.GAME_PAUSE) {
         ChoiceMenu.setChoiceMade(false);
+        // Age everyone in each society
+        if (Hud.getTurn() % AGE_FREQUENCY == 0) {
+          for (Society society : World.getActiveSocieties()) {
+            System.out.println("AGEING THE POPULATION");
+            society.agePopulation();
+          }
+        }
         // generates a random turn order of all the societies in play
         ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
         Collections.shuffle(turnOrder);

@@ -1,10 +1,12 @@
 package society.person;
 
 import game.world.World;
+import java.util.Random;
 import society.Society;
 import society.person.dataobjects.SocietyOpinion;
 
 public class Person {
+  private static final int AGE_AMOUNT = 9;
   private static final float MAX_HEALTH = 100;
   private static final float MIN_HEALTH = 1;
   private static final float MAX_INDEX = 1.0f;
@@ -177,5 +179,47 @@ public class Person {
     float attractivenessWeight = attractiveness;
 
     return healthWeight + attractivenessWeight - ageSubtraction;
+  }
+
+  /**
+   * Age a person a return whether they are still alive.
+   *
+   * @return the boolean
+   */
+  public boolean age() {
+    age += AGE_AMOUNT;
+    // Check for death probabilities from http://www.bandolier.org.uk/booth/Risk/dyingage.html
+    // Get the probability based on age bracket
+    float probability = 0;
+    if (age <= 10) {
+      probability = 1 / 10000f;
+    } else if (age <= 25) {
+      probability = 1 / 2000f;
+    } else if (age <= 35) {
+      probability = 1 / 700f;
+    } else if (age <= 55) {
+      probability = 1 / 300f;
+    } else if (age <= 65) {
+      probability = 1 / 120f;
+    } else if (age <= 75) {
+      probability = 1 / 40f;
+    } else if (age <= 85) {
+      probability = 1 / 6f;
+    }
+    // Check if the person has died, compensate for the age amount by checking that many times
+    boolean hasDied = false;
+    for (int i = 0; i < AGE_AMOUNT; i++) {
+      hasDied = checkProbability(probability);
+      if (hasDied) {
+        break;
+      }
+    }
+
+    return hasDied;
+  }
+
+  private boolean checkProbability(float probability) {
+    float randomFloat = new Random().nextFloat() * 100f;
+    return randomFloat <= probability * 100f;
   }
 }
