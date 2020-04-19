@@ -120,7 +120,8 @@ public class Person {
    * @param listOfSocieties the list of societies
    */
   public void setOpinionsOfSocieties(Society[] listOfSocieties) {
-    this.opinionsOfSocieties = new SocietyOpinion[listOfSocieties.length - 1];
+    this.opinionsOfSocieties =
+        new SocietyOpinion[listOfSocieties.length > 0 ? listOfSocieties.length - 1 : 0];
     for (int i = 0; i < listOfSocieties.length - 1; i++) {
       SocietyOpinion opinion = new SocietyOpinion(listOfSocieties[i].getSocietyId(),
           calculateOpinionOfSociety(listOfSocieties[i]));
