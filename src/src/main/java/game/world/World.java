@@ -522,7 +522,7 @@ public class World {
         / (society.getTotalFoodResource() + 1);
     float materialWeight = (society.getPopulation().size() * Society.getMaterialPerPerson())
         / (society.getTotalRawMaterialResource() + 1);
-    float tileAttackWeight = -(society.getAverageLifeExpectancy() / 100);
+    float tileAttackWeight = -(society.getAverageAge() / 100);
 
     return (foodWeight * tile.getFoodResource())
         + (materialWeight * tile.getRawMaterialResource())

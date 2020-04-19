@@ -667,11 +667,11 @@ public class Hud {
     String linePadding = "\n \n";
     return String.format("%9$s Society Name: %s %10$s Population: %d %10$s Food: %d "
             + "%10$s Raw Material: %d %10$s Territory Size: %d %10$s Average Aggressiveness: %.2f "
-            + "%10$s Average Productivity: %.2f %10$s Average Lifespan: %.2f",
+            + "%10$s Average Productivity: %.2f %10$s Average Age: %.2f",
         societyString, society.getPopulation().size(), society.getTotalFoodResource(),
         society.getTotalRawMaterialResource(), society.getTerritory().size(),
-        society.getAverageAggressiveness(), society.getAverageLifeExpectancy(),
-        society.getAverageLifeExpectancy(), startPadding, linePadding);
+        society.getAverageAggressiveness(), society.getAverageProductivity(),
+        society.getAverageAge(), startPadding, linePadding);
   }
 
   private static String calculateTerrainPanelString(TileWorldObject tile) {

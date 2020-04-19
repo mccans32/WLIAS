@@ -28,15 +28,12 @@ public class Society {
   private Vector3f societyColor;
   private ArrayList<Person> population;
   private int societyId;
-  private float averageLifeExpectancy;
   private int totalFoodResource = 0;
   private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
   private ArrayList<TileWorldObject> claimableTerritory = new ArrayList<>();
   private ArrayList<TileWorldObject> opponentWarringTiles = new ArrayList<>();
   private ArrayList<TileWorldObject> societyWarringTiles = new ArrayList<>();
-  private float averageAggressiveness;
-  private float averageProductivity;
   private int score;
   private boolean endTurn = false;
   private ArrayList<Society> possibleTradingSocieties = new ArrayList<>();
@@ -158,34 +155,30 @@ public class Society {
     this.score = score;
   }
 
+  /**
+   * Gets average aggressiveness.
+   *
+   * @return the average aggressiveness
+   */
   public float getAverageAggressiveness() {
-    return averageAggressiveness;
+    float averageAggressiveness = 0;
+    for (Person person : population) {
+      averageAggressiveness += person.getAggressiveness();
+    }
+    return averageAggressiveness / population.size();
   }
 
   /**
-   * Sets average aggressiveness.
+   * Gets average productivity.
+   *
+   * @return the average productivity
    */
-  public void setAverageAggressiveness() {
-    float totalAggressiveness = 0;
-    for (Person person : population) {
-      totalAggressiveness += person.getAggressiveness();
-    }
-    this.averageAggressiveness = totalAggressiveness / population.size();
-  }
-
   public float getAverageProductivity() {
-    return averageProductivity;
-  }
-
-  /**
-   * Sets average productivity.
-   */
-  public void setAverageProductivity() {
-    float totalProductivity = 0;
+    float averageProductivity = 0;
     for (Person person : population) {
-      totalProductivity += person.getProductiveness();
+      averageProductivity += person.getProductiveness();
     }
-    this.averageProductivity = totalProductivity / population.size();
+    return averageProductivity / population.size();
   }
 
   public int getTotalFoodResource() {
@@ -376,12 +369,17 @@ public class Society {
     this.societyId = societyId;
   }
 
-  public float getAverageLifeExpectancy() {
-    return averageLifeExpectancy;
-  }
-
-  public void setAverageLifeExpectancy() {
-    this.averageLifeExpectancy = calculateLifeExpectancy();
+  /**
+   * Gets average age.
+   *
+   * @return the average age
+   */
+  public float getAverageAge() {
+    float age = 0;
+    for (Person person : population) {
+      age += person.getAge();
+    }
+    return age / population.size();
   }
 
   private int calculateLifeExpectancy() {

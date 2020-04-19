@@ -111,21 +111,6 @@ class SocietyTest {
   }
 
   @Test
-  void getAverageAggressivenessTest() {
-    assertEquals(society.getAverageAggressiveness(), 0.0f);
-    society.setAverageAggressiveness();
-    assertEquals(society.getAverageAggressiveness(), DEFAULT_FLOAT_INDEX);
-  }
-
-  @Test
-  void getAverageProductivityTest() {
-    assertEquals(society.getAverageProductivity(), 0.0f);
-    society.setAverageProductivity();
-    assertEquals(society.getAverageProductivity(), DEFAULT_FLOAT_INDEX);
-  }
-
-
-  @Test
   void addTerritoryTest() {
     assertEquals(society.getTerritory().size(), 0);
     Material borderMaterial = new Material(new Image("/images/tileBorder.png"),
