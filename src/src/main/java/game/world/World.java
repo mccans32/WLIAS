@@ -197,13 +197,14 @@ public class World {
 
   private static void selectWarTiles(Window window) {
     if (attackingTile == null) {
-      MousePicker.update(window, societies[0].getSocietyWarringTiles());
+      MousePicker.update(window, societies[0].getAttackingTiles());
       updateSelectOverlay();
-      attackingTile = selectWorldTile(societies[0].getSocietyWarringTiles());
+      attackingTile = selectWorldTile(societies[0].getAttackingTiles());
     } else if (opponentTile == null) {
-      MousePicker.update(window, societies[0].getOpponentWarringTiles());
+      activeSocieties.get(0).calculateDefendingTiles(attackingTile);
+      MousePicker.update(window, societies[0].getDefendingTiles());
       updateSelectOverlay();
-      opponentTile = selectWorldTile(societies[0].getOpponentWarringTiles());
+      opponentTile = selectWorldTile(societies[0].getDefendingTiles());
     } else {
       simulateBattle(societies[0], attackingTile, opponentTile);
       attackingTile = null;

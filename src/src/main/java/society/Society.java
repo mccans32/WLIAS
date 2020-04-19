@@ -23,8 +23,8 @@ public class Society {
   private int totalRawMaterialResource = 0;
   private ArrayList<TileWorldObject> territory = new ArrayList<>();
   private ArrayList<TileWorldObject> claimableTerritory = new ArrayList<>();
-  private ArrayList<TileWorldObject> opponentWarringTiles = new ArrayList<>();
-  private ArrayList<TileWorldObject> societyWarringTiles = new ArrayList<>();
+  private ArrayList<TileWorldObject> defendingTiles = new ArrayList<>();
+  private ArrayList<TileWorldObject> attackingTiles = new ArrayList<>();
   private float averageAggressiveness;
   private float averageProductivity;
   private int score;
@@ -108,20 +108,16 @@ public class Society {
     return claimableTerritory;
   }
 
-  public ArrayList<TileWorldObject> getOpponentWarringTiles() {
-    return opponentWarringTiles;
+  public ArrayList<TileWorldObject> getDefendingTiles() {
+    return defendingTiles;
   }
 
-  public void setOpponentWarringTiles(ArrayList<TileWorldObject> opponentWarringTiles) {
-    this.opponentWarringTiles = opponentWarringTiles;
+  public ArrayList<TileWorldObject> getAttackingTiles() {
+    return attackingTiles;
   }
 
-  public ArrayList<TileWorldObject> getSocietyWarringTiles() {
-    return societyWarringTiles;
-  }
-
-  public void setSocietyWarringTiles(ArrayList<TileWorldObject> societyWarringTiles) {
-    this.societyWarringTiles = societyWarringTiles;
+  public void setAttackingTiles(ArrayList<TileWorldObject> attackingTiles) {
+    this.attackingTiles = attackingTiles;
   }
 
   public ArrayList<Society> getPossibleTradingSocieties() {
@@ -257,11 +253,47 @@ public class Society {
   /**
    * Calculate warring tiles.
    */
-  public void calculateWarringTiles() {
-    opponentWarringTiles.clear();
-    societyWarringTiles.clear();
+  public void calculateAttackingTiles() {
+//    opponentWarringTiles.clear();
+    attackingTiles.clear();
     for (TileWorldObject worldTile : territory) {
       addWarringTiles(worldTile.getRow(), worldTile.getColumn());
+    }
+  }
+
+  public void calculateDefendingTiles(TileWorldObject attackingTile) {
+    int row = attackingTile.getRow();
+    int column = attackingTile.getColumn();
+    TileWorldObject[][] map = World.getWorldMap();
+    // Check left side of the territory
+    if (map[row][column - 1].isClaimed() && column - 1 != 0
+        && map[row][column - 1].getClaimedBy().getSocietyId() != societyId) {
+      if (!defendingTiles.add(map[row][column - 1]) && checkForPeace(map[row][column - 1])) {
+        defendingTiles.add(map[row][column - 1]);
+      }
+    }
+    // Check right side of the territory
+    if (map[row][column + 1].isClaimed() && column + 1 != map.length - 1
+        && map[row][column + 1].getClaimedBy().getSocietyId() != societyId) {
+      if (!defendingTiles.add(map[row][column + 1]) && checkForPeace(map[row][column + 1])) {
+        defendingTiles.add(map[row][column + 1]);
+      }
+    }
+    // Check top of territory
+    if (map[row - 1][column].isClaimed() && row - 1 != 0
+        && map[row - 1][column].getClaimedBy().getSocietyId() != societyId) {
+      if (!defendingTiles.contains(map[row - 1][column])
+          && checkForPeace(map[row - 1][column])) {
+        defendingTiles.add(map[row - 1][column]);
+      }
+    }
+    // check bottom of territory
+    if (map[row + 1][column].isClaimed() && row + 1 != map.length - 1
+        && map[row + 1][column].getClaimedBy().getSocietyId() != societyId) {
+      if (!defendingTiles.contains(map[row + 1][column])
+          && checkForPeace(map[row + 1][column])) {
+        defendingTiles.add(map[row + 1][column]);
+      }
     }
   }
 
@@ -270,44 +302,44 @@ public class Society {
     // Check left side of the territory
     if (map[row][column - 1].isClaimed() && column - 1 != 0
         && map[row][column - 1].getClaimedBy().getSocietyId() != societyId) {
-      if (!societyWarringTiles.contains(map[row][column])) {
-        societyWarringTiles.add(map[row][column]);
+      if (!attackingTiles.contains(map[row][column])) {
+        attackingTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.add(map[row][column - 1]) && checkForPeace(map[row][column - 1])) {
-        opponentWarringTiles.add(map[row][column - 1]);
-      }
+//      if (!opponentWarringTiles.add(map[row][column - 1]) && checkForPeace(map[row][column - 1])) {
+//        opponentWarringTiles.add(map[row][column - 1]);
+//      }
     }
     // Check right side of the territory
     if (map[row][column + 1].isClaimed() && column + 1 != map.length - 1
         && map[row][column + 1].getClaimedBy().getSocietyId() != societyId) {
-      if (!societyWarringTiles.contains(map[row][column])) {
-        societyWarringTiles.add(map[row][column]);
+      if (!attackingTiles.contains(map[row][column])) {
+        attackingTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.add(map[row][column + 1]) && checkForPeace(map[row][column + 1])) {
-        opponentWarringTiles.add(map[row][column + 1]);
-      }
+//      if (!opponentWarringTiles.add(map[row][column + 1]) && checkForPeace(map[row][column + 1])) {
+//        opponentWarringTiles.add(map[row][column + 1]);
+//      }
     }
     // Check top of territory
     if (map[row - 1][column].isClaimed() && row - 1 != 0
         && map[row - 1][column].getClaimedBy().getSocietyId() != societyId) {
-      if (!societyWarringTiles.contains(map[row][column])) {
-        societyWarringTiles.add(map[row][column]);
+      if (!attackingTiles.contains(map[row][column])) {
+        attackingTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.contains(map[row - 1][column])
-          && checkForPeace(map[row - 1][column])) {
-        opponentWarringTiles.add(map[row - 1][column]);
-      }
+//      if (!opponentWarringTiles.contains(map[row - 1][column])
+//          && checkForPeace(map[row - 1][column])) {
+//        opponentWarringTiles.add(map[row - 1][column]);
+//      }
     }
     // check bottom of territory
     if (map[row + 1][column].isClaimed() && row + 1 != map.length - 1
         && map[row + 1][column].getClaimedBy().getSocietyId() != societyId) {
-      if (!societyWarringTiles.contains(map[row][column])) {
-        societyWarringTiles.add(map[row][column]);
+      if (!attackingTiles.contains(map[row][column])) {
+        attackingTiles.add(map[row][column]);
       }
-      if (!opponentWarringTiles.contains(map[row + 1][column])
-          && checkForPeace(map[row + 1][column])) {
-        opponentWarringTiles.add(map[row + 1][column]);
-      }
+//      if (!opponentWarringTiles.contains(map[row + 1][column])
+//          && checkForPeace(map[row + 1][column])) {
+//        opponentWarringTiles.add(map[row + 1][column]);
+//      }
     }
   }
 
