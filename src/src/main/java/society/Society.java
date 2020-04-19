@@ -585,7 +585,7 @@ public class Society {
     if (randomInt <= (MUTATION_PROBABILITY * 100)) {
       // Apply Mutation
       boolean mutationDirection = r.nextBoolean();
-      // select a mutation between 0 and the max mutation impact
+      // select a mutation between the min and the max mutation impact
       float mutationFactor = MIN_MUTATION_FACTOR + r.nextFloat()
           * (MAX_MUTATION_FACTOR - MIN_MUTATION_FACTOR);
       // if gene is zero just add the factor
