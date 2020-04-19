@@ -36,7 +36,8 @@ class PersonTest {
       randomIntArray[i] = generateRandomInt();
       randomFloatArray[i] = generateRandomFloat();
     }
-    person = new Person(1, 0, 0.0f, 0.0f, listOfSocieties);
+    person = new Person(0, 0.0f, 0.0f, 0);
+    person.setOpinionsOfSocieties(listOfSocieties);
   }
 
   private float generateRandomFloat() {
@@ -52,15 +53,6 @@ class PersonTest {
   private float generateRandomHealth() {
     Random r = new Random();
     return r.nextInt((int) Person.getMaxHealth()) + Person.getMinHealth();
-  }
-
-  @Test
-  void idTest() {
-    assertEquals(person.getId(), 1);
-    for (int value : randomIntArray) {
-      person.setId(value);
-      assertEquals(person.getId(), value);
-    }
   }
 
   @Test

@@ -467,6 +467,10 @@ public class World {
     return activeSociety;
   }
 
+  public static void setActiveSociety(Society activeSociety) {
+    World.activeSociety = activeSociety;
+  }
+
   /**
    * The turn calculations needed for the Ai Societies to ake their turns.
    *
@@ -474,8 +478,7 @@ public class World {
    */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
-    activeSociety = society;
-    if (!society.isMadeMove()) {
+    if (!society.hasMadeMove()) {
       society.calculateClaimableTerritory();
       if (!society.getClaimableTerritory().isEmpty()) {
         // calculate Most Needed Tile
@@ -494,7 +497,6 @@ public class World {
     if (Game.getNotificationTimer().isDurationMet()) {
       Game.getNotificationTimer().clearDuration();
       society.setEndTurn(true);
-      activeSociety = null;
       Game.setState(GameState.GAME_MAIN);
     }
   }
@@ -520,7 +522,7 @@ public class World {
         / (society.getTotalFoodResource() + 1);
     float materialWeight = (society.getPopulation().size() * Society.getMaterialPerPerson())
         / (society.getTotalRawMaterialResource() + 1);
-    float tileAttackWeight = -(society.getAverageLifeExpectancy() / 100);
+    float tileAttackWeight = -(society.getAverageAge() / 100);
 
     return (foodWeight * tile.getFoodResource())
         + (materialWeight * tile.getRawMaterialResource())
