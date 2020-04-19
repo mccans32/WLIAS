@@ -21,9 +21,8 @@ public class Society {
   private static final int OFFSPRING_AMOUNT = 2;
   private static final float DEFAULT_POPULATION_REPRODUCTION_RATIO = 0.25f;
   private static final float MUTATION_PROBABILITY = 0.4f;
-  private static final float MUTATION_FACTOR = 0.25f;
-  private static final float UPPER_MUTATION_FACTOR = 1 + MUTATION_FACTOR;
-  private static final float LOWER_MUTATION_FACTOR = 1 - MUTATION_FACTOR;
+  private static final float MAX_MUTATION_FACTOR = 0.25f;
+  private static final float MIN_MUTATION_FACTOR = 0.10f;
   public ArrayList<TradeDeal> activeTradeDeals = new ArrayList<>();
   private Vector3f societyColor;
   private ArrayList<Person> population;
@@ -585,8 +584,18 @@ public class Society {
     int randomInt = r.nextInt(100);
     if (randomInt <= (MUTATION_PROBABILITY * 100)) {
       // Apply Mutation
-      float mutationFactor = r.nextBoolean() ? UPPER_MUTATION_FACTOR : LOWER_MUTATION_FACTOR;
-      gene *= mutationFactor;
+      boolean mutationDirection = r.nextBoolean();
+      // select a mutation between 0 and the max mutation impact
+      float mutationFactor = MIN_MUTATION_FACTOR + r.nextFloat()
+          * (MAX_MUTATION_FACTOR - MIN_MUTATION_FACTOR);
+      // if gene is zero just add the factor
+      if (gene == 0) {
+        gene = mutationFactor;
+      } else if (mutationDirection) { // if positive add the mutation
+        gene = gene + (gene * mutationFactor);
+      } else { // subtract the mutation
+        gene = gene - (gene * mutationFactor);
+      }
       // Ensure gene is between limits
       if (gene != 1) {
         gene = Math.min(gene, 1);
