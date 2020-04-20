@@ -220,6 +220,8 @@ public class Hud {
         updateTurnCounter();
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
         arrowCounter = 0;
+        setSocietyPanelActive(false);
+        setTerrainPanelActive(false);
         // change the state so the the next turn can begin the in game loop
         Game.setState(GameState.GAME_MAIN);
       }
@@ -663,15 +665,15 @@ public class Hud {
     } else {
       societyString = "Society " + (society.getSocietyId() + 1);
     }
-    String startPadding = StringUtils.repeat(" \n", 3);
-    String linePadding = "\n \n";
-    return String.format("%9$s Society Name: %s %10$s Population: %d %10$s Food: %d "
-            + "%10$s Raw Material: %d %10$s Territory Size: %d %10$s Average Aggressiveness: %.2f "
-            + "%10$s Average Productivity: %.2f %10$s Average Age: %.2f",
+    String startPadding = StringUtils.repeat(" \n", 5);
+    String linePadding = "\n";
+    return String.format("%10$s Society Name: %s %11$s Population: %d %11$s Food: %d "
+            + "%11$s Raw Material: %d %11$s Territory Size: %d %11$s Average Aggressiveness: %.2f "
+            + "%11$s Average Productivity: %.2f %11$s Average Age: %.2f %11$s Army Size: %d",
         societyString, society.getPopulation().size(), society.getTotalFoodResource(),
         society.getTotalRawMaterialResource(), society.getTerritory().size(),
         society.getAverageAggressiveness(), society.getAverageProductivity(),
-        society.getAverageAge(), startPadding, linePadding);
+        society.getAverageAge(), society.getArmy().size(), startPadding, linePadding);
   }
 
   private static String calculateTerrainPanelString(TileWorldObject tile) {

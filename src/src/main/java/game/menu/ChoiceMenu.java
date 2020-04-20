@@ -78,8 +78,8 @@ public class ChoiceMenu {
   private static void updateButtonStatus() {
     Society playerSociety = World.getActiveSocieties().get(0);
     // Update War Button
-    playerSociety.calculateWarringTiles();
-    if (playerSociety.getOpponentWarringTiles().isEmpty()) {
+    playerSociety.calculateAttackingTiles();
+    if (playerSociety.getAttackingTiles().isEmpty()) {
       choiceButtons.get(0).disable();
     } else {
       choiceButtons.get(0).enable();
@@ -147,7 +147,10 @@ public class ChoiceMenu {
             playerSociety.setLastMove(Moves.Nothing);
             Game.setState(GameState.GAME_MAIN);
           }
+          Hud.setSocietyPanelActive(false);
+          Hud.setTerrainPanelActive(false);
         }
+
       }
     }
   }

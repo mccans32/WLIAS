@@ -1,15 +1,21 @@
 package society.person;
 
 import game.Moves;
+import game.world.World;
+import java.util.Random;
 import society.Society;
 
 public class Person {
+  private static final float MIN_DEFAULT_INDEX = 0.35f;
+  private static final int AGE_AMOUNT = 9;
   private static final float MAX_HEALTH = 100;
   private static final float MIN_HEALTH = 1;
   private static final float MAX_INDEX = 1.0f;
   private static final float MIN_INDEX = 0f;
   private static final float PRIME_AGE = 30;
   private static final float DEFAULT_INDEX = (MAX_INDEX + MIN_INDEX) / 2;
+  private static final float MAX_DEFAULT_INDEX = 0.65f;
+  private static Society[] defaultSocieties = World.getSocieties();
   private float health;
   private int age;
   private Society citizenOf;
@@ -24,9 +30,9 @@ public class Person {
   public Person() {
     this.health = MAX_HEALTH;
     this.age = 0;
-    this.productiveness = DEFAULT_INDEX;
-    this.aggressiveness = DEFAULT_INDEX;
-    this.attractiveness = DEFAULT_INDEX;
+    this.productiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.aggressiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.attractiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
   }
 
   /**
@@ -62,12 +68,17 @@ public class Person {
     return MIN_INDEX;
   }
 
-  public static float getDefaultIndex() {
-    return DEFAULT_INDEX;
+  public static float getMaxDefaultIndex() {
+    return MAX_DEFAULT_INDEX;
   }
 
   public static float getPrimeAge() {
     return PRIME_AGE;
+  }
+
+  private float generateRandomFloatInRange(float maxNo, float minNo) {
+    Random r = new Random();
+    return minNo + r.nextFloat() * (maxNo - minNo);
   }
 
   public float getProductiveness() {
@@ -152,5 +163,48 @@ public class Person {
     float attractivenessWeight = attractiveness;
 
     return healthWeight + attractivenessWeight - ageSubtraction;
+  }
+
+  /**
+   * Age a person a return whether they are still alive.
+   *
+   * @return the boolean
+   */
+  public boolean age() {
+    age += AGE_AMOUNT;
+    // Check for death probabilities from http://www.bandolier.org.uk/booth/Risk/dyingage.html
+    // Get the probability based on age bracket
+    float probability = 0;
+    if (age <= 10) {
+      probability = 1 / 10000f;
+    } else if (age <= 25) {
+      probability = 1 / 2000f;
+    } else if (age <= 35) {
+      probability = 1 / 700f;
+    } else if (age <= 55) {
+      probability = 1 / 300f;
+    } else if (age <= 65) {
+      probability = 1 / 120f;
+    } else if (age <= 75) {
+      probability = 1 / 40f;
+    } else if (age <= 85) {
+      probability = 1 / 6f;
+    }
+    // Check if the person has died, compensate for the age amount by checking that many times
+    boolean hasDied = false;
+    for (int i = 0; i < AGE_AMOUNT; i++) {
+      hasDied = checkProbability(probability);
+      if (hasDied) {
+        break;
+      }
+    }
+
+    return hasDied;
+  }
+
+  private boolean checkProbability(float probability) {
+    Random r = new Random();
+    float randomFloat = r.nextFloat() * 100f;
+    return randomFloat <= probability * 100f;
   }
 }
