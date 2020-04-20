@@ -5,7 +5,7 @@ import engine.graphics.image.Image;
 public class FertileTile extends Tile {
   private static Image image = new Image("/images/fertileTile.jpg");
 
-  private static float attackModifier = 0.1f;
+  private static float attackModifier = 1f;
 
 
   @Override

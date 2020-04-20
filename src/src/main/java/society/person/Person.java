@@ -6,13 +6,14 @@ import society.Society;
 import society.person.dataobjects.SocietyOpinion;
 
 public class Person {
+  private static final float MIN_DEFAULT_INDEX = 0.35f;
   private static final int AGE_AMOUNT = 9;
   private static final float MAX_HEALTH = 100;
   private static final float MIN_HEALTH = 1;
   private static final float MAX_INDEX = 1.0f;
   private static final float MIN_INDEX = 0f;
   private static final float PRIME_AGE = 30;
-  private static final float DEFAULT_INDEX = (MAX_INDEX + MIN_INDEX) / 2;
+  private static final float MAX_DEFAULT_INDEX = 0.65f;
   private static Society[] defaultSocieties = World.getSocieties();
   private float health;
   private int age;
@@ -28,9 +29,9 @@ public class Person {
   public Person() {
     this.health = MAX_HEALTH;
     this.age = 0;
-    this.productiveness = DEFAULT_INDEX;
-    this.aggressiveness = DEFAULT_INDEX;
-    this.attractiveness = DEFAULT_INDEX;
+    this.productiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.aggressiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.attractiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
   }
 
   /**
@@ -71,12 +72,17 @@ public class Person {
     return MIN_INDEX;
   }
 
-  public static float getDefaultIndex() {
-    return DEFAULT_INDEX;
+  public static float getMaxDefaultIndex() {
+    return MAX_DEFAULT_INDEX;
   }
 
   public static float getPrimeAge() {
     return PRIME_AGE;
+  }
+
+  private float generateRandomFloatInRange(float maxNo, float minNo) {
+    Random r = new Random();
+    return minNo + r.nextFloat() * (maxNo - minNo);
   }
 
   public float getProductiveness() {
