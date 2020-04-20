@@ -16,6 +16,7 @@ import engine.utils.ArrayUtils;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
+import game.Moves;
 import game.menu.ChoiceMenu;
 import java.util.ArrayList;
 import java.util.List;
@@ -488,8 +489,10 @@ public class World {
         updateSocietyBorders();
         society.setMadeMove(true);
         Game.setState(GameState.AI_CLAIM);
+        society.setLastMove(Moves.ClaimTile);
       } else {
         Game.setState(GameState.AI_NOTHING);
+        society.setLastMove(Moves.Nothing);
         society.setMadeMove(true);
       }
       Game.getNotificationTimer().setDuration(2);

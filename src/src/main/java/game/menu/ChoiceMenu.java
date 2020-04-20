@@ -14,6 +14,7 @@ import engine.objects.gui.HudText;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
+import game.Moves;
 import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
@@ -110,6 +111,7 @@ public class ChoiceMenu {
   }
 
   private static void checkChoiceButtonClick(Window window) {
+    Society playerSociety = World.getActiveSocieties().get(0);
     // Check if left button is down
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()) {
       Game.resetButtonLock();
@@ -121,11 +123,13 @@ public class ChoiceMenu {
             choiceMade = true;
             // War button was highlighted
             Game.setState(GameState.WARRING);
+            playerSociety.setLastMove(Moves.War);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[1])) {
             choiceMade = true;
             // Claim Tile button was highlighted
             Game.setState(GameState.CLAIM_TILE);
+            playerSociety.setLastMove(Moves.ClaimTile);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[2])) {
             choiceMade = true;
@@ -134,11 +138,13 @@ public class ChoiceMenu {
             TradingMenu.setTradeDeal(new TradeDeal(0, 0, 0, 0));
             // Trade move button was highlighted
             Game.setState(GameState.TRADING);
+            playerSociety.setLastMove(Moves.Trade);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[3])) {
             choiceMade = true;
             // Nothing button was highlighted
             World.getActiveSocieties().get(0).setEndTurn(true);
+            playerSociety.setLastMove(Moves.Nothing);
             Game.setState(GameState.GAME_MAIN);
           }
         }

@@ -2,6 +2,7 @@ package society;
 
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.objects.world.TileWorldObject;
+import game.Moves;
 import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
@@ -24,6 +25,7 @@ public class Society {
   private static final float MAX_MUTATION_FACTOR = 0.25f;
   private static final float MIN_MUTATION_FACTOR = 0.10f;
   public ArrayList<TradeDeal> activeTradeDeals = new ArrayList<>();
+  private float opinionOfLeader;
   private Vector3f societyColor;
   private ArrayList<Person> population;
   private int societyId;
@@ -39,6 +41,7 @@ public class Society {
   private boolean madeMove = false;
   private int foodFromDeals;
   private int rawMatsFromDeals;
+  private Moves lastMove = Moves.Nothing;
 
   /**
    * Instantiates a new Society.
@@ -76,6 +79,14 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public Moves getLastMove() {
+    return lastMove;
+  }
+
+  public void setLastMove(Moves lastMove) {
+    this.lastMove = lastMove;
   }
 
   public ArrayList<TradeDeal> getActiveTradeDeals() {
@@ -621,9 +632,26 @@ public class Society {
       float aggressiveness = parentToInherit.getAggressiveness();
       parentToInherit = parents.get(r.nextInt(parents.size()));
       float attractiveness = parentToInherit.getAttractiveness();
-      Person child = new Person(0, aggressiveness, attractiveness, productiveness);
+      Person child = new Person(0, aggressiveness, attractiveness, productiveness, this);
       offspring.add(child);
     }
     return offspring;
+  }
+
+  public void calculateOpinions() {
+    float totalOpinionsOfLeader = 0;
+    for (Person citizen : population) {
+      citizen.calOpinionOfLeader();
+      totalOpinionsOfLeader += citizen.getOpinionOfLeader();
+    }
+    setOpinionOfLeader(totalOpinionsOfLeader / population.size());
+  }
+
+  public float getOpinionOfLeader() {
+    return opinionOfLeader;
+  }
+
+  public void setOpinionOfLeader(float opinionOfLeader) {
+    this.opinionOfLeader = opinionOfLeader;
   }
 }

@@ -1,8 +1,7 @@
 package society.person;
 
-import game.world.World;
+import game.Moves;
 import society.Society;
-import society.person.dataobjects.SocietyOpinion;
 
 public class Person {
   private static final float MAX_HEALTH = 100;
@@ -11,14 +10,13 @@ public class Person {
   private static final float MIN_INDEX = 0f;
   private static final float PRIME_AGE = 30;
   private static final float DEFAULT_INDEX = (MAX_INDEX + MIN_INDEX) / 2;
-  private static Society[] defaultSocieties = World.getSocieties();
   private float health;
   private int age;
+  private Society citizenOf;
   private float aggressiveness;
   private float attractiveness;
-  private float opinionOfLeader;
+  private float opinionOfLeader = 0.5f;
   private float productiveness;
-  private SocietyOpinion[] opinionsOfSocieties;
 
   /**
    * Instantiates a new Person.
@@ -38,19 +36,14 @@ public class Person {
    * @param aggressiveness the aggressiveness
    * @param attractiveness the fertility
    */
-  public Person(int age, float aggressiveness, float attractiveness, float productiveness) {
+  public Person(int age, float aggressiveness, float attractiveness, float productiveness, Society society) {
     this.health = MAX_HEALTH;
     this.age = age;
     this.aggressiveness = aggressiveness;
     this.attractiveness = attractiveness;
     this.productiveness = productiveness;
-    if (defaultSocieties != null) {
-      setOpinions(World.getSocieties());
-    }
-  }
-
-  public static Society[] getDefaultSocieties() {
-    return defaultSocieties.clone();
+    this.citizenOf = society;
+    calOpinionOfLeader();
   }
 
   public static float getMaxHealth() {
@@ -85,11 +78,6 @@ public class Person {
     this.productiveness = productiveness;
   }
 
-  public void setOpinions(Society[] listOfSocieties) {
-    setOpinionOfLeader();
-    setOpinionsOfSocieties(listOfSocieties);
-  }
-
   public float getOpinionOfLeader() {
     return opinionOfLeader;
   }
@@ -98,39 +86,26 @@ public class Person {
     this.opinionOfLeader = opinionOfLeader;
   }
 
-  public void setOpinionOfLeader() {
-    this.opinionOfLeader = calculateOpinionOfLeader();
-  }
-
-  private float calculateOpinionOfLeader() {
-    return 0;
-  }
-
-  public SocietyOpinion[] getOpinionsOfSocieties() {
-    return opinionsOfSocieties.clone();
-  }
-
-  public void setOpinionsOfSocieties(SocietyOpinion[] opinionsOfSocieties) {
-    this.opinionsOfSocieties = opinionsOfSocieties.clone();
-  }
-
-  /**
-   * Sets opinions of societies.
-   *
-   * @param listOfSocieties the list of societies
-   */
-  public void setOpinionsOfSocieties(Society[] listOfSocieties) {
-    this.opinionsOfSocieties =
-        new SocietyOpinion[listOfSocieties.length > 0 ? listOfSocieties.length - 1 : 0];
-    for (int i = 0; i < listOfSocieties.length - 1; i++) {
-      SocietyOpinion opinion = new SocietyOpinion(listOfSocieties[i].getSocietyId(),
-          calculateOpinionOfSociety(listOfSocieties[i]));
-      this.opinionsOfSocieties[i] = opinion;
+  public void calOpinionOfLeader() {
+    float opinionModifier = 1;
+    if ((float) citizenOf.getTotalRawMaterialResource() / citizenOf.getPopulation().size() < Society.getMaterialPerPerson()) {
+      opinionModifier -= 0.1;
+    } else {
+      opinionModifier += 0.1;
     }
-  }
-
-  private float calculateOpinionOfSociety(Society society) {
-    return 0;
+    if ((float) citizenOf.getTotalFoodResource() / citizenOf.getPopulation().size() < Society.getFoodPerPerson()) {
+      opinionModifier -= 0.1;
+    } else {
+      opinionModifier += 0.1;
+    }
+    if (citizenOf.getLastMove() == Moves.War) {
+      opinionModifier -= 0.2;
+    } else if (citizenOf.getLastMove() == Moves.ClaimTile) {
+      opinionModifier += 0.1;
+    } else if (citizenOf.getLastMove() == Moves.Trade) {
+      opinionModifier += 0.2;
+    }
+    setOpinionOfLeader(opinionOfLeader + opinionModifier);
   }
 
   public float getHealth() {

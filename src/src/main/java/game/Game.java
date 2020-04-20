@@ -128,6 +128,8 @@ public class Game {
         // cycles thorough all societies in play
         for (Society society : turnOrder) {
           World.setActiveSociety(society);
+          // calculate the opinion of teh leaders
+          society.calculateOpinions();
           // check and end Trade deals
           society.checkTradeDeal();
           // set the end turn flag to false
