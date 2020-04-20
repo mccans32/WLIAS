@@ -126,7 +126,6 @@ public class Game {
         // Age everyone in each society
         if (Hud.getTurn() % AGE_FREQUENCY == 0) {
           for (Society society : World.getActiveSocieties()) {
-            System.out.println("AGEING THE POPULATION");
             society.agePopulation();
           }
         }
