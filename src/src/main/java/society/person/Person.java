@@ -29,9 +29,9 @@ public class Person {
   public Person() {
     this.health = MAX_HEALTH;
     this.age = 0;
-    this.productiveness = GenerateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
-    this.aggressiveness = GenerateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
-    this.attractiveness = GenerateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.productiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.aggressiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.attractiveness = generateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
   }
 
   /**
@@ -80,7 +80,7 @@ public class Person {
     return PRIME_AGE;
   }
 
-  private float GenerateRandomFloatInRange(float maxNo, float minNo) {
+  private float generateRandomFloatInRange(float maxNo, float minNo) {
     Random r = new Random();
     return minNo + r.nextFloat() * (maxNo - minNo);
   }
