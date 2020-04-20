@@ -219,7 +219,8 @@ public class Person {
   }
 
   private boolean checkProbability(float probability) {
-    float randomFloat = new Random().nextFloat() * 100f;
+    Random r = new Random();
+    float randomFloat = r.nextFloat() * 100f;
     return randomFloat <= probability * 100f;
   }
 }
