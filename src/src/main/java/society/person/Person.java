@@ -29,9 +29,9 @@ public class Person {
   public Person() {
     this.health = MAX_HEALTH;
     this.age = 0;
-    this.productiveness = calcMinimum(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
-    this.aggressiveness = calcMinimum(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
-    this.attractiveness = calcMinimum(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.productiveness = GenerateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.aggressiveness = GenerateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
+    this.attractiveness = GenerateRandomFloatInRange(MAX_DEFAULT_INDEX, MIN_DEFAULT_INDEX);
   }
 
   /**
@@ -80,11 +80,9 @@ public class Person {
     return PRIME_AGE;
   }
 
-  private float calcMinimum(float maxNo, float minNo) {
+  private float GenerateRandomFloatInRange(float maxNo, float minNo) {
     Random r = new Random();
-    double random = minNo + r.nextDouble() * (maxNo - minNo);
-    double roundOff = (double) Math.round(random * 100) / 100;
-    return (float) roundOff;
+    return minNo + r.nextFloat() * (maxNo - minNo);
   }
 
   public float getProductiveness() {
