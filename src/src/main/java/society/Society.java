@@ -34,10 +34,6 @@ public class Society {
   private ArrayList<TileWorldObject> claimableTerritory = new ArrayList<>();
   private ArrayList<TileWorldObject> defendingTiles = new ArrayList<>();
   private ArrayList<TileWorldObject> attackingTiles = new ArrayList<>();
-  private float averageAggressiveness;
-  private float averageProductivity;
-  private ArrayList<TileWorldObject> opponentWarringTiles = new ArrayList<>();
-  private ArrayList<TileWorldObject> societyWarringTiles = new ArrayList<>();
   private int score;
   private boolean endTurn = false;
   private ArrayList<Society> possibleTradingSocieties = new ArrayList<>();
@@ -160,6 +156,9 @@ public class Society {
     this.score = score;
   }
 
+  /**
+   * Create army.
+   */
   public void createArmy() {
     army.clear();
     for (Person citizen : getPopulation()) {
@@ -282,6 +281,11 @@ public class Society {
     }
   }
 
+  /**
+   * Calculate defending tiles.
+   *
+   * @param attackingTile the attacking tile
+   */
   public void calculateDefendingTiles(TileWorldObject attackingTile) {
     defendingTiles.clear();
     int row = attackingTile.getRow();
@@ -327,9 +331,6 @@ public class Society {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
-//      if (!opponentWarringTiles.add(map[row][column - 1]) && checkForPeace(map[row][column - 1])) {
-//        opponentWarringTiles.add(map[row][column - 1]);
-//      }
     }
     // Check right side of the territory
     if (map[row][column + 1].isClaimed() && column + 1 != map.length - 1
@@ -337,9 +338,6 @@ public class Society {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
-//      if (!opponentWarringTiles.add(map[row][column + 1]) && checkForPeace(map[row][column + 1])) {
-//        opponentWarringTiles.add(map[row][column + 1]);
-//      }
     }
     // Check top of territory
     if (map[row - 1][column].isClaimed() && row - 1 != 0
@@ -347,10 +345,6 @@ public class Society {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
-//      if (!opponentWarringTiles.contains(map[row - 1][column])
-//          && checkForPeace(map[row - 1][column])) {
-//        opponentWarringTiles.add(map[row - 1][column]);
-//      }
     }
     // check bottom of territory
     if (map[row + 1][column].isClaimed() && row + 1 != map.length - 1
@@ -358,10 +352,6 @@ public class Society {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
-//      if (!opponentWarringTiles.contains(map[row + 1][column])
-//          && checkForPeace(map[row + 1][column])) {
-//        opponentWarringTiles.add(map[row + 1][column]);
-//      }
     }
   }
 
@@ -679,7 +669,12 @@ public class Society {
     return offspring;
   }
 
-  public float calcArmyAgression() {
+  /**
+   * Calc army aggression float.
+   *
+   * @return the float
+   */
+  public float calcArmyAggression() {
     float totalAggression = 0;
     for (Person soldier : army) {
       totalAggression += soldier.getAggressiveness();

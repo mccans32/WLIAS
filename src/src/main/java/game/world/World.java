@@ -457,7 +457,7 @@ public class World {
 
   private static float calcAttack(Society currentSociety, TileWorldObject worldTile) {
     // TODO NORMALISE THESE VALUES FOR THE PURPOSE OF BALANCING
-    float armyAggressiveness = currentSociety.calcArmyAgression();
+    float armyAggressiveness = currentSociety.calcArmyAggression();
     float productionModifier = currentSociety.getAverageProductivity();
     float tileModifier = worldTile.getTile().getAttackModifier();
     return armyAggressiveness * productionModifier * tileModifier;
