@@ -11,6 +11,7 @@ import math.Vector3f;
 import society.person.Person;
 
 public class Society {
+  private static final float MINIMUM_ARMY_AGE = 18;
   private static final int DEFAULT_POPULATION_SIZE = 5;
   private static final float FOOD_PER_PERSON = 1;
   private static final float MATERIAL_PER_PERSON = 1;
@@ -43,6 +44,7 @@ public class Society {
   private boolean madeMove = false;
   private int foodFromDeals;
   private int rawMatsFromDeals;
+  private ArrayList<Person> army = new ArrayList<>();
 
   /**
    * Instantiates a new Society.
@@ -80,6 +82,10 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public ArrayList<Person> getArmy() {
+    return army;
   }
 
   public ArrayList<TradeDeal> getActiveTradeDeals() {
@@ -152,6 +158,15 @@ public class Society {
 
   public void setScore(int score) {
     this.score = score;
+  }
+
+  public void createArmy() {
+    army.clear();
+    for (Person citizen : getPopulation()) {
+      if (citizen.getAge() >= MINIMUM_ARMY_AGE) {
+        army.add(citizen);
+      }
+    }
   }
 
   /**
@@ -229,6 +244,7 @@ public class Society {
     rawMaterials += rawMatsFromDeals;
     setTotalFoodResource(foodTotal);
     setTotalRawMaterialResource(rawMaterials);
+    createArmy();
   }
 
   /**
@@ -661,5 +677,13 @@ public class Society {
       offspring.add(child);
     }
     return offspring;
+  }
+
+  public float calcArmyAgression() {
+    float totalAggression = 0;
+    for (Person soldier : army) {
+      totalAggression += soldier.getAggressiveness();
+    }
+    return totalAggression;
   }
 }

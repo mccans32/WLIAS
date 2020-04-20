@@ -141,7 +141,10 @@ public class ChoiceMenu {
             World.getActiveSocieties().get(0).setEndTurn(true);
             Game.setState(GameState.GAME_MAIN);
           }
+          Hud.setSocietyPanelActive(false);
+          Hud.setTerrainPanelActive(false);
         }
+
       }
     }
   }

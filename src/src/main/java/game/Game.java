@@ -127,6 +127,11 @@ public class Game {
         Collections.shuffle(turnOrder);
         // cycles thorough all societies in play
         for (Society society : turnOrder) {
+          // closing of the inspection panel so that information is up to date
+          if (society.getSocietyId() == 0) {
+            Hud.setSocietyPanelActive(false);
+            Hud.setTerrainPanelActive(false);
+          }
           World.setActiveSociety(society);
           // check and end Trade deals
           society.checkTradeDeal();
