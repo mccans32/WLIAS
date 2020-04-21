@@ -87,6 +87,11 @@ public class Society {
     return happiness;
   }
 
+  /**
+   * Sets happiness.
+   *
+   * @param happiness the happiness
+   */
   public void setHappiness(float happiness) {
     if (happiness < 0.001f) {
       happiness = 0.01f;
