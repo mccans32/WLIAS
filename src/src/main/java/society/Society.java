@@ -93,8 +93,10 @@ public class Society {
   public void setHappiness(float happiness) {
     if (happiness < 0.01f) {
       happiness = 0.01f;
-      this.happiness = happiness;
+    } else if (happiness > 1.0f) {
+      happiness = 1.0f;
     }
+    this.happiness = happiness;
   }
 
   public ArrayList<Person> getArmy() {
@@ -269,11 +271,6 @@ public class Society {
    * @param claimedTile the world tile
    */
   public void claimTile(TileWorldObject claimedTile) {
-    float baseHappinessModifier = 1f;
-    float amtOfResources = claimedTile.getFoodResource() + claimedTile.getRawMaterialResource();
-    baseHappinessModifier += amtOfResources
-        / (getTotalFoodResource() + getTotalRawMaterialResource());
-    setHappiness(getHappiness() * baseHappinessModifier);
     claimedTile.setClaimed(true);
     claimedTile.setClaimedBy(this);
     this.territory.add(claimedTile);
@@ -530,25 +527,35 @@ public class Society {
     float happinessModifier = 1f;
     activeTradeDeals.add(tradeDeal);
     if (tradeDeal.getSocietyA() == this) {
+      // calculate total resource received from trade deal
       float totalResourcesAdded = tradeDeal.getFoodReceived() + tradeDeal.getRawMatsReceived();
+      // calculate total resource lost in trade deal
       float totalResourcesTakenAway = tradeDeal.getFoodGiven() + tradeDeal.getRawMatsGiven();
+      // check if either of totals are greater than 0
       if (totalResourcesAdded > 0 || totalResourcesTakenAway > 0) {
+        // add or takeaway from the modifier the ratio of total resources lost or gained
         happinessModifier += (totalResourcesAdded - totalResourcesTakenAway)
             / (getTotalFoodResource() + getTotalRawMaterialResource()
             + totalFoodResource - totalRawMaterialResource);
       }
+      // set the new happiness
       setHappiness(getHappiness() * happinessModifier);
       foodFromDeals += tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
       rawMatsFromDeals += tradeDeal.getRawMatsReceived() - tradeDeal.getRawMatsGiven();
 
     } else {
+      // calculate the amount of resources lost in trade deal
       float totalResourcesTakenAway = tradeDeal.getFoodReceived() + tradeDeal.getRawMatsReceived();
+      // calculate the amount of resources gained in trade deal
       float totalResourcesAdded = tradeDeal.getFoodGiven() + tradeDeal.getRawMatsGiven();
+      // check whether either total is greater than 0
       if (totalResourcesAdded > 0 || totalResourcesTakenAway > 0) {
+        // add or take away from the modifier the ratio of total resources lost or gained.
         happinessModifier += (totalResourcesAdded - totalResourcesTakenAway)
             / (getTotalFoodResource() + getTotalRawMaterialResource()
             + totalFoodResource - totalRawMaterialResource);
       }
+      // set the new happiness
       setHappiness(getHappiness() * happinessModifier);
       foodFromDeals += tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
       rawMatsFromDeals += tradeDeal.getRawMatsGiven() - tradeDeal.getRawMatsReceived();
@@ -740,18 +747,25 @@ public class Society {
    * Update happiness.
    */
   public void updateHappiness() {
+    // set a base modifier to 1
     float happinessModifier = 1f;
+    // calculate current food per person
     float currentFoodPerPerson = (float) getTotalFoodResource() / population.size();
     if (currentFoodPerPerson != 0) {
+      // apply that ratio to the happiness modifier
       happinessModifier *= currentFoodPerPerson;
     }
+    // calculate current Raw materials per person
     float currentRawMatsPerPerson = (float) getTotalRawMaterialResource() / population.size();
     if (currentRawMatsPerPerson != 0) {
+      // apply that ratio to the happiness modifier
       happinessModifier *= currentRawMatsPerPerson;
     }
+    // check in case happiness modifier exceeded maximum limit
     if (happinessModifier > 2) {
       happinessModifier = 2f;
     }
+    // apply happiness modifier to previous happiness
     setHappiness(getHappiness() * happinessModifier);
   }
 }
