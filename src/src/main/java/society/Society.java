@@ -91,11 +91,12 @@ public class Society {
    * @param happiness the happiness
    */
   public void setHappiness(float happiness) {
-    if (happiness < 0.001f) {
+    if (happiness < 0.01f) {
       happiness = 0.01f;
       this.happiness = happiness;
     }
   }
+
   public ArrayList<Person> getArmy() {
     return army;
   }
