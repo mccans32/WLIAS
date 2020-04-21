@@ -15,7 +15,6 @@ public class Person {
   private int age;
   private float aggressiveness;
   private float attractiveness;
-  private float opinionOfLeader = 0.5f;
   private float productiveness;
 
   /**
@@ -79,14 +78,6 @@ public class Person {
 
   public void setProductiveness(float productiveness) {
     this.productiveness = productiveness;
-  }
-
-  public float getOpinionOfLeader() {
-    return opinionOfLeader;
-  }
-
-  public void setOpinionOfLeader(float opinionOfLeader) {
-    this.opinionOfLeader = opinionOfLeader;
   }
 
   public float getHealth() {

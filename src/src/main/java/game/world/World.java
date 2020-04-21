@@ -197,8 +197,8 @@ public class World {
       float baseHappinessModifier = 1f;
       float amtOfResources = claimedTile.getFoodResource() + claimedTile.getRawMaterialResource();
       if (amtOfResources != 0) {
-        baseHappinessModifier += amtOfResources /
-            (societies[0].getTotalFoodResource() + societies[0].getTotalRawMaterialResource());
+        baseHappinessModifier += amtOfResources
+            / (societies[0].getTotalFoodResource() + societies[0].getTotalRawMaterialResource());
       }
       societies[0].setHappiness(societies[0].getHappiness() * baseHappinessModifier);
       societies[0].claimTile(claimedTile);
@@ -449,12 +449,18 @@ public class World {
         warTarget.getTerritory().remove(opponentTile);
         playerSociety.claimTile(opponentTile);
         bordersAltered = true;
-        playerSociety.setHappiness(playerSociety.getHappiness() * (1 + playerSociety.getAverageAggressiveness()));
+        playerSociety.setHappiness(playerSociety.getHappiness()
+            * (1 + playerSociety.getAverageAggressiveness()));
+        warTarget.setHappiness(playerSociety.getHappiness()
+            * (playerSociety.getAverageAggressiveness()));
       } else if (playerAttack < opponentAttack) {
         playerSociety.getTerritory().remove(playerTile);
         warTarget.claimTile(playerTile);
         bordersAltered = true;
-        playerSociety.setHappiness(playerSociety.getHappiness() * (playerSociety.getAverageAggressiveness()));
+        playerSociety.setHappiness(playerSociety.getHappiness()
+            * (playerSociety.getAverageAggressiveness()));
+        warTarget.setHappiness(playerSociety.getHappiness()
+            * (1 + playerSociety.getAverageAggressiveness()));
       }
     }
     playerSociety.setEndTurn(true);

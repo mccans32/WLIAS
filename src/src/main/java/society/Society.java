@@ -43,7 +43,7 @@ public class Society {
   private int rawMatsFromDeals;
   private Moves lastMove = Moves.Nothing;
   private ArrayList<Person> army = new ArrayList<>();
-  private float Happiness = 0.5f;
+  private float happiness = 0.5f;
 
   /**
    * Instantiates a new Society.
@@ -84,11 +84,11 @@ public class Society {
   }
 
   public float getHappiness() {
-    return Happiness;
+    return happiness;
   }
 
   public void setHappiness(float happiness) {
-    Happiness = happiness;
+    this.happiness = happiness;
   }
 
   public Moves getLastMove() {
@@ -530,8 +530,9 @@ public class Society {
       float totalResourcesAdded = tradeDeal.getFoodReceived() + tradeDeal.getRawMatsReceived();
       float totalResourcesTakenAway = tradeDeal.getFoodGiven() + tradeDeal.getRawMatsGiven();
       if (totalResourcesAdded > 0 || totalResourcesTakenAway > 0) {
-        happinessModifier += (totalResourcesAdded - totalResourcesTakenAway) /
-            (getTotalFoodResource() + getTotalRawMaterialResource() + totalFoodResource - totalRawMaterialResource);
+        happinessModifier += (totalResourcesAdded - totalResourcesTakenAway)
+            / (getTotalFoodResource() + getTotalRawMaterialResource()
+            + totalFoodResource - totalRawMaterialResource);
       }
       setHappiness(getHappiness() * happinessModifier);
       foodFromDeals += tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
@@ -541,8 +542,9 @@ public class Society {
       float totalResourcesTakenAway = tradeDeal.getFoodReceived() + tradeDeal.getRawMatsReceived();
       float totalResourcesAdded = tradeDeal.getFoodGiven() + tradeDeal.getRawMatsGiven();
       if (totalResourcesAdded > 0 || totalResourcesTakenAway > 0) {
-        happinessModifier += (totalResourcesAdded - totalResourcesTakenAway) /
-            (getTotalFoodResource() + getTotalRawMaterialResource() + totalFoodResource - totalRawMaterialResource);
+        happinessModifier += (totalResourcesAdded - totalResourcesTakenAway)
+            / (getTotalFoodResource() + getTotalRawMaterialResource()
+            + totalFoodResource - totalRawMaterialResource);
       }
       setHappiness(getHappiness() * happinessModifier);
       foodFromDeals += tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
@@ -731,6 +733,9 @@ public class Society {
     population.removeAll(passedAway);
   }
 
+  /**
+   * Update happiness.
+   */
   public void updateHappiness() {
     float happinessModifier = 1f;
     float currentFoodPerPerson = (float) getTotalFoodResource() / population.size();

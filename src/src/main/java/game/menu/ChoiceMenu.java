@@ -14,7 +14,6 @@ import engine.objects.gui.HudText;
 import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
-import game.Moves;
 import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
@@ -111,7 +110,6 @@ public class ChoiceMenu {
   }
 
   private static void checkChoiceButtonClick(Window window) {
-    Society playerSociety = World.getActiveSocieties().get(0);
     // Check if left button is down
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()) {
       Game.resetButtonLock();

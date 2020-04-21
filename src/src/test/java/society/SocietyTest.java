@@ -22,7 +22,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import society.person.Person;
-import society.person.dataobjects.Gender;
 
 class SocietyTest {
   static final int SIZE_OF_ARRAYS = 5;

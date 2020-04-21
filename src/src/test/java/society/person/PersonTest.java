@@ -37,7 +37,6 @@ class PersonTest {
       randomFloatArray[i] = generateRandomFloat();
     }
     person = new Person(0, 0.0f, 0.0f, 0);
-    person.setOpinionsOfSocieties(listOfSocieties);
   }
 
   private float generateRandomFloat() {

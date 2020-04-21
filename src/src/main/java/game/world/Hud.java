@@ -674,7 +674,8 @@ public class Hud {
         societyString, society.getPopulation().size(), society.getTotalFoodResource(),
         society.getTotalRawMaterialResource(), society.getTerritory().size(),
         society.getAverageAggressiveness(), society.getAverageProductivity(),
-        society.getAverageAge(), society.getArmy().size(), society.getHappiness(), startPadding, linePadding);
+        society.getAverageAge(), society.getArmy().size(), society.getHappiness(),
+        startPadding, linePadding);
   }
 
   private static String calculateTerrainPanelString(TileWorldObject tile) {
