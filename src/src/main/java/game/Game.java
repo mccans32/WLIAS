@@ -142,6 +142,8 @@ public class Game {
           World.setActiveSociety(society);
           // check and end Trade deals
           society.checkTradeDeal();
+          // update happiness based on resources
+          society.updateHappiness();
           // set the end turn flag to false
           society.setEndTurn(false);
           society.setMadeMove(false);

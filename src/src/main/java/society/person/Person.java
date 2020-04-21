@@ -1,9 +1,6 @@
 package society.person;
 
-import game.world.World;
 import java.util.Random;
-import society.Society;
-import society.person.dataobjects.SocietyOpinion;
 
 public class Person {
   private static final float MIN_DEFAULT_INDEX = 0.35f;
@@ -14,14 +11,11 @@ public class Person {
   private static final float MIN_INDEX = 0f;
   private static final float PRIME_AGE = 30;
   private static final float MAX_DEFAULT_INDEX = 0.65f;
-  private static Society[] defaultSocieties = World.getSocieties();
   private float health;
   private int age;
   private float aggressiveness;
   private float attractiveness;
-  private float opinionOfLeader;
   private float productiveness;
-  private SocietyOpinion[] opinionsOfSocieties;
 
   /**
    * Instantiates a new Person.
@@ -47,13 +41,6 @@ public class Person {
     this.aggressiveness = aggressiveness;
     this.attractiveness = attractiveness;
     this.productiveness = productiveness;
-    if (defaultSocieties != null) {
-      setOpinions(World.getSocieties());
-    }
-  }
-
-  public static Society[] getDefaultSocieties() {
-    return defaultSocieties.clone();
   }
 
   public static float getMaxHealth() {
@@ -91,54 +78,6 @@ public class Person {
 
   public void setProductiveness(float productiveness) {
     this.productiveness = productiveness;
-  }
-
-  public void setOpinions(Society[] listOfSocieties) {
-    setOpinionOfLeader();
-    setOpinionsOfSocieties(listOfSocieties);
-  }
-
-  public float getOpinionOfLeader() {
-    return opinionOfLeader;
-  }
-
-  public void setOpinionOfLeader(float opinionOfLeader) {
-    this.opinionOfLeader = opinionOfLeader;
-  }
-
-  public void setOpinionOfLeader() {
-    this.opinionOfLeader = calculateOpinionOfLeader();
-  }
-
-  private float calculateOpinionOfLeader() {
-    return 0;
-  }
-
-  public SocietyOpinion[] getOpinionsOfSocieties() {
-    return opinionsOfSocieties.clone();
-  }
-
-  public void setOpinionsOfSocieties(SocietyOpinion[] opinionsOfSocieties) {
-    this.opinionsOfSocieties = opinionsOfSocieties.clone();
-  }
-
-  /**
-   * Sets opinions of societies.
-   *
-   * @param listOfSocieties the list of societies
-   */
-  public void setOpinionsOfSocieties(Society[] listOfSocieties) {
-    this.opinionsOfSocieties =
-        new SocietyOpinion[listOfSocieties.length > 0 ? listOfSocieties.length - 1 : 0];
-    for (int i = 0; i < listOfSocieties.length - 1; i++) {
-      SocietyOpinion opinion = new SocietyOpinion(listOfSocieties[i].getSocietyId(),
-          calculateOpinionOfSociety(listOfSocieties[i]));
-      this.opinionsOfSocieties[i] = opinion;
-    }
-  }
-
-  private float calculateOpinionOfSociety(Society society) {
-    return 0;
   }
 
   public float getHealth() {

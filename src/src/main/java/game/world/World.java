@@ -45,16 +45,23 @@ public class World {
       ColourUtils.convertColor(ChartColor.LIGHT_YELLOW),
       ColourUtils.convertColor(ChartColor.LIGHT_GREEN),
       ColourUtils.convertColor(ChartColor.LIGHT_CYAN)};
-  private static final int FERTILE_MIN_FOOD_RESOURCE = 3;
-  private static final int FERTILE_MAX_FOOD_RESOURCE = 5;
-  private static final int FERTILE_MAX_RAW_MATERIALS = 1;
-  private static final int ARID_MAX_FOOD_RESOURCE = 1;
-  private static final int ARID_MAX_RAW_MATERIALS = 5;
-  private static final int ARID_MIN_RAW_MATERIALS = 3;
-  private static final int PLAIN_MAX_FOOD_RESOURCE = 3;
-  private static final int PLAIN_MAX_RAW_MATERIALS = 2;
-  private static final int WATER_MAX_FOOD_RESOURCE = 1;
-  private static final int WATER_MAX_RAW_MATERIALS = 1;
+  private static final int FERTILE_MIN_FOOD_RESOURCE = 6;
+  private static final int FERTILE_MAX_FOOD_RESOURCE = 9;
+  private static final int FERTILE_MAX_RAW_MATERIALS = 4;
+  private static final int FERTILE_MIN_RAW_MATERIALS = 3;
+
+  private static final int ARID_MAX_FOOD_RESOURCE = 4;
+  private static final int ARID_MIN_FOOD_RESOURCE = 3;
+  private static final int ARID_MAX_RAW_MATERIALS = 9;
+  private static final int ARID_MIN_RAW_MATERIALS = 6;
+
+  private static final int PLAIN_MAX_FOOD_RESOURCE = 6;
+  private static final int PLAIN_MIN_FOOD_RESOURCE = 5;
+  private static final int PLAIN_MAX_RAW_MATERIALS = 5;
+  private static final int PLAIN_MIN_RAW_MATERIALS = 4;
+
+  private static final int WATER_MAX_FOOD_RESOURCE = 2;
+  private static final int WATER_MAX_RAW_MATERIALS = 2;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -320,14 +327,18 @@ public class World {
     } else if (tempTileWorldObject.getTile() instanceof FertileTile) {
       tempTileWorldObject.setFoodResource(genRandomInt(FERTILE_MAX_FOOD_RESOURCE,
           FERTILE_MIN_FOOD_RESOURCE));
-      tempTileWorldObject.setRawMaterialResource(genRandomInt(FERTILE_MAX_RAW_MATERIALS));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(FERTILE_MAX_RAW_MATERIALS,
+          FERTILE_MIN_RAW_MATERIALS));
     } else if (tempTileWorldObject.getTile() instanceof AridTile) {
-      tempTileWorldObject.setFoodResource(genRandomInt(ARID_MAX_FOOD_RESOURCE));
+      tempTileWorldObject.setFoodResource(genRandomInt(ARID_MAX_FOOD_RESOURCE,
+          ARID_MIN_FOOD_RESOURCE));
       tempTileWorldObject.setRawMaterialResource(genRandomInt(ARID_MAX_RAW_MATERIALS,
           ARID_MIN_RAW_MATERIALS));
     } else if (tempTileWorldObject.getTile() instanceof PlainTile) {
-      tempTileWorldObject.setFoodResource(genRandomInt(PLAIN_MAX_FOOD_RESOURCE));
-      tempTileWorldObject.setRawMaterialResource(genRandomInt(PLAIN_MAX_RAW_MATERIALS));
+      tempTileWorldObject.setFoodResource(genRandomInt(PLAIN_MAX_FOOD_RESOURCE,
+          PLAIN_MIN_FOOD_RESOURCE));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(PLAIN_MAX_RAW_MATERIALS,
+          PLAIN_MIN_RAW_MATERIALS));
     }
   }
 
@@ -415,28 +426,51 @@ public class World {
     activeSocieties.clear();
   }
 
-  private static void simulateBattle(Society playerSociety,
+  private static void simulateBattle(Society attackingSociety,
                                      TileWorldObject playerTile, TileWorldObject opponentTile) {
-    Society warTarget = null;
+    Society defendingSociety = null;
     for (Society society : societies) {
       if (society.getTerritory().contains(opponentTile)) {
-        warTarget = society;
+        defendingSociety = society;
       }
     }
-    if (warTarget != null) {
-      float playerAttack = calcAttack(playerSociety, playerTile);
-      float opponentAttack = calcAttack(warTarget, opponentTile);
-      if (playerAttack > opponentAttack) {
-        warTarget.getTerritory().remove(opponentTile);
-        playerSociety.claimTile(opponentTile);
+    if (defendingSociety != null) {
+      float attackSocietyA = calcAttack(attackingSociety, playerTile);
+      float attackSocietyB = calcAttack(defendingSociety, opponentTile);
+      float attackingSocietyHappinessModifier = 1f;
+      float defendingSocietyHappinessModifier = 1f;
+      if (attackSocietyA > attackSocietyB) {
+        // SocietyA wins the battle
+        defendingSociety.getTerritory().remove(opponentTile);
+        attackingSociety.claimTile(opponentTile);
         bordersAltered = true;
-      } else if (playerAttack < opponentAttack) {
-        playerSociety.getTerritory().remove(playerTile);
-        warTarget.claimTile(playerTile);
+        // apply limit to attackingSocietyModifier
+        attackingSocietyHappinessModifier = attackingSociety.limitHappinessModifier(
+            (attackingSocietyHappinessModifier + attackingSociety.getAverageAggressiveness()));
+        // increase happiness for attacking society
+        attackingSociety.setHappiness(attackingSociety.getHappiness()
+            * attackingSocietyHappinessModifier);
+        // decrease happiness for defending society
+        defendingSociety.setHappiness(defendingSociety.getHappiness()
+            * defendingSociety.getAverageAggressiveness());
+
+      } else if (attackSocietyA < attackSocietyB) {
+        // SocietyB wins the battle
+        attackingSociety.getTerritory().remove(playerTile);
+        defendingSociety.claimTile(playerTile);
         bordersAltered = true;
+        // decrease attacking society happiness
+        attackingSociety.setHappiness(attackingSociety.getHappiness()
+            * attackingSociety.getAverageAggressiveness());
+        // apply limit to defendingSocietyHappinessModifier
+        defendingSocietyHappinessModifier = defendingSociety.limitHappinessModifier(
+            defendingSocietyHappinessModifier + defendingSociety.getAverageAggressiveness());
+        // increase defending society happiness
+        defendingSociety.setHappiness(defendingSociety.getHappiness()
+            * defendingSocietyHappinessModifier);
       }
     }
-    playerSociety.setEndTurn(true);
+    attackingSociety.setEndTurn(true);
     purgeSocieties();
     Game.setState(GameState.GAME_MAIN);
   }
