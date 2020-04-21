@@ -34,7 +34,7 @@ public class Society {
   private ArrayList<TileWorldObject> claimableTerritory = new ArrayList<>();
   private ArrayList<TileWorldObject> defendingTiles = new ArrayList<>();
   private ArrayList<TileWorldObject> attackingTiles = new ArrayList<>();
-  private int score;
+  private float score;
   private boolean endTurn = false;
   private ArrayList<Society> possibleTradingSocieties = new ArrayList<>();
   private boolean madeMove = false;
@@ -185,7 +185,7 @@ public class Society {
     this.endTurn = endTurn;
   }
 
-  public int getScore() {
+  public float getScore() {
     return score;
   }
 
@@ -789,6 +789,11 @@ public class Society {
     happinessModifier = limitHappinessModifier(happinessModifier);
     // apply happiness modifier to previous happiness
     setHappiness(getHappiness() * happinessModifier);
+  }
+
+  public void updateScore() {
+    score = ((population.size() + territory.size() + totalFoodResource + totalRawMaterialResource))
+        * happiness;
   }
 }
 
