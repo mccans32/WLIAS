@@ -2,7 +2,6 @@ package society;
 
 import engine.graphics.model.dimension.two.RectangleModel;
 import engine.objects.world.TileWorldObject;
-import game.Moves;
 import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
@@ -41,7 +40,6 @@ public class Society {
   private boolean madeMove = false;
   private int foodFromDeals;
   private int rawMatsFromDeals;
-  private Moves lastMove = Moves.Nothing;
   private ArrayList<Person> army = new ArrayList<>();
   private float happiness = 0.5f;
 
@@ -98,15 +96,6 @@ public class Society {
       this.happiness = happiness;
     }
   }
-
-  public Moves getLastMove() {
-    return lastMove;
-  }
-
-  public void setLastMove(Moves lastMove) {
-    this.lastMove = lastMove;
-  }
-
   public ArrayList<Person> getArmy() {
     return army;
   }
