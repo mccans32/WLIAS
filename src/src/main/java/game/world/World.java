@@ -435,29 +435,40 @@ public class World {
       }
     }
     if (defendingSociety != null) {
-      float playerAttack = calcAttack(attackingSociety, playerTile);
-      float opponentAttack = calcAttack(defendingSociety, opponentTile);
-      if (playerAttack > opponentAttack) {
+      float attackSocietyA = calcAttack(attackingSociety, playerTile);
+      float attackSocietyB = calcAttack(defendingSociety, opponentTile);
+      float attackingSocietyHappinessModifier = 1f;
+      float defendingSocietyHappinessModifier = 1f;
+      if (attackSocietyA > attackSocietyB) {
+        // SocietyA wins the battle
         defendingSociety.getTerritory().remove(opponentTile);
         attackingSociety.claimTile(opponentTile);
         bordersAltered = true;
+        // apply limit to attackingSocietyModifier
+        attackingSocietyHappinessModifier = attackingSociety.limitHappinessModifier(
+            (attackingSocietyHappinessModifier + attackingSociety.getAverageAggressiveness()));
         // increase happiness for attacking society
         attackingSociety.setHappiness(attackingSociety.getHappiness()
-            * (1 + attackingSociety.getAverageAggressiveness()));
+            * attackingSocietyHappinessModifier);
         // decrease happiness for defending society
         defendingSociety.setHappiness(defendingSociety.getHappiness()
-            * (defendingSociety.getAverageAggressiveness()));
+            * defendingSociety.getAverageAggressiveness());
 
-      } else if (playerAttack < opponentAttack) {
+      } else if (attackSocietyA < attackSocietyB) {
+        // SocietyB wins the battle
         attackingSociety.getTerritory().remove(playerTile);
         defendingSociety.claimTile(playerTile);
         bordersAltered = true;
         // decrease attacking society happiness
         attackingSociety.setHappiness(attackingSociety.getHappiness()
-            * (attackingSociety.getAverageAggressiveness()));
+            * attackingSociety.getAverageAggressiveness());
+        // apply limit to defendingSocietyHappinessModifier
+        defendingSocietyHappinessModifier =
+            defendingSocietyHappinessModifier = defendingSociety.limitHappinessModifier(
+                defendingSocietyHappinessModifier + defendingSociety.getAverageAggressiveness());
         // increase defending society happiness
         defendingSociety.setHappiness(defendingSociety.getHappiness()
-            * (1 + defendingSociety.getAverageAggressiveness()));
+            * defendingSocietyHappinessModifier);
       }
     }
     attackingSociety.setEndTurn(true);

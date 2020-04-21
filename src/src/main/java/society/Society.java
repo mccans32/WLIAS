@@ -81,6 +81,21 @@ public class Society {
     return DEFAULT_POPULATION_SIZE;
   }
 
+  /**
+   * Limit happiness modifier float.
+   *
+   * @param happinessModifier the happiness modifier
+   * @return the float
+   */
+  public float limitHappinessModifier(float happinessModifier) {
+    if (happinessModifier < 0.8f) {
+      happinessModifier = 0.8f;
+    } else if (happinessModifier > 1.2f) {
+      happinessModifier = 1.2f;
+    }
+    return happinessModifier;
+  }
+
   public float getHappiness() {
     return happiness;
   }
@@ -541,6 +556,8 @@ public class Society {
             / (getTotalFoodResource() + getTotalRawMaterialResource()
             + totalFoodResource - totalRawMaterialResource);
       }
+      // limit the happiness modifier
+      happinessModifier = limitHappinessModifier(happinessModifier);
       // set the new happiness
       setHappiness(getHappiness() * happinessModifier);
       foodFromDeals += tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
@@ -768,6 +785,8 @@ public class Society {
     if (happinessModifier > 2) {
       happinessModifier = 2f;
     }
+    // limit happiness modifier
+    happinessModifier = limitHappinessModifier(happinessModifier);
     // apply happiness modifier to previous happiness
     setHappiness(getHappiness() * happinessModifier);
   }
