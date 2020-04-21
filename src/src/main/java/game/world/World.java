@@ -194,13 +194,6 @@ public class World {
       updateSelectOverlay();
       claimedTile = selectWorldTile(societies[0].getClaimableTerritory());
     } else {
-      float baseHappinessModifier = 1f;
-      float amtOfResources = claimedTile.getFoodResource() + claimedTile.getRawMaterialResource();
-      if (amtOfResources != 0) {
-        baseHappinessModifier += amtOfResources
-            / (societies[0].getTotalFoodResource() + societies[0].getTotalRawMaterialResource());
-      }
-      societies[0].setHappiness(societies[0].getHappiness() * baseHappinessModifier);
       societies[0].claimTile(claimedTile);
       bordersAltered = true;
       updateSocietyBorders();

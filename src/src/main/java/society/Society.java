@@ -276,12 +276,17 @@ public class Society {
   /**
    * This society claims a tile.
    *
-   * @param worldTile the world tile
+   * @param claimedTile the world tile
    */
-  public void claimTile(TileWorldObject worldTile) {
-    worldTile.setClaimed(true);
-    worldTile.setClaimedBy(this);
-    this.territory.add(worldTile);
+  public void claimTile(TileWorldObject claimedTile) {
+    float baseHappinessModifier = 1f;
+    float amtOfResources = claimedTile.getFoodResource() + claimedTile.getRawMaterialResource();
+    baseHappinessModifier += amtOfResources
+        / (getTotalFoodResource() + getTotalRawMaterialResource());
+    setHappiness(getHappiness() * baseHappinessModifier);
+    claimedTile.setClaimed(true);
+    claimedTile.setClaimedBy(this);
+    this.territory.add(claimedTile);
   }
 
   public ArrayList<TileWorldObject> getTerritory() {
