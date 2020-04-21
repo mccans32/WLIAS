@@ -252,6 +252,9 @@ public class Game {
       } else if (state == GameState.TRADING) {
         TradingMenu.update(window);
       } else {
+        // Update the scores
+        updateScores();
+        // Check if the game is over
         checkGameOver();
         if (state != GameState.GAME_OVER) {
           // Update The Dev Hud
@@ -264,6 +267,15 @@ public class Game {
           GameOverMenu.update(window, camera);
         }
       }
+    }
+  }
+
+  /**
+   * Update the scores for each society.
+   */
+  public static void updateScores() {
+    for (Society society: World.getActiveSocieties()) {
+      society.updateScore();
     }
   }
 

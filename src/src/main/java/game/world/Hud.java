@@ -59,7 +59,7 @@ public class Hud {
   private static HudObject terrainInspectionPanel;
   private static Text coordText = new Text("", 0.9f, ColourUtils.convertColor(Color.BLACK));
   private static Text turnText = new Text("", 0.7f);
-  private static Text scoreText = new Text("", 0.7f);
+  private static Text scoreText = new Text("", 0.6f);
   private static Text arrowText = new Text("Next Turn", 0.5f);
   private static Text societyPanelText = new Text("", 0.5f);
   private static Text terrainPanelText = new Text("", 0.5f);
@@ -218,6 +218,7 @@ public class Hud {
         mouseOverHud = true;
         Game.resetButtonLock();
         updateTurnCounter();
+        updateScoreCounter();
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
         arrowCounter = 0;
         setSocietyPanelActive(false);
@@ -309,6 +310,15 @@ public class Hud {
     turnCounter.getLines().get(0).setText(turnText);
   }
 
+  private static void updateScoreCounter() {
+    float score = World.getActiveSocieties().get(0).getScore();
+    scoreText.setString(String.format("Score: %.0f", score));
+    scoreText.setCentreHorizontal(true);
+    scoreText.setCentreVertical(true);
+    scoreCounter.updateText(scoreText);
+    scoreCounter.reposition();
+  }
+
   /**
    * Update dev hud, displays the camera coordinates.
    *
@@ -338,12 +348,15 @@ public class Hud {
     turnCounter = new HudObject(turnMesh, turnText, -1f, 0.2f, 1f, -0.05f);
     turnCounter.create();
     // Create the score counter for the player
-    scoreText.setString(String.format("Score: %d", World.getSocieties()[0].getScore()));
+    scoreText.setString(String.format("Score: %.0f", World.getSocieties()[0].getScore()));
     scoreText.setCentreHorizontal(true);
     scoreText.setCentreVertical(true);
     RectangleMesh scoreMesh = new RectangleMesh(model, new Material(hudImage));
-    scoreCounter = new HudObject(scoreMesh, scoreText, -1f, 0.2f, 1f, -0.15f);
+    scoreCounter = new HudObject(scoreMesh, scoreText, -1f, 0.7f, 1f, -0.05f);
     scoreCounter.create();
+    // Update the score here initially
+    Game.updateScores();
+    updateScoreCounter();
     // Create the coordinate hud element
     coordinates = new HudText(coordText, -1, 0, 1, -1.95f);
     coordinates.create();
@@ -665,17 +678,18 @@ public class Hud {
     } else {
       societyString = "Society " + (society.getSocietyId() + 1);
     }
-    String startPadding = StringUtils.repeat(" \n", 5);
+    String startPadding = StringUtils.repeat(" \n", 3);
     String linePadding = "\n";
-    return String.format("%11$s Society Name: %s %12$s Population: %d %12$s Food: %d "
-            + "%12$s Raw Material: %d %12$s Territory Size: %d %12$s Average Aggressiveness: %.2f "
-            + "%12$s Average Productivity: %.2f %12$s Average Age: %.2f %12$s Army Size: %d "
-            + "%12$s Happiness: %.2f",
-        societyString, society.getPopulation().size(), society.getTotalFoodResource(),
-        society.getTotalRawMaterialResource(), society.getTerritory().size(),
-        society.getAverageAggressiveness(), society.getAverageProductivity(),
-        society.getAverageAge(), society.getArmy().size(), society.getHappiness(),
-        startPadding, linePadding);
+    return String.format(
+        "%12$s Society Name: %s %13$s Score: %.0f %13$s Population: %d %13$s Food: %d "
+            + "%13$s Raw Material: %d %13$s Territory Size: %d %13$s Average Aggressiveness: %.2f "
+            + "%13$s Average Productivity: %.2f %13$s Average Age: %.2f %13$s Army Size: %d "
+            + "%13$s Happiness: %.2f",
+        societyString, society.getScore(), society.getPopulation().size(),
+        society.getTotalFoodResource(), society.getTotalRawMaterialResource(),
+        society.getTerritory().size(), society.getAverageAggressiveness(),
+        society.getAverageProductivity(), society.getAverageAge(), society.getArmy().size(),
+        society.getHappiness(), startPadding, linePadding);
   }
 
   private static String calculateTerrainPanelString(TileWorldObject tile) {
