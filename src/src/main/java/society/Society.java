@@ -91,9 +91,12 @@ public class Society {
    * @param happiness the happiness
    */
   public void setHappiness(float happiness) {
-    if (happiness < 0.01f) {
-      happiness = 0.01f;
+    // check if happiness fell below minimum level or maximum level
+    if (happiness < 0.1f) {
+      // set happiness to minimum level
+      happiness = 0.11f;
     } else if (happiness > 1.0f) {
+      // set happiness to maximum level
       happiness = 1.0f;
     }
     this.happiness = happiness;
