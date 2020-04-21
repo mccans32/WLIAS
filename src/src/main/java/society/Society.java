@@ -88,7 +88,10 @@ public class Society {
   }
 
   public void setHappiness(float happiness) {
-    this.happiness = happiness;
+    if (happiness < 0.001f) {
+      happiness = 0.01f;
+      this.happiness = happiness;
+    }
   }
 
   public Moves getLastMove() {
@@ -750,8 +753,6 @@ public class Society {
       happinessModifier = 2f;
     }
     setHappiness(getHappiness() * happinessModifier);
-    if (getHappiness() < 0.001f) {
-      setHappiness(0.01f);
-    }
   }
 }
+
