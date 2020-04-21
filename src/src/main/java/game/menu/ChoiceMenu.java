@@ -123,13 +123,11 @@ public class ChoiceMenu {
             choiceMade = true;
             // War button was highlighted
             Game.setState(GameState.WARRING);
-            playerSociety.setLastMove(Moves.War);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[1])) {
             choiceMade = true;
             // Claim Tile button was highlighted
             Game.setState(GameState.CLAIM_TILE);
-            playerSociety.setLastMove(Moves.ClaimTile);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[2])) {
             choiceMade = true;
@@ -138,13 +136,11 @@ public class ChoiceMenu {
             TradingMenu.setTradeDeal(new TradeDeal(0, 0, 0, 0));
             // Trade move button was highlighted
             Game.setState(GameState.TRADING);
-            playerSociety.setLastMove(Moves.Trade);
           } else if (choiceButton.getLines().get(0).getText().getString()
               .equals(CHOICE_BUTTON_NAMES[3])) {
             choiceMade = true;
             // Nothing button was highlighted
             World.getActiveSocieties().get(0).setEndTurn(true);
-            playerSociety.setLastMove(Moves.Nothing);
             Game.setState(GameState.GAME_MAIN);
           }
           Hud.setSocietyPanelActive(false);

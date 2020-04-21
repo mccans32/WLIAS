@@ -26,7 +26,6 @@ public class Society {
   private static final float MAX_MUTATION_FACTOR = 0.25f;
   private static final float MIN_MUTATION_FACTOR = 0.10f;
   public ArrayList<TradeDeal> activeTradeDeals = new ArrayList<>();
-  private float opinionOfLeader;
   private Vector3f societyColor;
   private ArrayList<Person> population;
   private int societyId;
@@ -44,6 +43,7 @@ public class Society {
   private int rawMatsFromDeals;
   private Moves lastMove = Moves.Nothing;
   private ArrayList<Person> army = new ArrayList<>();
+  private float Happiness = 0.5f;
 
   /**
    * Instantiates a new Society.
@@ -81,6 +81,14 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
+  }
+
+  public float getHappiness() {
+    return Happiness;
+  }
+
+  public void setHappiness(float happiness) {
+    Happiness = happiness;
   }
 
   public Moves getLastMove() {
@@ -516,11 +524,27 @@ public class Society {
    * @param tradeDeal the trade deal
    */
   public void activateTradeDeal(TradeDeal tradeDeal) {
+    float happinessModifier = 1f;
     activeTradeDeals.add(tradeDeal);
     if (tradeDeal.getSocietyA() == this) {
+      float totalResourcesAdded = tradeDeal.getFoodReceived() + tradeDeal.getRawMatsReceived();
+      float totalResourcesTakenAway = tradeDeal.getFoodGiven() + tradeDeal.getRawMatsGiven();
+      if (totalResourcesAdded > 0 || totalResourcesTakenAway > 0) {
+        happinessModifier += (totalResourcesAdded - totalResourcesTakenAway) /
+            (getTotalFoodResource() + getTotalRawMaterialResource() + totalFoodResource - totalRawMaterialResource);
+      }
+      setHappiness(getHappiness() * happinessModifier);
       foodFromDeals += tradeDeal.getFoodReceived() - tradeDeal.getFoodGiven();
       rawMatsFromDeals += tradeDeal.getRawMatsReceived() - tradeDeal.getRawMatsGiven();
+
     } else {
+      float totalResourcesTakenAway = tradeDeal.getFoodReceived() + tradeDeal.getRawMatsReceived();
+      float totalResourcesAdded = tradeDeal.getFoodGiven() + tradeDeal.getRawMatsGiven();
+      if (totalResourcesAdded > 0 || totalResourcesTakenAway > 0) {
+        happinessModifier += (totalResourcesAdded - totalResourcesTakenAway) /
+            (getTotalFoodResource() + getTotalRawMaterialResource() + totalFoodResource - totalRawMaterialResource);
+      }
+      setHappiness(getHappiness() * happinessModifier);
       foodFromDeals += tradeDeal.getFoodGiven() - tradeDeal.getFoodReceived();
       rawMatsFromDeals += tradeDeal.getRawMatsGiven() - tradeDeal.getRawMatsReceived();
     }
@@ -674,27 +698,10 @@ public class Society {
       float aggressiveness = parentToInherit.getAggressiveness();
       parentToInherit = parents.get(r.nextInt(parents.size()));
       float attractiveness = parentToInherit.getAttractiveness();
-      Person child = new Person(0, aggressiveness, attractiveness, productiveness, this);
+      Person child = new Person(0, aggressiveness, attractiveness, productiveness);
       offspring.add(child);
     }
     return offspring;
-  }
-
-  public void calculateOpinions() {
-    float totalOpinionsOfLeader = 0;
-    for (Person citizen : population) {
-      citizen.calOpinionOfLeader();
-      totalOpinionsOfLeader += citizen.getOpinionOfLeader();
-    }
-    setOpinionOfLeader(totalOpinionsOfLeader / population.size());
-  }
-
-  public float getOpinionOfLeader() {
-    return opinionOfLeader;
-  }
-
-  public void setOpinionOfLeader(float opinionOfLeader) {
-    this.opinionOfLeader = opinionOfLeader;
   }
 
   /**
@@ -722,5 +729,24 @@ public class Society {
     }
     // Remove everyone from the population who has died
     population.removeAll(passedAway);
+  }
+
+  public void updateHappiness() {
+    float happinessModifier = 1f;
+    float currentFoodPerPerson = (float) getTotalFoodResource() / population.size();
+    if (currentFoodPerPerson != 0) {
+      happinessModifier *= currentFoodPerPerson;
+    }
+    float currentRawMatsPerPerson = (float) getTotalRawMaterialResource() / population.size();
+    if (currentRawMatsPerPerson != 0) {
+      happinessModifier *= currentRawMatsPerPerson;
+    }
+    if (happinessModifier > 2) {
+      happinessModifier = 2f;
+    }
+    setHappiness(getHappiness() * happinessModifier);
+    if (getHappiness() < 0.001f) {
+      setHappiness(0.01f);
+    }
   }
 }

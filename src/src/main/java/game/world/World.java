@@ -46,16 +46,23 @@ public class World {
       ColourUtils.convertColor(ChartColor.LIGHT_YELLOW),
       ColourUtils.convertColor(ChartColor.LIGHT_GREEN),
       ColourUtils.convertColor(ChartColor.LIGHT_CYAN)};
-  private static final int FERTILE_MIN_FOOD_RESOURCE = 3;
-  private static final int FERTILE_MAX_FOOD_RESOURCE = 5;
-  private static final int FERTILE_MAX_RAW_MATERIALS = 1;
-  private static final int ARID_MAX_FOOD_RESOURCE = 1;
-  private static final int ARID_MAX_RAW_MATERIALS = 5;
-  private static final int ARID_MIN_RAW_MATERIALS = 3;
-  private static final int PLAIN_MAX_FOOD_RESOURCE = 3;
-  private static final int PLAIN_MAX_RAW_MATERIALS = 2;
-  private static final int WATER_MAX_FOOD_RESOURCE = 1;
-  private static final int WATER_MAX_RAW_MATERIALS = 1;
+  private static final int FERTILE_MIN_FOOD_RESOURCE = 6;
+  private static final int FERTILE_MAX_FOOD_RESOURCE = 9;
+  private static final int FERTILE_MAX_RAW_MATERIALS = 4;
+  private static final int FERTILE_MIN_RAW_MATERIALS = 3;
+
+  private static final int ARID_MAX_FOOD_RESOURCE = 4;
+  private static final int ARID_MIN_FOOD_RESOURCE = 3;
+  private static final int ARID_MAX_RAW_MATERIALS = 9;
+  private static final int ARID_MIN_RAW_MATERIALS = 6;
+
+  private static final int PLAIN_MAX_FOOD_RESOURCE = 6;
+  private static final int PLAIN_MIN_FOOD_RESOURCE = 5;
+  private static final int PLAIN_MAX_RAW_MATERIALS = 5;
+  private static final int PLAIN_MIN_RAW_MATERIALS = 4;
+
+  private static final int WATER_MAX_FOOD_RESOURCE = 2;
+  private static final int WATER_MAX_RAW_MATERIALS = 2;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -187,6 +194,13 @@ public class World {
       updateSelectOverlay();
       claimedTile = selectWorldTile(societies[0].getClaimableTerritory());
     } else {
+      float baseHappinessModifier = 1f;
+      float amtOfResources = claimedTile.getFoodResource() + claimedTile.getRawMaterialResource();
+      if (amtOfResources != 0) {
+        baseHappinessModifier += amtOfResources /
+            (societies[0].getTotalFoodResource() + societies[0].getTotalRawMaterialResource());
+      }
+      societies[0].setHappiness(societies[0].getHappiness() * baseHappinessModifier);
       societies[0].claimTile(claimedTile);
       bordersAltered = true;
       updateSocietyBorders();
@@ -321,14 +335,18 @@ public class World {
     } else if (tempTileWorldObject.getTile() instanceof FertileTile) {
       tempTileWorldObject.setFoodResource(genRandomInt(FERTILE_MAX_FOOD_RESOURCE,
           FERTILE_MIN_FOOD_RESOURCE));
-      tempTileWorldObject.setRawMaterialResource(genRandomInt(FERTILE_MAX_RAW_MATERIALS));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(FERTILE_MAX_RAW_MATERIALS,
+          FERTILE_MIN_RAW_MATERIALS));
     } else if (tempTileWorldObject.getTile() instanceof AridTile) {
-      tempTileWorldObject.setFoodResource(genRandomInt(ARID_MAX_FOOD_RESOURCE));
+      tempTileWorldObject.setFoodResource(genRandomInt(ARID_MAX_FOOD_RESOURCE,
+          ARID_MIN_FOOD_RESOURCE));
       tempTileWorldObject.setRawMaterialResource(genRandomInt(ARID_MAX_RAW_MATERIALS,
           ARID_MIN_RAW_MATERIALS));
     } else if (tempTileWorldObject.getTile() instanceof PlainTile) {
-      tempTileWorldObject.setFoodResource(genRandomInt(PLAIN_MAX_FOOD_RESOURCE));
-      tempTileWorldObject.setRawMaterialResource(genRandomInt(PLAIN_MAX_RAW_MATERIALS));
+      tempTileWorldObject.setFoodResource(genRandomInt(PLAIN_MAX_FOOD_RESOURCE,
+          PLAIN_MIN_FOOD_RESOURCE));
+      tempTileWorldObject.setRawMaterialResource(genRandomInt(PLAIN_MAX_RAW_MATERIALS,
+          PLAIN_MIN_RAW_MATERIALS));
     }
   }
 
@@ -431,10 +449,12 @@ public class World {
         warTarget.getTerritory().remove(opponentTile);
         playerSociety.claimTile(opponentTile);
         bordersAltered = true;
+        playerSociety.setHappiness(playerSociety.getHappiness() * (1 + playerSociety.getAverageAggressiveness()));
       } else if (playerAttack < opponentAttack) {
         playerSociety.getTerritory().remove(playerTile);
         warTarget.claimTile(playerTile);
         bordersAltered = true;
+        playerSociety.setHappiness(playerSociety.getHappiness() * (playerSociety.getAverageAggressiveness()));
       }
     }
     playerSociety.setEndTurn(true);

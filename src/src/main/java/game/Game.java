@@ -140,10 +140,10 @@ public class Game {
             Hud.setTerrainPanelActive(false);
           }
           World.setActiveSociety(society);
-          // calculate the opinion of teh leaders
-          society.calculateOpinions();
           // check and end Trade deals
           society.checkTradeDeal();
+          // update happiness based on resources
+          society.updateHappiness();
           // set the end turn flag to false
           society.setEndTurn(false);
           society.setMadeMove(false);

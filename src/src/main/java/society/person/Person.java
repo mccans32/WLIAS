@@ -1,9 +1,6 @@
 package society.person;
 
-import game.Moves;
-import game.world.World;
 import java.util.Random;
-import society.Society;
 
 public class Person {
   private static final float MIN_DEFAULT_INDEX = 0.35f;
@@ -13,12 +10,9 @@ public class Person {
   private static final float MAX_INDEX = 1.0f;
   private static final float MIN_INDEX = 0f;
   private static final float PRIME_AGE = 30;
-  private static final float DEFAULT_INDEX = (MAX_INDEX + MIN_INDEX) / 2;
   private static final float MAX_DEFAULT_INDEX = 0.65f;
-  private static Society[] defaultSocieties = World.getSocieties();
   private float health;
   private int age;
-  private Society citizenOf;
   private float aggressiveness;
   private float attractiveness;
   private float opinionOfLeader = 0.5f;
@@ -42,14 +36,12 @@ public class Person {
    * @param aggressiveness the aggressiveness
    * @param attractiveness the fertility
    */
-  public Person(int age, float aggressiveness, float attractiveness, float productiveness, Society society) {
+  public Person(int age, float aggressiveness, float attractiveness, float productiveness) {
     this.health = MAX_HEALTH;
     this.age = age;
     this.aggressiveness = aggressiveness;
     this.attractiveness = attractiveness;
     this.productiveness = productiveness;
-    this.citizenOf = society;
-    calOpinionOfLeader();
   }
 
   public static float getMaxHealth() {
@@ -95,28 +87,6 @@ public class Person {
 
   public void setOpinionOfLeader(float opinionOfLeader) {
     this.opinionOfLeader = opinionOfLeader;
-  }
-
-  public void calOpinionOfLeader() {
-    float opinionModifier = 1;
-    if ((float) citizenOf.getTotalRawMaterialResource() / citizenOf.getPopulation().size() < Society.getMaterialPerPerson()) {
-      opinionModifier -= 0.1;
-    } else {
-      opinionModifier += 0.1;
-    }
-    if ((float) citizenOf.getTotalFoodResource() / citizenOf.getPopulation().size() < Society.getFoodPerPerson()) {
-      opinionModifier -= 0.1;
-    } else {
-      opinionModifier += 0.1;
-    }
-    if (citizenOf.getLastMove() == Moves.War) {
-      opinionModifier -= 0.2;
-    } else if (citizenOf.getLastMove() == Moves.ClaimTile) {
-      opinionModifier += 0.1;
-    } else if (citizenOf.getLastMove() == Moves.Trade) {
-      opinionModifier += 0.2;
-    }
-    setOpinionOfLeader(opinionOfLeader + opinionModifier);
   }
 
   public float getHealth() {
