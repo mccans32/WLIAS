@@ -88,10 +88,10 @@ public class Society {
    * @return the float
    */
   public float limitHappinessModifier(float happinessModifier) {
-    if (happinessModifier < 0.8f) {
-      happinessModifier = 0.8f;
-    } else if (happinessModifier > 1.2f) {
-      happinessModifier = 1.2f;
+    if (happinessModifier < 0.7f) {
+      happinessModifier = 0.7f;
+    } else if (happinessModifier > 1.3f) {
+      happinessModifier = 1.3f;
     }
     return happinessModifier;
   }

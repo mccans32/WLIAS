@@ -463,9 +463,8 @@ public class World {
         attackingSociety.setHappiness(attackingSociety.getHappiness()
             * attackingSociety.getAverageAggressiveness());
         // apply limit to defendingSocietyHappinessModifier
-        defendingSocietyHappinessModifier =
-            defendingSocietyHappinessModifier = defendingSociety.limitHappinessModifier(
-                defendingSocietyHappinessModifier + defendingSociety.getAverageAggressiveness());
+        defendingSocietyHappinessModifier = defendingSociety.limitHappinessModifier(
+            defendingSocietyHappinessModifier + defendingSociety.getAverageAggressiveness());
         // increase defending society happiness
         defendingSociety.setHappiness(defendingSociety.getHappiness()
             * defendingSocietyHappinessModifier);
