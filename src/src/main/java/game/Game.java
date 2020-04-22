@@ -14,6 +14,7 @@ import game.menu.ChoiceMenu;
 import game.menu.GameOverMenu;
 import game.menu.MainMenu;
 import game.menu.PauseMenu;
+import game.menu.TradeAgreement;
 import game.menu.TradingMenu;
 import game.world.Hud;
 import game.world.World;
@@ -92,6 +93,15 @@ public class Game {
 
   public static void setRestarted(boolean restarted) {
     Game.restarted = restarted;
+  }
+
+  /**
+   * Update the scores for each society.
+   */
+  public static void updateScores() {
+    for (Society society : World.getActiveSocieties()) {
+      society.updateScore();
+    }
   }
 
   /**
@@ -251,6 +261,8 @@ public class Game {
         World.update(window, camera);
       } else if (state == GameState.TRADING) {
         TradingMenu.update(window);
+      } else if (state == GameState.DEALING) {
+        TradeAgreement.update(window);
       } else {
         // Update the scores
         updateScores();
@@ -267,15 +279,6 @@ public class Game {
           GameOverMenu.update(window, camera);
         }
       }
-    }
-  }
-
-  /**
-   * Update the scores for each society.
-   */
-  public static void updateScores() {
-    for (Society society: World.getActiveSocieties()) {
-      society.updateScore();
     }
   }
 
@@ -322,6 +325,8 @@ public class Game {
         GameOverMenu.render(guiRenderer, textRenderer);
       } else if (state == GameState.TRADING) {
         TradingMenu.render(guiRenderer, textRenderer);
+      } else if (state == GameState.DEALING) {
+        TradeAgreement.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();

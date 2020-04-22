@@ -87,6 +87,10 @@ public class TradingMenu {
   private static boolean societiesChosen = false;
   private static boolean updatedHint = false;
 
+  public static int getDefaultLengthOfTradeDealInTurns() {
+    return DEFAULT_LENGTH_OF_TRADE_DEAL_IN_TURNS;
+  }
+
   public static void setTradeDeal(TradeDeal tradeDeal) {
     TradingMenu.tradeDeal = tradeDeal;
   }
@@ -330,8 +334,6 @@ public class TradingMenu {
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
             && Game.canClick()
             && dealButton.isMouseOver(window)) {
-
-
           if (dealButton == leftAddFoodButton) {
             int currentFoodGiven = tradeDeal.getFoodGiven();
             int newFoodAmount = selectMinimum(currentFoodGiven + 1,

@@ -95,6 +95,8 @@ public class MainMenu {
         Game.setState(GameState.GAME_MAIN);
         // Destroy the Main Menu
         destroy();
+        // Create The Trade Agreement Screen
+        TradeAgreement.create();
         // Create the Pause Menu
         PauseMenu.create();
         // Create the Choice Menu

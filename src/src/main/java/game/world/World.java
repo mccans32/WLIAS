@@ -17,6 +17,9 @@ import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
 import game.menu.ChoiceMenu;
+import game.menu.TradeAgreement;
+import game.menu.TradingMenu;
+import game.menu.data.TradeDeal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -514,6 +517,7 @@ public class World {
   public static void aiTurn(Society society) {
     if (!society.hasMadeMove()) {
       society.calculateClaimableTerritory();
+      society.calculatePossibleTradingSocieties();
       if (!society.getClaimableTerritory().isEmpty()) {
         // calculate Most Needed Tile
         TileWorldObject claimTile = calculateClaimTile(society);
@@ -522,6 +526,37 @@ public class World {
         updateSocietyBorders();
         society.setMadeMove(true);
         Game.setState(GameState.AI_CLAIM);
+      } else if (!society.getPossibleTradingSocieties().isEmpty()) {
+        // create Trade Agreement
+        float foodPerPerson = 0;
+        float matsPerPerson = 0;
+        Society bestCandidate = null;
+        // calculate the society with highest food and raw materials per person
+        // this will give rise to highest possibility of accepting a trade deal
+        for (Society soc : society.getPossibleTradingSocieties()) {
+          if ((float) soc.getTotalFoodResource() / soc.getPopulation().size() > foodPerPerson
+              && (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size() > matsPerPerson) {
+            foodPerPerson = (float) soc.getTotalFoodResource() / soc.getPopulation().size();
+            matsPerPerson = (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size();
+            bestCandidate = soc;
+          }
+        }
+        TradeDeal tradeDeal = calculateTradeDeal(society, bestCandidate);
+        if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)) {
+          // TODO DRAW SCREEN FOR PLAYER TO DECIDE ON TRADE DEAL
+          TradeAgreement.setTradeDeal(tradeDeal);
+          Game.setState(GameState.DEALING);
+        } else {
+          boolean accepted = tradeDeal.getSocietyB().examineTradeDeal(tradeDeal);
+          if (accepted) {
+            tradeDeal.setEndTurnOfDeal(Hud.getTurn() + TradingMenu.getDefaultLengthOfTradeDealInTurns());
+            tradeDeal.getSocietyA().activateTradeDeal(tradeDeal);
+            tradeDeal.getSocietyB().activateTradeDeal(tradeDeal);
+            tradeDeal.getSocietyA().setEndTurn(true);
+          }
+          society.setEndTurn(true);
+        }
+
       } else {
         Game.setState(GameState.AI_NOTHING);
         society.setMadeMove(true);
@@ -533,6 +568,34 @@ public class World {
       society.setEndTurn(true);
       Game.setState(GameState.GAME_MAIN);
     }
+  }
+
+  private static TradeDeal calculateTradeDeal(Society currentPlayer, Society targetOfTradeDeal) {
+    //initialise a new trade deal
+    TradeDeal tradeDeal = new TradeDeal(0, 0, 0, 0);
+    // add currentPlayer as Society A to the trade deal
+    tradeDeal.setSocietyA(currentPlayer);
+    // add targetOfTradeDeal as Society B of the Trade deal
+    tradeDeal.setSocietyB(targetOfTradeDeal);
+    // add to the trade deal the amount of food you need to full fill minimum quota
+    while ((float) (currentPlayer.getTotalFoodResource() + tradeDeal.getFoodReceived()) / currentPlayer.getPopulation().size() < Society.getFoodPerPerson()) {
+      // check if the target of trade deal has enough food to give you what you require
+      if (!(targetOfTradeDeal.getTotalFoodResource() - tradeDeal.getFoodReceived() <= 0)) {
+        tradeDeal.setFoodReceived(tradeDeal.getFoodReceived() + 1);
+      } else {
+        break;
+      }
+    }
+    // add to the trade deal the amount of food you need to full fill minimum quota
+    while ((float) (currentPlayer.getTotalRawMaterialResource() + tradeDeal.getRawMatsReceived()) / currentPlayer.getPopulation().size() < Society.getMaterialPerPerson()) {
+      // check if the target of trade deal has enough food to give you what you require
+      if (!(targetOfTradeDeal.getTotalRawMaterialResource() - tradeDeal.getRawMatsReceived() <= 0)) {
+        tradeDeal.setRawMatsReceived(tradeDeal.getRawMatsReceived() + 1);
+      } else {
+        break;
+      }
+    }
+    return tradeDeal;
   }
 
   private static TileWorldObject calculateClaimTile(Society society) {
