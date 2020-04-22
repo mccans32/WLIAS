@@ -64,8 +64,8 @@ public class TradeAgreement {
   private static InspectionPanelObject rightTradeDealPanel;
   private static Text leftPanelTitleText = new Text("Your Societies Details", 0.45f);
   private static Text rightPanelTitleText = new Text("Other Societies Details", 0.45f);
-  private static Text leftTradeDealPanelText = new Text("Your Goods", 0.45f);
-  private static Text rightTradeDealPanelText = new Text("Opponent Goods", 0.45f);
+  private static Text leftTradeDealPanelText = new Text("Goods Lost", 0.45f);
+  private static Text rightTradeDealPanelText = new Text("Goods Gained", 0.45f);
   private static ArrayList<HudText> dealNumbers = new ArrayList<>();
   private static boolean updatedHint = false;
   private static boolean updateTradeDeal = false;
@@ -124,22 +124,22 @@ public class TradeAgreement {
   private static void createLeftDealAmount() {
     // create left food amount
     leftFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f,
-        EDGE_Y, 0.11f);
+        EDGE_Y, 0.2f);
     leftFoodAmount.create();
     dealNumbers.add(leftFoodAmount);
     // create left raw materials amount
     leftRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f,
-        EDGE_Y - 0.19f, 0);
+        EDGE_Y - 0.13f, 0);
     leftRawMatsAmount.create();
     dealNumbers.add(leftRawMatsAmount);
     // create right food amount
     rightFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f,
-        EDGE_Y, 0.11f);
+        EDGE_Y, 0.2f);
     rightFoodAmount.create();
     dealNumbers.add(rightFoodAmount);
     // create left raw materials amount
     rightRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f,
-        EDGE_Y - 0.19f, 0);
+        EDGE_Y - 0.13f, 0);
     rightRawMatsAmount.create();
     dealNumbers.add(rightRawMatsAmount);
   }
@@ -159,23 +159,23 @@ public class TradeAgreement {
     RectangleMesh foodIcon = new RectangleMesh(ICON_MODEL, new Material(FOOD_ICON));
     // create Left Food Icon
     leftFoodIcon = new HudImage(foodIcon, -TRADE_PANEL_EDGE_X, -0.1f,
-        EDGE_Y + 0.06f, 0);
+        EDGE_Y + 0.06f, .09f);
     leftFoodIcon.create();
     icons.add(leftFoodIcon);
     // create Left Raw Materials Icon
     RectangleMesh rawMatsIcon = new RectangleMesh(ICON_MODEL, new Material(RAW_MATS_ICON));
     leftRawMaterialsIcon = new HudImage(rawMatsIcon, -TRADE_PANEL_EDGE_X,
-        -0.1f, EDGE_Y - 0.25f, 0);
+        -0.1f, EDGE_Y, -0.2f);
     leftRawMaterialsIcon.create();
     icons.add(leftRawMaterialsIcon);
     // create Right food Icon
     rightFoodIcon = new HudImage(foodIcon, TRADE_PANEL_EDGE_X, -0.1f,
-        EDGE_Y + 0.06f, 0);
+        EDGE_Y + 0.06f, .09f);
     leftFoodIcon.create();
     icons.add(rightFoodIcon);
     // create Right Raw Materials Icon
     rightRawMaterialsIcon = new HudImage(rawMatsIcon, TRADE_PANEL_EDGE_X,
-        -0.1f, EDGE_Y - 0.25f, 0);
+        -0.1f, EDGE_Y, -0.2f);
     leftRawMaterialsIcon.create();
     icons.add(rightRawMaterialsIcon);
   }
@@ -186,6 +186,7 @@ public class TradeAgreement {
       icon.reposition();
     }
     acceptButton.reposition();
+    declineButton.reposition();
     leftSocietyPanel.reposition();
     rightSocietyPanel.reposition();
     leftTradeDealPanel.reposition();
@@ -222,9 +223,9 @@ public class TradeAgreement {
       for (HudImage icon : icons) {
         icon.render(renderer);
       }
-      if (acceptButton.isEnabled()) {
-        acceptButton.render(renderer, textRenderer);
-      }
+      acceptButton.render(renderer, textRenderer);
+      declineButton.render(renderer, textRenderer);
+
       if (leftSocietyPanel.isActive()) {
         for (HudImage border : leftSocietyPanel.getPanelBorders()) {
           border.render(renderer);
@@ -276,7 +277,6 @@ public class TradeAgreement {
       leftSocietyPanel.getPanel().updateText(leftSocietyPanel.getPanelText());
     }
     if (!rightSocietyPanel.isActive()) {
-      acceptButton.enable();
       rightSocietyPanel.setActive(true);
       // set the text for the panel
       String rightPanelString = calculateSocietyPanelString(tradeDeal.getSocietyA());
@@ -290,12 +290,46 @@ public class TradeAgreement {
       tradeDeal.setEndTurnOfDeal(Hud.getTurn() + DEFAULT_LENGTH_OF_TRADE_DEAL_IN_TURNS);
       tradeDeal.getSocietyA().activateTradeDeal(tradeDeal);
       tradeDeal.getSocietyB().activateTradeDeal(tradeDeal);
-      reset(window);
-      tradeDeal.getSocietyB().setEndTurn(true);
+      reset();
+      tradeDeal.getSocietyA().setEndTurn(true);
+    } else if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
+        && Game.canClick()
+        && declineButton.isMouseOver(window)) {
+      reset();
+      tradeDeal.getSocietyA().setEndTurn(true);
     }
   }
 
-  public static void reset(Window window) {
+  /**
+   * Reset.
+   */
+  public static void reset() {
+    for (HudText amountText : dealNumbers) {
+      amountText.setText(new Text(String.valueOf(0), DEFAULT_FONT_SIZE));
+    }
+    updateTradeDeal = false;
+    rightSocietyPanel.setActive(false);
+    leftSocietyPanel.setActive(false);
+  }
 
+  /**
+   * Destroy.
+   */
+  public static void destroy() {
+    leftSocietyPanel.destroyPanel();
+    rightTradeDealPanel.destroyPanel();
+    leftTradeDealPanel.destroyPanel();
+    rightSocietyPanel.destroyPanel();
+    for (HudImage icon : icons) {
+      icon.destroy();
+    }
+    icons.clear();
+    leftFoodIcon.destroy();
+    for (HudText dealNumber : dealNumbers) {
+      dealNumber.destroy();
+    }
+    dealNumbers.clear();
+    acceptButton.destroy();
+    declineButton.destroy();
   }
 }

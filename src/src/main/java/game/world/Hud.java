@@ -159,6 +159,8 @@ public class Hud {
         hintString = String.format("Society %d Reproduces",
             World.getActiveSociety().getSocietyId() + 1);
       }
+    } else if (Game.getState() == GameState.DEALING) {
+      hintString = "Will you Decline or Accept The offer?";
     } else if (Game.getState() == GameState.TRADING) {
       if (TradingMenu.isSocietiesChosen()) {
         hintString = "Select Food and Materials to trade";

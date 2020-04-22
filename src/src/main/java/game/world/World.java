@@ -543,7 +543,6 @@ public class World {
         }
         TradeDeal tradeDeal = calculateTradeDeal(society, bestCandidate);
         if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)) {
-          // TODO DRAW SCREEN FOR PLAYER TO DECIDE ON TRADE DEAL
           TradeAgreement.setTradeDeal(tradeDeal);
           Game.setState(GameState.DEALING);
         } else {
