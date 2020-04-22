@@ -133,8 +133,9 @@ public class TileWorldObject extends GameObject {
     float foodRatio = society.getTotalFoodResource() / (popSize * Society.getFoodPerPerson());
     float matRatio = society.getTotalRawMaterialResource()
         / (popSize * Society.getMaterialPerPerson());
-    return ((foodResource * foodRatio) + (rawMaterialResource * matRatio))
-        / tile.getAttackModifier();
+    float armyRatio = claimedBy.getArmy().size() / (float) society.getArmy().size();
+    return (((foodResource * foodRatio) + (rawMaterialResource * matRatio))
+        / tile.getAttackModifier()) / armyRatio;
   }
 
 
