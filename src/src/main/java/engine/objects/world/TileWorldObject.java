@@ -121,4 +121,36 @@ public class TileWorldObject extends GameObject {
   public void setClaimedBy(Society claimedBy) {
     this.claimedBy = claimedBy;
   }
+
+  /**
+   * Calculate the desirability of this to be attacked by a given society.
+   *
+   * @param society the society
+   * @return the float
+   */
+  public float getDefendingDesirability(Society society) {
+    int popSize = society.getPopulation().size();
+    float foodRatio = society.getTotalFoodResource() / (popSize * Society.getFoodPerPerson());
+    float matRatio = society.getTotalRawMaterialResource()
+        / (popSize * Society.getMaterialPerPerson());
+    return ((foodResource * foodRatio) + (rawMaterialResource * matRatio))
+        / tile.getAttackModifier();
+  }
+
+
+  /**
+   * Gets the desirability of attacking with this tile.
+   *
+   * @return the attacking desirability
+   */
+  public float getAttackingDesirability() {
+    float bestScore = 0;
+    claimedBy.calculateDefendingTiles(this);
+    for (TileWorldObject tile : claimedBy.getDefendingTiles()) {
+      if (tile.getDefendingDesirability(claimedBy) > bestScore) {
+        bestScore = tile.getDefendingDesirability(claimedBy);
+      }
+    }
+    return (bestScore * tile.getAttackModifier());
+  }
 }

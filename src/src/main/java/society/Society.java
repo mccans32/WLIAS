@@ -795,5 +795,27 @@ public class Society {
     score = ((population.size() + territory.size() + totalFoodResource + totalRawMaterialResource))
         * happiness;
   }
+
+  /**
+   * Gets an array of all valid tiles that our society can attack at any point in time.
+   *
+   * @return the valid tiles to attack
+   */
+  public ArrayList<TileWorldObject> getValidTilesToAttack() {
+    // Calculate valid tiles that we can attack with
+    calculateAttackingTiles();
+    ArrayList<TileWorldObject> validTiles = new ArrayList<>();
+    // For each tile that we can attack with calculate its defending tiles
+    for (TileWorldObject tile : attackingTiles) {
+      calculateDefendingTiles(tile);
+      // for each defending tile if it is nto present in our return array add it
+      for (TileWorldObject defendingTile : defendingTiles) {
+        if (!validTiles.contains(defendingTile)) {
+          validTiles.add(defendingTile);
+        }
+      }
+    }
+    return validTiles;
+  }
 }
 
