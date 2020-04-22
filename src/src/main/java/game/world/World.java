@@ -79,6 +79,11 @@ public class World {
   private static TileWorldObject opponentTile;
   private static TileWorldObject claimedTile;
   private static Society activeSociety;
+  private static Society targetSociety;
+
+  public static Society getTargetSociety() {
+    return targetSociety;
+  }
 
   public static RectangleModel getTileModel() {
     return tileModel;
@@ -214,6 +219,7 @@ public class World {
       opponentTile = selectWorldTile(societies[0].getDefendingTiles());
     } else {
       simulateBattle(societies[0], attackingTile, opponentTile);
+      societies[0].setEndTurn(true);
       attackingTile = null;
       opponentTile = null;
     }
@@ -428,49 +434,41 @@ public class World {
 
   private static void simulateBattle(Society attackingSociety,
                                      TileWorldObject playerTile, TileWorldObject opponentTile) {
-    Society defendingSociety = null;
-    for (Society society : societies) {
-      if (society.getTerritory().contains(opponentTile)) {
-        defendingSociety = society;
-      }
-    }
-    if (defendingSociety != null) {
-      float attackSocietyA = calcAttack(attackingSociety, playerTile);
-      float attackSocietyB = calcAttack(defendingSociety, opponentTile);
-      float attackingSocietyHappinessModifier = 1f;
-      float defendingSocietyHappinessModifier = 1f;
-      if (attackSocietyA > attackSocietyB) {
-        // SocietyA wins the battle
-        defendingSociety.getTerritory().remove(opponentTile);
-        attackingSociety.claimTile(opponentTile);
-        bordersAltered = true;
-        // apply limit to attackingSocietyModifier
-        attackingSocietyHappinessModifier = attackingSociety.limitHappinessModifier(
-            (attackingSocietyHappinessModifier + attackingSociety.getAverageAggressiveness()));
-        // increase happiness for attacking society
-        attackingSociety.setHappiness(attackingSociety.getHappiness()
-            * attackingSocietyHappinessModifier);
-        // decrease happiness for defending society
-        defendingSociety.setHappiness(defendingSociety.getHappiness()
-            * defendingSociety.getAverageAggressiveness());
+    Society defendingSociety = opponentTile.getClaimedBy();
+    float attackSocietyA = calcAttack(attackingSociety, playerTile);
+    float attackSocietyB = calcAttack(defendingSociety, opponentTile);
+    float attackingSocietyHappinessModifier = 1f;
+    float defendingSocietyHappinessModifier = 1f;
+    if (attackSocietyA > attackSocietyB) {
+      // SocietyA wins the battle
+      defendingSociety.getTerritory().remove(opponentTile);
+      attackingSociety.claimTile(opponentTile);
+      bordersAltered = true;
+      // apply limit to attackingSocietyModifier
+      attackingSocietyHappinessModifier = attackingSociety.limitHappinessModifier(
+          (attackingSocietyHappinessModifier + attackingSociety.getAverageAggressiveness()));
+      // increase happiness for attacking society
+      attackingSociety.setHappiness(attackingSociety.getHappiness()
+          * attackingSocietyHappinessModifier);
+      // decrease happiness for defending society
+      defendingSociety.setHappiness(defendingSociety.getHappiness()
+          * defendingSociety.getAverageAggressiveness());
 
-      } else if (attackSocietyA < attackSocietyB) {
-        // SocietyB wins the battle
-        attackingSociety.getTerritory().remove(playerTile);
-        defendingSociety.claimTile(playerTile);
-        bordersAltered = true;
-        // decrease attacking society happiness
-        attackingSociety.setHappiness(attackingSociety.getHappiness()
-            * attackingSociety.getAverageAggressiveness());
-        // apply limit to defendingSocietyHappinessModifier
-        defendingSocietyHappinessModifier = defendingSociety.limitHappinessModifier(
-            defendingSocietyHappinessModifier + defendingSociety.getAverageAggressiveness());
-        // increase defending society happiness
-        defendingSociety.setHappiness(defendingSociety.getHappiness()
-            * defendingSocietyHappinessModifier);
-      }
+    } else if (attackSocietyA < attackSocietyB) {
+      // SocietyB wins the battle
+      attackingSociety.getTerritory().remove(playerTile);
+      defendingSociety.claimTile(playerTile);
+      bordersAltered = true;
+      // decrease attacking society happiness
+      attackingSociety.setHappiness(attackingSociety.getHappiness()
+          * attackingSociety.getAverageAggressiveness());
+      // apply limit to defendingSocietyHappinessModifier
+      defendingSocietyHappinessModifier = defendingSociety.limitHappinessModifier(
+          defendingSocietyHappinessModifier + defendingSociety.getAverageAggressiveness());
+      // increase defending society happiness
+      defendingSociety.setHappiness(defendingSociety.getHappiness()
+          * defendingSocietyHappinessModifier);
     }
-    attackingSociety.setEndTurn(true);
     purgeSocieties();
     Game.setState(GameState.GAME_MAIN);
   }
@@ -513,18 +511,46 @@ public class World {
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
     if (!society.hasMadeMove()) {
-      society.calculateClaimableTerritory();
-      if (!society.getClaimableTerritory().isEmpty()) {
-        // calculate Most Needed Tile
-        TileWorldObject claimTile = calculateClaimTile(society);
-        society.claimTile(claimTile);
-        bordersAltered = true;
-        updateSocietyBorders();
+      // Make a War Move
+      // Get a list of valid tiles that we can attack
+      ArrayList<TileWorldObject> validTiles = society.getValidTilesToAttack();
+      if (validTiles.size() > 0) {
+        // rank our possible tiles to attack with
+        ArrayList<TileWorldObject> attackingTiles = society.getAttackingTiles();
+        attackingTiles.sort((tile1, tile2)
+            -> (Float.compare(tile2.getAttackingDesirability(),
+            tile1.getAttackingDesirability())));
+        // pick the best tile to attack with
+        TileWorldObject attackingTile = attackingTiles.get(0);
+        // Pick the best tile to attack
+        society.calculateDefendingTiles(attackingTile);
+        TileWorldObject defendingTile = null;
+        for (TileWorldObject tile : society.getDefendingTiles()) {
+          if (defendingTile == null || tile.getDefendingDesirability(society)
+              > defendingTile.getDefendingDesirability(society)) {
+            defendingTile = tile;
+          }
+        }
+        assert defendingTile != null;
+        targetSociety = defendingTile.getClaimedBy();
+        simulateBattle(society, attackingTile, defendingTile);
         society.setMadeMove(true);
-        Game.setState(GameState.AI_CLAIM);
+        Game.setState(GameState.AI_WAR);
       } else {
-        Game.setState(GameState.AI_NOTHING);
-        society.setMadeMove(true);
+        // Claim a tile
+        society.calculateClaimableTerritory();
+        if (!society.getClaimableTerritory().isEmpty()) {
+          // calculate Most Needed Tile
+          TileWorldObject claimTile = calculateClaimTile(society);
+          society.claimTile(claimTile);
+          bordersAltered = true;
+          updateSocietyBorders();
+          society.setMadeMove(true);
+          Game.setState(GameState.AI_CLAIM);
+        } else {
+          Game.setState(GameState.AI_NOTHING);
+          society.setMadeMove(true);
+        }
       }
       Game.getNotificationTimer().setDuration(2);
     }
