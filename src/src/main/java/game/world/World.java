@@ -630,7 +630,7 @@ public class World {
     int i = 0;
     while ((float) (currentPlayer.getTotalFoodResource() - tradeDeal.getFoodGiven())
         / ((float) currentPlayer.getPopulation().size() + Society.getOffspringAmount())
-        > Society.getFoodPerPerson() && i < 9) {
+        > Society.getFoodPerPerson() && i < TradingMenu.getDefaultMaxValueForTradeDeals()) {
       tradeDeal.setFoodGiven(tradeDeal.getFoodGiven() + 1);
       i++;
     }
@@ -639,7 +639,7 @@ public class World {
     int j = 0;
     while ((float) (currentPlayer.getTotalRawMaterialResource() - tradeDeal.getRawMatsGiven())
         / ((float) currentPlayer.getPopulation().size() + Society.getOffspringAmount())
-        > Society.getFoodPerPerson() && j < 9) {
+        > Society.getFoodPerPerson() && j < TradingMenu.getDefaultMaxValueForTradeDeals()) {
       tradeDeal.setRawMarsGiven(tradeDeal.getRawMatsGiven() + 1);
       j++;
     }
