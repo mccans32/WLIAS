@@ -132,7 +132,9 @@ public class Game {
       // Main game loop where each turn is being decided
       if (World.getActiveSocieties().size() > 0
           && state != GameState.TURN_END
-          && state != GameState.GAME_PAUSE) {
+          && state != GameState.GAME_PAUSE
+          && state != GameState.GAME_OVER
+          && state != GameState.GAME_WIN) {
         // Update the scores
         updateScores();
         // Check if the game is over
@@ -259,10 +261,14 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
     } else {
-      // Update the scores
-      updateScores();
-      // Check if the game is over
-      checkGameOver();
+      if (Game.getState() != GameState.GAME_OVER
+          && state != GameState.GAME_WIN) {
+        // Update the scores
+        updateScores();
+        // Check if the game is over
+        checkGameOver();
+      }
+
       if (state == GameState.GAME_PAUSE) {
         PauseMenu.update(window, camera);
       } else if (state == GameState.GAME_CHOICE) {
