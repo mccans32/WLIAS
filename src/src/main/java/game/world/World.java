@@ -17,7 +17,7 @@ import engine.utils.ColourUtils;
 import game.Game;
 import game.GameState;
 import game.menu.ChoiceMenu;
-import game.menu.TradeAgreement;
+import game.menu.DealingMenu;
 import game.menu.TradingMenu;
 import game.menu.data.TradeDeal;
 import java.util.ArrayList;
@@ -549,7 +549,8 @@ public class World {
         // this will give rise to highest possibility of accepting a trade deal
         for (Society soc : society.getPossibleTradingSocieties()) {
           if ((float) soc.getTotalFoodResource() / soc.getPopulation().size() > foodPerPerson
-              && (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size() > matsPerPerson) {
+              && (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size()
+              > matsPerPerson) {
             foodPerPerson = (float) soc.getTotalFoodResource() / soc.getPopulation().size();
             matsPerPerson = (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size();
             bestCandidate = soc;
@@ -557,12 +558,13 @@ public class World {
         }
         TradeDeal tradeDeal = calculateTradeDeal(society, bestCandidate);
         if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)) {
-          TradeAgreement.setTradeDeal(tradeDeal);
+          DealingMenu.setTradeDeal(tradeDeal);
           Game.setState(GameState.DEALING);
         } else {
           boolean accepted = tradeDeal.getSocietyB().examineTradeDeal(tradeDeal);
           if (accepted) {
-            tradeDeal.setEndTurnOfDeal(Hud.getTurn() + TradingMenu.getDefaultLengthOfTradeDealInTurns());
+            tradeDeal.setEndTurnOfDeal(Hud.getTurn()
+                + TradingMenu.getDefaultLengthOfTradeDealInTurns());
             tradeDeal.getSocietyA().activateTradeDeal(tradeDeal);
             tradeDeal.getSocietyB().activateTradeDeal(tradeDeal);
             tradeDeal.getSocietyA().setEndTurn(true);
@@ -603,7 +605,8 @@ public class World {
     // add targetOfTradeDeal as Society B of the Trade deal
     tradeDeal.setSocietyB(targetOfTradeDeal);
     // add to the trade deal the amount of food you need to full fill minimum quota
-    while ((float) (currentPlayer.getTotalFoodResource() + tradeDeal.getFoodReceived()) / currentPlayer.getPopulation().size() < Society.getFoodPerPerson()) {
+    while ((float) (currentPlayer.getTotalFoodResource() + tradeDeal.getFoodReceived())
+        / currentPlayer.getPopulation().size() < Society.getFoodPerPerson()) {
       // check if the target of trade deal has enough food to give you what you require
       if (!(targetOfTradeDeal.getTotalFoodResource() - tradeDeal.getFoodReceived() <= 0)) {
         tradeDeal.setFoodReceived(tradeDeal.getFoodReceived() + 1);
@@ -612,13 +615,33 @@ public class World {
       }
     }
     // add to the trade deal the amount of food you need to full fill minimum quota
-    while ((float) (currentPlayer.getTotalRawMaterialResource() + tradeDeal.getRawMatsReceived()) / currentPlayer.getPopulation().size() < Society.getMaterialPerPerson()) {
+    while ((float) (currentPlayer.getTotalRawMaterialResource() + tradeDeal.getRawMatsReceived())
+        / currentPlayer.getPopulation().size() < Society.getMaterialPerPerson()) {
       // check if the target of trade deal has enough food to give you what you require
-      if (!(targetOfTradeDeal.getTotalRawMaterialResource() - tradeDeal.getRawMatsReceived() <= 0)) {
+      if (!(targetOfTradeDeal.getTotalRawMaterialResource()
+          - tradeDeal.getRawMatsReceived() <= 0)) {
         tradeDeal.setRawMatsReceived(tradeDeal.getRawMatsReceived() + 1);
       } else {
         break;
       }
+    }
+    // add to trade deal any access amount of food the society has, assuming the minimum amount
+    // of people are born come next reproduction
+    int i = 0;
+    while ((float) (currentPlayer.getTotalFoodResource() - tradeDeal.getFoodGiven())
+        / ((float) currentPlayer.getPopulation().size() + Society.getOffspringAmount())
+        > Society.getFoodPerPerson() && i < 9) {
+      tradeDeal.setFoodGiven(tradeDeal.getFoodGiven() + 1);
+      i++;
+    }
+    // add to trade deal any access amount of Raw Mats the society has, assuming the minimum amount
+    // of people are born come next reproduction
+    int j = 0;
+    while ((float) (currentPlayer.getTotalRawMaterialResource() - tradeDeal.getRawMatsGiven())
+        / ((float) currentPlayer.getPopulation().size() + Society.getOffspringAmount())
+        > Society.getFoodPerPerson() && j < 9) {
+      tradeDeal.setRawMarsGiven(tradeDeal.getRawMatsGiven() + 1);
+      j++;
     }
     return tradeDeal;
   }

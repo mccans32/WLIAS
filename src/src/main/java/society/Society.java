@@ -69,6 +69,10 @@ public class Society {
     generateInitialPopulation(DEFAULT_POPULATION_SIZE);
   }
 
+  public static int getOffspringAmount() {
+    return OFFSPRING_AMOUNT;
+  }
+
   public static float getFoodPerPerson() {
     return FOOD_PER_PERSON;
   }

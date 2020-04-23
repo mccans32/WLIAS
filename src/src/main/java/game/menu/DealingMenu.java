@@ -28,7 +28,7 @@ import math.Vector4f;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
 
-public class TradeAgreement {
+public class DealingMenu {
   private static final int DEFAULT_LENGTH_OF_TRADE_DEAL_IN_TURNS = 3;
   private static final Image FOOD_ICON = new Image("/images/foodIcon.png");
   private static final Image RAW_MATS_ICON = new Image("/images/rawMaterials.png");
@@ -71,7 +71,7 @@ public class TradeAgreement {
   private static boolean updateTradeDeal = false;
 
   public static void setTradeDeal(TradeDeal tradeDeal) {
-    TradeAgreement.tradeDeal = tradeDeal;
+    DealingMenu.tradeDeal = tradeDeal;
   }
 
   /**
@@ -261,10 +261,14 @@ public class TradeAgreement {
       updatedHint = true;
     }
     if (!updateTradeDeal) {
-      leftFoodAmount.setText(new Text(String.valueOf(tradeDeal.getFoodReceived()), DEFAULT_FONT_SIZE));
-      leftRawMatsAmount.setText(new Text(String.valueOf(tradeDeal.getRawMatsReceived()), DEFAULT_FONT_SIZE));
-      rightFoodAmount.setText(new Text(String.valueOf(tradeDeal.getFoodGiven()), DEFAULT_FONT_SIZE));
-      rightRawMatsAmount.setText(new Text(String.valueOf(tradeDeal.getRawMatsGiven()), DEFAULT_FONT_SIZE));
+      leftFoodAmount.setText(new Text(String.valueOf(tradeDeal.getFoodReceived()),
+          DEFAULT_FONT_SIZE));
+      leftRawMatsAmount.setText(new Text(String.valueOf(tradeDeal.getRawMatsReceived()),
+          DEFAULT_FONT_SIZE));
+      rightFoodAmount.setText(new Text(String.valueOf(tradeDeal.getFoodGiven()),
+          DEFAULT_FONT_SIZE));
+      rightRawMatsAmount.setText(new Text(String.valueOf(tradeDeal.getRawMatsGiven()),
+          DEFAULT_FONT_SIZE));
       updateTradeDeal = true;
     }
     Hud.updateHint();

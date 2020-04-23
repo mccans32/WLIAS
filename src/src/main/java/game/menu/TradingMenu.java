@@ -338,6 +338,9 @@ public class TradingMenu {
             int currentFoodGiven = tradeDeal.getFoodGiven();
             int newFoodAmount = selectMinimum(currentFoodGiven + 1,
                 tradeDeal.getSocietyA().getTotalFoodResource());
+            if (newFoodAmount > 9) {
+              newFoodAmount = 9;
+            }
             tradeDeal.setFoodGiven(newFoodAmount);
             leftFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
@@ -345,6 +348,9 @@ public class TradingMenu {
             int currentFoodGiven = tradeDeal.getFoodGiven();
             int newFoodAmount = selectMinimum(currentFoodGiven - 1,
                 tradeDeal.getSocietyA().getTotalFoodResource());
+            if (newFoodAmount > 9) {
+              newFoodAmount = 9;
+            }
             tradeDeal.setFoodGiven(newFoodAmount);
             leftFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
@@ -352,6 +358,9 @@ public class TradingMenu {
             int currentRawMatsGiven = tradeDeal.getRawMatsGiven();
             int newRawMatsAmt = selectMinimum(currentRawMatsGiven + 1,
                 tradeDeal.getSocietyA().getTotalRawMaterialResource());
+            if (newRawMatsAmt > 9) {
+              newRawMatsAmt = 9;
+            }
             tradeDeal.setRawMarsGiven(newRawMatsAmt);
             leftRawMatsAmount.setText(new Text(String.valueOf(newRawMatsAmt), DEFAULT_FONT_SIZE));
 
@@ -359,6 +368,9 @@ public class TradingMenu {
             int currentRawMatsGiven = tradeDeal.getRawMatsGiven();
             int newRawMatsAmt = selectMinimum(currentRawMatsGiven - 1,
                 tradeDeal.getSocietyA().getTotalRawMaterialResource());
+            if (newRawMatsAmt > 9) {
+              newRawMatsAmt = 9;
+            }
             tradeDeal.setRawMarsGiven(newRawMatsAmt);
             leftRawMatsAmount.setText(new Text(String.valueOf(newRawMatsAmt), DEFAULT_FONT_SIZE));
 
@@ -367,6 +379,9 @@ public class TradingMenu {
             int foodReceived = tradeDeal.getFoodReceived();
             int newFoodAmount = selectMinimum(foodReceived + 1,
                 tradeDeal.getSocietyB().getTotalFoodResource());
+            if (newFoodAmount > 9) {
+              newFoodAmount = 9;
+            }
             tradeDeal.setFoodReceived(newFoodAmount);
             rightFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
@@ -374,6 +389,9 @@ public class TradingMenu {
             int foodReceived = tradeDeal.getFoodReceived();
             int newFoodAmount = selectMinimum(foodReceived - 1,
                 tradeDeal.getSocietyB().getTotalFoodResource());
+            if (newFoodAmount > 9) {
+              newFoodAmount = 9;
+            }
             tradeDeal.setFoodReceived(newFoodAmount);
             rightFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
@@ -381,6 +399,9 @@ public class TradingMenu {
             int rawMatsReceived = tradeDeal.getRawMatsReceived();
             int rawMatsAmount = selectMinimum(rawMatsReceived + 1,
                 tradeDeal.getSocietyB().getTotalRawMaterialResource());
+            if (rawMatsAmount > 9) {
+              rawMatsAmount = 9;
+            }
             tradeDeal.setRawMatsReceived(rawMatsAmount);
             rightRawMatsAmount.setText(new Text(String.valueOf(rawMatsAmount), DEFAULT_FONT_SIZE));
 
@@ -388,6 +409,9 @@ public class TradingMenu {
             int rawMatsReceived = tradeDeal.getRawMatsReceived();
             int rawMatsAmount = selectMinimum(rawMatsReceived - 1,
                 tradeDeal.getSocietyB().getTotalRawMaterialResource());
+            if (rawMatsAmount > 9) {
+              rawMatsAmount = 9;
+            }
             tradeDeal.setRawMatsReceived(rawMatsAmount);
             rightRawMatsAmount.setText(new Text(String.valueOf(rawMatsAmount), DEFAULT_FONT_SIZE));
           }

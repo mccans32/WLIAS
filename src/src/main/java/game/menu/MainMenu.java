@@ -96,7 +96,7 @@ public class MainMenu {
         // Destroy the Main Menu
         destroy();
         // Create The Trade Agreement Screen
-        TradeAgreement.create();
+        DealingMenu.create();
         // Create the Pause Menu
         PauseMenu.create();
         // Create the Choice Menu
