@@ -43,6 +43,7 @@ public class Game {
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
+  private static final int TURN_LIMIT = 5;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
@@ -169,7 +170,10 @@ public class Game {
             if (society.getSocietyId() != 0) {
               World.aiTurn(society);
               // If the user has not made their choice update the menu
-            } else if (!ChoiceMenu.isChoiceMade() && state != GameState.GAME_PAUSE) {
+            } else if (!ChoiceMenu.isChoiceMade()
+                && state != GameState.GAME_PAUSE
+                && state != GameState.GAME_OVER
+                && state != GameState.GAME_WIN) {
               state = GameState.GAME_CHOICE;
             }
             update();
@@ -286,10 +290,21 @@ public class Game {
   }
 
   private void checkGameOver() {
-    if (!World.getActiveSocieties().contains(World.getSocieties()[0])
-        && !World.getActiveSocieties().isEmpty()) {
-      // The Player's Society is not present in the active societies
+    if (World.getActiveSocieties().size() <= 1
+        || Hud.getTurn() >= TURN_LIMIT
+        || !World.getActiveSocieties().contains(World.getSocieties()[0])) {
       state = GameState.GAME_OVER;
+      // get the society with the highest score
+      Society winningSociety = null;
+      for (Society society : World.getActiveSocieties()) {
+        if (winningSociety == null || society.getScore() > winningSociety.getScore()) {
+          winningSociety = society;
+        }
+      }
+      // Check if the winning society is the player's society
+      if (winningSociety == World.getSocieties()[0]) {
+        state = GameState.GAME_WIN;
+      }
     }
   }
 
