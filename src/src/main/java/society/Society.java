@@ -377,7 +377,7 @@ public class Society {
     // Check right side of the territory
     if (map[row][column + 1].isClaimed() && column + 1 != map.length - 1
         && map[row][column + 1].getClaimedBy() != this
-        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
+        && !inTradeWith(map[row][column + 1].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
@@ -385,7 +385,7 @@ public class Society {
     // Check top of territory
     if (map[row - 1][column].isClaimed() && row - 1 != 0
         && map[row - 1][column].getClaimedBy() != this
-        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
+        && !inTradeWith(map[row - 1][column].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
@@ -393,7 +393,7 @@ public class Society {
     // check bottom of territory
     if (map[row + 1][column].isClaimed() && row + 1 != map.length - 1
         && map[row + 1][column].getClaimedBy() != this
-        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
+        && !inTradeWith(map[row + 1][column].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
