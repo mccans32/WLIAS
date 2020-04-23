@@ -43,7 +43,7 @@ public class Game {
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
-  private static final int TURN_LIMIT = 5;
+  private static final int TURN_LIMIT = 100;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
