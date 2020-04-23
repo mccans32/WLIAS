@@ -133,6 +133,11 @@ public class Game {
       if (World.getActiveSocieties().size() > 0
           && state != GameState.TURN_END
           && state != GameState.GAME_PAUSE) {
+        // Update the scores
+        updateScores();
+        // Check if the game is over
+        checkGameOver();
+        // Reset the player choice
         ChoiceMenu.setChoiceMade(false);
         // Age everyone in each society
         if (Hud.getTurn() % AGE_FREQUENCY == 0) {
@@ -254,6 +259,10 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
     } else {
+      // Update the scores
+      updateScores();
+      // Check if the game is over
+      checkGameOver();
       if (state == GameState.GAME_PAUSE) {
         PauseMenu.update(window, camera);
       } else if (state == GameState.GAME_CHOICE) {
@@ -273,10 +282,6 @@ public class Game {
         // update Deal Menu
         DealingMenu.update(window);
       } else {
-        // Update the scores
-        updateScores();
-        // Check if the game is over
-        checkGameOver();
         if (state != GameState.GAME_OVER
             && state != GameState.GAME_WIN) {
           // Update The Dev Hud
