@@ -513,6 +513,7 @@ public class World {
    */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
+    society.calculatePossibleTradingSocieties();
     if (!society.hasMadeMove()) {
       // Make a War Move
       // Get a list of valid tiles that we can attack
@@ -539,6 +540,36 @@ public class World {
         simulateBattle(society, attackingTile, defendingTile);
         society.setMadeMove(true);
         Game.setState(GameState.AI_WAR);
+      } else if (!society.getPossibleTradingSocieties().isEmpty()) {
+        // create Trade Agreement
+        float foodPerPerson = 0;
+        float matsPerPerson = 0;
+        Society bestCandidate = null;
+        // calculate the society with highest food and raw materials per person
+        // this will give rise to highest possibility of accepting a trade deal
+        for (Society soc : society.getPossibleTradingSocieties()) {
+          if ((float) soc.getTotalFoodResource() / soc.getPopulation().size() > foodPerPerson
+              && (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size() > matsPerPerson) {
+            foodPerPerson = (float) soc.getTotalFoodResource() / soc.getPopulation().size();
+            matsPerPerson = (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size();
+            bestCandidate = soc;
+          }
+        }
+        TradeDeal tradeDeal = calculateTradeDeal(society, bestCandidate);
+        if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)) {
+          TradeAgreement.setTradeDeal(tradeDeal);
+          Game.setState(GameState.DEALING);
+        } else {
+          boolean accepted = tradeDeal.getSocietyB().examineTradeDeal(tradeDeal);
+          if (accepted) {
+            tradeDeal.setEndTurnOfDeal(Hud.getTurn() + TradingMenu.getDefaultLengthOfTradeDealInTurns());
+            tradeDeal.getSocietyA().activateTradeDeal(tradeDeal);
+            tradeDeal.getSocietyB().activateTradeDeal(tradeDeal);
+            tradeDeal.getSocietyA().setEndTurn(true);
+          }
+          society.setEndTurn(true);
+        }
+
       } else {
         // Claim a tile
         society.calculateClaimableTerritory();
