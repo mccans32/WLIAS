@@ -535,7 +535,8 @@ public class World {
           }
         }
         TradeDeal tradeDeal = calculateTradeDeal(society, bestCandidate);
-        if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)) {
+        if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)
+            && Game.getState() != GameState.GAME_PAUSE) {
           DealingMenu.setTradeDeal(tradeDeal);
           Game.setState(GameState.DEALING);
         } else {

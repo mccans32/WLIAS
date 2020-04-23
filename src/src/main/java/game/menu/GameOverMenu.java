@@ -19,6 +19,7 @@ import game.world.Hud;
 import game.world.World;
 import java.awt.Color;
 import math.Vector3f;
+import math.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
 public class GameOverMenu {
@@ -47,9 +48,8 @@ public class GameOverMenu {
     mainMenuButton.create();
     buttons[1] = mainMenuButton;
     // Create Game Over Text
-    Text text = new Text("Game Over!", 2.3f, ColourUtils.convertColor(Color.RED.brighter()));
+    Text text = new Text("", 2.3f);
     gameOverText = new HudText(text, 0, 0, 1, -0.2f);
-    gameOverText.setOffsetX(-(gameOverText.getWidth() / 2));
     gameOverText.create();
   }
 
@@ -126,5 +126,23 @@ public class GameOverMenu {
       button.destroy();
     }
     gameOverText.destroy();
+  }
+
+  /**
+   * Sets the text on the game over menu based on whether the player wins or not.
+   *
+   * @param state the state
+   */
+  public static void setText(GameState state) {
+    if (state == GameState.GAME_OVER) {
+      gameOverText.getText().setString("Game Over");
+      gameOverText.getText().setTextColour(new Vector4f(ColourUtils.convertColor(Color.RED), 1));
+    } else {
+      gameOverText.getText().setString("Victory!");
+      gameOverText.getText().setTextColour(new Vector4f(ColourUtils.convertColor(Color.GREEN), 1));
+    }
+    gameOverText.setText(gameOverText.getText());
+    gameOverText.setOffsetX(-(gameOverText.getWidth() / 2));
+    gameOverText.reposition();
   }
 }

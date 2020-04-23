@@ -43,6 +43,7 @@ public class Game {
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
+  private static final int TURN_LIMIT = 100;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
@@ -131,7 +132,14 @@ public class Game {
       // Main game loop where each turn is being decided
       if (World.getActiveSocieties().size() > 0
           && state != GameState.TURN_END
-          && state != GameState.GAME_PAUSE) {
+          && state != GameState.GAME_PAUSE
+          && state != GameState.GAME_OVER
+          && state != GameState.GAME_WIN) {
+        // Update the scores
+        updateScores();
+        // Check if the game is over
+        checkGameOver();
+        // Reset the player choice
         ChoiceMenu.setChoiceMade(false);
         // Age everyone in each society
         if (Hud.getTurn() % AGE_FREQUENCY == 0) {
@@ -169,7 +177,10 @@ public class Game {
             if (society.getSocietyId() != 0) {
               World.aiTurn(society);
               // If the user has not made their choice update the menu
-            } else if (!ChoiceMenu.isChoiceMade() && state != GameState.GAME_PAUSE) {
+            } else if (!ChoiceMenu.isChoiceMade()
+                && state != GameState.GAME_PAUSE
+                && state != GameState.GAME_OVER
+                && state != GameState.GAME_WIN) {
               state = GameState.GAME_CHOICE;
             }
             update();
@@ -180,6 +191,7 @@ public class Game {
           // is not rendered.
           if (state != GameState.MAIN_MENU
               && state != GameState.GAME_OVER
+              && state != GameState.GAME_WIN
               && state != GameState.GAME_PAUSE
               && Hud.getTurn() % REPRODUCE_FREQUENCY == 0) {
             reproduceLoop(society);
@@ -190,6 +202,7 @@ public class Game {
         // If these states aren't accounted for there are game play bugs
         if (state != GameState.MAIN_MENU
             && state != GameState.GAME_OVER
+            && state != GameState.GAME_WIN
             && state != GameState.GAME_PAUSE
             && !restarted) {
           state = GameState.TURN_END;
@@ -248,6 +261,14 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
     } else {
+      if (Game.getState() != GameState.GAME_OVER
+          && state != GameState.GAME_WIN) {
+        // Update the scores
+        updateScores();
+        // Check if the game is over
+        checkGameOver();
+      }
+
       if (state == GameState.GAME_PAUSE) {
         PauseMenu.update(window, camera);
       } else if (state == GameState.GAME_CHOICE) {
@@ -267,11 +288,8 @@ public class Game {
         // update Deal Menu
         DealingMenu.update(window);
       } else {
-        // Update the scores
-        updateScores();
-        // Check if the game is over
-        checkGameOver();
-        if (state != GameState.GAME_OVER) {
+        if (state != GameState.GAME_OVER
+            && state != GameState.GAME_WIN) {
           // Update The Dev Hud
           Hud.updateDevHud(camera);
           // Update the Hud
@@ -286,10 +304,24 @@ public class Game {
   }
 
   private void checkGameOver() {
-    if (!World.getActiveSocieties().contains(World.getSocieties()[0])
-        && !World.getActiveSocieties().isEmpty()) {
-      // The Player's Society is not present in the active societies
+    if (World.getActiveSocieties().size() <= 1
+        || Hud.getTurn() >= TURN_LIMIT
+        || !World.getActiveSocieties().contains(World.getSocieties()[0])) {
       state = GameState.GAME_OVER;
+      // get the society with the highest score
+      Society winningSociety = null;
+      for (Society society : World.getActiveSocieties()) {
+        if (winningSociety == null || society.getScore() > winningSociety.getScore()) {
+          winningSociety = society;
+        }
+      }
+      // Check if the winning society is the player's society
+      if (winningSociety == World.getSocieties()[0]) {
+        state = GameState.GAME_WIN;
+      }
+
+      // Set the GameOver Menu Text to fit the appropriate state
+      GameOverMenu.setText(state);
     }
   }
 
@@ -324,7 +356,7 @@ public class Game {
         PauseMenu.render(guiRenderer, textRenderer);
       } else if (state == GameState.GAME_CHOICE) {
         ChoiceMenu.render(guiRenderer, textRenderer);
-      } else if (state == GameState.GAME_OVER) {
+      } else if (state == GameState.GAME_OVER || state == GameState.GAME_WIN) {
         GameOverMenu.render(guiRenderer, textRenderer);
       } else if (state == GameState.TRADING) {
         TradingMenu.render(guiRenderer, textRenderer);

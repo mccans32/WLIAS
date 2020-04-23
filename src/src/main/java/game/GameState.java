@@ -14,5 +14,6 @@ public enum GameState {
   TRADING,
   REPRODUCING,
   DEALING,
-  AI_WAR
+  AI_WAR,
+  GAME_WIN
 }
