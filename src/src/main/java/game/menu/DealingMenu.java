@@ -123,22 +123,22 @@ public class DealingMenu {
 
   private static void createLeftDealAmount() {
     // create left food amount
-    leftFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f,
+    leftFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.0f,
         EDGE_Y, 0.2f);
     leftFoodAmount.create();
     dealNumbers.add(leftFoodAmount);
     // create left raw materials amount
-    leftRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f,
+    leftRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.0f,
         EDGE_Y - 0.13f, 0);
     leftRawMatsAmount.create();
     dealNumbers.add(leftRawMatsAmount);
     // create right food amount
-    rightFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f,
+    rightFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.0f,
         EDGE_Y, 0.2f);
     rightFoodAmount.create();
     dealNumbers.add(rightFoodAmount);
     // create left raw materials amount
-    rightRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f,
+    rightRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.0f,
         EDGE_Y - 0.13f, 0);
     rightRawMatsAmount.create();
     dealNumbers.add(rightRawMatsAmount);
