@@ -513,34 +513,12 @@ public class World {
    */
   // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
-    society.calculatePossibleTradingSocieties();
     if (!society.hasMadeMove()) {
-      // Make a War Move
+      // calculate all possible societies you can trade with
+      society.calculatePossibleTradingSocieties();
       // Get a list of valid tiles that we can attack
       ArrayList<TileWorldObject> validTiles = society.getValidTilesToAttack();
-      if (validTiles.size() > 0) {
-        // rank our possible tiles to attack with
-        ArrayList<TileWorldObject> attackingTiles = society.getAttackingTiles();
-        attackingTiles.sort((tile1, tile2)
-            -> (Float.compare(tile2.getAttackingDesirability(),
-            tile1.getAttackingDesirability())));
-        // pick the best tile to attack with
-        TileWorldObject attackingTile = attackingTiles.get(0);
-        // Pick the best tile to attack
-        society.calculateDefendingTiles(attackingTile);
-        TileWorldObject defendingTile = null;
-        for (TileWorldObject tile : society.getDefendingTiles()) {
-          if (defendingTile == null || tile.getDefendingDesirability(society)
-              > defendingTile.getDefendingDesirability(society)) {
-            defendingTile = tile;
-          }
-        }
-        assert defendingTile != null;
-        targetSociety = defendingTile.getClaimedBy();
-        simulateBattle(society, attackingTile, defendingTile);
-        society.setMadeMove(true);
-        Game.setState(GameState.AI_WAR);
-      } else if (!society.getPossibleTradingSocieties().isEmpty()) {
+      if (!society.getPossibleTradingSocieties().isEmpty()) {
         // create Trade Agreement
         float foodPerPerson = 0;
         float matsPerPerson = 0;
@@ -571,7 +549,29 @@ public class World {
           }
           society.setEndTurn(true);
         }
-
+      } else if (validTiles.size() > 0) {
+        // Make a War Move
+        // rank our possible tiles to attack with
+        ArrayList<TileWorldObject> attackingTiles = society.getAttackingTiles();
+        attackingTiles.sort((tile1, tile2)
+            -> (Float.compare(tile2.getAttackingDesirability(),
+            tile1.getAttackingDesirability())));
+        // pick the best tile to attack with
+        TileWorldObject attackingTile = attackingTiles.get(0);
+        // Pick the best tile to attack
+        society.calculateDefendingTiles(attackingTile);
+        TileWorldObject defendingTile = null;
+        for (TileWorldObject tile : society.getDefendingTiles()) {
+          if (defendingTile == null || tile.getDefendingDesirability(society)
+              > defendingTile.getDefendingDesirability(society)) {
+            defendingTile = tile;
+          }
+        }
+        assert defendingTile != null;
+        targetSociety = defendingTile.getClaimedBy();
+        simulateBattle(society, attackingTile, defendingTile);
+        society.setMadeMove(true);
+        Game.setState(GameState.AI_WAR);
       } else {
         // Claim a tile
         society.calculateClaimableTerritory();

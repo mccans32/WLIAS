@@ -642,7 +642,7 @@ public class Society {
   public boolean checkIfTrading(Society society) {
     if (society != this) {
       for (TradeDeal tradeDeal : activeTradeDeals) {
-        if (society == tradeDeal.getSocietyB()) {
+        if (society == tradeDeal.getSocietyB() || society == tradeDeal.getSocietyA()) {
           return true;
         }
       }
