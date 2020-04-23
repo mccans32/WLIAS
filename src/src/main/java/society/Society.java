@@ -364,32 +364,47 @@ public class Society {
     TileWorldObject[][] map = World.getWorldMap();
     // Check left side of the territory
     if (map[row][column - 1].isClaimed() && column - 1 != 0
-        && map[row][column - 1].getClaimedBy().getSocietyId() != societyId) {
+        && map[row][column - 1].getClaimedBy() != this
+        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
     }
     // Check right side of the territory
     if (map[row][column + 1].isClaimed() && column + 1 != map.length - 1
-        && map[row][column + 1].getClaimedBy().getSocietyId() != societyId) {
+        && map[row][column + 1].getClaimedBy() != this
+        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
     }
     // Check top of territory
     if (map[row - 1][column].isClaimed() && row - 1 != 0
-        && map[row - 1][column].getClaimedBy().getSocietyId() != societyId) {
+        && map[row - 1][column].getClaimedBy() != this
+        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
     }
     // check bottom of territory
     if (map[row + 1][column].isClaimed() && row + 1 != map.length - 1
-        && map[row + 1][column].getClaimedBy().getSocietyId() != societyId) {
+        && map[row + 1][column].getClaimedBy() != this
+        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
     }
+  }
+
+  private boolean inTradeWith(Society society) {
+    boolean isTradingWith = false;
+    for (TradeDeal deal : activeTradeDeals) {
+      if (deal.getSocietyA() == society || deal.getSocietyB() == society) {
+        isTradingWith = true;
+        break;
+      }
+    }
+    return isTradingWith;
   }
 
   private boolean checkForPeace(TileWorldObject warringTile) {
@@ -794,6 +809,28 @@ public class Society {
   public void updateScore() {
     score = ((population.size() + territory.size() + totalFoodResource + totalRawMaterialResource))
         * happiness;
+  }
+
+  /**
+   * Gets an array of all valid tiles that our society can attack at any point in time.
+   *
+   * @return the valid tiles to attack
+   */
+  public ArrayList<TileWorldObject> getValidTilesToAttack() {
+    // Calculate valid tiles that we can attack with
+    calculateAttackingTiles();
+    ArrayList<TileWorldObject> validTiles = new ArrayList<>();
+    // For each tile that we can attack with calculate its defending tiles
+    for (TileWorldObject tile : attackingTiles) {
+      calculateDefendingTiles(tile);
+      // for each defending tile if it is nto present in our return array add it
+      for (TileWorldObject defendingTile : defendingTiles) {
+        if (!validTiles.contains(defendingTile)) {
+          validTiles.add(defendingTile);
+        }
+      }
+    }
+    return validTiles;
   }
 }
 
