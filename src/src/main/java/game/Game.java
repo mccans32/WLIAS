@@ -262,6 +262,9 @@ public class Game {
       } else if (state == GameState.TRADING) {
         TradingMenu.update(window);
       } else if (state == GameState.DEALING) {
+        // Update The world
+        World.update(window, camera);
+        // update Deal Menu
         DealingMenu.update(window);
       } else {
         // Update the scores
