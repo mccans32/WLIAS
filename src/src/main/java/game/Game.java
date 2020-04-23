@@ -184,6 +184,7 @@ public class Game {
           // is not rendered.
           if (state != GameState.MAIN_MENU
               && state != GameState.GAME_OVER
+              && state != GameState.GAME_WIN
               && state != GameState.GAME_PAUSE
               && Hud.getTurn() % REPRODUCE_FREQUENCY == 0) {
             reproduceLoop(society);
@@ -194,6 +195,7 @@ public class Game {
         // If these states aren't accounted for there are game play bugs
         if (state != GameState.MAIN_MENU
             && state != GameState.GAME_OVER
+            && state != GameState.GAME_WIN
             && state != GameState.GAME_PAUSE
             && !restarted) {
           state = GameState.TURN_END;
@@ -275,7 +277,8 @@ public class Game {
         updateScores();
         // Check if the game is over
         checkGameOver();
-        if (state != GameState.GAME_OVER) {
+        if (state != GameState.GAME_OVER
+            && state != GameState.GAME_WIN) {
           // Update The Dev Hud
           Hud.updateDevHud(camera);
           // Update the Hud
@@ -305,6 +308,9 @@ public class Game {
       if (winningSociety == World.getSocieties()[0]) {
         state = GameState.GAME_WIN;
       }
+
+      // Set the GameOver Menu Text to fit the appropriate state
+      GameOverMenu.setText(state);
     }
   }
 
@@ -339,7 +345,7 @@ public class Game {
         PauseMenu.render(guiRenderer, textRenderer);
       } else if (state == GameState.GAME_CHOICE) {
         ChoiceMenu.render(guiRenderer, textRenderer);
-      } else if (state == GameState.GAME_OVER) {
+      } else if (state == GameState.GAME_OVER || state == GameState.GAME_WIN) {
         GameOverMenu.render(guiRenderer, textRenderer);
       } else if (state == GameState.TRADING) {
         TradingMenu.render(guiRenderer, textRenderer);
