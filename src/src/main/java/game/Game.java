@@ -11,6 +11,7 @@ import engine.io.Input;
 import engine.objects.world.Camera;
 import engine.tools.Timer;
 import game.menu.ChoiceMenu;
+import game.menu.DealingMenu;
 import game.menu.GameOverMenu;
 import game.menu.MainMenu;
 import game.menu.PauseMenu;
@@ -92,6 +93,15 @@ public class Game {
 
   public static void setRestarted(boolean restarted) {
     Game.restarted = restarted;
+  }
+
+  /**
+   * Update the scores for each society.
+   */
+  public static void updateScores() {
+    for (Society society : World.getActiveSocieties()) {
+      society.updateScore();
+    }
   }
 
   /**
@@ -251,6 +261,11 @@ public class Game {
         World.update(window, camera);
       } else if (state == GameState.TRADING) {
         TradingMenu.update(window);
+      } else if (state == GameState.DEALING) {
+        // Update The world
+        World.update(window, camera);
+        // update Deal Menu
+        DealingMenu.update(window);
       } else {
         // Update the scores
         updateScores();
@@ -267,15 +282,6 @@ public class Game {
           GameOverMenu.update(window, camera);
         }
       }
-    }
-  }
-
-  /**
-   * Update the scores for each society.
-   */
-  public static void updateScores() {
-    for (Society society: World.getActiveSocieties()) {
-      society.updateScore();
     }
   }
 
@@ -322,6 +328,8 @@ public class Game {
         GameOverMenu.render(guiRenderer, textRenderer);
       } else if (state == GameState.TRADING) {
         TradingMenu.render(guiRenderer, textRenderer);
+      } else if (state == GameState.DEALING) {
+        DealingMenu.render(guiRenderer, textRenderer);
       }
     }
     window.swapBuffers();

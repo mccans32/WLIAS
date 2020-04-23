@@ -33,6 +33,7 @@ import society.Society;
 
 public class TradingMenu {
   private static final int DEFAULT_LENGTH_OF_TRADE_DEAL_IN_TURNS = 3;
+  private static final int DEFAULT_MAX_VALUE_FOR_TRADE_DEALS = 10;
   private static final Image PLUS_TEXTURE = new Image("/images/plusTexture.png");
   private static final Image MINUS_TEXTURE = new Image("/images/minusTexture.png");
   private static final Image FOOD_ICON = new Image("/images/foodIcon.png");
@@ -86,6 +87,14 @@ public class TradingMenu {
   private static ArrayList<HudText> dealNumbers = new ArrayList<>();
   private static boolean societiesChosen = false;
   private static boolean updatedHint = false;
+
+  public static int getDefaultMaxValueForTradeDeals() {
+    return DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+  }
+
+  public static int getDefaultLengthOfTradeDealInTurns() {
+    return DEFAULT_LENGTH_OF_TRADE_DEAL_IN_TURNS;
+  }
 
   public static void setTradeDeal(TradeDeal tradeDeal) {
     TradingMenu.tradeDeal = tradeDeal;
@@ -156,8 +165,7 @@ public class TradingMenu {
     createTradingPanels();
     createLeftDealButtons();
     createRightDealButtons();
-    createRightDealAmounts();
-    createLeftDealAmount();
+    createDealAmounts();
     createAcceptButton();
   }
 
@@ -177,30 +185,27 @@ public class TradingMenu {
     acceptButton.disable();
   }
 
-  private static void createLeftDealAmount() {
+  private static void createDealAmounts() {
     // create left food amount
-    leftFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f,
+    leftFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.0f,
         EDGE_Y, 0.11f);
     leftFoodAmount.create();
     dealNumbers.add(leftFoodAmount);
     // create left raw materials amount
-    leftRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.05f,
+    leftRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, -TRADE_PANEL_EDGE_X, 0.0f,
         EDGE_Y - 0.19f, 0);
     leftRawMatsAmount.create();
     dealNumbers.add(leftRawMatsAmount);
     // create right food amount
-    rightFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f,
+    rightFoodAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.0f,
         EDGE_Y, 0.11f);
     rightFoodAmount.create();
     dealNumbers.add(rightFoodAmount);
     // create left raw materials amount
-    rightRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.05f,
+    rightRawMatsAmount = new HudText(DEFAULT_DEAL_AMOUNT, TRADE_PANEL_EDGE_X, 0.0f,
         EDGE_Y - 0.19f, 0);
     rightRawMatsAmount.create();
     dealNumbers.add(rightRawMatsAmount);
-  }
-
-  private static void createRightDealAmounts() {
   }
 
   private static void createLeftDealButtons() {
@@ -209,7 +214,7 @@ public class TradingMenu {
     RectangleMesh foodAddMesh = new RectangleMesh(dealButtonModel,
         new Material(PLUS_TEXTURE));
     leftAddRawMatButton = new ButtonObject(foodAddMesh, dealButtonText, -TRADE_PANEL_EDGE_X,
-        0.1f, EDGE_Y - 0.1f, OFFSET_Y);
+        0.05f, EDGE_Y - 0.1f, OFFSET_Y);
     leftAddRawMatButton.create();
     dealButtons.add(leftAddRawMatButton);
 
@@ -223,7 +228,7 @@ public class TradingMenu {
     RectangleMesh rawMatAddMesh = new RectangleMesh(dealButtonModel,
         new Material(PLUS_TEXTURE));
     leftAddFoodButton = new ButtonObject(rawMatAddMesh, dealButtonText, -TRADE_PANEL_EDGE_X,
-        0.1f, EDGE_Y + 0.2f, OFFSET_Y);
+        0.05f, EDGE_Y + 0.2f, OFFSET_Y);
     leftAddFoodButton.create();
     dealButtons.add(leftAddFoodButton);
 
@@ -241,7 +246,7 @@ public class TradingMenu {
     RectangleMesh foodAddMesh = new RectangleMesh(dealButtonModel,
         new Material(PLUS_TEXTURE));
     rightAddRawMatButton = new ButtonObject(foodAddMesh, dealButtonText, TRADE_PANEL_EDGE_X,
-        0.1f, EDGE_Y - 0.1f, OFFSET_Y);
+        0.05f, EDGE_Y - 0.1f, OFFSET_Y);
     rightAddRawMatButton.create();
     dealButtons.add(rightAddRawMatButton);
 
@@ -255,7 +260,7 @@ public class TradingMenu {
     RectangleMesh rawMatAddMesh = new RectangleMesh(dealButtonModel,
         new Material(PLUS_TEXTURE));
     rightAddFoodButton = new ButtonObject(rawMatAddMesh, dealButtonText, TRADE_PANEL_EDGE_X,
-        0.1f, EDGE_Y + 0.2f, OFFSET_Y);
+        0.05f, EDGE_Y + 0.2f, OFFSET_Y);
     rightAddFoodButton.create();
     dealButtons.add(rightAddFoodButton);
 
@@ -330,12 +335,13 @@ public class TradingMenu {
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
             && Game.canClick()
             && dealButton.isMouseOver(window)) {
-
-
           if (dealButton == leftAddFoodButton) {
             int currentFoodGiven = tradeDeal.getFoodGiven();
             int newFoodAmount = selectMinimum(currentFoodGiven + 1,
                 tradeDeal.getSocietyA().getTotalFoodResource());
+            if (newFoodAmount > DEFAULT_MAX_VALUE_FOR_TRADE_DEALS) {
+              newFoodAmount = DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+            }
             tradeDeal.setFoodGiven(newFoodAmount);
             leftFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
@@ -343,6 +349,9 @@ public class TradingMenu {
             int currentFoodGiven = tradeDeal.getFoodGiven();
             int newFoodAmount = selectMinimum(currentFoodGiven - 1,
                 tradeDeal.getSocietyA().getTotalFoodResource());
+            if (newFoodAmount > DEFAULT_MAX_VALUE_FOR_TRADE_DEALS) {
+              newFoodAmount = DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+            }
             tradeDeal.setFoodGiven(newFoodAmount);
             leftFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
@@ -350,6 +359,9 @@ public class TradingMenu {
             int currentRawMatsGiven = tradeDeal.getRawMatsGiven();
             int newRawMatsAmt = selectMinimum(currentRawMatsGiven + 1,
                 tradeDeal.getSocietyA().getTotalRawMaterialResource());
+            if (newRawMatsAmt > DEFAULT_MAX_VALUE_FOR_TRADE_DEALS) {
+              newRawMatsAmt = DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+            }
             tradeDeal.setRawMarsGiven(newRawMatsAmt);
             leftRawMatsAmount.setText(new Text(String.valueOf(newRawMatsAmt), DEFAULT_FONT_SIZE));
 
@@ -357,6 +369,9 @@ public class TradingMenu {
             int currentRawMatsGiven = tradeDeal.getRawMatsGiven();
             int newRawMatsAmt = selectMinimum(currentRawMatsGiven - 1,
                 tradeDeal.getSocietyA().getTotalRawMaterialResource());
+            if (newRawMatsAmt > DEFAULT_MAX_VALUE_FOR_TRADE_DEALS) {
+              newRawMatsAmt = DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+            }
             tradeDeal.setRawMarsGiven(newRawMatsAmt);
             leftRawMatsAmount.setText(new Text(String.valueOf(newRawMatsAmt), DEFAULT_FONT_SIZE));
 
@@ -365,6 +380,9 @@ public class TradingMenu {
             int foodReceived = tradeDeal.getFoodReceived();
             int newFoodAmount = selectMinimum(foodReceived + 1,
                 tradeDeal.getSocietyB().getTotalFoodResource());
+            if (newFoodAmount > DEFAULT_MAX_VALUE_FOR_TRADE_DEALS) {
+              newFoodAmount = DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+            }
             tradeDeal.setFoodReceived(newFoodAmount);
             rightFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
@@ -372,6 +390,9 @@ public class TradingMenu {
             int foodReceived = tradeDeal.getFoodReceived();
             int newFoodAmount = selectMinimum(foodReceived - 1,
                 tradeDeal.getSocietyB().getTotalFoodResource());
+            if (newFoodAmount > DEFAULT_MAX_VALUE_FOR_TRADE_DEALS) {
+              newFoodAmount = DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+            }
             tradeDeal.setFoodReceived(newFoodAmount);
             rightFoodAmount.setText(new Text(String.valueOf(newFoodAmount), DEFAULT_FONT_SIZE));
 
@@ -379,6 +400,9 @@ public class TradingMenu {
             int rawMatsReceived = tradeDeal.getRawMatsReceived();
             int rawMatsAmount = selectMinimum(rawMatsReceived + 1,
                 tradeDeal.getSocietyB().getTotalRawMaterialResource());
+            if (rawMatsAmount > DEFAULT_MAX_VALUE_FOR_TRADE_DEALS) {
+              rawMatsAmount = DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+            }
             tradeDeal.setRawMatsReceived(rawMatsAmount);
             rightRawMatsAmount.setText(new Text(String.valueOf(rawMatsAmount), DEFAULT_FONT_SIZE));
 
@@ -386,6 +410,9 @@ public class TradingMenu {
             int rawMatsReceived = tradeDeal.getRawMatsReceived();
             int rawMatsAmount = selectMinimum(rawMatsReceived - 1,
                 tradeDeal.getSocietyB().getTotalRawMaterialResource());
+            if (rawMatsAmount > DEFAULT_MAX_VALUE_FOR_TRADE_DEALS) {
+              rawMatsAmount = DEFAULT_MAX_VALUE_FOR_TRADE_DEALS;
+            }
             tradeDeal.setRawMatsReceived(rawMatsAmount);
             rightRawMatsAmount.setText(new Text(String.valueOf(rawMatsAmount), DEFAULT_FONT_SIZE));
           }

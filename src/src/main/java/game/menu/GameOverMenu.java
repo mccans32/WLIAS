@@ -88,8 +88,10 @@ public class GameOverMenu {
     Hud.destroy();
     World.destroy();
     TradingMenu.destroy();
+    DealingMenu.destroy();
     World.create(window, camera);
     TradingMenu.create();
+    DealingMenu.create();
     ChoiceMenu.create();
     World.update(window, camera);
     Hud.create();

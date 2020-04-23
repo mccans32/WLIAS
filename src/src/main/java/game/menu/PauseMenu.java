@@ -133,6 +133,7 @@ public class PauseMenu {
         Hud.destroy();
         World.destroy();
         TradingMenu.destroy();
+        DealingMenu.destroy();
         Game.setState(GameState.MAIN_MENU);
         MainMenu.create(window, camera);
       }

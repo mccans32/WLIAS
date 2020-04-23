@@ -13,5 +13,6 @@ public enum GameState {
   AI_NOTHING,
   TRADING,
   REPRODUCING,
+  DEALING,
   AI_WAR
 }

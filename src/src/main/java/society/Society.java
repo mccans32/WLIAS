@@ -69,6 +69,10 @@ public class Society {
     generateInitialPopulation(DEFAULT_POPULATION_SIZE);
   }
 
+  public static int getOffspringAmount() {
+    return OFFSPRING_AMOUNT;
+  }
+
   public static float getFoodPerPerson() {
     return FOOD_PER_PERSON;
   }
@@ -373,7 +377,7 @@ public class Society {
     // Check right side of the territory
     if (map[row][column + 1].isClaimed() && column + 1 != map.length - 1
         && map[row][column + 1].getClaimedBy() != this
-        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
+        && !inTradeWith(map[row][column + 1].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
@@ -381,7 +385,7 @@ public class Society {
     // Check top of territory
     if (map[row - 1][column].isClaimed() && row - 1 != 0
         && map[row - 1][column].getClaimedBy() != this
-        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
+        && !inTradeWith(map[row - 1][column].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
@@ -389,7 +393,7 @@ public class Society {
     // check bottom of territory
     if (map[row + 1][column].isClaimed() && row + 1 != map.length - 1
         && map[row + 1][column].getClaimedBy() != this
-        && !inTradeWith(map[row][column - 1].getClaimedBy())) {
+        && !inTradeWith(map[row + 1][column].getClaimedBy())) {
       if (!attackingTiles.contains(map[row][column])) {
         attackingTiles.add(map[row][column]);
       }
@@ -638,7 +642,7 @@ public class Society {
   public boolean checkIfTrading(Society society) {
     if (society != this) {
       for (TradeDeal tradeDeal : activeTradeDeals) {
-        if (society == tradeDeal.getSocietyB()) {
+        if (society == tradeDeal.getSocietyB() || society == tradeDeal.getSocietyA()) {
           return true;
         }
       }
