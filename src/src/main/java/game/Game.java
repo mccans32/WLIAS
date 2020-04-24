@@ -44,7 +44,7 @@ public class Game {
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
   private static final int TURN_LIMIT = 100;
-  private static boolean training = true;
+  private static boolean training = false;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
@@ -182,7 +182,7 @@ public class Game {
             // Make AI Moves only if there is no player input
             if (training) {
               World.aiTurn(society);
-            } else if (society.getSocietyId() == 0) {
+            } else if (society.getSocietyId() != 0) {
               // There is Player Input and it is an AI society
               World.aiTurn(society);
             } else if (!ChoiceMenu.isChoiceMade()
@@ -341,12 +341,17 @@ public class Game {
         }
       }
       // Check if the winning society is the player's society
-      if (winningSociety == World.getSocieties()[0]) {
+      if (!training && winningSociety == World.getSocieties()[0]) {
         state = GameState.GAME_WIN;
       }
 
       // Set the GameOver Menu Text to fit the appropriate state
-      GameOverMenu.setText(state);
+      // Only need to do this if the game is not training
+      if (!training) {
+        GameOverMenu.setText(state);
+      }
+
+      // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
     }
   }
 

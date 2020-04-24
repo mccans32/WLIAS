@@ -91,7 +91,9 @@ public class GameOverMenu {
     World.destroy();
     TradingMenu.destroy();
     DealingMenu.destroy();
+    PauseMenu.destroy();
     World.create(window, camera);
+    PauseMenu.create();
     TradingMenu.create();
     DealingMenu.create();
     ChoiceMenu.create();
