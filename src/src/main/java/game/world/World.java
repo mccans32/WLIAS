@@ -232,7 +232,7 @@ public class World {
     if (MousePicker.getCurrentSelected() != null
         && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
         && worldTiles.contains(MousePicker.getCurrentSelected())
-        && Game.canClick()) {
+        && Game.buttonLockFree()) {
       Game.resetButtonLock();
       return MousePicker.getCurrentSelected();
     } else {
@@ -536,7 +536,7 @@ public class World {
         }
         TradeDeal tradeDeal = calculateTradeDeal(society, bestCandidate);
         if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)
-            && Game.getState() != GameState.GAME_PAUSE) {
+            && Game.getState() != GameState.GAME_PAUSE && !Game.isTraining()) {
           DealingMenu.setTradeDeal(tradeDeal);
           Game.setState(GameState.DEALING);
         } else {
@@ -589,7 +589,7 @@ public class World {
           society.setMadeMove(true);
         }
       }
-      Game.getNotificationTimer().setDuration(2);
+      Game.getNotificationTimer().setDuration(Game.isTraining() ? 0 : 2);
     }
     if (Game.getNotificationTimer().isDurationMet()) {
       Game.getNotificationTimer().clearDuration();

@@ -289,7 +289,7 @@ public class DealingMenu {
       rightSocietyPanel.getPanel().updateText(rightSocietyPanel.getPanelText());
     }
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-        && Game.canClick()
+        && Game.buttonLockFree()
         && acceptButton.isMouseOver(window)) {
       tradeDeal.setEndTurnOfDeal(Hud.getTurn() + DEFAULT_LENGTH_OF_TRADE_DEAL_IN_TURNS);
       tradeDeal.getSocietyA().activateTradeDeal(tradeDeal);
@@ -297,7 +297,7 @@ public class DealingMenu {
       reset();
       tradeDeal.getSocietyA().setEndTurn(true);
     } else if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-        && Game.canClick()
+        && Game.buttonLockFree()
         && declineButton.isMouseOver(window)) {
       reset();
       tradeDeal.getSocietyA().setEndTurn(true);

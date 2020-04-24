@@ -130,7 +130,11 @@ public class Hud {
     updateSocietyButtons(window);
     updateArrowButton(window);
     updatePanelCloseButton(window);
-    updateHint();
+    // Only update the hint if the player is participating
+    // By not updating we save time spent updating buffers which speeds up the training process
+    if (!Game.isTraining()) {
+      updateHint();
+    }
   }
 
   /**
@@ -223,11 +227,17 @@ public class Hud {
       float offsetY = arrowButton.getHudImage().getOffsetY();
       arrowButton.getHudImage().setOffsetY(offsetY + newValue);
       // Check if clicked
-      if (((Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && arrowButton.isMouseOver(window))
+      if ((((Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && arrowButton.isMouseOver(window))
           || Input.isKeyDown(GLFW.GLFW_KEY_SPACE))
-          && Game.canClick()) {
+          && Game.buttonLockFree())
+          || Game.isTraining()) {
         mouseOverHud = true;
-        Game.resetButtonLock();
+        // Only reset the lock if player input is active
+        // If not the lock gets constantly reset and any other player input
+        // cant be taken during training such as changing the mode
+        if (!Game.isTraining()) {
+          Game.resetButtonLock();
+        }
         updateTurnCounter();
         updateScoreCounter();
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
@@ -260,7 +270,7 @@ public class Hud {
       societyButtons.get(i).update(window);
       // check if mouse click
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-          && societyButtons.get(i).isMouseOver(window) && Game.canClick()) {
+          && societyButtons.get(i).isMouseOver(window) && Game.buttonLockFree()) {
         Game.resetButtonLock();
         mouseOverHud = true;
         terrainPanelActive = false;
@@ -317,17 +327,24 @@ public class Hud {
 
   private static void updateTurnCounter() {
     turn++;
-    turnText.setString(String.format("Turn: %d", turn));
-    turnCounter.getLines().get(0).setText(turnText);
+    // Only update the buffers if a player is participating
+    if (!Game.isTraining()) {
+      turnText.setString(String.format("Turn: %d", turn));
+      turnCounter.getLines().get(0).setText(turnText);
+    }
   }
 
   private static void updateScoreCounter() {
-    float score = World.getActiveSocieties().get(0).getScore();
-    scoreText.setString(String.format("Score: %.0f", score));
-    scoreText.setCentreHorizontal(true);
-    scoreText.setCentreVertical(true);
-    scoreCounter.updateText(scoreText);
-    scoreCounter.reposition();
+    // Only need to update the onscreen score if a player is participating
+    if (!Game.isTraining()) {
+      float score = World.getActiveSocieties().get(0).getScore();
+      scoreText.setString(String.format("Score: %.0f", score));
+      scoreText.setCentreHorizontal(true);
+      scoreText.setCentreVertical(true);
+      scoreCounter.updateText(scoreText);
+      scoreCounter.reposition();
+    }
+
   }
 
   /**
@@ -337,7 +354,7 @@ public class Hud {
    */
   public static void updateDevHud(Camera camera) {
     // check for key press to toggle
-    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && Game.canClick()) {
+    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && Game.buttonLockFree()) {
       devHudActive = !devHudActive;
       Game.resetButtonLock();
     }

@@ -111,7 +111,7 @@ public class ChoiceMenu {
 
   private static void checkChoiceButtonClick(Window window) {
     // Check if left button is down
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()) {
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.buttonLockFree()) {
       Game.resetButtonLock();
       // cycle thorough all buttons in out list of choice buttons
       for (ButtonObject choiceButton : choiceButtons) {

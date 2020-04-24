@@ -333,7 +333,7 @@ public class TradingMenu {
         acceptButton.update(window);
         tradeDeal.setSocietyA(World.getActiveSocieties().get(0));
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-            && Game.canClick()
+            && Game.buttonLockFree()
             && dealButton.isMouseOver(window)) {
           if (dealButton == leftAddFoodButton) {
             int currentFoodGiven = tradeDeal.getFoodGiven();
@@ -446,7 +446,7 @@ public class TradingMenu {
       }
     }
     if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-        && Game.canClick()
+        && Game.buttonLockFree()
         && acceptButton.isMouseOver(window)) {
       boolean accepted = tradeDeal.getSocietyB().examineTradeDeal(tradeDeal);
       if (accepted) {

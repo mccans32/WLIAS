@@ -44,6 +44,7 @@ public class Game {
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
   private static final int TURN_LIMIT = 100;
+  private static boolean training = true;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
@@ -71,7 +72,7 @@ public class Game {
     return buttonLock;
   }
 
-  public static boolean canClick() {
+  public static boolean buttonLockFree() {
     return buttonLock == 0;
   }
 
@@ -103,6 +104,10 @@ public class Game {
     for (Society society : World.getActiveSocieties()) {
       society.updateScore();
     }
+  }
+
+  public static boolean isTraining() {
+    return training;
   }
 
   /**
@@ -174,10 +179,14 @@ public class Game {
             if (restarted) {
               break;
             }
-            if (society.getSocietyId() != 0) {
+            // Make AI Moves only if there is no player input
+            if (training) {
               World.aiTurn(society);
-              // If the user has not made their choice update the menu
+            } else if (society.getSocietyId() == 0) {
+              // There is Player Input and it is an AI society
+              World.aiTurn(society);
             } else if (!ChoiceMenu.isChoiceMade()
+                // There is Player input and the Player has not made a choice yet
                 && state != GameState.GAME_PAUSE
                 && state != GameState.GAME_OVER
                 && state != GameState.GAME_WIN) {
@@ -257,6 +266,7 @@ public class Game {
     window.update();
 
     executeEscapeKeyFunctionality();
+    checkTrainingToggle();
 
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
@@ -303,6 +313,21 @@ public class Game {
     }
   }
 
+  private void checkTrainingToggle() {
+    // Check to see if we can toggle the mode
+    if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)
+        && Input.isKeyDown(GLFW.GLFW_KEY_T)
+        && buttonLockFree()) {
+      resetButtonLock();
+      training = !training;
+      if (training) {
+        System.out.println("TRAINING MODE IS ENABLED");
+      } else {
+        System.out.println("PLAYER INPUT IS NOW ENABLED");
+      }
+    }
+  }
+
   private void checkGameOver() {
     if (World.getActiveSocieties().size() <= 1
         || Hud.getTurn() >= TURN_LIMIT
@@ -326,7 +351,7 @@ public class Game {
   }
 
   private void executeEscapeKeyFunctionality() {
-    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && canClick()) {
+    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && buttonLockFree()) {
       resetButtonLock();
       // close inspection panel if currently open
       if (Hud.isSocietyPanelActive() || Hud.isTerrainPanelActive()) {
@@ -385,7 +410,7 @@ public class Game {
   private void reproduceLoop(Society society) {
     society.reproduce();
     Game.setState(GameState.REPRODUCING);
-    Game.getNotificationTimer().setDuration(1);
+    Game.getNotificationTimer().setDuration(training ? 0 : 1);
     while (!notificationTimer.isDurationMet()
         && !window.shouldClose()
         && !World.getActiveSocieties().isEmpty()) {
