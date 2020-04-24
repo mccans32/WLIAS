@@ -331,7 +331,7 @@ public class Game {
   private void checkGameOver() {
     if (World.getActiveSocieties().size() <= 1
         || Hud.getTurn() >= TURN_LIMIT
-        || !World.getActiveSocieties().contains(World.getSocieties()[0])) {
+        || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
       state = GameState.GAME_OVER;
       // get the society with the highest score
       Society winningSociety = null;
