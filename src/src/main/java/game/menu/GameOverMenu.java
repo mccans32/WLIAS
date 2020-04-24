@@ -68,9 +68,11 @@ public class GameOverMenu {
   }
 
   private static void checkButtonClick(Window window, Camera camera) {
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.buttonLockFree()) {
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
+        && Game.buttonLockFree()
+        || Game.isTraining()) {
       Game.resetButtonLock();
-      if (restartButton.isMouseOver(window)) {
+      if (restartButton.isMouseOver(window) || Game.isTraining()) {
         restartGame(window, camera);
       } else if (mainMenuButton.isMouseOver(window)) {
         destroy();
