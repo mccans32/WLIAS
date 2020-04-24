@@ -435,7 +435,9 @@ public class World {
     selectOverlay.destroy();
     // Destroy Overlay
     selectOverlay.destroy();
-    ChoiceMenu.destroy();
+    if (!Game.isTraining()) {
+      ChoiceMenu.destroy();
+    }
     activeSocieties.clear();
     activeSociety = null;
   }

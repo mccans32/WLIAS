@@ -115,6 +115,10 @@ public class Game {
     Game.training = training;
   }
 
+  public static Source getMusicSource() {
+    return musicSource;
+  }
+
   /**
    * Start.
    */
@@ -339,9 +343,13 @@ public class Game {
       if (!training) {
         GameOverMenu.setText(state);
       }
-      winCount++;
-      System.out.println(winCount);
-      // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
+
+      if (training) {
+        winCount++;
+        System.out.println(winCount);
+        // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
+      }
+
     }
   }
 
@@ -402,10 +410,6 @@ public class Game {
     int musicBuffer =
         AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
     musicSource.playSound(musicBuffer);
-  }
-
-  public static Source getMusicSource() {
-    return musicSource;
   }
 
   private void reproduceLoop(Society society) {
