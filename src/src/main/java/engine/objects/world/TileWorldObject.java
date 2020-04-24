@@ -5,6 +5,7 @@ import engine.graphics.image.Image;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.mesh.dimension.two.RectangleMesh;
 import engine.graphics.model.dimension.two.RectangleModel;
+import game.Game;
 import map.tiles.Tile;
 import math.Vector3f;
 import math.Vector4f;
@@ -107,7 +108,9 @@ public class TileWorldObject extends GameObject {
     this.borderObject = new GameObject(this.getPosition(), borderMesh);
     borderObject.setScale(this.getScale());
     borderObject.setRotation(this.getRotation());
-    borderObject.create();
+    if (!Game.isTraining()) {
+      borderObject.create();
+    }
   }
 
   public Tile getTile() {

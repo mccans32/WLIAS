@@ -312,7 +312,9 @@ public class World {
         // assign tile ot the world map
         worldMap[row][column] = tempTileWorldObject;
         // Create the Object
-        tempTileWorldObject.create();
+        if (!Game.isTraining()) {
+          tempTileWorldObject.create();
+        }
         // Add to Current Tile List
         addTileObject(tempTileWorldObject);
       }
@@ -414,13 +416,15 @@ public class World {
    */
   public static void destroy() {
     // Destroy tile data
-    for (TileWorldObject[] row : worldMap) {
-      for (TileWorldObject tile : row) {
-        GameObject border = tile.getBorderObject();
-        if (border != null) {
-          border.destroy();
+    if (!Game.isTraining()) {
+      for (TileWorldObject[] row : worldMap) {
+        for (TileWorldObject tile : row) {
+          GameObject border = tile.getBorderObject();
+          if (border != null) {
+            border.destroy();
+          }
+          tile.destroy();
         }
-        tile.destroy();
       }
     }
     worldMap = null;
@@ -433,6 +437,7 @@ public class World {
     selectOverlay.destroy();
     ChoiceMenu.destroy();
     activeSocieties.clear();
+    activeSociety = null;
   }
 
   private static void simulateBattle(Society attackingSociety,

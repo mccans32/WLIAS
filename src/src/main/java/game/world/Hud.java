@@ -126,13 +126,14 @@ public class Hud {
   public static void update(Window window) {
     mouseOverHud = false;
     resize();
-    updateTerrainPanel();
-    updateSocietyButtons(window);
+
     updateArrowButton(window);
-    updatePanelCloseButton(window);
     // Only update the hint if the player is participating
     // By not updating we save time spent updating buffers which speeds up the training process
     if (!Game.isTraining()) {
+      updateTerrainPanel();
+      updateSocietyButtons(window);
+      updatePanelCloseButton(window);
       updateHint();
     }
   }

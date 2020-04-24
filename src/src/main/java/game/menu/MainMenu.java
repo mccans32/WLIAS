@@ -1,5 +1,8 @@
 package game.menu;
 
+import static game.Game.buttonLockFree;
+import static game.Game.resetButtonLock;
+
 import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.image.Image;
@@ -64,6 +67,7 @@ public class MainMenu {
     resize();
     updateButtons(window);
     checkButtonClick(window, camera);
+    checkTrainingToggle();
   }
 
   /**
@@ -180,5 +184,22 @@ public class MainMenu {
         new RectangleMesh(BACKGROUND_MODEL, new Material(BACKGROUND_IMAGE));
     backgroundImage = new HudImage(backgroundMesh, -1, 1, 1, 1);
     backgroundImage.create();
+  }
+
+  private static void checkTrainingToggle() {
+    // Check to see if we can toggle the mode
+    if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)
+        && Input.isKeyDown(GLFW.GLFW_KEY_T)
+        && buttonLockFree()) {
+      resetButtonLock();
+      Game.setTraining(!Game.isTraining());
+      if (Game.isTraining()) {
+        Game.getMusicSource().setGain(0);
+        System.out.println("TRAINING MODE IS ENABLED");
+      } else {
+        Game.getMusicSource().setGain(0.01f);
+        System.out.println("PLAYER INPUT IS NOW ENABLED");
+      }
+    }
   }
 }

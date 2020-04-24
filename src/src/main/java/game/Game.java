@@ -43,7 +43,7 @@ public class Game {
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
-  private static final int TURN_LIMIT = 100;
+  private static final int TURN_LIMIT = 25;
   private static boolean training = false;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
@@ -54,6 +54,7 @@ public class Game {
   private static Source musicSource;
   private static int buttonLock = BUTTON_LOCK_CYCLES;
   private static boolean restarted;
+  private static int winCount = 0;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   private Window window;
   private Shader worldShader;
@@ -108,6 +109,10 @@ public class Game {
 
   public static boolean isTraining() {
     return training;
+  }
+
+  public static void setTraining(boolean training) {
+    Game.training = training;
   }
 
   /**
@@ -266,7 +271,6 @@ public class Game {
     window.update();
 
     executeEscapeKeyFunctionality();
-    checkTrainingToggle();
 
     if (state == GameState.MAIN_MENU) {
       MainMenu.update(window, camera);
@@ -313,21 +317,6 @@ public class Game {
     }
   }
 
-  private void checkTrainingToggle() {
-    // Check to see if we can toggle the mode
-    if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)
-        && Input.isKeyDown(GLFW.GLFW_KEY_T)
-        && buttonLockFree()) {
-      resetButtonLock();
-      training = !training;
-      if (training) {
-        System.out.println("TRAINING MODE IS ENABLED");
-      } else {
-        System.out.println("PLAYER INPUT IS NOW ENABLED");
-      }
-    }
-  }
-
   private void checkGameOver() {
     if (World.getActiveSocieties().size() <= 1
         || Hud.getTurn() >= TURN_LIMIT
@@ -350,7 +339,8 @@ public class Game {
       if (!training) {
         GameOverMenu.setText(state);
       }
-
+      winCount++;
+      System.out.println(winCount);
       // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
     }
   }
@@ -377,10 +367,12 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.render(guiRenderer, textRenderer, backgroundRenderer);
     } else { // state == GameState.GAME;
-      // Render world objects
-      World.render(worldRenderer, camera, window);
-      // Render all hud elements
-      Hud.render(guiRenderer, textRenderer);
+      if (!training) {
+        // Render world objects
+        World.render(worldRenderer, camera, window);
+        // Render all hud elements
+        Hud.render(guiRenderer, textRenderer);
+      }
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
         PauseMenu.render(guiRenderer, textRenderer);
@@ -410,6 +402,10 @@ public class Game {
     int musicBuffer =
         AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
     musicSource.playSound(musicBuffer);
+  }
+
+  public static Source getMusicSource() {
+    return musicSource;
   }
 
   private void reproduceLoop(Society society) {

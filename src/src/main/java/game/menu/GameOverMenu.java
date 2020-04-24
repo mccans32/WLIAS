@@ -89,14 +89,18 @@ public class GameOverMenu {
     Game.setState(GameState.GAME_MAIN);
     Hud.destroy();
     World.destroy();
-    TradingMenu.destroy();
-    DealingMenu.destroy();
+    if (!Game.isTraining()) {
+      TradingMenu.destroy();
+      DealingMenu.destroy();
+    }
     PauseMenu.destroy();
     World.create(window, camera);
     PauseMenu.create();
-    TradingMenu.create();
-    DealingMenu.create();
-    ChoiceMenu.create();
+    if (!Game.isTraining()) {
+      TradingMenu.create();
+      DealingMenu.create();
+      ChoiceMenu.create();
+    }
     World.update(window, camera);
     Hud.create();
   }
