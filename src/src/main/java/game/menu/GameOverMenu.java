@@ -68,9 +68,11 @@ public class GameOverMenu {
   }
 
   private static void checkButtonClick(Window window, Camera camera) {
-    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && Game.canClick()) {
+    if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
+        && Game.buttonLockFree()
+        || Game.isTraining()) {
       Game.resetButtonLock();
-      if (restartButton.isMouseOver(window)) {
+      if (restartButton.isMouseOver(window) || Game.isTraining()) {
         restartGame(window, camera);
       } else if (mainMenuButton.isMouseOver(window)) {
         destroy();
@@ -87,12 +89,18 @@ public class GameOverMenu {
     Game.setState(GameState.GAME_MAIN);
     Hud.destroy();
     World.destroy();
-    TradingMenu.destroy();
-    DealingMenu.destroy();
+    if (!Game.isTraining()) {
+      TradingMenu.destroy();
+      DealingMenu.destroy();
+    }
+    PauseMenu.destroy();
     World.create(window, camera);
-    TradingMenu.create();
-    DealingMenu.create();
-    ChoiceMenu.create();
+    PauseMenu.create();
+    if (!Game.isTraining()) {
+      TradingMenu.create();
+      DealingMenu.create();
+      ChoiceMenu.create();
+    }
     World.update(window, camera);
     Hud.create();
   }

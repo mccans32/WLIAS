@@ -26,9 +26,7 @@ public class PauseMenu {
   private static RectangleModel buttonModel = new RectangleModel(0.75f, 0.3f);
   private static Image buttonImage = new Image("/images/buttonTexture.png");
   private static Vector3f buttonTextColour = new Vector3f(1, 1, 1);
-  private static Text pauseText = new Text("Paused", 2.3f,
-      ColourUtils.convertColor(Color.RED.brighter()));
-  private static HudText pauseObject = new HudText(pauseText, 0, 0, 1, -0.2f);
+  private static HudText pauseObject;
   private static ButtonObject resumeButton;
   private static ButtonObject exitButton;
   private static GameState previousState;
@@ -38,6 +36,10 @@ public class PauseMenu {
    */
   public static void create() {
     createButtons();
+    // Create the Pause Text
+    Text pauseText = new Text("Paused", 2.3f,
+        ColourUtils.convertColor(Color.RED.brighter()));
+    pauseObject = new HudText(pauseText, 0, 0, 1, -0.2f);
     pauseObject.setOffsetX(-(pauseObject.getWidth() / 2f));
     pauseObject.create();
   }
@@ -132,8 +134,10 @@ public class PauseMenu {
         destroy();
         Hud.destroy();
         World.destroy();
-        TradingMenu.destroy();
-        DealingMenu.destroy();
+        if (!Game.isTraining()) {
+          TradingMenu.destroy();
+          DealingMenu.destroy();
+        }
         Game.setState(GameState.MAIN_MENU);
         MainMenu.create(window, camera);
       }

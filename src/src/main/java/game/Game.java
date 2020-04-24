@@ -43,7 +43,8 @@ public class Game {
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
-  private static final int TURN_LIMIT = 100;
+  private static final int TURN_LIMIT = 25;
+  private static boolean training = false;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
   private static WorldRenderer worldRenderer;
@@ -53,6 +54,7 @@ public class Game {
   private static Source musicSource;
   private static int buttonLock = BUTTON_LOCK_CYCLES;
   private static boolean restarted;
+  private static int winCount = 0;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   private Window window;
   private Shader worldShader;
@@ -71,7 +73,7 @@ public class Game {
     return buttonLock;
   }
 
-  public static boolean canClick() {
+  public static boolean buttonLockFree() {
     return buttonLock == 0;
   }
 
@@ -103,6 +105,18 @@ public class Game {
     for (Society society : World.getActiveSocieties()) {
       society.updateScore();
     }
+  }
+
+  public static boolean isTraining() {
+    return training;
+  }
+
+  public static void setTraining(boolean training) {
+    Game.training = training;
+  }
+
+  public static Source getMusicSource() {
+    return musicSource;
   }
 
   /**
@@ -174,10 +188,14 @@ public class Game {
             if (restarted) {
               break;
             }
-            if (society.getSocietyId() != 0) {
+            // Make AI Moves only if there is no player input
+            if (training) {
               World.aiTurn(society);
-              // If the user has not made their choice update the menu
+            } else if (society.getSocietyId() != 0) {
+              // There is Player Input and it is an AI society
+              World.aiTurn(society);
             } else if (!ChoiceMenu.isChoiceMade()
+                // There is Player input and the Player has not made a choice yet
                 && state != GameState.GAME_PAUSE
                 && state != GameState.GAME_OVER
                 && state != GameState.GAME_WIN) {
@@ -306,7 +324,7 @@ public class Game {
   private void checkGameOver() {
     if (World.getActiveSocieties().size() <= 1
         || Hud.getTurn() >= TURN_LIMIT
-        || !World.getActiveSocieties().contains(World.getSocieties()[0])) {
+        || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
       state = GameState.GAME_OVER;
       // get the society with the highest score
       Society winningSociety = null;
@@ -316,17 +334,27 @@ public class Game {
         }
       }
       // Check if the winning society is the player's society
-      if (winningSociety == World.getSocieties()[0]) {
+      if (!training && winningSociety == World.getSocieties()[0]) {
         state = GameState.GAME_WIN;
       }
 
       // Set the GameOver Menu Text to fit the appropriate state
-      GameOverMenu.setText(state);
+      // Only need to do this if the game is not training
+      if (!training) {
+        GameOverMenu.setText(state);
+      }
+
+      if (training) {
+        winCount++;
+        System.out.println(winningSociety + " Wins Game " + winCount);
+        // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
+      }
+
     }
   }
 
   private void executeEscapeKeyFunctionality() {
-    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && canClick()) {
+    if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE) && buttonLockFree()) {
       resetButtonLock();
       // close inspection panel if currently open
       if (Hud.isSocietyPanelActive() || Hud.isTerrainPanelActive()) {
@@ -347,10 +375,15 @@ public class Game {
     if (state == GameState.MAIN_MENU) {
       MainMenu.render(guiRenderer, textRenderer, backgroundRenderer);
     } else { // state == GameState.GAME;
-      // Render world objects
-      World.render(worldRenderer, camera, window);
-      // Render all hud elements
-      Hud.render(guiRenderer, textRenderer);
+      if (!training) {
+        // Render world objects
+        World.render(worldRenderer, camera, window);
+        // Render all hud elements
+        Hud.render(guiRenderer, textRenderer);
+      } else if (state != GameState.GAME_PAUSE) {
+        // If training is in progress but not paused than display the training notification
+        Hud.renderHint(textRenderer);
+      }
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
         PauseMenu.render(guiRenderer, textRenderer);
@@ -385,7 +418,7 @@ public class Game {
   private void reproduceLoop(Society society) {
     society.reproduce();
     Game.setState(GameState.REPRODUCING);
-    Game.getNotificationTimer().setDuration(1);
+    Game.getNotificationTimer().setDuration(training ? 0 : 1);
     while (!notificationTimer.isDurationMet()
         && !window.shouldClose()
         && !World.getActiveSocieties().isEmpty()) {

@@ -1,5 +1,8 @@
 package game.menu;
 
+import static game.Game.buttonLockFree;
+import static game.Game.resetButtonLock;
+
 import engine.Window;
 import engine.graphics.Material;
 import engine.graphics.image.Image;
@@ -64,6 +67,7 @@ public class MainMenu {
     resize();
     updateButtons(window);
     checkButtonClick(window, camera);
+    checkTrainingToggle();
   }
 
   /**
@@ -95,14 +99,16 @@ public class MainMenu {
         Game.setState(GameState.GAME_MAIN);
         // Destroy the Main Menu
         destroy();
-        // Create The Trade Agreement Screen
-        DealingMenu.create();
         // Create the Pause Menu
         PauseMenu.create();
-        // Create the Choice Menu
-        ChoiceMenu.create();
-        // Create Trading menu
-        TradingMenu.create();
+        if (!Game.isTraining()) {
+          // Create The Trade Agreement Screen
+          DealingMenu.create();
+          // Create the Choice Menu
+          ChoiceMenu.create();
+          // Create Trading menu
+          TradingMenu.create();
+        }
         // Create the Game Over Menu
         GameOverMenu.create();
         // Create the World
@@ -180,5 +186,22 @@ public class MainMenu {
         new RectangleMesh(BACKGROUND_MODEL, new Material(BACKGROUND_IMAGE));
     backgroundImage = new HudImage(backgroundMesh, -1, 1, 1, 1);
     backgroundImage.create();
+  }
+
+  private static void checkTrainingToggle() {
+    // Check to see if we can toggle the mode
+    if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)
+        && Input.isKeyDown(GLFW.GLFW_KEY_T)
+        && buttonLockFree()) {
+      resetButtonLock();
+      Game.setTraining(!Game.isTraining());
+      if (Game.isTraining()) {
+        Game.getMusicSource().setGain(0);
+        System.out.println("TRAINING MODE IS ENABLED");
+      } else {
+        Game.getMusicSource().setGain(0.01f);
+        System.out.println("PLAYER INPUT IS NOW ENABLED");
+      }
+    }
   }
 }

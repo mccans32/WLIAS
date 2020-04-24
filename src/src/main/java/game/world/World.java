@@ -232,7 +232,7 @@ public class World {
     if (MousePicker.getCurrentSelected() != null
         && Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
         && worldTiles.contains(MousePicker.getCurrentSelected())
-        && Game.canClick()) {
+        && Game.buttonLockFree()) {
       Game.resetButtonLock();
       return MousePicker.getCurrentSelected();
     } else {
@@ -312,7 +312,9 @@ public class World {
         // assign tile ot the world map
         worldMap[row][column] = tempTileWorldObject;
         // Create the Object
-        tempTileWorldObject.create();
+        if (!Game.isTraining()) {
+          tempTileWorldObject.create();
+        }
         // Add to Current Tile List
         addTileObject(tempTileWorldObject);
       }
@@ -414,13 +416,15 @@ public class World {
    */
   public static void destroy() {
     // Destroy tile data
-    for (TileWorldObject[] row : worldMap) {
-      for (TileWorldObject tile : row) {
-        GameObject border = tile.getBorderObject();
-        if (border != null) {
-          border.destroy();
+    if (!Game.isTraining()) {
+      for (TileWorldObject[] row : worldMap) {
+        for (TileWorldObject tile : row) {
+          GameObject border = tile.getBorderObject();
+          if (border != null) {
+            border.destroy();
+          }
+          tile.destroy();
         }
-        tile.destroy();
       }
     }
     worldMap = null;
@@ -431,8 +435,11 @@ public class World {
     selectOverlay.destroy();
     // Destroy Overlay
     selectOverlay.destroy();
-    ChoiceMenu.destroy();
+    if (!Game.isTraining()) {
+      ChoiceMenu.destroy();
+    }
     activeSocieties.clear();
+    activeSociety = null;
   }
 
   private static void simulateBattle(Society attackingSociety,
@@ -536,7 +543,7 @@ public class World {
         }
         TradeDeal tradeDeal = calculateTradeDeal(society, bestCandidate);
         if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)
-            && Game.getState() != GameState.GAME_PAUSE) {
+            && Game.getState() != GameState.GAME_PAUSE && !Game.isTraining()) {
           DealingMenu.setTradeDeal(tradeDeal);
           Game.setState(GameState.DEALING);
         } else {
@@ -589,7 +596,7 @@ public class World {
           society.setMadeMove(true);
         }
       }
-      Game.getNotificationTimer().setDuration(2);
+      Game.getNotificationTimer().setDuration(Game.isTraining() ? 0 : 2);
     }
     if (Game.getNotificationTimer().isDurationMet()) {
       Game.getNotificationTimer().clearDuration();

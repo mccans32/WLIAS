@@ -125,12 +125,19 @@ public class Hud {
    */
   public static void update(Window window) {
     mouseOverHud = false;
-    resize();
-    updateTerrainPanel();
-    updateSocietyButtons(window);
+    if (!Game.isTraining()) {
+      resize();
+    }
+
     updateArrowButton(window);
-    updatePanelCloseButton(window);
-    updateHint();
+    // Only update the hint if the player is participating
+    // By not updating we save time spent updating buffers which speeds up the training process
+    if (!Game.isTraining()) {
+      updateTerrainPanel();
+      updateSocietyButtons(window);
+      updatePanelCloseButton(window);
+      updateHint();
+    }
   }
 
   /**
@@ -138,43 +145,47 @@ public class Hud {
    */
   public static void updateHint() {
     String hintString = null;
-    if (Game.getState() == GameState.WARRING) {
-      if (World.getAttackingTile() == null) {
-        hintString = "Select an Attacking Tile";
-      } else if (World.getOpponentTile() == null) {
-        hintString = "Select an Opponent's Tile to Attack";
-      }
-    } else if (Game.getState() == GameState.CLAIM_TILE) {
-      hintString = "Select a Tile to Claim";
-    } else if (Game.getState() == GameState.AI_CLAIM) {
-      hintString = String.format("Society %d expands their territory",
-          World.getActiveSociety().getSocietyId() + 1);
-    } else if (Game.getState() == GameState.AI_NOTHING) {
-      hintString = String.format("Society %d decides to do nothing",
-          World.getActiveSociety().getSocietyId() + 1);
-    } else if (Game.getState() == GameState.REPRODUCING) {
-      if (World.getActiveSociety().getSocietyId() == 0) {
-        hintString = "Your Society Reproduces";
-      } else {
-        hintString = String.format("Society %d Reproduces",
+    if (Game.isTraining()) {
+      hintString = "TRAINING IN PROGRESS";
+    } else {
+      if (Game.getState() == GameState.WARRING) {
+        if (World.getAttackingTile() == null) {
+          hintString = "Select an Attacking Tile";
+        } else if (World.getOpponentTile() == null) {
+          hintString = "Select an Opponent's Tile to Attack";
+        }
+      } else if (Game.getState() == GameState.CLAIM_TILE) {
+        hintString = "Select a Tile to Claim";
+      } else if (Game.getState() == GameState.AI_CLAIM) {
+        hintString = String.format("Society %d expands their territory",
             World.getActiveSociety().getSocietyId() + 1);
-      }
-    } else if (Game.getState() == GameState.DEALING) {
-      hintString = "Will you Decline or Accept The offer?";
-    } else if (Game.getState() == GameState.TRADING) {
-      if (TradingMenu.isSocietiesChosen()) {
-        hintString = "Select Food and Materials to trade";
-      } else {
-        hintString = "Select society you wish to trade with.";
-      }
-    } else if (Game.getState() == GameState.AI_WAR) {
-      if (World.getTargetSociety().getSocietyId() == 0) {
-        hintString = String.format("Society %d Attacks Your Society",
+      } else if (Game.getState() == GameState.AI_NOTHING) {
+        hintString = String.format("Society %d decides to do nothing",
             World.getActiveSociety().getSocietyId() + 1);
-      } else {
-        hintString = String.format("Society %d Attacks Society %d",
-            World.getActiveSociety().getSocietyId() + 1,
-            World.getTargetSociety().getSocietyId() + 1);
+      } else if (Game.getState() == GameState.REPRODUCING) {
+        if (World.getActiveSociety().getSocietyId() == 0) {
+          hintString = "Your Society Reproduces";
+        } else {
+          hintString = String.format("Society %d Reproduces",
+              World.getActiveSociety().getSocietyId() + 1);
+        }
+      } else if (Game.getState() == GameState.DEALING) {
+        hintString = "Will you Decline or Accept The offer?";
+      } else if (Game.getState() == GameState.TRADING) {
+        if (TradingMenu.isSocietiesChosen()) {
+          hintString = "Select Food and Materials to trade";
+        } else {
+          hintString = "Select society you wish to trade with.";
+        }
+      } else if (Game.getState() == GameState.AI_WAR) {
+        if (World.getTargetSociety().getSocietyId() == 0) {
+          hintString = String.format("Society %d Attacks Your Society",
+              World.getActiveSociety().getSocietyId() + 1);
+        } else {
+          hintString = String.format("Society %d Attacks Society %d",
+              World.getActiveSociety().getSocietyId() + 1,
+              World.getTargetSociety().getSocietyId() + 1);
+        }
       }
     }
     if (!hint.getText().getString().equals(hintString) && hintString != null) {
@@ -223,11 +234,17 @@ public class Hud {
       float offsetY = arrowButton.getHudImage().getOffsetY();
       arrowButton.getHudImage().setOffsetY(offsetY + newValue);
       // Check if clicked
-      if (((Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && arrowButton.isMouseOver(window))
+      if ((((Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && arrowButton.isMouseOver(window))
           || Input.isKeyDown(GLFW.GLFW_KEY_SPACE))
-          && Game.canClick()) {
+          && Game.buttonLockFree())
+          || Game.isTraining()) {
         mouseOverHud = true;
-        Game.resetButtonLock();
+        // Only reset the lock if player input is active
+        // If not the lock gets constantly reset and any other player input
+        // cant be taken during training such as changing the mode
+        if (!Game.isTraining()) {
+          Game.resetButtonLock();
+        }
         updateTurnCounter();
         updateScoreCounter();
         arrowButton.getHudImage().setOffsetY(ARROW_BUTTON_OFFSET_Y);
@@ -260,7 +277,7 @@ public class Hud {
       societyButtons.get(i).update(window);
       // check if mouse click
       if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
-          && societyButtons.get(i).isMouseOver(window) && Game.canClick()) {
+          && societyButtons.get(i).isMouseOver(window) && Game.buttonLockFree()) {
         Game.resetButtonLock();
         mouseOverHud = true;
         terrainPanelActive = false;
@@ -317,17 +334,24 @@ public class Hud {
 
   private static void updateTurnCounter() {
     turn++;
-    turnText.setString(String.format("Turn: %d", turn));
-    turnCounter.getLines().get(0).setText(turnText);
+    // Only update the buffers if a player is participating
+    if (!Game.isTraining()) {
+      turnText.setString(String.format("Turn: %d", turn));
+      turnCounter.getLines().get(0).setText(turnText);
+    }
   }
 
   private static void updateScoreCounter() {
-    float score = World.getActiveSocieties().get(0).getScore();
-    scoreText.setString(String.format("Score: %.0f", score));
-    scoreText.setCentreHorizontal(true);
-    scoreText.setCentreVertical(true);
-    scoreCounter.updateText(scoreText);
-    scoreCounter.reposition();
+    // Only need to update the onscreen score if a player is participating
+    if (!Game.isTraining()) {
+      float score = World.getActiveSocieties().get(0).getScore();
+      scoreText.setString(String.format("Score: %.0f", score));
+      scoreText.setCentreHorizontal(true);
+      scoreText.setCentreVertical(true);
+      scoreCounter.updateText(scoreText);
+      scoreCounter.reposition();
+    }
+
   }
 
   /**
@@ -337,7 +361,7 @@ public class Hud {
    */
   public static void updateDevHud(Camera camera) {
     // check for key press to toggle
-    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && Game.canClick()) {
+    if (Input.isKeyDown(GLFW.GLFW_KEY_F3) && Game.buttonLockFree()) {
       devHudActive = !devHudActive;
       Game.resetButtonLock();
     }
@@ -357,28 +381,41 @@ public class Hud {
     // create the turn Counter
     RectangleMesh turnMesh = new RectangleMesh(model, new Material(hudImage));
     turnCounter = new HudObject(turnMesh, turnText, -1f, 0.2f, 1f, -0.05f);
-    turnCounter.create();
+    if (!Game.isTraining()) {
+      turnCounter.create();
+    }
     // Create the score counter for the player
     scoreText.setString(String.format("Score: %.0f", World.getSocieties()[0].getScore()));
     scoreText.setCentreHorizontal(true);
     scoreText.setCentreVertical(true);
     RectangleMesh scoreMesh = new RectangleMesh(model, new Material(hudImage));
     scoreCounter = new HudObject(scoreMesh, scoreText, -1f, 0.7f, 1f, -0.05f);
-    scoreCounter.create();
+    if (!Game.isTraining()) {
+      scoreCounter.create();
+    }
     // Update the score here initially
     Game.updateScores();
     updateScoreCounter();
     // Create the coordinate hud element
     coordinates = new HudText(coordText, -1, 0, 1, -1.95f);
-    coordinates.create();
-    // Create society buttons
-    createSocietyButtons();
+    if (!Game.isTraining()) {
+      coordinates.create();
+    }
+    if (!Game.isTraining()) {
+      // Create society buttons
+      createSocietyButtons();
+      // create Society Inspection Panel
+      createInspectionPanels();
+    }
     // Create Next Turn Button
     createTurnButton();
-    // create Society Inspection Panel
-    createInspectionPanels();
     // CreateHint
     createHint();
+    // Set the training notification if training
+    if (Game.isTraining()) {
+      updateHint();
+      hint.reposition();
+    }
   }
 
   private static void createHint() {
@@ -653,26 +690,28 @@ public class Hud {
    * Destroy All Hud Elements.
    */
   public static void destroy() {
-    turnCounter.destroy();
-    scoreCounter.destroy();
-    coordinates.destroy();
-    for (ButtonObject button : societyButtons) {
-      button.destroy();
+    if (!Game.isTraining()) {
+      turnCounter.destroy();
+      scoreCounter.destroy();
+      coordinates.destroy();
+      for (ButtonObject button : societyButtons) {
+        button.destroy();
+      }
+      societyInspectionPanel.destroy();
+      terrainInspectionPanel.destroy();
+      for (HudImage border : panelBorders) {
+        border.destroy();
+      }
+      panelTitle.destroy();
+      terrainTileImage.destroy();
+      societyButtonPanel.destroy();
+      closeButton.destroy();
     }
     societyButtons.clear();
     arrowButton.destroy();
     arrowTextObject.destroy();
-    societyButtonPanel.destroy();
     arrowButtonPanel.destroy();
-    societyInspectionPanel.destroy();
-    terrainInspectionPanel.destroy();
-    closeButton.destroy();
-    for (HudImage border : panelBorders) {
-      border.destroy();
-    }
     panelBorders.clear();
-    panelTitle.destroy();
-    terrainTileImage.destroy();
     hint.destroy();
     turn = 0;
   }
