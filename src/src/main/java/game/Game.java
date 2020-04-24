@@ -346,7 +346,7 @@ public class Game {
 
       if (training) {
         winCount++;
-        System.out.println(winCount);
+        System.out.println(winningSociety + " Wins Game " + winCount);
         // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
       }
 
@@ -380,6 +380,9 @@ public class Game {
         World.render(worldRenderer, camera, window);
         // Render all hud elements
         Hud.render(guiRenderer, textRenderer);
+      } else if (state != GameState.GAME_PAUSE) {
+        // If training is in progress but not paused than display the training notification
+        Hud.renderHint(textRenderer);
       }
       if (state == GameState.GAME_PAUSE) {
         // Render the PauseMenu
