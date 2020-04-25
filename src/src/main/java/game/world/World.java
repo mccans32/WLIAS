@@ -523,13 +523,13 @@ public class World {
     if (!society.hasMadeMove()) {
       // calculate all possible societies you can trade with
       society.calculatePossibleTradingSocieties();
+      Society bestTradingCandidate = null;
       // Get a list of valid tiles that we can attack
       ArrayList<TileWorldObject> validTiles = society.getValidTilesToAttack();
       if (!society.getPossibleTradingSocieties().isEmpty()) {
-        // create Trade Agreement
+        // find best candidate for trading
         float foodPerPerson = 0;
         float matsPerPerson = 0;
-        Society bestCandidate = null;
         // calculate the society with highest food and raw materials per person
         // this will give rise to highest possibility of accepting a trade deal
         for (Society soc : society.getPossibleTradingSocieties()) {
@@ -538,10 +538,12 @@ public class World {
               > matsPerPerson) {
             foodPerPerson = (float) soc.getTotalFoodResource() / soc.getPopulation().size();
             matsPerPerson = (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size();
-            bestCandidate = soc;
+            bestTradingCandidate = soc;
           }
         }
-        TradeDeal tradeDeal = calculateTradeDeal(society, bestCandidate);
+      }
+      if (bestTradingCandidate != null) {
+        TradeDeal tradeDeal = calculateTradeDeal(society, bestTradingCandidate);
         if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)
             && Game.getState() != GameState.GAME_PAUSE && !Game.isTraining()) {
           DealingMenu.setTradeDeal(tradeDeal);
