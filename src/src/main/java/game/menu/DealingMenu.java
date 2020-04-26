@@ -20,6 +20,7 @@ import engine.objects.gui.HudText;
 import engine.objects.gui.InspectionPanelObject;
 import engine.utils.ColourUtils;
 import game.Game;
+import game.GameState;
 import game.menu.data.TradeDeal;
 import game.world.Hud;
 import java.awt.Color;
@@ -296,11 +297,13 @@ public class DealingMenu {
       tradeDeal.getSocietyB().activateTradeDeal(tradeDeal);
       reset();
       tradeDeal.getSocietyA().setEndTurn(true);
+      Game.setState(GameState.GAME_MAIN);
     } else if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
         && Game.buttonLockFree()
         && declineButton.isMouseOver(window)) {
       reset();
       tradeDeal.getSocietyA().setEndTurn(true);
+      Game.setState(GameState.GAME_MAIN);
     }
   }
 

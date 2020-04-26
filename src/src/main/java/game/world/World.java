@@ -22,7 +22,9 @@ import game.menu.TradingMenu;
 import game.menu.data.TradeDeal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 import map.MapGeneration;
 import map.tiles.AridTile;
 import map.tiles.FertileTile;
@@ -83,6 +85,7 @@ public class World {
   private static TileWorldObject claimedTile;
   private static Society activeSociety;
   private static Society targetSociety;
+  private static Society bestTradingCandidate;
 
   public static Society getTargetSociety() {
     return targetSociety;
@@ -513,36 +516,96 @@ public class World {
     World.activeSociety = activeSociety;
   }
 
+  private static int getMoveID(Society society) {
+    // This function returns a turn ID where each number corresponds to a certain move
+    // For now we just return a list of random weights and pick the first one possible
+
+    // This will be returned by the NN;
+    double[] moveWeights = new double[4];
+
+    for (int i = 0; i < moveWeights.length; i++) {
+      moveWeights[i] = Math.random();
+    }
+
+    // Create a map that will map a move ID to its weight
+    TreeMap<Double, Integer> map = new TreeMap<>();
+
+    for (int i = 0; i < moveWeights.length; i++) {
+      map.put(moveWeights[i], i);
+    }
+
+    ArrayList<Integer> moveOrder = new ArrayList<>();
+    for (Map.Entry<Double, Integer> entry : map.entrySet()) {
+      moveOrder.add(entry.getValue());
+    }
+
+    int move = 0;
+    for (int i = moveOrder.size() - 1; i >= 0; i--) {
+      // Get the move ID
+      move = moveOrder.get(i);
+
+      if (move == 0) {
+
+        // See if Claiming is possible
+        society.calculateClaimableTerritory();
+        if (!society.getClaimableTerritory().isEmpty()) {
+          break;
+        }
+      } else if (move == 1) {
+
+        // See if Warring is possible
+        // Get a list of valid tiles that we can attack
+        ArrayList<TileWorldObject> validTiles = society.getValidTilesToAttack();
+        if (!validTiles.isEmpty()) {
+          break;
+        }
+      } else if (move == 2) {
+
+        // See if Trading is possible
+        // calculate all possible societies you can trade with
+        society.calculatePossibleTradingSocieties();
+        // Get a list of valid tiles that we can attack
+        ArrayList<TileWorldObject> validTiles = society.getValidTilesToAttack();
+        if (!society.getPossibleTradingSocieties().isEmpty()) {
+          // find best candidate for trading
+          float foodPerPerson = 0;
+          float matsPerPerson = 0;
+          // calculate the society with highest food and raw materials per person
+          // this will give rise to highest possibility of accepting a trade deal
+          for (Society soc : society.getPossibleTradingSocieties()) {
+            if ((float) soc.getTotalFoodResource() / soc.getPopulation().size() > foodPerPerson
+                && (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size()
+                > matsPerPerson) {
+              foodPerPerson = (float) soc.getTotalFoodResource() / soc.getPopulation().size();
+              matsPerPerson = (float) soc.getTotalRawMaterialResource()
+                  / soc.getPopulation().size();
+              bestTradingCandidate = soc;
+            }
+          }
+        }
+        if (bestTradingCandidate != null) {
+          break;
+        }
+      } else {
+        // if move is 4 the society does nothing
+        break;
+      }
+    }
+    return move;
+  }
+
   /**
    * The turn calculations needed for the Ai Societies to ake their turns.
    *
    * @param society the society
    */
-  // TODO GET RID OF THIS FUNCTION OR REFACTOR IT WHEN AI LOGIC IS IMPLEMENTED
   public static void aiTurn(Society society) {
-    if (!society.hasMadeMove()) {
-      // calculate all possible societies you can trade with
-      society.calculatePossibleTradingSocieties();
-      Society bestTradingCandidate = null;
-      // Get a list of valid tiles that we can attack
-      ArrayList<TileWorldObject> validTiles = society.getValidTilesToAttack();
-      if (!society.getPossibleTradingSocieties().isEmpty()) {
-        // find best candidate for trading
-        float foodPerPerson = 0;
-        float matsPerPerson = 0;
-        // calculate the society with highest food and raw materials per person
-        // this will give rise to highest possibility of accepting a trade deal
-        for (Society soc : society.getPossibleTradingSocieties()) {
-          if ((float) soc.getTotalFoodResource() / soc.getPopulation().size() > foodPerPerson
-              && (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size()
-              > matsPerPerson) {
-            foodPerPerson = (float) soc.getTotalFoodResource() / soc.getPopulation().size();
-            matsPerPerson = (float) soc.getTotalRawMaterialResource() / soc.getPopulation().size();
-            bestTradingCandidate = soc;
-          }
-        }
-      }
-      if (bestTradingCandidate != null) {
+    if (!society.hasMadeMove() && Game.getState() != GameState.DEALING) {
+      // Get the turn ID;
+      int turnId = getMoveID(society);
+      if (turnId == 2) {
+        // TRADING
+        Game.getNotificationTimer().setDuration(Game.isTraining() ? 0 : 2);
         TradeDeal tradeDeal = calculateTradeDeal(society, bestTradingCandidate);
         if (tradeDeal.getSocietyB() == getActiveSocieties().get(0)
             && Game.getState() != GameState.GAME_PAUSE && !Game.isTraining()) {
@@ -559,8 +622,9 @@ public class World {
           }
           society.setEndTurn(true);
         }
-      } else if (validTiles.size() > 0) {
-        // Make a War Move
+      } else if (turnId == 1) {
+        // WARRING
+        Game.getNotificationTimer().setDuration(Game.isTraining() ? 0 : 2);
         // rank our possible tiles to attack with
         ArrayList<TileWorldObject> attackingTiles = society.getAttackingTiles();
         attackingTiles.sort((tile1, tile2)
@@ -582,25 +646,22 @@ public class World {
         simulateBattle(society, attackingTile, defendingTile);
         society.setMadeMove(true);
         Game.setState(GameState.AI_WAR);
+      } else if (turnId == 0) {
+        // CLAIMING
+        Game.getNotificationTimer().setDuration(Game.isTraining() ? 0 : 2);
+        TileWorldObject claimTile = calculateClaimTile(society);
+        society.claimTile(claimTile);
+        bordersAltered = true;
+        updateSocietyBorders();
+        society.setMadeMove(true);
+        Game.setState(GameState.AI_CLAIM);
       } else {
-        // Claim a tile
-        society.calculateClaimableTerritory();
-        if (!society.getClaimableTerritory().isEmpty()) {
-          // calculate Most Needed Tile
-          TileWorldObject claimTile = calculateClaimTile(society);
-          society.claimTile(claimTile);
-          bordersAltered = true;
-          updateSocietyBorders();
-          society.setMadeMove(true);
-          Game.setState(GameState.AI_CLAIM);
-        } else {
-          Game.setState(GameState.AI_NOTHING);
-          society.setMadeMove(true);
-        }
+        Game.getNotificationTimer().setDuration(Game.isTraining() ? 0 : 2);
+        Game.setState(GameState.AI_NOTHING);
+        society.setMadeMove(true);
       }
-      Game.getNotificationTimer().setDuration(Game.isTraining() ? 0 : 2);
     }
-    if (Game.getNotificationTimer().isDurationMet()) {
+    if (Game.getNotificationTimer().isDurationMet() && Game.getState() != GameState.DEALING) {
       Game.getNotificationTimer().clearDuration();
       society.setEndTurn(true);
       Game.setState(GameState.GAME_MAIN);

@@ -153,71 +153,75 @@ public class Game {
         updateScores();
         // Check if the game is over
         checkGameOver();
-        // Reset the player choice
-        ChoiceMenu.setChoiceMade(false);
-        // Age everyone in each society
-        if (Hud.getTurn() % AGE_FREQUENCY == 0) {
-          for (Society society : World.getActiveSocieties()) {
-            society.agePopulation();
-          }
-        }
-        // generates a random turn order of all the societies in play
-        ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
-        Collections.shuffle(turnOrder);
-        // update the Turn Order
-        Hud.updateTurnTracker(turnOrder);
-        // cycles thorough all societies in play
-        for (Society society : turnOrder) {
-          // closing of the inspection panel so that information is up to date
-          if (society.getSocietyId() == 0) {
-            Hud.setSocietyPanelActive(false);
-            Hud.setTerrainPanelActive(false);
-          }
-          World.setActiveSociety(society);
-          // check and end Trade deals
-          society.checkTradeDeal();
-          // update happiness based on resources
-          society.updateHappiness();
-          // set the end turn flag to false
-          society.setEndTurn(false);
-          society.setMadeMove(false);
-          // update and render the screen until the society finishes its move
-          // or the simulation closes
-          while (!society.isEndTurn()
-              && !window.shouldClose()
-              && !World.getActiveSocieties().isEmpty()) {
-            // Break this loop if the game is restarted form the game over screen
-            if (restarted) {
-              break;
+
+        if (state != GameState.GAME_WIN && state != GameState.GAME_OVER) {
+          // Reset the player choice
+          ChoiceMenu.setChoiceMade(false);
+          // Age everyone in each society
+          if (Hud.getTurn() % AGE_FREQUENCY == 0) {
+            for (Society society : World.getActiveSocieties()) {
+              society.agePopulation();
             }
-            // Make AI Moves only if there is no player input
-            if (training) {
-              World.aiTurn(society);
-            } else if (society.getSocietyId() != 0) {
-              // There is Player Input and it is an AI society
-              World.aiTurn(society);
-            } else if (!ChoiceMenu.isChoiceMade()
-                // There is Player input and the Player has not made a choice yet
-                && state != GameState.GAME_PAUSE
+          }
+          // generates a random turn order of all the societies in play
+          ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
+          Collections.shuffle(turnOrder);
+          // update the Turn Order
+          Hud.updateTurnTracker(turnOrder);
+          // cycles thorough all societies in play
+          for (Society society : turnOrder) {
+            // closing of the inspection panel so that information is up to date
+            if (society.getSocietyId() == 0) {
+              Hud.setSocietyPanelActive(false);
+              Hud.setTerrainPanelActive(false);
+            }
+            World.setActiveSociety(society);
+            // check and end Trade deals
+            society.checkTradeDeal();
+            // update happiness based on resources
+            society.updateHappiness();
+            // set the end turn flag to false
+            society.setEndTurn(false);
+            society.setMadeMove(false);
+            // update and render the screen until the society finishes its move
+            // or the simulation closes
+            while (!society.isEndTurn()
+                && !window.shouldClose()
+                && !World.getActiveSocieties().isEmpty()) {
+              // Break this loop if the game is restarted form the game over screen
+              if (restarted) {
+                break;
+              }
+              // Make AI Moves only if there is no player input
+              if (training) {
+                World.aiTurn(society);
+              } else if (society.getSocietyId() != 0) {
+                // There is Player Input and it is an AI society
+                World.aiTurn(society);
+              } else if (!ChoiceMenu.isChoiceMade()
+                  // There is Player input and the Player has not made a choice yet
+                  && state != GameState.GAME_PAUSE
+                  && state != GameState.GAME_OVER
+                  && state != GameState.GAME_WIN) {
+                state = GameState.GAME_CHOICE;
+              }
+              update();
+              render();
+            }
+            // Society reproduces and the notification loop is set
+            // Need to check this, if we don't the state is reset to reproducing and the main menu
+            // is not rendered.
+            if (state != GameState.MAIN_MENU
                 && state != GameState.GAME_OVER
-                && state != GameState.GAME_WIN) {
-              state = GameState.GAME_CHOICE;
+                && state != GameState.GAME_WIN
+                && state != GameState.GAME_PAUSE
+                && Hud.getTurn() % REPRODUCE_FREQUENCY == 0) {
+              reproduceLoop(society);
+              World.setActiveSociety(null);
             }
-            update();
-            render();
-          }
-          // Society reproduces and the notification loop is set
-          // Need to check this, if we don't the state is reset to reproducing and the main menu
-          // is not rendered.
-          if (state != GameState.MAIN_MENU
-              && state != GameState.GAME_OVER
-              && state != GameState.GAME_WIN
-              && state != GameState.GAME_PAUSE
-              && Hud.getTurn() % REPRODUCE_FREQUENCY == 0) {
-            reproduceLoop(society);
-            World.setActiveSociety(null);
           }
         }
+
         // End the turn if the state is appropriate
         // If these states aren't accounted for there are game play bugs
         if (state != GameState.MAIN_MENU

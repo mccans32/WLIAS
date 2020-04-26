@@ -1,13 +1,12 @@
 import game.Game;
 import neat.Client;
 import neat.Neat;
-import neat.genomes.ConnectionGene;
 
 /**
  * The type Main.
  */
 public class Main {
-  private static boolean testing = true;
+  private static boolean testing = false;
 
   /**
    * The entry point of application.
@@ -31,12 +30,12 @@ public class Main {
       //neat.printSpecies();
     }
 
-    for (Client c : neat.getClients().getData()) {
-      for (ConnectionGene g : c.getGenome().getConnections().getData()) {
-        System.out.print(g.getInnovationNumber() + " ");
-      }
-      System.out.println();
-    }
+    //    for (Client c : neat.getClients().getData()) {
+    //      for (ConnectionGene g : c.getGenome().getConnections().getData()) {
+    //        System.out.print(g.getInnovationNumber() + " ");
+    //      }
+    //      System.out.println();
+    //    }
 
     if (!testing) {
       Game game = new Game();
