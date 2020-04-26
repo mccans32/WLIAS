@@ -1,6 +1,7 @@
-package structures;
+package neat.genomes;
 
 public class NodeGene extends Gene {
+
   private double valueX;
   private double valueY;
 
@@ -26,15 +27,10 @@ public class NodeGene extends Gene {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof NodeGene)) {
       return false;
     }
-    NodeGene nodeGene = (NodeGene) o;
-    return Double.compare(nodeGene.valueX, valueX) == 0
-        && Double.compare(nodeGene.valueY, valueY) == 0;
+    return innovationNumber == ((NodeGene) o).getInnovationNumber();
   }
 
   @Override

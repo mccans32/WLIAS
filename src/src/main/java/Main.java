@@ -1,6 +1,7 @@
 import game.Game;
-import structures.Genome;
-import structures.Neat;
+import neat.Neat;
+import neat.genomes.Genome;
+import neat.visual.Frame;
 
 /**
  * The type Main.
@@ -14,9 +15,10 @@ public class Main {
    * @param args the input arguments.
    */
   public static void main(String[] args) {
-    Neat neat  = new Neat(8, 20, 100);
+    Neat neat = new Neat(2, 2, 0);
     Genome genome = neat.createEmptyGenome();
-    System.out.println(genome.getNodeGenes().size());
+    new Frame(genome);
+
     if (!testing) {
       Game game = new Game();
       game.start();

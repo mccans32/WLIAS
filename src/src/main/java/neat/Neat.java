@@ -1,51 +1,51 @@
-package structures;
+package neat;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import neat.genomes.ConnectionGene;
+import neat.genomes.Genome;
+import neat.genomes.NodeGene;
+import neat.genomes.RandomHashSet;
+import neat.visual.Frame;
 
 public class Neat {
-  public static final int GENE_MIN = 20;
+
   public static final int MAX_NODES = (int) Math.pow(2, 20);
+  public static final double C1 = 1;
+  public static final double C2 = 1;
+  public static final double C3 = 1;
+  public static final double WEIGHT_SHIFT_STRENGTH = 0.3;
+  public static final double WEIGHT_RANDOM_STRENGTH = 1;
   public static final double PROBABILITY_MUTATE_LINK = 0.4;
   public static final double PROBABILITY_MUTATE_NODE = 0.4;
   public static final double PROBABILITY_MUTATE_WEIGHT_SHIFT = 0.4;
   public static final double PROBABILITY_MUTATE_WEIGHT_RANDOM = 0.4;
   public static final double PROBABILITY_MUTATE_TOGGLE_LINK = 0.4;
-  public static final int C1 = 1;
-  public static final int C2 = 1;
-  public static final int C3 = 1;
-  public static final double WEIGHT_SHIFT_STRENGTH = 0.3;
-  public static final double WEIGHT_RANDOM_STRENGTH = 1;
-  private HashMap<ConnectionGene, ConnectionGene> allConnections = new HashMap<>();
-  private ArrayList<NodeGene> allNodes = new ArrayList<>();
-  private int inputSize;
-  private int outputSize;
-  private Object maxClients;
 
-  public Object getMaxClients() {
-    return maxClients;
-  }
+  private HashMap<ConnectionGene, ConnectionGene> allConnections = new HashMap<>();
+  private RandomHashSet<NodeGene> allNodes = new RandomHashSet<>();
+  private int maxClients;
+  private int outputSize;
+  private int inputSize;
 
   public Neat(int inputSize, int outputSize, int clients) {
     this.reset(inputSize, outputSize, clients);
   }
 
   /**
-   * Gets a connection that is a copy of the provided connection.
+   * Gets a new connection.
    *
-   * @param connectionGene1 the connection gene 1
+   * @param con the con
    * @return the connection
    */
-  public static ConnectionGene getConnection(ConnectionGene connectionGene1) {
-    ConnectionGene connectionGene2 = new ConnectionGene(connectionGene1.getFromGene(),
-        connectionGene1.getToGene());
-    connectionGene2.setWeight(connectionGene1.getWeight());
-    connectionGene2.setEnabled(connectionGene1.isEnabled());
-    return connectionGene2;
+  public static ConnectionGene getConnection(ConnectionGene con) {
+    ConnectionGene c = new ConnectionGene(con.getFrom(), con.getTo());
+    c.setWeight(con.getWeight());
+    c.setEnabled(con.isEnabled());
+    return c;
   }
 
   /**
-   * Gets a connection and adds to allConnections if it does nto already exist.
+   * Gets a new connection with to given nodes.
    *
    * @param node1 the node 1
    * @param node2 the node 2
@@ -60,24 +60,34 @@ public class Neat {
       connectionGene.setInnovationNumber(allConnections.size() + 1);
       allConnections.put(connectionGene, connectionGene);
     }
+
     return connectionGene;
   }
 
+  public static void main(String[] args) {
+    Neat neat = new Neat(3, 2, 0);
+    new Frame(neat.createEmptyGenome());
+  }
+
+  public int getMaxClients() {
+    return maxClients;
+  }
+
   /**
-   * Create an empty genome genome.
+   * Create an empty genome.
    *
    * @return the genome
    */
   public Genome createEmptyGenome() {
-    Genome genome = new Genome(this);
+    Genome g = new Genome(this);
     for (int i = 0; i < inputSize + outputSize; i++) {
-      genome.getNodeGenes().add(getNode(i + 1));
+      g.getNodes().add(getNode(i + 1));
     }
-    return genome;
+    return g;
   }
 
   /**
-   * Resets everything.
+   * Reset.
    *
    * @param inputSize  the input size
    * @param outputSize the output size
@@ -87,21 +97,22 @@ public class Neat {
     this.inputSize = inputSize;
     this.outputSize = outputSize;
     this.maxClients = clients;
+
     allConnections.clear();
     allNodes.clear();
 
-    // Create the input nodes
     for (int i = 0; i < inputSize; i++) {
-      NodeGene inputNode = getNode();
-      inputNode.setX(0.1);
-      inputNode.setY((i + 1) / (double) (inputSize + 1));
+      NodeGene n = getNode();
+      n.setX(0.1);
+      n.setY((i + 1) / (double) (inputSize + 1));
     }
-    // Create the output nodes
+
     for (int i = 0; i < outputSize; i++) {
-      NodeGene outputNode = getNode();
-      outputNode.setX(0.9);
-      outputNode.setY((i + 1) / (double) (outputSize + 1));
+      NodeGene n = getNode();
+      n.setX(0.9);
+      n.setY((i + 1) / (double) (outputSize + 1));
     }
+
   }
 
   /**
@@ -110,21 +121,29 @@ public class Neat {
    * @return the node
    */
   public NodeGene getNode() {
-    NodeGene node = new NodeGene(allNodes.size() + 1);
-    allNodes.add(node);
-    return node;
+    NodeGene n = new NodeGene(allNodes.size() + 1);
+    allNodes.add(n);
+    return n;
   }
 
   /**
-   * Gets a node form data based off of its index.
+   * Gets a node given an index.
    *
    * @param id the id
    * @return the node
    */
   public NodeGene getNode(int id) {
-    if (id >= 0 && id < allNodes.size()) {
-      return allNodes.get(id);
+    if (id <= allNodes.size()) {
+      return allNodes.get(id - 1);
     }
     return getNode();
+  }
+
+  public int getOutputSize() {
+    return outputSize;
+  }
+
+  public int getInputSize() {
+    return inputSize;
   }
 }

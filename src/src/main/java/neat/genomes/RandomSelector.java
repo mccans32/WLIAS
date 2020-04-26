@@ -1,4 +1,4 @@
-package structures;
+package neat.genomes;
 
 import java.util.ArrayList;
 
@@ -10,24 +10,25 @@ public class RandomSelector<T> {
   private double totalScore = 0;
 
   /**
-   * Add a new object.
+   * Adds a new object.
    *
-   * @param object the object
-   * @param score  the score
+   * @param element the element
+   * @param score   the score
    */
-  public void add(T object, double score) {
-    objects.add(object);
+  public void add(T element, double score) {
+    objects.add(element);
     scores.add(score);
     totalScore += score;
   }
 
   /**
-   * Gets a random object based off score.
+   * Gets a random object.
    *
-   * @return the random
+   * @return the object
    */
-  public T getRandom() {
+  public T random() {
     double v = Math.random() * totalScore;
+
     double c = 0;
     for (int i = 0; i < objects.size(); i++) {
       c += scores.get(i);
@@ -39,11 +40,12 @@ public class RandomSelector<T> {
   }
 
   /**
-   * Reset everything.
+   * Reset.
    */
   public void reset() {
     objects.clear();
     scores.clear();
     totalScore = 0;
   }
+
 }

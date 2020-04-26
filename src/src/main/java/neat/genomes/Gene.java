@@ -1,14 +1,14 @@
-package structures;
+package neat.genomes;
 
-public class Gene {
+public abstract class Gene {
+
   protected int innovationNumber;
-
-  public Gene() {
-
-  }
 
   public Gene(int innovationNumber) {
     this.innovationNumber = innovationNumber;
+  }
+
+  public Gene() {
   }
 
   public int getInnovationNumber() {
