@@ -18,9 +18,9 @@ public class RandomHashSet<T> {
   }
 
   /**
-   * Gets a Random element.
+   * Gets a random element.
    *
-   * @return the element
+   * @return the t
    */
   public T randomElement() {
     if (set.size() > 0) {
@@ -34,7 +34,7 @@ public class RandomHashSet<T> {
   }
 
   /**
-   * Adds a new element.
+   * Add.
    *
    * @param object the object
    */
@@ -46,7 +46,7 @@ public class RandomHashSet<T> {
   }
 
   /**
-   * Add a new object sorted by its innovation number.
+   * Adds a new object to the data sorted by its innovation number.
    *
    * @param object the object
    */
@@ -70,7 +70,7 @@ public class RandomHashSet<T> {
   }
 
   /**
-   * Gets an element based off of its index.
+   * Get an object given its index.
    *
    * @param index the index
    * @return the t
@@ -83,7 +83,7 @@ public class RandomHashSet<T> {
   }
 
   /**
-   * Removes an element given its index.
+   * Remove.
    *
    * @param index the index
    */

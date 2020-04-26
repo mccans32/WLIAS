@@ -2,6 +2,7 @@ package neat.genomes;
 
 public class NodeGene extends Gene {
 
+
   private double valueX;
   private double valueY;
 
@@ -31,6 +32,11 @@ public class NodeGene extends Gene {
       return false;
     }
     return innovationNumber == ((NodeGene) o).getInnovationNumber();
+  }
+
+  @Override
+  public String toString() {
+    return "NodeGene{" + "innovation_number=" + innovationNumber + '}';
   }
 
   @Override

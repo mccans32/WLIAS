@@ -3,11 +3,14 @@ package neat.genomes;
 import neat.Neat;
 
 public class ConnectionGene extends Gene {
+
   private NodeGene from;
   private NodeGene to;
 
   private double weight;
   private boolean enabled = true;
+
+  private int replaceIndex;
 
   public ConnectionGene(NodeGene from, NodeGene to) {
     this.from = from;
@@ -56,7 +59,26 @@ public class ConnectionGene extends Gene {
   }
 
   @Override
+  public String toString() {
+    return "ConnectionGene{"
+        + "from=" + from.getInnovationNumber()
+        + ", to=" + to.getInnovationNumber()
+        + ", weight=" + weight
+        + ", enabled=" + enabled
+        + ", innovation_number=" + innovationNumber
+        + '}';
+  }
+
+  @Override
   public int hashCode() {
     return from.getInnovationNumber() * Neat.MAX_NODES + to.getInnovationNumber();
+  }
+
+  public int getReplaceIndex() {
+    return replaceIndex;
+  }
+
+  public void setReplaceIndex(int replaceIndex) {
+    this.replaceIndex = replaceIndex;
   }
 }

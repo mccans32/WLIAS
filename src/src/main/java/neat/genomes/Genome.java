@@ -1,7 +1,6 @@
 package neat.genomes;
 
 import neat.Neat;
-import neat.calculations.Calculator;
 
 public class Genome {
 
@@ -9,7 +8,6 @@ public class Genome {
   private RandomHashSet<NodeGene> nodes = new RandomHashSet<>();
 
   private Neat neat;
-  private Calculator calculator;
 
 
   public Genome(Neat neat) {
@@ -31,7 +29,7 @@ public class Genome {
   public static Genome crossOver(Genome g1, Genome g2) {
     Neat neat = g1.getNeat();
 
-    Genome genome = neat.createEmptyGenome();
+    Genome genome = neat.emptyGenome();
 
     int indexG1 = 0;
     int indexG2 = 0;
@@ -45,7 +43,6 @@ public class Genome {
       int in2 = gene2.getInnovationNumber();
 
       if (in1 == in2) {
-
         if (Math.random() > 0.5) {
           genome.getConnections().add(Neat.getConnection(gene1));
         } else {
@@ -53,8 +50,7 @@ public class Genome {
         }
         indexG1++;
         indexG2++;
-      }
-      if (in1 > in2) {
+      } else if (in1 > in2) {
         //genome.getConnections().add(neat.getConnection(gene2));
         //disjoint gene of b
         indexG2++;
@@ -83,17 +79,23 @@ public class Genome {
    * calculated the distance between this genome g1 and a second genome g2.
    * - g1 must have the highest innovation number!
    *
-   * @param g2 the second genome
-   * @return the distance
+   * @param g2 the other genome
+   * @return the distance between this and the second genome
    */
   public double distance(Genome g2) {
 
     Genome g1 = this;
+    int highestInnovationGene1 = 0;
+    if (g1.getConnections().size() != 0) {
+      highestInnovationGene1
+          = g1.getConnections().get(g1.getConnections().size() - 1).getInnovationNumber();
+    }
 
-    int highestInnovationGene1 =
-        g1.getConnections().get(g1.getConnections().size() - 1).getInnovationNumber();
-    int highestInnovationGene2 =
-        g2.getConnections().get(g2.getConnections().size() - 1).getInnovationNumber();
+    int highestInnovationGene2 = 0;
+    if (g2.getConnections().size() != 0) {
+      highestInnovationGene2
+          = g2.getConnections().get(g2.getConnections().size() - 1).getInnovationNumber();
+    }
 
     if (highestInnovationGene1 < highestInnovationGene2) {
       Genome g = g1;
@@ -118,69 +120,51 @@ public class Genome {
       int in2 = gene2.getInnovationNumber();
 
       if (in1 == in2) {
-        // similar gene
+        //similar gene
         similar++;
         weightDiff += Math.abs(gene1.getWeight() - gene2.getWeight());
         indexG1++;
         indexG2++;
-      }
-      disjoint++;
-      if (in1 > in2) {
-        // disjoint gene of b
+      } else if (in1 > in2) {
+        //disjoint gene of b
+        disjoint++;
         indexG2++;
       } else {
-        // disjoint gene of a
+        //disjoint gene of a
+        disjoint++;
         indexG1++;
       }
     }
 
-    weightDiff /= similar;
+    weightDiff /= Math.max(1, similar);
     excess = g1.getConnections().size() - indexG1;
-
 
     double n = Math.max(g1.getConnections().size(), g2.getConnections().size());
     if (n < 20) {
       n = 1;
     }
 
-    return Neat.C1 * disjoint / n + Neat.C2 * excess / n + Neat.C3 * weightDiff / n;
+    return neat.getC1() * disjoint / n + neat.getC2() * excess / n + neat.getC3() * weightDiff / n;
 
-  }
-
-  public void generate_calculator() {
-    this.calculator = new Calculator(this);
   }
 
   /**
-   * Calculate the output array for this genome.
-   *
-   * @param ar the ar
-   * @return the double [ ]
-   */
-  public double[] calculate(double... ar) {
-    if (calculator != null) {
-      return calculator.calculate(ar);
-    }
-    return null;
-  }
-
-  /**
-   * Mutate this genome.
+   * Mutate.
    */
   public void mutate() {
-    if (Neat.PROBABILITY_MUTATE_LINK > Math.random()) {
+    if (neat.getProbabilityMutateLink() > Math.random()) {
       mutateLink();
     }
-    if (Neat.PROBABILITY_MUTATE_NODE > Math.random()) {
+    if (neat.getProbabilityMutateNode() > Math.random()) {
       mutateNode();
     }
-    if (Neat.PROBABILITY_MUTATE_WEIGHT_SHIFT > Math.random()) {
+    if (neat.getProbabilityMutateWeightShift() > Math.random()) {
       mutateWeightShift();
     }
-    if (Neat.PROBABILITY_MUTATE_WEIGHT_RANDOM > Math.random()) {
+    if (neat.getProbabilityMutateWeightRandom() > Math.random()) {
       mutateWeightRandom();
     }
-    if (Neat.PROBABILITY_MUTATE_TOGGLE_LINK > Math.random()) {
+    if (neat.getProbabilityMutateToggleLink() > Math.random()) {
       mutateLinkToggle();
     }
   }
@@ -195,6 +179,9 @@ public class Genome {
       NodeGene a = nodes.randomElement();
       NodeGene b = nodes.randomElement();
 
+      if (a == null || b == null) {
+        continue;
+      }
       if (a.getX() == b.getX()) {
         continue;
       }
@@ -211,7 +198,7 @@ public class Genome {
       }
 
       con = neat.getConnection(con.getFrom(), con.getTo());
-      con.setWeight((Math.random() * 2 - 1) * Neat.WEIGHT_RANDOM_STRENGTH);
+      con.setWeight((Math.random() * 2 - 1) * neat.getWeightRandomStrength());
 
       connections.addSorted(con);
       return;
@@ -219,7 +206,7 @@ public class Genome {
   }
 
   /**
-   * Mutates a link to add an extra node.
+   * Mutates a node.
    */
   public void mutateNode() {
     ConnectionGene con = connections.randomElement();
@@ -230,9 +217,16 @@ public class Genome {
     NodeGene from = con.getFrom();
     NodeGene to = con.getTo();
 
-    NodeGene middle = neat.getNode();
-    middle.setX((from.getX() + to.getX()) / 2);
-    middle.setY((from.getY() + to.getY()) / 2 + Math.random() * 0.1 - 0.05);
+    int replaceIndex = neat.getReplaceIndex(from, to);
+    NodeGene middle;
+    if (replaceIndex == 0) {
+      middle = neat.getNode();
+      middle.setX((from.getX() + to.getX()) / 2);
+      middle.setY((from.getY() + to.getY()) / 2 + Math.random() * 0.1 - 0.05);
+      neat.setReplaceIndex(from, to, middle.getInnovationNumber());
+    } else {
+      middle = neat.getNode(replaceIndex);
+    }
 
     ConnectionGene con1 = neat.getConnection(from, middle);
     ConnectionGene con2 = neat.getConnection(middle, to);
@@ -249,27 +243,27 @@ public class Genome {
   }
 
   /**
-   * Mutates a weight to shift.
+   * Mutates a weight by shifting its value.
    */
   public void mutateWeightShift() {
     ConnectionGene con = connections.randomElement();
     if (con != null) {
-      con.setWeight(con.getWeight() + (Math.random() * 2 - 1) * Neat.WEIGHT_SHIFT_STRENGTH);
+      con.setWeight(con.getWeight() + (Math.random() * 2 - 1) * neat.getWeightShiftStrength());
     }
   }
 
   /**
-   * Mutates a weight to a new random value.
+   * Mutates a weight by changing it value random;y.
    */
   public void mutateWeightRandom() {
     ConnectionGene con = connections.randomElement();
     if (con != null) {
-      con.setWeight((Math.random() * 2 - 1) * Neat.WEIGHT_RANDOM_STRENGTH);
+      con.setWeight((Math.random() * 2 - 1) * neat.getWeightRandomStrength());
     }
   }
 
   /**
-   * Toggled whether a lnk is enabled or disabled.
+   * Mutates link ny toggling if it is enabled or disabled.
    */
   public void mutateLinkToggle() {
     ConnectionGene con = connections.randomElement();
@@ -289,4 +283,6 @@ public class Genome {
   public Neat getNeat() {
     return neat;
   }
+
+
 }

@@ -10,7 +10,7 @@ public class RandomSelector<T> {
   private double totalScore = 0;
 
   /**
-   * Adds a new object.
+   * Add.
    *
    * @param element the element
    * @param score   the score
@@ -22,17 +22,16 @@ public class RandomSelector<T> {
   }
 
   /**
-   * Gets a random object.
+   * Get a random object.
    *
-   * @return the object
+   * @return the t
    */
   public T random() {
     double v = Math.random() * totalScore;
-
     double c = 0;
     for (int i = 0; i < objects.size(); i++) {
       c += scores.get(i);
-      if (c > v) {
+      if (c >= v) {
         return objects.get(i);
       }
     }

@@ -25,6 +25,7 @@ public class Calculator {
     HashMap<Integer, Node> nodeHashMap = new HashMap<>();
 
     for (NodeGene n : nodes.getData()) {
+
       Node node = new Node(n.getX());
       nodeHashMap.put(n.getInnovationNumber(), node);
 
@@ -61,6 +62,7 @@ public class Calculator {
    * @return the double [ ]
    */
   public double[] calculate(double... input) {
+
     if (input.length != inputNodes.size()) {
       throw new RuntimeException("Data doesnt fit");
     }
