@@ -154,6 +154,14 @@ public class World {
         int clientIndex = Game.getDecisionClientIndex();
         decisionClient = decisionClients.get(clientIndex);
       }
+    } else {
+      // A normal game is occurring
+      try {
+        decisionClient = Game.getNeat().getBestClient();
+      } catch (NullPointerException e) {
+        // Need this to fix unit tests
+        System.out.println("Can't set the decision client");
+      }
     }
 
 
@@ -166,6 +174,9 @@ public class World {
         if (Game.getTrainingMode() == 0) {
           society.setDecisionClient(decisionClient);
         }
+      } else {
+        // else set the client to be the best from the NEAT
+        society.setDecisionClient(decisionClient);
       }
 
       activeSocieties.add(society);
@@ -551,12 +562,11 @@ public class World {
 
   private static int getMoveID(Society society) {
     // This function returns a turn ID where each number corresponds to a certain move
-    // For now we just return a list of random weights and pick the first one possible
 
     // This will be returned by the NN;
     double[] moveWeights = new double[4];
 
-    if (!Game.isTraining()) {
+    if (society.getDecisionClient() == null) {
       // Do random moves
       for (int i = 0; i < moveWeights.length; i++) {
         moveWeights[i] = Math.random();

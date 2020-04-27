@@ -341,4 +341,37 @@ public class Neat implements Serializable {
   public RandomHashSet<Client> getClients() {
     return clients;
   }
+
+  /**
+   * Gets the fittest client from the best species.
+   *
+   * @return the best client
+   */
+  public Client getBestClient() {
+    Client bestClient = null;
+
+    // If there are existing species
+    if (species.size() > 0) {
+      // Get the best Species
+      Species bestSpecies = null;
+      for (Species species : species.getData()) {
+        if (bestSpecies == null || species.getScore() > bestSpecies.getScore()) {
+          bestSpecies = species;
+        }
+      }
+
+      // From the best species get the fittest client
+      assert bestSpecies != null;
+      for (Client client : bestSpecies.getClients().getData()) {
+        if (bestClient == null || client.getScore() > bestClient.getScore()) {
+          bestClient = client;
+        }
+      }
+    } else {
+      // Pick a random client
+      bestClient = clients.randomElement();
+    }
+
+    return bestClient;
+  }
 }
