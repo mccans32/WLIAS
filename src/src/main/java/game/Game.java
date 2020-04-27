@@ -419,7 +419,7 @@ public class Game {
           // Update the score for the single client
           winningSociety.getDecisionClient().setScore(winningSociety.getScore());
         } else {
-          // update the score if teh client being trained
+          // update the score if the client being trained
           if (winningSociety == World.getSocieties()[0]) {
             float score = winningSociety.getScore() * 1.5f;
             winningSociety.getDecisionClient().setScore(score);
