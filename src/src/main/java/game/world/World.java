@@ -148,12 +148,9 @@ public class World {
     Client decisionClient = null;
 
     if (Game.isTraining()) {
-      if (Game.getTrainingMode() == 0) {
-        // Get the Client to test in this simulation
-        ArrayList<Client> decisionClients = Game.getNeat().getClients().getData();
-        int clientIndex = Game.getDecisionClientIndex();
-        decisionClient = decisionClients.get(clientIndex);
-      }
+      ArrayList<Client> decisionClients = Game.getNeat().getClients().getData();
+      int clientIndex = Game.getDecisionClientIndex();
+      decisionClient = decisionClients.get(clientIndex);
     } else {
       // A normal game is occurring
       try {
@@ -173,6 +170,12 @@ public class World {
       if (Game.isTraining()) {
         if (Game.getTrainingMode() == 0) {
           society.setDecisionClient(decisionClient);
+        } else {
+          if (society.getSocietyId() == 0) {
+            society.setDecisionClient(decisionClient);
+          } else {
+            society.setDecisionClient(Game.getNeat().getRandomClient());
+          }
         }
       } else {
         // else set the client to be the best from the NEAT

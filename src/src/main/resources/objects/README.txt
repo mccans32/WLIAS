@@ -1,0 +1,1 @@
+This is a placeholder file so that this directory is saved within the Git repository.
