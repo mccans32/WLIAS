@@ -53,6 +53,13 @@ public class Hud {
   private static final float SOCIETY_BUTTON_HEIGHT = 0.1f;
   private static final float SOCIETY_BUTTON_PADDING = 0.06f;
   private static final float SOCIETY_BUTTON_OFFSET_Y = (SOCIETY_BUTTON_HEIGHT / 2) + 0.02f;
+  private static final float TURN_ORDER_IDENTIFIER_WIDTH = 0.3f;
+  private static final float TURN_ORDER_IDENTIFIER_HEIGHT = 0.05f;
+  private static final float DEFAULT_IDENTIFIER_X_OFFSET = 0.15f;
+  private static final float DEFAULT_IDENTIFIER_EDGE_X = -1f;
+  private static final float DEFAULT_IDENTIFIER_EDGE_Y = 0.825f;
+  private static final float DEFAULT_IDENTIFIER_Y_OFFSET = 0.1f;
+  private static final float DEFAULT_IDENTIFIER_PADDING = 0.1f;
   private static HudObject turnCounter;
   private static HudObject scoreCounter;
   private static HudObject societyInspectionPanel;
@@ -69,7 +76,9 @@ public class Hud {
   private static Boolean devHudActive = false;
   private static int turn = 1;
   private static ArrayList<SocietyButton> societyButtons = new ArrayList<>();
+  private static ArrayList<SocietyButton> turnOrderIdentifiers = new ArrayList<>();
   private static HudImage societyButtonPanel;
+  private static HudImage turnTrackerPanel;
   private static HudImage arrowButtonPanel;
   private static HudText panelTitle;
   private static ButtonObject arrowButton;
@@ -81,6 +90,7 @@ public class Hud {
   private static ArrayList<HudImage> panelBorders = new ArrayList<>();
   private static boolean mouseOverHud = false;
   private static HudText hint;
+  private static ArrayList<Float> TurnTrackerIdentifierPositions = new ArrayList<>();
 
   public static int getTurn() {
     return turn;
@@ -135,6 +145,7 @@ public class Hud {
     if (!Game.isTraining()) {
       updateTerrainPanel();
       updateSocietyButtons(window);
+      updateActiveSocietyInTurnOrder(window);
       updatePanelCloseButton(window);
       updateHint();
     }
@@ -189,7 +200,7 @@ public class Hud {
       }
     }
     if (!hint.getText().getString().equals(hintString) && hintString != null) {
-      Text hintText = new Text(hintString, 1, ColourUtils.convertColor(Color.WHITE));
+      Text hintText = new Text(hintString, 0.8f, ColourUtils.convertColor(Color.WHITE));
       hint.setText(hintText);
       hint.setOffsetX(-(hint.getWidth() / 2));
     }
@@ -262,6 +273,21 @@ public class Hud {
     arrowButton.update(window);
   }
 
+
+  public static void updateActiveSocietyInTurnOrder(Window window) {
+    purgeIdentifiers();
+    for (SocietyButton identifier : turnOrderIdentifiers) {
+      if (identifier.getSociety() == World.getActiveSociety()) {
+        identifier.setInactiveColourOffset(new Vector4f(ColourUtils.convertColor(ChartColor.yellow), 1));
+        identifier.setActiveColourOffset(new Vector4f(ColourUtils.convertColor(ChartColor.yellow), 1));
+      } else {
+        identifier.setInactiveColourOffset(ButtonObject.getDefaultInactiveColorOffset());
+        identifier.setActiveColourOffset(ButtonObject.getDefaultInactiveColorOffset());
+      }
+      identifier.update(window);
+    }
+  }
+
   private static void updateSocietyButtons(Window window) {
     purgeButtons();
     for (int i = 0; i < societyButtons.size(); i++) {
@@ -289,6 +315,31 @@ public class Hud {
         societyPanelText.setShouldWrap(true);
         societyInspectionPanel.updateText(societyPanelText);
       }
+    }
+  }
+
+
+  private static void purgeIdentifiers() {
+    ArrayList<Society> newTurnOrder = new ArrayList<>();
+    // remove identifier of societies no longer in the game
+    if (World.getActiveSocieties().size() < turnOrderIdentifiers.size()) {
+      ArrayList<SocietyButton> identifiersToRemove = new ArrayList<>();
+      for (SocietyButton turnOrderIdentifier : turnOrderIdentifiers) {
+        boolean found = false;
+        if (World.getActiveSocieties().contains(turnOrderIdentifier.getSociety())) {
+          newTurnOrder.add(turnOrderIdentifier.getSociety());
+          found = true;
+        }
+        if (!found) {
+          identifiersToRemove.add(turnOrderIdentifier);
+        }
+      }
+      for (SocietyButton identifier : identifiersToRemove) {
+        turnOrderIdentifiers.remove(identifier);
+      }
+      // Reposition the panel
+      createTurnTrackerPanel();
+      updateTurnTracker(newTurnOrder);
     }
   }
 
@@ -384,6 +435,8 @@ public class Hud {
     if (!Game.isTraining()) {
       turnCounter.create();
     }
+    // create the Turn Tracker
+    createTurnTracker();
     // Create the score counter for the player
     scoreText.setString(String.format("Score: %.0f", World.getSocieties()[0].getScore()));
     scoreText.setCentreHorizontal(true);
@@ -417,6 +470,7 @@ public class Hud {
       hint.reposition();
     }
   }
+
 
   private static void createHint() {
     Text hintText = new Text("");
@@ -539,6 +593,43 @@ public class Hud {
     arrowButtonPanel.create();
   }
 
+
+  private static void createTurnTracker() {
+    Image societyIdentifierImage = new Image("/images/hudElementBackground.png");
+    RectangleModel societyIdentifierModel = new RectangleModel(TURN_ORDER_IDENTIFIER_WIDTH, TURN_ORDER_IDENTIFIER_HEIGHT);
+    float yoffset = DEFAULT_IDENTIFIER_Y_OFFSET;
+    for (int i = 0; i < World.getSocieties().length; i++) {
+      Society society = World.getSocieties()[i];
+      String societyString;
+      float fontSize;
+      if (i == 0) {
+        societyString = "Your Society";
+        fontSize = 0.3f;
+      } else {
+        societyString = String.format("Society: %d", society.getSocietyId() + 1);
+        fontSize = 0.4f;
+      }
+      Text societyText = new Text(societyString, fontSize,
+          Vector3f.subtract(society.getSocietyColor(), 0.2f));
+      societyText.setCentreHorizontal(true);
+      societyText.setCentreVertical(true);
+      yoffset = calculateIdentifierYOffset(yoffset);
+      TurnTrackerIdentifierPositions.add(yoffset);
+      RectangleMesh buttonMesh = new RectangleMesh(societyIdentifierModel, new Material(societyIdentifierImage));
+      SocietyButton turnOrderIdentifier = new SocietyButton(buttonMesh, societyText, DEFAULT_IDENTIFIER_EDGE_X, DEFAULT_IDENTIFIER_X_OFFSET,
+          DEFAULT_IDENTIFIER_EDGE_Y, yoffset, society);
+      turnOrderIdentifier.create();
+      // add the identifier to the list of identifiers
+      turnOrderIdentifiers.add(turnOrderIdentifier);
+    }
+    createTurnTrackerPanel();
+  }
+
+  private static float calculateIdentifierYOffset(float previousYOffset) {
+    return previousYOffset - DEFAULT_IDENTIFIER_PADDING;
+
+  }
+
   private static void createSocietyButtons() {
     // set the image and the model and create the button
     Image buttonImage = new Image("/images/hudElementBackground.png");
@@ -582,6 +673,18 @@ public class Hud {
     societyButtonPanel.create();
   }
 
+  private static void createTurnTrackerPanel() {
+    // create the background panel for the identifiers
+    float panelHeight = (TURN_ORDER_IDENTIFIER_HEIGHT * turnOrderIdentifiers.size())
+        + (SOCIETY_BUTTON_PADDING * (turnOrderIdentifiers.size()));
+    float panelWidth = TURN_ORDER_IDENTIFIER_WIDTH * 2.1f;
+    RectangleModel panelModel = new RectangleModel(panelWidth, panelHeight);
+    Material panelMaterial = new Material(SOCIETY_PANEL_IMAGE, PANEL_COLOUR);
+    RectangleMesh panelMesh = new RectangleMesh(panelModel, panelMaterial);
+
+    turnTrackerPanel = new HudImage(panelMesh, -1, 0, 0.87f - (panelHeight / 2), 0);
+    turnTrackerPanel.create();
+  }
 
   private static float calculateSocietyButtonXOffset(int amount, int number) {
     // determine if odd or even
@@ -636,6 +739,10 @@ public class Hud {
     }
     arrowButton.render(guiRenderer, textRenderer);
     societyButtonPanel.render(guiRenderer);
+    for (ButtonObject identifier : turnOrderIdentifiers) {
+      identifier.render(guiRenderer, textRenderer);
+    }
+    turnTrackerPanel.render(guiRenderer);
     if (devHudActive) {
       coordinates.render(textRenderer);
     }
@@ -664,9 +771,13 @@ public class Hud {
     for (ButtonObject button : societyButtons) {
       button.reposition();
     }
+    for (ButtonObject identifier : turnOrderIdentifiers) {
+      identifier.reposition();
+    }
     arrowButton.reposition();
     arrowTextObject.reposition();
     societyButtonPanel.reposition();
+    turnTrackerPanel.reposition();
     arrowButtonPanel.reposition();
     societyInspectionPanel.reposition();
     terrainInspectionPanel.reposition();
@@ -697,6 +808,12 @@ public class Hud {
       for (ButtonObject button : societyButtons) {
         button.destroy();
       }
+      for (SocietyButton identifier : turnOrderIdentifiers) {
+        identifier.destroy();
+      }
+      turnOrderIdentifiers.clear();
+      TurnTrackerIdentifierPositions.clear();
+      turnTrackerPanel.destroy();
       societyInspectionPanel.destroy();
       terrainInspectionPanel.destroy();
       for (HudImage border : panelBorders) {
@@ -778,5 +895,15 @@ public class Hud {
             + "%6$s Raw Material: %d %6$s Claimed By: %s",
         tileType, tile.getFoodResource(), tile.getRawMaterialResource(), claimedSocietyString,
         startPadding, linePadding);
+  }
+
+  public static void updateTurnTracker(ArrayList<Society> turnOrder) {
+    for (int i = 0; i < turnOrder.size(); i++) {
+      for (SocietyButton identifier : turnOrderIdentifiers) {
+        if (turnOrder.get(i) == identifier.getSociety()) {
+          identifier.getHudImage().setOffsetY(TurnTrackerIdentifierPositions.get(i));
+        }
+      }
+    }
   }
 }
