@@ -566,7 +566,7 @@ public class World {
     // This will be returned by the NN;
     double[] moveWeights = new double[4];
 
-    if (!Game.isTraining()) {
+    if (society.getDecisionClient() == null) {
       // Do random moves
       for (int i = 0; i < moveWeights.length; i++) {
         moveWeights[i] = Math.random();
