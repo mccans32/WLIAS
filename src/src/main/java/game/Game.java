@@ -299,11 +299,6 @@ public class Game {
     // init Audio
     initAudio();
     playMusic();
-    // Initialise the NEAT;
-    // Input = The Amount of Inputs
-    // Outputs = The Amount of Outputs (Possible Moves)
-    // Clients how much simulations to run each genetic cycle
-    // TODO CHECK IF THIS IS SAVED
     //Load the NEAT Structure
     neat = loadNeat();
     MainMenu.create(window, camera);
@@ -316,6 +311,10 @@ public class Game {
       if (dir.exists()) {
         return ObjectFileIO.readNeatFromFile(NEAT_FILE_PATH);
       } else {
+        // Initialise the NEAT;
+        // Input = The Amount of Inputs
+        // Outputs = The Amount of Outputs (Possible Moves)
+        // Clients how much simulations to run each genetic cycle
         return new Neat(9, 4, 50);
       }
     } catch (IOException | ClassNotFoundException e) {
