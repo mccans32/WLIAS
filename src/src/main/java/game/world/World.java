@@ -21,7 +21,6 @@ import game.menu.DealingMenu;
 import game.menu.TradingMenu;
 import game.menu.data.TradeDeal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -86,6 +85,10 @@ public class World {
   private static Society activeSociety;
   private static Society targetSociety;
   private static Society bestTradingCandidate;
+
+  public static Society getBestTradingCandidate() {
+    return bestTradingCandidate;
+  }
 
   public static Society getTargetSociety() {
     return targetSociety;
@@ -669,6 +672,7 @@ public class World {
           DealingMenu.setTradeDeal(tradeDeal);
           Game.setState(GameState.DEALING);
         } else {
+          Game.setState(GameState.AI_DEALING);
           boolean accepted = tradeDeal.getSocietyB().examineTradeDeal(tradeDeal);
           if (accepted) {
             tradeDeal.setEndTurnOfDeal(Hud.getTurn()
@@ -677,7 +681,7 @@ public class World {
             tradeDeal.getSocietyB().activateTradeDeal(tradeDeal);
             tradeDeal.getSocietyA().setEndTurn(true);
           }
-          society.setEndTurn(true);
+          society.setMadeMove(true);
         }
       } else if (turnId == 1) {
         // WARRING
