@@ -1,9 +1,13 @@
 package neat.calculations;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Node implements Comparable<Node> {
+public class Node implements Comparable<Node>, Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private double valueX;
   private double output;

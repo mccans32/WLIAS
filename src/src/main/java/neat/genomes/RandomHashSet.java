@@ -1,9 +1,13 @@
 package neat.genomes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class RandomHashSet<T> {
+public class RandomHashSet<T> implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   HashSet<T> set;
   ArrayList<T> data;

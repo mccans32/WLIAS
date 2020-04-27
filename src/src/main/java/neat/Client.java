@@ -1,9 +1,13 @@
 package neat;
 
+import java.io.Serializable;
 import neat.calculations.Calculator;
 import neat.genomes.Genome;
 
-public class Client {
+public class Client implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private Calculator calculator;
 

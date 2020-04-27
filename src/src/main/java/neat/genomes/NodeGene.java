@@ -1,7 +1,11 @@
 package neat.genomes;
 
-public class NodeGene extends Gene {
+import java.io.Serializable;
 
+public class NodeGene extends Gene implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private double valueX;
   private double valueY;

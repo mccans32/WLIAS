@@ -1,8 +1,12 @@
 package neat.genomes;
 
+import java.io.Serializable;
 import neat.Neat;
 
-public class Genome {
+public class Genome implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private RandomHashSet<ConnectionGene> connections = new RandomHashSet<>();
   private RandomHashSet<NodeGene> nodes = new RandomHashSet<>();

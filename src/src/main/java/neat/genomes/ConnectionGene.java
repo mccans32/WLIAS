@@ -1,8 +1,12 @@
 package neat.genomes;
 
+import java.io.Serializable;
 import neat.Neat;
 
-public class ConnectionGene extends Gene {
+public class ConnectionGene extends Gene implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private NodeGene from;
   private NodeGene to;

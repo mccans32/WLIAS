@@ -1,10 +1,14 @@
 package neat;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import neat.genomes.Genome;
 import neat.genomes.RandomHashSet;
 
-public class Species {
+public class Species implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private RandomHashSet<Client> clients = new RandomHashSet<>();
   private Client representative;

@@ -10,6 +10,7 @@ import engine.graphics.renderer.WorldRenderer;
 import engine.io.Input;
 import engine.objects.world.Camera;
 import engine.tools.Timer;
+import engine.utils.ObjectFileIO;
 import game.menu.ChoiceMenu;
 import game.menu.DealingMenu;
 import game.menu.GameOverMenu;
@@ -18,6 +19,8 @@ import game.menu.PauseMenu;
 import game.menu.TradingMenu;
 import game.world.Hud;
 import game.world.World;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import math.Vector3f;
@@ -41,6 +44,7 @@ public class Game {
   static final String GUI_VERTEX_SHADER = "guiVertex.glsl";
   static final String GUI_FRAGMENT_SHADER = "guiFragment.glsl";
   static final String BACKGROUND_SHADER = "backgroundVertex.glsl";
+  private static final String NEAT_FILE_PATH = "src/main/resources/objects/Neat.txt";
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
@@ -142,6 +146,10 @@ public class Game {
 
   public static Neat getNeat() {
     return neat;
+  }
+
+  public static String getNeatFilePath() {
+    return NEAT_FILE_PATH;
   }
 
   /**
@@ -296,8 +304,24 @@ public class Game {
     // Outputs = The Amount of Outputs (Possible Moves)
     // Clients how much simulations to run each genetic cycle
     // TODO CHECK IF THIS IS SAVED
-    neat = new Neat(9, 4, 50);
+    //Load the NEAT Structure
+    neat = loadNeat();
     MainMenu.create(window, camera);
+  }
+
+  private Neat loadNeat() {
+    try {
+      File dir = new File(NEAT_FILE_PATH);
+      // Check if exists
+      if (dir.exists()) {
+        return ObjectFileIO.readNeatFromFile(NEAT_FILE_PATH);
+      } else {
+        return new Neat(9, 4, 50);
+      }
+    } catch (IOException | ClassNotFoundException e) {
+      System.out.println("File not found");
+    }
+    return null;
   }
 
   /**

@@ -1,6 +1,11 @@
 package neat.genomes;
 
-public abstract class Gene {
+import java.io.Serializable;
+
+public abstract class Gene implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   protected int innovationNumber;
 
