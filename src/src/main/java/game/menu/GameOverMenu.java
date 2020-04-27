@@ -73,13 +73,27 @@ public class GameOverMenu {
         || Game.isTraining()) {
       Game.resetButtonLock();
       if (restartButton.isMouseOver(window) || Game.isTraining()) {
-        restartGame(window, camera);
-      } else if (mainMenuButton.isMouseOver(window)) {
-        destroy();
-        Hud.destroy();
-        World.destroy();
-        Game.setState(GameState.MAIN_MENU);
-        MainMenu.create(window, camera);
+        // If Training
+        if (Game.isTraining()) {
+          // Check if the current client is the final to check in this iteration
+          if (Game.getDecisionClientIndex() < Game.getNeat().getClients().size() - 1) {
+            // Update the index
+            Game.incrementDecisionClientIndex();
+          } else {
+            System.out.println("EVOLUTIONARY CYCLE COMPLETED");
+            // Reset the index
+            Game.setDecisionClientIndex(0);
+            // Evolve the network
+            Game.getNeat().evolve();
+          }
+          restartGame(window, camera);
+        } else if (mainMenuButton.isMouseOver(window)) {
+          destroy();
+          Hud.destroy();
+          World.destroy();
+          Game.setState(GameState.MAIN_MENU);
+          MainMenu.create(window, camera);
+        }
       }
     }
   }

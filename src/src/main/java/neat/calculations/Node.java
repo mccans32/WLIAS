@@ -27,10 +27,10 @@ public class Node implements Comparable<Node> {
       }
     }
     // return the output
-    output = activation_function(s);
+    output = activationFunction(s);
   }
 
-  private double activation_function(double x) {
+  private double activationFunction(double x) {
     return 1d / (1 + Math.exp(-x));
   }
 

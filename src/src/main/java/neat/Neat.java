@@ -183,7 +183,6 @@ public class Neat {
    * Evolves the network.
    */
   public void evolve() {
-
     genSpecies();
     kill();
     removeExtinctSpecies();
@@ -252,7 +251,6 @@ public class Neat {
     for (Species s : species.getData()) {
       s.reset();
     }
-
 
     for (Client c : clients.getData()) {
       if (c.getSpecies() != null) {

@@ -44,9 +44,9 @@ public class Game {
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
-  private static final int TURN_LIMIT = 25;
+  private static final int TURN_LIMIT = 50;
   // Dictates the type of training (0 = Single agent training, 1 = Multi-agent training);
-  private static final int TRAINING_MODE = 1;
+  private static final int TRAINING_MODE = 0;
   private static boolean training = false;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
@@ -59,11 +59,24 @@ public class Game {
   private static boolean restarted;
   private static int winCount = 0;
   private static Neat neat;
+  private static int decisionClientIndex = 0;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   private Window window;
   private Shader worldShader;
   private Shader guiShader;
   private Shader backgroundShader;
+
+  public static int getDecisionClientIndex() {
+    return decisionClientIndex;
+  }
+
+  public static void setDecisionClientIndex(int decisionClientIndex) {
+    Game.decisionClientIndex = decisionClientIndex;
+  }
+
+  public static void incrementDecisionClientIndex() {
+    decisionClientIndex++;
+  }
 
   public static int getTrainingMode() {
     return TRAINING_MODE;
@@ -283,7 +296,7 @@ public class Game {
     // Outputs = The Amount of Outputs (Possible Moves)
     // Clients how much simulations to run each genetic cycle
     // TODO CHECK IF THIS IS SAVED
-    neat = new Neat(1, 4, 100);
+    neat = new Neat(9, 4, 25);
     MainMenu.create(window, camera);
   }
 
@@ -372,8 +385,14 @@ public class Game {
 
       if (training) {
         winCount++;
-        System.out.println(winningSociety + " Wins Game " + winCount);
+        assert winningSociety != null;
+        System.out.println(winningSociety + " Wins Game " + winCount + " With a score of "
+            + winningSociety.getScore());
         // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
+        if (TRAINING_MODE == 0) {
+          // Update the score for the single client
+          winningSociety.getDecisionClient().setScore(winningSociety.getScore());
+        }
         // for (Society society : World.getSocieties()) {
         // System.out.println(Hud.getTurn());
         //      society.getDecisionClient().setScore(society.getScore());

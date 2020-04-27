@@ -422,7 +422,7 @@ public class TradingMenu {
     }
     for (int i = 0; i < societyButtons.size(); i++) {
       if (!societiesChosen) {
-        if (!World.getActiveSocieties().get(0).getPossibleTradingSocieties()
+        if (!World.getActiveSocieties().get(0).getNeighbouringSocieties()
             .contains(societyButtons.get(i).getSociety())) {
           societyButtons.get(i).disable();
         }

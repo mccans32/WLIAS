@@ -92,8 +92,8 @@ public class ChoiceMenu {
     }
 
     // Update Trade Button
-    playerSociety.calculatePossibleTradingSocieties();
-    if (playerSociety.getPossibleTradingSocieties().isEmpty()) {
+    playerSociety.calculateNeighbouringSocieties();
+    if (playerSociety.getNeighbouringSocieties().isEmpty()) {
       choiceButtons.get(2).disable();
     } else {
       choiceButtons.get(2).enable();
