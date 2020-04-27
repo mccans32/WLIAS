@@ -22,11 +22,11 @@ public class Neat {
 
   private static final double SURVIVOR_PERCENTAGE = 0.8;
 
-  private static final double PROBABILITY_MUTATE_LINK = 0.01;
-  private static final double PROBABILITY_MUTATE_NODE = 0.1;
-  private static final double PROBABILITY_MUTATE_WEIGHT_SHIFT = 0.02;
-  private static final double PROBABILITY_MUTATE_WEIGHT_RANDOM = 0.02;
-  private static final double PROBABILITY_MUTATE_TOGGLE_LINK = 0;
+  private static final double PROBABILITY_MUTATE_LINK = 0.05;
+  private static final double PROBABILITY_MUTATE_NODE = 0.05;
+  private static final double PROBABILITY_MUTATE_WEIGHT_SHIFT = 0.05;
+  private static final double PROBABILITY_MUTATE_WEIGHT_RANDOM = 0.05;
+  private static final double PROBABILITY_MUTATE_TOGGLE_LINK = 0.02;
 
   private HashMap<ConnectionGene, ConnectionGene> allConnections = new HashMap<>();
   private RandomHashSet<NodeGene> allNodes = new RandomHashSet<>();
@@ -105,12 +105,14 @@ public class Neat {
     allNodes.clear();
     this.clients.clear();
 
+    // Make the Input Nodes with their own unique innovation number
     for (int i = 0; i < inputSize; i++) {
       NodeGene n = getNode();
       n.setX(0.1);
       n.setY((i + 1) / (double) (inputSize + 1));
     }
 
+    // Make the Output Nodes with their own unique innovation number
     for (int i = 0; i < outputSize; i++) {
       NodeGene n = getNode();
       n.setX(0.9);
@@ -118,9 +120,12 @@ public class Neat {
     }
 
     for (int i = 0; i < maxClients; i++) {
+      // Make a new client
       Client c = new Client();
+      // Assign a new genome to that client
       c.setGenome(emptyGenome());
-      c.generate_calculator();
+      // Generate the calculator for this client
+      c.generateCalculator();
       this.clients.add(c);
     }
   }
@@ -184,8 +189,9 @@ public class Neat {
     removeExtinctSpecies();
     reproduce();
     mutate();
+    // Make a new calculator for the new genomes of each client
     for (Client c : clients.getData()) {
-      c.generate_calculator();
+      c.generateCalculator();
     }
   }
 
@@ -193,22 +199,28 @@ public class Neat {
    * Prints the species information.
    */
   public void printSpecies() {
-    System.out.println("##########################################");
+    System.out.println("##########################################\n");
     for (Species s : this.species.getData()) {
-      System.out.println(s + "  " + s.getScore() + "  " + s.size());
+      System.out.println(s + "  " + s.getScore() + "  " + s.size() + "\n");
     }
   }
 
   private void reproduce() {
     RandomSelector<Species> selector = new RandomSelector<>();
+    // For each species add to a random selector
     for (Species s : species.getData()) {
       selector.add(s, s.getScore());
     }
 
+    // For each client if they have no species select a new random species
     for (Client c : clients.getData()) {
       if (c.getSpecies() == null) {
+        // Select a random species
         Species s = selector.random();
+        // crossover two random clients from this species together and
+        // make this the genome of the client
         c.setGenome(s.breed());
+        // Put this client in the species with no regards to similarity
         s.forcePut(c);
       }
     }
@@ -224,8 +236,11 @@ public class Neat {
   }
 
   private void removeExtinctSpecies() {
+    // For each species
     for (int i = species.size() - 1; i >= 0; i--) {
+      // If the species has 1 or less clients
       if (species.get(i).size() <= 1) {
+        // Go extinct and remove
         species.get(i).goExtinct();
         species.remove(i);
       }
@@ -233,9 +248,11 @@ public class Neat {
   }
 
   private void genSpecies() {
+    // Resets a species and selects a new client to be a representative
     for (Species s : species.getData()) {
       s.reset();
     }
+
 
     for (Client c : clients.getData()) {
       if (c.getSpecies() != null) {
@@ -244,24 +261,30 @@ public class Neat {
 
 
       boolean found = false;
+      // Try to add a client into an existing species
       for (Species s : species.getData()) {
         if (s.put(c)) {
           found = true;
           break;
         }
       }
+
+      // If the client does not match any species make a new species
       if (!found) {
         species.add(new Species(c));
       }
     }
 
+    // Get the score for this species
     for (Species s : species.getData()) {
       s.evaluateScore();
     }
   }
 
   private void kill() {
+    // For each species
     for (Species s : species.getData()) {
+      //remove a percentage of clients with the lowest scores
       s.kill(1 - SURVIVOR_PERCENTAGE);
     }
   }

@@ -18,11 +18,15 @@ public class Node implements Comparable<Node> {
    */
   public void calculate() {
     double s = 0;
+    // For each node connecting to this node
     for (Connection c : connections) {
+      // if the connection is enabled
       if (c.isEnabled()) {
+        // update the sum
         s += c.getWeight() * c.getFrom().getOutput();
       }
     }
+    // return the output
     output = activation_function(s);
   }
 

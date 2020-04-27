@@ -8,6 +8,7 @@ import game.world.World;
 import java.util.ArrayList;
 import java.util.Random;
 import math.Vector3f;
+import neat.Client;
 import society.person.Person;
 
 public class Society {
@@ -42,6 +43,7 @@ public class Society {
   private int rawMatsFromDeals;
   private ArrayList<Person> army = new ArrayList<>();
   private float happiness = 0.5f;
+  private Client decisionClient;
 
   /**
    * Instantiates a new Society.
@@ -810,8 +812,12 @@ public class Society {
     setHappiness(getHappiness() * happinessModifier);
   }
 
+  /**
+   * Updates the score for this society.
+   */
   public void updateScore() {
-    score = ((population.size() + territory.size() + totalFoodResource + totalRawMaterialResource))
+    score = (Hud.getTurn() * 0.2f)
+        + ((population.size() + territory.size() + totalFoodResource + totalRawMaterialResource))
         * happiness;
   }
 
@@ -835,6 +841,14 @@ public class Society {
       }
     }
     return validTiles;
+  }
+
+  public Client getDecisionClient() {
+    return decisionClient;
+  }
+
+  public void setDecisionClient(Client decisionClient) {
+    this.decisionClient = decisionClient;
   }
 }
 

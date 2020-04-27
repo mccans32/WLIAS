@@ -34,6 +34,7 @@ import map.tiles.WaterTile;
 import math.Vector2f;
 import math.Vector3f;
 import math.Vector4f;
+import neat.Client;
 import org.jfree.chart.ChartColor;
 import org.lwjgl.glfw.GLFW;
 import society.Society;
@@ -54,19 +55,17 @@ public class World {
   private static final int FERTILE_MAX_FOOD_RESOURCE = 9;
   private static final int FERTILE_MAX_RAW_MATERIALS = 4;
   private static final int FERTILE_MIN_RAW_MATERIALS = 3;
-
   private static final int ARID_MAX_FOOD_RESOURCE = 4;
   private static final int ARID_MIN_FOOD_RESOURCE = 3;
   private static final int ARID_MAX_RAW_MATERIALS = 9;
   private static final int ARID_MIN_RAW_MATERIALS = 6;
-
   private static final int PLAIN_MAX_FOOD_RESOURCE = 6;
   private static final int PLAIN_MIN_FOOD_RESOURCE = 5;
   private static final int PLAIN_MAX_RAW_MATERIALS = 5;
   private static final int PLAIN_MIN_RAW_MATERIALS = 4;
-
   private static final int WATER_MAX_FOOD_RESOURCE = 2;
   private static final int WATER_MAX_RAW_MATERIALS = 2;
+  private static int numberOfSocieties;
   private static TileWorldObject[][] worldMap;
   private static ArrayList<GameObject> fertileTiles = new ArrayList<>();
   private static ArrayList<GameObject> aridTiles = new ArrayList<>();
@@ -105,7 +104,17 @@ public class World {
    * @param camera the camera
    */
   public static void create(Window window, Camera camera) {
-    create(window, camera, DEFAULT_NUMBER_OF_SOCIETIES);
+    if (!Game.isTraining()) {
+      create(window, camera, DEFAULT_NUMBER_OF_SOCIETIES);
+    } else {
+      if (Game.getTrainingMode() == 0) {
+        numberOfSocieties = 1;
+        create(window, camera, numberOfSocieties);
+      } else {
+        numberOfSocieties = DEFAULT_NUMBER_OF_SOCIETIES;
+        create(window, camera, DEFAULT_NUMBER_OF_SOCIETIES);
+      }
+    }
   }
 
   /**
@@ -130,8 +139,10 @@ public class World {
   }
 
   private static void generateSocieties(int numberOfSocieties) {
+    System.out.println(String.format("Making a new world with %d Societies", numberOfSocieties));
     societies = new Society[numberOfSocieties];
     activeSocieties.clear();
+
     for (int i = 0; i < numberOfSocieties; i++) {
       Society society = new Society(i, BASIC_SOCIETY_COLORS[i]);
       societies[i] = society;

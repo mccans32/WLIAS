@@ -24,9 +24,11 @@ public class Calculator {
 
     HashMap<Integer, Node> nodeHashMap = new HashMap<>();
 
+    // For each node in our genome
     for (NodeGene n : nodes.getData()) {
-
+      // Make a new generic node
       Node node = new Node(n.getX());
+      // map this nodes "layer" to itself for reference
       nodeHashMap.put(n.getInnovationNumber(), node);
 
       if (n.getX() <= 0.1) {
@@ -38,19 +40,26 @@ public class Calculator {
       }
     }
 
+    // Sort the hidden nodes by their layer
     hiddenNodes.sort(Node::compareTo);
 
+    // For each connection
     for (ConnectionGene c : cons.getData()) {
+      // Get the node coming from
       NodeGene from = c.getFrom();
+      // Get the node going to
       NodeGene to = c.getTo();
 
+      // Make two reference nodes for coming form and to
       Node nodeFrom = nodeHashMap.get(from.getInnovationNumber());
       Node nodeTo = nodeHashMap.get(to.getInnovationNumber());
 
+      // Set up a new connection reference
       Connection con = new Connection(nodeFrom, nodeTo);
       con.setWeight(c.getWeight());
       con.setEnabled(c.isEnabled());
 
+      // Add connection reference to connection to
       nodeTo.getConnections().add(con);
     }
   }
@@ -66,13 +75,17 @@ public class Calculator {
     if (input.length != inputNodes.size()) {
       throw new RuntimeException("Data doesnt fit");
     }
+    // Set the output for the input nodes to be themselves
     for (int i = 0; i < inputNodes.size(); i++) {
       inputNodes.get(i).setOutput(input[i]);
     }
+
+    // calculate the output for each hidden node
     for (Node n : hiddenNodes) {
       n.calculate();
     }
 
+    // Calculate the outputs
     double[] output = new double[outputNodes.size()];
     for (int i = 0; i < outputNodes.size(); i++) {
       outputNodes.get(i).calculate();

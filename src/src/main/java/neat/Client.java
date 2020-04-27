@@ -11,7 +11,7 @@ public class Client {
   private double score;
   private Species species;
 
-  public void generate_calculator() {
+  public void generateCalculator() {
     this.calculator = new Calculator(genome);
   }
 
@@ -23,7 +23,7 @@ public class Client {
    */
   public double[] calculate(double... input) {
     if (this.calculator == null) {
-      generate_calculator();
+      generateCalculator();
     }
     return this.calculator.calculate(input);
   }

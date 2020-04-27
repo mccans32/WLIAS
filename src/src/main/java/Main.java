@@ -14,7 +14,7 @@ public class Main {
    * @param args the input arguments.
    */
   public static void main(String[] args) {
-    Neat neat = new Neat(10, 1, 1000);
+    Neat neat = new Neat(10, 1, 100);
 
     double[] in = new double[10];
     for (int i = 0; i < 10; i++) {
@@ -27,7 +27,7 @@ public class Main {
         c.setScore(score);
       }
       neat.evolve();
-      //neat.printSpecies();
+      neat.printSpecies();
     }
 
     //    for (Client c : neat.getClients().getData()) {

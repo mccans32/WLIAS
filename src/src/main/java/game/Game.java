@@ -21,6 +21,7 @@ import game.world.World;
 import java.util.ArrayList;
 import java.util.Collections;
 import math.Vector3f;
+import neat.Neat;
 import org.lwjgl.glfw.GLFW;
 import society.Society;
 
@@ -44,6 +45,8 @@ public class Game {
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
   private static final int TURN_LIMIT = 25;
+  // Dictates the type of training (0 = Single agent training, 1 = Multi-agent training);
+  private static final int TRAINING_MODE = 1;
   private static boolean training = false;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
@@ -55,11 +58,16 @@ public class Game {
   private static int buttonLock = BUTTON_LOCK_CYCLES;
   private static boolean restarted;
   private static int winCount = 0;
+  private static Neat neat;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   private Window window;
   private Shader worldShader;
   private Shader guiShader;
   private Shader backgroundShader;
+
+  public static int getTrainingMode() {
+    return TRAINING_MODE;
+  }
 
   public static GameState getState() {
     return state;
@@ -117,6 +125,10 @@ public class Game {
 
   public static Source getMusicSource() {
     return musicSource;
+  }
+
+  public static Neat getNeat() {
+    return neat;
   }
 
   /**
@@ -266,6 +278,12 @@ public class Game {
     // init Audio
     initAudio();
     playMusic();
+    // Initialise the NEAT;
+    // Input = The Amount of Inputs
+    // Outputs = The Amount of Outputs (Possible Moves)
+    // Clients how much simulations to run each genetic cycle
+    // TODO CHECK IF THIS IS SAVED
+    neat = new Neat(1, 4, 100);
     MainMenu.create(window, camera);
   }
 
@@ -330,7 +348,7 @@ public class Game {
   }
 
   private void checkGameOver() {
-    if (World.getActiveSocieties().size() <= 1
+    if ((Game.isTraining() && Game.getTrainingMode() == 1 && World.getActiveSocieties().size() <= 1)
         || Hud.getTurn() >= TURN_LIMIT
         || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
       state = GameState.GAME_OVER;
@@ -356,8 +374,18 @@ public class Game {
         winCount++;
         System.out.println(winningSociety + " Wins Game " + winCount);
         // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
+        // for (Society society : World.getSocieties()) {
+        // System.out.println(Hud.getTurn());
+        //      society.getDecisionClient().setScore(society.getScore());
+        //     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        //
+        // for (ConnectionGene gene
+        // : society.getDecisionClient().getGenome().getConnections().getData()) {
+        //            System.out.print(gene.getInnovationNumber() + " ");
+        //          }
+        //        }
+        //        Game.getNeat().evolve();
       }
-
     }
   }
 

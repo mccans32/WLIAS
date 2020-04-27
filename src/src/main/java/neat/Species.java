@@ -55,9 +55,11 @@ public class Species {
    */
   public void evaluateScore() {
     double v = 0;
+    // For each client in this species add their score
     for (Client c : clients.getData()) {
       v += c.getScore();
     }
+    // Return the average score
     score = v / clients.size();
   }
 
@@ -65,12 +67,16 @@ public class Species {
    * Reset.
    */
   public void reset() {
+    // Select a random client to be a new representative
     representative = clients.randomElement();
+
+    // Reset all of the clients
     for (Client c : clients.getData()) {
       c.setSpecies(null);
     }
     clients.clear();
 
+    // Add the representative
     clients.add(representative);
     representative.setSpecies(this);
     score = 0;
