@@ -314,7 +314,6 @@ public class Game {
       File dir = new File(NEAT_FILE_PATH);
       // Check if exists
       if (dir.exists()) {
-        System.out.println("READING FROM FILE");
         return ObjectFileIO.readNeatFromFile(NEAT_FILE_PATH);
       } else {
         return new Neat(9, 4, 50);
