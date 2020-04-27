@@ -90,7 +90,7 @@ public class Hud {
   private static ArrayList<HudImage> panelBorders = new ArrayList<>();
   private static boolean mouseOverHud = false;
   private static HudText hint;
-  private static ArrayList<Float> TurnTrackerIdentifierPositions = new ArrayList<>();
+  private static ArrayList<Float> turnTrackerIdentifierPositions = new ArrayList<>();
 
   public static int getTurn() {
     return turn;
@@ -628,7 +628,7 @@ public class Hud {
       societyText.setCentreHorizontal(true);
       societyText.setCentreVertical(true);
       yoffset = calculateIdentifierYOffset(yoffset);
-      TurnTrackerIdentifierPositions.add(yoffset);
+      turnTrackerIdentifierPositions.add(yoffset);
       RectangleMesh buttonMesh =
           new RectangleMesh(societyIdentifierModel, new Material(societyIdentifierImage));
       SocietyButton turnOrderIdentifier = new SocietyButton(buttonMesh, societyText,
@@ -830,7 +830,7 @@ public class Hud {
         identifier.destroy();
       }
       turnOrderIdentifiers.clear();
-      TurnTrackerIdentifierPositions.clear();
+      turnTrackerIdentifierPositions.clear();
       turnTrackerPanel.destroy();
       societyInspectionPanel.destroy();
       terrainInspectionPanel.destroy();
@@ -924,7 +924,7 @@ public class Hud {
     for (int i = 0; i < turnOrder.size(); i++) {
       for (SocietyButton identifier : turnOrderIdentifiers) {
         if (turnOrder.get(i) == identifier.getSociety()) {
-          identifier.getHudImage().setOffsetY(TurnTrackerIdentifierPositions.get(i));
+          identifier.getHudImage().setOffsetY(turnTrackerIdentifierPositions.get(i));
         }
       }
     }
