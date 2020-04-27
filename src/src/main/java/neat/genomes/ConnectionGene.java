@@ -59,17 +59,6 @@ public class ConnectionGene extends Gene {
   }
 
   @Override
-  public String toString() {
-    return "ConnectionGene{"
-        + "from=" + from.getInnovationNumber()
-        + ", to=" + to.getInnovationNumber()
-        + ", weight=" + weight
-        + ", enabled=" + enabled
-        + ", innovation_number=" + innovationNumber
-        + '}';
-  }
-
-  @Override
   public int hashCode() {
     return from.getInnovationNumber() * Neat.MAX_NODES + to.getInnovationNumber();
   }

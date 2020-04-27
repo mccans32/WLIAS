@@ -140,7 +140,6 @@ public class World {
   }
 
   private static void generateSocieties(int numberOfSocieties) {
-    System.out.println(String.format("Making a new world with %d Societies", numberOfSocieties));
     societies = new Society[numberOfSocieties];
     activeSocieties.clear();
     Client decisionClient = null;
@@ -562,6 +561,7 @@ public class World {
     } else {
       double[] inputs = new double[9];
       // Pass inputs
+      //TODO NORMALIZE INPUTS
       inputs[0] = society.getAverageProductivity();
       inputs[1] = society.getAverageAggressiveness();
       inputs[2] = society.getTerritory().size();
@@ -576,8 +576,6 @@ public class World {
       inputs[8] = society.getTradingSocieties().size();
 
       moveWeights = society.getDecisionClient().calculate(inputs);
-      System.out.println("//////////////////////////////////////");
-      System.out.println(Arrays.toString(moveWeights));
     }
 
     // Create a map that will map a move ID to its weight
@@ -650,7 +648,6 @@ public class World {
         break;
       }
     }
-    System.out.println(move);
     return move;
   }
 

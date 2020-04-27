@@ -80,20 +80,20 @@ public class GameOverMenu {
             // Update the index
             Game.incrementDecisionClientIndex();
           } else {
-            System.out.println("EVOLUTIONARY CYCLE COMPLETED");
             // Reset the index
             Game.setDecisionClientIndex(0);
             // Evolve the network
+            System.out.println("EVOLVING THE NETWORK");
             Game.getNeat().evolve();
           }
-          restartGame(window, camera);
-        } else if (mainMenuButton.isMouseOver(window)) {
-          destroy();
-          Hud.destroy();
-          World.destroy();
-          Game.setState(GameState.MAIN_MENU);
-          MainMenu.create(window, camera);
         }
+        restartGame(window, camera);
+      } else if (mainMenuButton.isMouseOver(window)) {
+        destroy();
+        Hud.destroy();
+        World.destroy();
+        Game.setState(GameState.MAIN_MENU);
+        MainMenu.create(window, camera);
       }
     }
   }

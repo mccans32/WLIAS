@@ -296,7 +296,7 @@ public class Game {
     // Outputs = The Amount of Outputs (Possible Moves)
     // Clients how much simulations to run each genetic cycle
     // TODO CHECK IF THIS IS SAVED
-    neat = new Neat(9, 4, 25);
+    neat = new Neat(9, 4, 50);
     MainMenu.create(window, camera);
   }
 
@@ -361,7 +361,8 @@ public class Game {
   }
 
   private void checkGameOver() {
-    if ((Game.isTraining() && Game.getTrainingMode() == 1 && World.getActiveSocieties().size() <= 1)
+    if ((training && Game.getTrainingMode() == 1 && World.getActiveSocieties().size() <= 1)
+        || (!training && World.getActiveSocieties().size() <= 1)
         || Hud.getTurn() >= TURN_LIMIT
         || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
       state = GameState.GAME_OVER;
@@ -388,22 +389,10 @@ public class Game {
         assert winningSociety != null;
         System.out.println(winningSociety + " Wins Game " + winCount + " With a score of "
             + winningSociety.getScore());
-        // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
         if (TRAINING_MODE == 0) {
           // Update the score for the single client
           winningSociety.getDecisionClient().setScore(winningSociety.getScore());
         }
-        // for (Society society : World.getSocieties()) {
-        // System.out.println(Hud.getTurn());
-        //      society.getDecisionClient().setScore(society.getScore());
-        //     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        //
-        // for (ConnectionGene gene
-        // : society.getDecisionClient().getGenome().getConnections().getData()) {
-        //            System.out.print(gene.getInnovationNumber() + " ");
-        //          }
-        //        }
-        //        Game.getNeat().evolve();
       }
     }
   }

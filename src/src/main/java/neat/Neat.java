@@ -194,16 +194,6 @@ public class Neat {
     }
   }
 
-  /**
-   * Prints the species information.
-   */
-  public void printSpecies() {
-    System.out.println("##########################################\n");
-    for (Species s : this.species.getData()) {
-      System.out.println(s + "  " + s.getScore() + "  " + s.size() + "\n");
-    }
-  }
-
   private void reproduce() {
     RandomSelector<Species> selector = new RandomSelector<>();
     // For each species add to a random selector
