@@ -387,7 +387,9 @@ public class Game {
     if ((training && Game.getTrainingMode() == 1 && World.getActiveSocieties().size() <= 1)
         || (!training && World.getActiveSocieties().size() <= 1)
         || Hud.getTurn() >= TURN_LIMIT
-        || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
+        || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))
+        || (training && TRAINING_MODE == 1
+        && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
       state = GameState.GAME_OVER;
       // get the society with the highest score
       Society winningSociety = null;
@@ -410,7 +412,7 @@ public class Game {
       if (training) {
         winCount++;
         assert winningSociety != null;
-        System.out.println(winningSociety + " with id " + winningSociety.getSocietyId()
+        System.out.println(winningSociety + " With ID " + winningSociety.getSocietyId()
             + " Wins Game " + winCount + " With a score of "
             + winningSociety.getScore());
         if (TRAINING_MODE == 0) {
