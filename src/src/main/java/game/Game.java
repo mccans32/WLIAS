@@ -164,6 +164,8 @@ public class Game {
         // generates a random turn order of all the societies in play
         ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
         Collections.shuffle(turnOrder);
+        // update the Turn Order
+        Hud.updateTurnTracker(turnOrder);
         // cycles thorough all societies in play
         for (Society society : turnOrder) {
           // closing of the inspection panel so that information is up to date
@@ -301,6 +303,8 @@ public class Game {
       } else if (state == GameState.TRADING) {
         TradingMenu.update(window);
       } else if (state == GameState.DEALING) {
+        //update Turn Tracker
+        Hud.updateActiveSocietyInTurnOrder(window);
         // Update The world
         World.update(window, camera);
         // update Deal Menu

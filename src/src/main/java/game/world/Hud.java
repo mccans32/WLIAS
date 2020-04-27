@@ -274,12 +274,19 @@ public class Hud {
   }
 
 
+  /**
+   * Update active society in turn order.
+   *
+   * @param window the window
+   */
   public static void updateActiveSocietyInTurnOrder(Window window) {
     purgeIdentifiers();
     for (SocietyButton identifier : turnOrderIdentifiers) {
       if (identifier.getSociety() == World.getActiveSociety()) {
-        identifier.setInactiveColourOffset(new Vector4f(ColourUtils.convertColor(ChartColor.yellow), 1));
-        identifier.setActiveColourOffset(new Vector4f(ColourUtils.convertColor(ChartColor.yellow), 1));
+        identifier.setInactiveColourOffset(
+            new Vector4f(ColourUtils.convertColor(ChartColor.yellow), 1));
+        identifier.setActiveColourOffset(
+            new Vector4f(ColourUtils.convertColor(ChartColor.yellow), 1));
       } else {
         identifier.setInactiveColourOffset(ButtonObject.getDefaultInactiveColorOffset());
         identifier.setActiveColourOffset(ButtonObject.getDefaultInactiveColorOffset());
@@ -431,7 +438,8 @@ public class Hud {
     RectangleModel model = new RectangleModel(0.45f, 0.1f);
     // create the turn Counter
     RectangleMesh turnMesh = new RectangleMesh(model, new Material(hudImage));
-    turnCounter = new HudObject(turnMesh, turnText, -1f, 0.2f, 1f, -0.05f);
+    turnCounter = new HudObject(turnMesh, turnText, -1f,
+        0.2f, 1f, -0.05f);
     if (!Game.isTraining()) {
       turnCounter.create();
     }
@@ -442,7 +450,8 @@ public class Hud {
     scoreText.setCentreHorizontal(true);
     scoreText.setCentreVertical(true);
     RectangleMesh scoreMesh = new RectangleMesh(model, new Material(hudImage));
-    scoreCounter = new HudObject(scoreMesh, scoreText, -1f, 0.7f, 1f, -0.05f);
+    scoreCounter = new HudObject(scoreMesh, scoreText, -1f,
+        0.7f, 1f, -0.05f);
     if (!Game.isTraining()) {
       scoreCounter.create();
     }
@@ -516,24 +525,26 @@ public class Hud {
     float horizontalWidth = width + (borderSize * 2);
     RectangleModel horizontalModel = new RectangleModel(horizontalWidth, borderSize);
     RectangleMesh horizontalMesh = new RectangleMesh(horizontalModel, borderMaterial);
-    HudImage borderTop = new HudImage(horizontalMesh, -1, horizontalWidth / 2, 0,
-        offsetY + height / 2f + borderSize / 2f);
+    HudImage borderTop = new HudImage(horizontalMesh, -1,
+        horizontalWidth / 2, 0, offsetY + height / 2f + borderSize / 2f);
     borderTop.create();
     panelBorders.add(borderTop);
     // create bottom border
-    HudImage borderBottom = new HudImage(horizontalMesh, -1, horizontalWidth / 2, 0,
-        offsetY - height / 2f - borderSize / 2f);
+    HudImage borderBottom = new HudImage(horizontalMesh, -1,
+        horizontalWidth / 2, 0, offsetY - height / 2f - borderSize / 2f);
     borderBottom.create();
     panelBorders.add(borderBottom);
     // create left border
     float verticalHeight = height + (borderSize * 2);
     RectangleModel verticalModel = new RectangleModel(borderSize, verticalHeight);
     RectangleMesh verticalMesh = new RectangleMesh(verticalModel, borderMaterial);
-    HudImage borderLeft = new HudImage(verticalMesh, -1, borderSize / 2, 0, offsetY);
+    HudImage borderLeft = new HudImage(verticalMesh,
+        -1, borderSize / 2, 0, offsetY);
     borderLeft.create();
     panelBorders.add(borderLeft);
     //create right border
-    HudImage borderRight = new HudImage(verticalMesh, -1, width + (borderSize * 1.5f), 0, offsetY);
+    HudImage borderRight = new HudImage(verticalMesh,
+        -1, width + (borderSize * 1.5f), 0, offsetY);
     borderRight.create();
     panelBorders.add(borderRight);
     // set the alpha for the borders
@@ -548,7 +559,8 @@ public class Hud {
     float terrainTileSize = 0.2f;
     RectangleModel terrainTileModel = new RectangleModel(terrainTileSize, terrainTileSize);
     RectangleMesh terrainTileMesh = new RectangleMesh(terrainTileModel, new Material());
-    terrainTileImage = new HudImage(terrainTileMesh, edgeX, borderSize + width / 2, 0, height / 4);
+    terrainTileImage = new HudImage(terrainTileMesh, edgeX,
+        borderSize + width / 2, 0, height / 4);
     terrainTileImage.create();
   }
 
@@ -589,14 +601,16 @@ public class Hud {
     RectangleModel panelModel = new RectangleModel(panelWidth, panelHeight);
     Material panelMaterial = new Material(PANEL_IMAGE, PANEL_COLOUR);
     RectangleMesh panelMesh = new RectangleMesh(panelModel, panelMaterial);
-    arrowButtonPanel = new HudImage(panelMesh, 1, -width * 1.1f, -1, height * 0.8f);
+    arrowButtonPanel = new HudImage(panelMesh, 1,
+        -width * 1.1f, -1, height * 0.8f);
     arrowButtonPanel.create();
   }
 
 
   private static void createTurnTracker() {
     Image societyIdentifierImage = new Image("/images/hudElementBackground.png");
-    RectangleModel societyIdentifierModel = new RectangleModel(TURN_ORDER_IDENTIFIER_WIDTH, TURN_ORDER_IDENTIFIER_HEIGHT);
+    RectangleModel societyIdentifierModel =
+        new RectangleModel(TURN_ORDER_IDENTIFIER_WIDTH, TURN_ORDER_IDENTIFIER_HEIGHT);
     float yoffset = DEFAULT_IDENTIFIER_Y_OFFSET;
     for (int i = 0; i < World.getSocieties().length; i++) {
       Society society = World.getSocieties()[i];
@@ -615,8 +629,10 @@ public class Hud {
       societyText.setCentreVertical(true);
       yoffset = calculateIdentifierYOffset(yoffset);
       TurnTrackerIdentifierPositions.add(yoffset);
-      RectangleMesh buttonMesh = new RectangleMesh(societyIdentifierModel, new Material(societyIdentifierImage));
-      SocietyButton turnOrderIdentifier = new SocietyButton(buttonMesh, societyText, DEFAULT_IDENTIFIER_EDGE_X, DEFAULT_IDENTIFIER_X_OFFSET,
+      RectangleMesh buttonMesh =
+          new RectangleMesh(societyIdentifierModel, new Material(societyIdentifierImage));
+      SocietyButton turnOrderIdentifier = new SocietyButton(buttonMesh, societyText,
+          DEFAULT_IDENTIFIER_EDGE_X, DEFAULT_IDENTIFIER_X_OFFSET,
           DEFAULT_IDENTIFIER_EDGE_Y, yoffset, society);
       turnOrderIdentifier.create();
       // add the identifier to the list of identifiers
@@ -669,7 +685,8 @@ public class Hud {
     RectangleModel panelModel = new RectangleModel(panelWidth, panelHeight);
     Material panelMaterial = new Material(SOCIETY_PANEL_IMAGE, PANEL_COLOUR);
     RectangleMesh panelMesh = new RectangleMesh(panelModel, panelMaterial);
-    societyButtonPanel = new HudImage(panelMesh, 0, 0, -1, SOCIETY_BUTTON_OFFSET_Y);
+    societyButtonPanel = new HudImage(panelMesh,
+        0, 0, -1, SOCIETY_BUTTON_OFFSET_Y);
     societyButtonPanel.create();
   }
 
@@ -682,7 +699,8 @@ public class Hud {
     Material panelMaterial = new Material(SOCIETY_PANEL_IMAGE, PANEL_COLOUR);
     RectangleMesh panelMesh = new RectangleMesh(panelModel, panelMaterial);
 
-    turnTrackerPanel = new HudImage(panelMesh, -1, 0, 0.87f - (panelHeight / 2), 0);
+    turnTrackerPanel = new HudImage(panelMesh,
+        -1, 0, 0.87f - (panelHeight / 2), 0);
     turnTrackerPanel.create();
   }
 
@@ -897,6 +915,11 @@ public class Hud {
         startPadding, linePadding);
   }
 
+  /**
+   * Update turn tracker.
+   *
+   * @param turnOrder the turn order
+   */
   public static void updateTurnTracker(ArrayList<Society> turnOrder) {
     for (int i = 0; i < turnOrder.size(); i++) {
       for (SocietyButton identifier : turnOrderIdentifiers) {
