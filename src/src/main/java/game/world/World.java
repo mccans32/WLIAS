@@ -153,6 +153,10 @@ public class World {
         ArrayList<Client> decisionClients = Game.getNeat().getClients().getData();
         int clientIndex = Game.getDecisionClientIndex();
         decisionClient = decisionClients.get(clientIndex);
+      } else {
+        ArrayList<Client> decisionClients = Game.getNeat().getClients().getData();
+        int clientIndex = Game.getDecisionClientIndex();
+        decisionClient = decisionClients.get(clientIndex);
       }
     } else {
       // A normal game is occurring
@@ -173,6 +177,12 @@ public class World {
       if (Game.isTraining()) {
         if (Game.getTrainingMode() == 0) {
           society.setDecisionClient(decisionClient);
+        } else {
+          if (society.getSocietyId() == 0) {
+            society.setDecisionClient(decisionClient);
+          } else {
+            society.setDecisionClient(Game.getNeat().getRandomClient());
+          }
         }
       } else {
         // else set the client to be the best from the NEAT

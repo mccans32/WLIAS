@@ -374,4 +374,8 @@ public class Neat implements Serializable {
 
     return bestClient;
   }
+
+  public Client getRandomClient() {
+    return clients.randomElement();
+  }
 }
