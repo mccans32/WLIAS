@@ -1,5 +1,6 @@
 package neat;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import neat.genomes.ConnectionGene;
 import neat.genomes.Genome;
@@ -7,10 +8,12 @@ import neat.genomes.NodeGene;
 import neat.genomes.RandomHashSet;
 import neat.genomes.RandomSelector;
 
-public class Neat {
+public class Neat implements Serializable {
 
   public static final int MAX_NODES = (int) Math.pow(2, 20);
 
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private static final double C1 = 1;
   private static final double C2 = 1;

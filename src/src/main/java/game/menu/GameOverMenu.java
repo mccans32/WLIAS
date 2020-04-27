@@ -13,11 +13,14 @@ import engine.objects.gui.ButtonObject;
 import engine.objects.gui.HudText;
 import engine.objects.world.Camera;
 import engine.utils.ColourUtils;
+import engine.utils.ObjectFileIO;
 import game.Game;
 import game.GameState;
 import game.world.Hud;
 import game.world.World;
 import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import math.Vector3f;
 import math.Vector4f;
 import org.lwjgl.glfw.GLFW;
@@ -85,6 +88,13 @@ public class GameOverMenu {
             // Evolve the network
             System.out.println("EVOLVING THE NETWORK");
             Game.getNeat().evolve();
+            try {
+              ObjectFileIO.writeNeatToFile(Game.getNeatFilePath(), Game.getNeat());
+            } catch (FileNotFoundException e) {
+              System.out.println("File Not Found");
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
           }
         }
         restartGame(window, camera);

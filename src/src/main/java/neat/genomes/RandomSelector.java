@@ -1,8 +1,12 @@
 package neat.genomes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class RandomSelector<T> {
+public class RandomSelector<T> implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private ArrayList<T> objects = new ArrayList<>();
   private ArrayList<Double> scores = new ArrayList<>();

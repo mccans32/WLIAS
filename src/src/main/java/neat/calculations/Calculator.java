@@ -1,5 +1,6 @@
 package neat.calculations;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import neat.genomes.ConnectionGene;
@@ -7,7 +8,10 @@ import neat.genomes.Genome;
 import neat.genomes.NodeGene;
 import neat.genomes.RandomHashSet;
 
-public class Calculator {
+public class Calculator implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private ArrayList<Node> inputNodes = new ArrayList<>();
   private ArrayList<Node> hiddenNodes = new ArrayList<>();

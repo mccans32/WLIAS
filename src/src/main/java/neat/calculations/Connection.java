@@ -1,7 +1,12 @@
 package neat.calculations;
 
 
-public class Connection {
+import java.io.Serializable;
+
+public class Connection implements Serializable {
+
+  //default serialVersion id
+  private static final long serialVersionUID = 1L;
 
   private Node from;
   private Node to;
