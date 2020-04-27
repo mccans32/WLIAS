@@ -21,6 +21,7 @@ import game.world.World;
 import java.util.ArrayList;
 import java.util.Collections;
 import math.Vector3f;
+import neat.Neat;
 import org.lwjgl.glfw.GLFW;
 import society.Society;
 
@@ -43,7 +44,9 @@ public class Game {
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
-  private static final int TURN_LIMIT = 25;
+  private static final int TURN_LIMIT = 50;
+  // Dictates the type of training (0 = Single agent training, 1 = Multi-agent training);
+  private static final int TRAINING_MODE = 0;
   private static boolean training = false;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
@@ -55,11 +58,29 @@ public class Game {
   private static int buttonLock = BUTTON_LOCK_CYCLES;
   private static boolean restarted;
   private static int winCount = 0;
+  private static Neat neat;
+  private static int decisionClientIndex = 0;
   public Camera camera = new Camera(new Vector3f(0, 0, 10f), new Vector3f(30, 0, 0));
   private Window window;
   private Shader worldShader;
   private Shader guiShader;
   private Shader backgroundShader;
+
+  public static int getDecisionClientIndex() {
+    return decisionClientIndex;
+  }
+
+  public static void setDecisionClientIndex(int decisionClientIndex) {
+    Game.decisionClientIndex = decisionClientIndex;
+  }
+
+  public static void incrementDecisionClientIndex() {
+    decisionClientIndex++;
+  }
+
+  public static int getTrainingMode() {
+    return TRAINING_MODE;
+  }
 
   public static GameState getState() {
     return state;
@@ -119,6 +140,10 @@ public class Game {
     return musicSource;
   }
 
+  public static Neat getNeat() {
+    return neat;
+  }
+
   /**
    * Start.
    */
@@ -153,71 +178,75 @@ public class Game {
         updateScores();
         // Check if the game is over
         checkGameOver();
-        // Reset the player choice
-        ChoiceMenu.setChoiceMade(false);
-        // Age everyone in each society
-        if (Hud.getTurn() % AGE_FREQUENCY == 0) {
-          for (Society society : World.getActiveSocieties()) {
-            society.agePopulation();
-          }
-        }
-        // generates a random turn order of all the societies in play
-        ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
-        Collections.shuffle(turnOrder);
-        // update the Turn Order
-        Hud.updateTurnTracker(turnOrder);
-        // cycles thorough all societies in play
-        for (Society society : turnOrder) {
-          // closing of the inspection panel so that information is up to date
-          if (society.getSocietyId() == 0) {
-            Hud.setSocietyPanelActive(false);
-            Hud.setTerrainPanelActive(false);
-          }
-          World.setActiveSociety(society);
-          // check and end Trade deals
-          society.checkTradeDeal();
-          // update happiness based on resources
-          society.updateHappiness();
-          // set the end turn flag to false
-          society.setEndTurn(false);
-          society.setMadeMove(false);
-          // update and render the screen until the society finishes its move
-          // or the simulation closes
-          while (!society.isEndTurn()
-              && !window.shouldClose()
-              && !World.getActiveSocieties().isEmpty()) {
-            // Break this loop if the game is restarted form the game over screen
-            if (restarted) {
-              break;
+
+        if (state != GameState.GAME_WIN && state != GameState.GAME_OVER) {
+          // Reset the player choice
+          ChoiceMenu.setChoiceMade(false);
+          // Age everyone in each society
+          if (Hud.getTurn() % AGE_FREQUENCY == 0) {
+            for (Society society : World.getActiveSocieties()) {
+              society.agePopulation();
             }
-            // Make AI Moves only if there is no player input
-            if (training) {
-              World.aiTurn(society);
-            } else if (society.getSocietyId() != 0) {
-              // There is Player Input and it is an AI society
-              World.aiTurn(society);
-            } else if (!ChoiceMenu.isChoiceMade()
-                // There is Player input and the Player has not made a choice yet
-                && state != GameState.GAME_PAUSE
+          }
+          // generates a random turn order of all the societies in play
+          ArrayList<Society> turnOrder = new ArrayList<>(World.getActiveSocieties());
+          Collections.shuffle(turnOrder);
+          // update the Turn Order
+          Hud.updateTurnTracker(turnOrder);
+          // cycles thorough all societies in play
+          for (Society society : turnOrder) {
+            // closing of the inspection panel so that information is up to date
+            if (society.getSocietyId() == 0) {
+              Hud.setSocietyPanelActive(false);
+              Hud.setTerrainPanelActive(false);
+            }
+            World.setActiveSociety(society);
+            // check and end Trade deals
+            society.checkTradeDeal();
+            // update happiness based on resources
+            society.updateHappiness();
+            // set the end turn flag to false
+            society.setEndTurn(false);
+            society.setMadeMove(false);
+            // update and render the screen until the society finishes its move
+            // or the simulation closes
+            while (!society.isEndTurn()
+                && !window.shouldClose()
+                && !World.getActiveSocieties().isEmpty()) {
+              // Break this loop if the game is restarted form the game over screen
+              if (restarted) {
+                break;
+              }
+              // Make AI Moves only if there is no player input
+              if (training) {
+                World.aiTurn(society);
+              } else if (society.getSocietyId() != 0) {
+                // There is Player Input and it is an AI society
+                World.aiTurn(society);
+              } else if (!ChoiceMenu.isChoiceMade()
+                  // There is Player input and the Player has not made a choice yet
+                  && state != GameState.GAME_PAUSE
+                  && state != GameState.GAME_OVER
+                  && state != GameState.GAME_WIN) {
+                state = GameState.GAME_CHOICE;
+              }
+              update();
+              render();
+            }
+            // Society reproduces and the notification loop is set
+            // Need to check this, if we don't the state is reset to reproducing and the main menu
+            // is not rendered.
+            if (state != GameState.MAIN_MENU
                 && state != GameState.GAME_OVER
-                && state != GameState.GAME_WIN) {
-              state = GameState.GAME_CHOICE;
+                && state != GameState.GAME_WIN
+                && state != GameState.GAME_PAUSE
+                && Hud.getTurn() % REPRODUCE_FREQUENCY == 0) {
+              reproduceLoop(society);
+              World.setActiveSociety(null);
             }
-            update();
-            render();
-          }
-          // Society reproduces and the notification loop is set
-          // Need to check this, if we don't the state is reset to reproducing and the main menu
-          // is not rendered.
-          if (state != GameState.MAIN_MENU
-              && state != GameState.GAME_OVER
-              && state != GameState.GAME_WIN
-              && state != GameState.GAME_PAUSE
-              && Hud.getTurn() % REPRODUCE_FREQUENCY == 0) {
-            reproduceLoop(society);
-            World.setActiveSociety(null);
           }
         }
+
         // End the turn if the state is appropriate
         // If these states aren't accounted for there are game play bugs
         if (state != GameState.MAIN_MENU
@@ -262,6 +291,12 @@ public class Game {
     // init Audio
     initAudio();
     playMusic();
+    // Initialise the NEAT;
+    // Input = The Amount of Inputs
+    // Outputs = The Amount of Outputs (Possible Moves)
+    // Clients how much simulations to run each genetic cycle
+    // TODO CHECK IF THIS IS SAVED
+    neat = new Neat(9, 4, 50);
     MainMenu.create(window, camera);
   }
 
@@ -326,7 +361,8 @@ public class Game {
   }
 
   private void checkGameOver() {
-    if (World.getActiveSocieties().size() <= 1
+    if ((training && Game.getTrainingMode() == 1 && World.getActiveSocieties().size() <= 1)
+        || (!training && World.getActiveSocieties().size() <= 1)
         || Hud.getTurn() >= TURN_LIMIT
         || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
       state = GameState.GAME_OVER;
@@ -350,10 +386,14 @@ public class Game {
 
       if (training) {
         winCount++;
-        System.out.println(winningSociety + " Wins Game " + winCount);
-        // TODO UPDATE THE NEURAL NETWORK WITH THE WINNING SOCIETY IF TRAINING
+        assert winningSociety != null;
+        System.out.println(winningSociety + " Wins Game " + winCount + " With a score of "
+            + winningSociety.getScore());
+        if (TRAINING_MODE == 0) {
+          // Update the score for the single client
+          winningSociety.getDecisionClient().setScore(winningSociety.getScore());
+        }
       }
-
     }
   }
 

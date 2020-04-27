@@ -73,6 +73,20 @@ public class GameOverMenu {
         || Game.isTraining()) {
       Game.resetButtonLock();
       if (restartButton.isMouseOver(window) || Game.isTraining()) {
+        // If Training
+        if (Game.isTraining()) {
+          // Check if the current client is the final to check in this iteration
+          if (Game.getDecisionClientIndex() < Game.getNeat().getClients().size() - 1) {
+            // Update the index
+            Game.incrementDecisionClientIndex();
+          } else {
+            // Reset the index
+            Game.setDecisionClientIndex(0);
+            // Evolve the network
+            System.out.println("EVOLVING THE NETWORK");
+            Game.getNeat().evolve();
+          }
+        }
         restartGame(window, camera);
       } else if (mainMenuButton.isMouseOver(window)) {
         destroy();
