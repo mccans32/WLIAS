@@ -188,6 +188,10 @@ public class Hud {
         } else {
           hintString = "Select society you wish to trade with.";
         }
+      } else if (Game.getState() == GameState.AI_DEALING) {
+        hintString = String.format("Society %d Trades with Society %d",
+            World.getActiveSociety().getSocietyId() + 1,
+            World.getBestTradingCandidate().getSocietyId() + 1);
       } else if (Game.getState() == GameState.AI_WAR) {
         if (World.getTargetSociety().getSocietyId() == 0) {
           hintString = String.format("Society %d Attacks Your Society",
@@ -770,7 +774,8 @@ public class Hud {
         || Game.getState() == GameState.AI_CLAIM
         || Game.getState() == GameState.AI_NOTHING
         || Game.getState() == GameState.REPRODUCING
-        || Game.getState() == GameState.AI_WAR) {
+        || Game.getState() == GameState.AI_WAR
+        || Game.getState() == GameState.AI_DEALING) {
       renderHint(textRenderer);
     }
   }

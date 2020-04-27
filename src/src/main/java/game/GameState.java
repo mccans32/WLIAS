@@ -15,5 +15,6 @@ public enum GameState {
   REPRODUCING,
   DEALING,
   AI_WAR,
-  GAME_WIN
+  GAME_WIN,
+  AI_DEALING
 }
