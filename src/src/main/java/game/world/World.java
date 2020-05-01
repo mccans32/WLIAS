@@ -595,9 +595,9 @@ public class World {
           / (society.getPopulation().size() * Society.getMaterialPerPerson());
       society.calculateNeighbouringSocieties();
       inputs[7] = society.getNeighbouringSocieties().size()
-          / (float) World.getActiveSocieties().size();
+          / ((float) World.getActiveSocieties().size() - 1);
       inputs[8] = society.getTradingSocieties().size()
-          / (float) World.getActiveSocieties().size() - 1;
+          / ((float) World.getActiveSocieties().size() - 1);
 
       moveWeights = society.getDecisionClient().calculate(inputs);
     }
