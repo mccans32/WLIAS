@@ -581,6 +581,10 @@ public class World {
         moveWeights[i] = Math.random();
       }
     } else {
+      float sizeOfActiveSocieties = 1;
+      if (World.getActiveSocieties().size() - 1 > 0) {
+        sizeOfActiveSocieties = World.getActiveSocieties().size() - 1;
+      }
       double[] inputs = new double[9];
       // Pass inputs
       inputs[0] = society.getAverageProductivity();
@@ -595,9 +599,9 @@ public class World {
           / (society.getPopulation().size() * Society.getMaterialPerPerson());
       society.calculateNeighbouringSocieties();
       inputs[7] = society.getNeighbouringSocieties().size()
-          / ((float) World.getActiveSocieties().size() - 1);
+          / sizeOfActiveSocieties;
       inputs[8] = society.getTradingSocieties().size()
-          / ((float) World.getActiveSocieties().size() - 1);
+          / sizeOfActiveSocieties;
 
       moveWeights = society.getDecisionClient().calculate(inputs);
     }
