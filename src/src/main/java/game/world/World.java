@@ -564,6 +564,12 @@ public class World {
   }
 
   private static int getMoveID(Society society) {
+    float largestPopulation = 1;
+    for (Society soc : getActiveSocieties()) {
+      if (soc.getPopulation().size() > largestPopulation) {
+        largestPopulation = soc.getPopulation().size();
+      }
+    }
     // This function returns a turn ID where each number corresponds to a certain move
 
     // This will be returned by the NN;
@@ -575,21 +581,27 @@ public class World {
         moveWeights[i] = Math.random();
       }
     } else {
+      float sizeOfActiveSocieties = 1;
+      if (World.getActiveSocieties().size() - 1 > 0) {
+        sizeOfActiveSocieties = World.getActiveSocieties().size() - 1;
+      }
       double[] inputs = new double[9];
       // Pass inputs
-      //TODO NORMALIZE INPUTS
       inputs[0] = society.getAverageProductivity();
       inputs[1] = society.getAverageAggressiveness();
-      inputs[2] = society.getTerritory().size();
-      inputs[3] = society.getPopulation().size();
-      inputs[4] = society.getArmy().size();
+      inputs[2] = society.getTerritory().size() / (float) (MapGeneration.getLandMassSizeX()
+          * MapGeneration.getLandMassSizeY());
+      inputs[3] = society.getPopulation().size() / largestPopulation;
+      inputs[4] = society.getArmy().size() / (float) society.getPopulation().size();
       inputs[5] = society.getTotalFoodResource()
           / (society.getPopulation().size() * Society.getFoodPerPerson());
       inputs[6] = society.getTotalRawMaterialResource()
           / (society.getPopulation().size() * Society.getMaterialPerPerson());
       society.calculateNeighbouringSocieties();
-      inputs[7] = society.getNeighbouringSocieties().size();
-      inputs[8] = society.getTradingSocieties().size();
+      inputs[7] = society.getNeighbouringSocieties().size()
+          / sizeOfActiveSocieties;
+      inputs[8] = society.getTradingSocieties().size()
+          / sizeOfActiveSocieties;
 
       moveWeights = society.getDecisionClient().calculate(inputs);
     }
