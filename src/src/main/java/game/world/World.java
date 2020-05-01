@@ -564,6 +564,12 @@ public class World {
   }
 
   private static int getMoveID(Society society) {
+    float largestPopulation = 1;
+    for (Society soc : getActiveSocieties()) {
+      if (soc.getPopulation().size() > largestPopulation) {
+        largestPopulation = soc.getPopulation().size();
+      }
+    }
     // This function returns a turn ID where each number corresponds to a certain move
 
     // This will be returned by the NN;
@@ -581,7 +587,7 @@ public class World {
       inputs[1] = society.getAverageAggressiveness();
       inputs[2] = society.getTerritory().size() / (float) (MapGeneration.getLandMassSizeX()
           * MapGeneration.getLandMassSizeY());
-      inputs[3] = society.getPopulation().size() / Society.getMaximumPopulationsSize();
+      inputs[3] = society.getPopulation().size() / largestPopulation;
       inputs[4] = society.getArmy().size() / (float) society.getPopulation().size();
       inputs[5] = society.getTotalFoodResource()
           / (society.getPopulation().size() * Society.getFoodPerPerson());

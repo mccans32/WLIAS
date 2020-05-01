@@ -26,7 +26,6 @@ public class Society {
   private static final float MUTATION_PROBABILITY = 0.4f;
   private static final float MAX_MUTATION_FACTOR = 0.25f;
   private static final float MIN_MUTATION_FACTOR = 0.10f;
-  private static final float MAXIMUM_POPULATION_SIZE = 400f;
   public ArrayList<TradeDeal> activeTradeDeals = new ArrayList<>();
   private Vector3f societyColor;
   private ArrayList<Person> population;
@@ -88,10 +87,6 @@ public class Society {
 
   public static int getDefaultPopulationSize() {
     return DEFAULT_POPULATION_SIZE;
-  }
-
-  public static float getMaximumPopulationsSize() {
-    return MAXIMUM_POPULATION_SIZE;
   }
 
   public int getWrongMoves() {
