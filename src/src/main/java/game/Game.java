@@ -50,7 +50,7 @@ public class Game {
   private static final int AGE_FREQUENCY = 2;
   private static final int TURN_LIMIT = 50;
   // Dictates the type of training (0 = Single agent training, 1 = Multi-agent training);
-  private static final int TRAINING_MODE = 0;
+  private static final int TRAINING_MODE = 1;
   private static boolean training = false;
   private static Timer notificationTimer = new Timer();
   private static GameState state = GameState.MAIN_MENU;
@@ -299,11 +299,6 @@ public class Game {
     // init Audio
     initAudio();
     playMusic();
-    // Initialise the NEAT;
-    // Input = The Amount of Inputs
-    // Outputs = The Amount of Outputs (Possible Moves)
-    // Clients how much simulations to run each genetic cycle
-    // TODO CHECK IF THIS IS SAVED
     //Load the NEAT Structure
     neat = loadNeat();
     MainMenu.create(window, camera);
@@ -316,6 +311,10 @@ public class Game {
       if (dir.exists()) {
         return ObjectFileIO.readNeatFromFile(NEAT_FILE_PATH);
       } else {
+        // Initialise the NEAT;
+        // Input = The Amount of Inputs
+        // Outputs = The Amount of Outputs (Possible Moves)
+        // Clients how much simulations to run each genetic cycle
         return new Neat(9, 4, 50);
       }
     } catch (IOException | ClassNotFoundException e) {
@@ -388,7 +387,9 @@ public class Game {
     if ((training && Game.getTrainingMode() == 1 && World.getActiveSocieties().size() <= 1)
         || (!training && World.getActiveSocieties().size() <= 1)
         || Hud.getTurn() >= TURN_LIMIT
-        || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
+        || (!training && !World.getActiveSocieties().contains(World.getSocieties()[0]))
+        || (training && TRAINING_MODE == 1
+        && !World.getActiveSocieties().contains(World.getSocieties()[0]))) {
       state = GameState.GAME_OVER;
       // get the society with the highest score
       Society winningSociety = null;
@@ -411,11 +412,21 @@ public class Game {
       if (training) {
         winCount++;
         assert winningSociety != null;
-        System.out.println(winningSociety + " Wins Game " + winCount + " With a score of "
+        System.out.println(winningSociety + " With ID " + winningSociety.getSocietyId()
+            + " Wins Game " + winCount + " With a score of "
             + winningSociety.getScore());
         if (TRAINING_MODE == 0) {
           // Update the score for the single client
           winningSociety.getDecisionClient().setScore(winningSociety.getScore());
+        } else {
+          // update the score if the client being trained
+          if (winningSociety == World.getSocieties()[0]) {
+            float score = winningSociety.getScore() * 1.5f;
+            winningSociety.getDecisionClient().setScore(score);
+          } else {
+            World.getSocieties()[0].getDecisionClient()
+                .setScore(World.getSocieties()[0].getScore());
+          }
         }
       }
     }

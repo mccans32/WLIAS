@@ -854,10 +854,8 @@ public class Society {
    * Updates the score for this society.
    */
   public void updateScore() {
-    if (Game.isTraining()) {
-      if (Game.getTrainingMode() == 0) {
-        score = (Hud.getTurn() * 0.2f) + territory.size() - wrongMoves;
-      }
+    if (Game.isTraining() && Game.getTrainingMode() == 0) {
+      score = (Hud.getTurn() * 0.2f) + territory.size() - wrongMoves;
     } else {
       score = (Hud.getTurn() * 0.2f)
           + ((population.size() + territory.size() + totalFoodResource + totalRawMaterialResource))

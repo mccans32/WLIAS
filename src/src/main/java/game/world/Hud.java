@@ -446,9 +446,10 @@ public class Hud {
         0.2f, 1f, -0.05f);
     if (!Game.isTraining()) {
       turnCounter.create();
+      // create the Turn Tracker
+      createTurnTracker();
     }
-    // create the Turn Tracker
-    createTurnTracker();
+
     // Create the score counter for the player
     scoreText.setString(String.format("Score: %.0f", World.getSocieties()[0].getScore()));
     scoreText.setCentreHorizontal(true);
