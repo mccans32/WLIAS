@@ -351,7 +351,6 @@ public class TradingMenu {
         // check if mouse click
         acceptButton.update(window);
         cancelButton.update(window);
-        cancelButton.reposition();
         tradeDeal.setSocietyA(World.getActiveSocieties().get(0));
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
             && Game.buttonLockFree()
@@ -526,6 +525,7 @@ public class TradingMenu {
       icon.reposition();
     }
     acceptButton.reposition();
+    cancelButton.reposition();
     leftSocietyPanel.reposition();
     rightSocietyPanel.reposition();
     leftTradeDealPanel.reposition();
