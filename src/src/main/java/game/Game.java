@@ -44,7 +44,7 @@ public class Game {
   static final String GUI_VERTEX_SHADER = "guiVertex.glsl";
   static final String GUI_FRAGMENT_SHADER = "guiFragment.glsl";
   static final String BACKGROUND_SHADER = "backgroundVertex.glsl";
-  private static final String NEAT_FILE_PATH = "src/main/resources/objects/Neat.txt";
+  private static String neatFilePath = "src/main/resources/objects/Neat.txt";
   private static final int BUTTON_LOCK_CYCLES = 20;
   private static final int REPRODUCE_FREQUENCY = 2;
   private static final int AGE_FREQUENCY = 2;
@@ -149,7 +149,7 @@ public class Game {
   }
 
   public static String getNeatFilePath() {
-    return NEAT_FILE_PATH;
+    return neatFilePath;
   }
 
   /**
@@ -306,16 +306,23 @@ public class Game {
 
   private Neat loadNeat() {
     try {
-      File dir = new File(NEAT_FILE_PATH);
+      File dir = new File(neatFilePath);
       // Check if exists
       if (dir.exists()) {
-        return ObjectFileIO.readNeatFromFile(NEAT_FILE_PATH);
+        return ObjectFileIO.readNeatFromFile(neatFilePath);
       } else {
-        // Initialise the NEAT;
-        // Input = The Amount of Inputs
-        // Outputs = The Amount of Outputs (Possible Moves)
-        // Clients how much simulations to run each genetic cycle
-        return new Neat(9, 4, 50);
+        // Try load the build directory
+        neatFilePath = "../resources/main/objects/Neat.txt";
+        dir = new File(neatFilePath);
+        if (dir.exists()) {
+          return ObjectFileIO.readNeatFromFile(neatFilePath);
+        } else {
+          // Initialise the NEAT;
+          // Input = The Amount of Inputs
+          // Outputs = The Amount of Outputs (Possible Moves)
+          // Clients how much simulations to run each genetic cycle
+          return new Neat(9, 4, 50);
+        }
       }
     } catch (IOException | ClassNotFoundException e) {
       System.out.println("File not found");
@@ -494,8 +501,14 @@ public class Game {
     musicSource.setRelative(true);
     musicSource.setLooping(true);
     musicSource.setGain(0.01f);
-    int musicBuffer =
-        AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
+    int musicBuffer;
+    try {
+      musicBuffer =
+          AudioMaster.loadSound("src/main/resources/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
+    } catch (NullPointerException e) {
+      musicBuffer =
+          AudioMaster.loadSound("../resources/main/audio/music/Aphex_Twin_Stone_In_Focus.ogg");
+    }
     musicSource.playSound(musicBuffer);
   }
 
