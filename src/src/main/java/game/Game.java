@@ -412,9 +412,14 @@ public class Game {
       if (training) {
         winCount++;
         assert winningSociety != null;
-        System.out.println(winningSociety + " With ID " + winningSociety.getSocietyId()
-            + " Wins Game " + winCount + " With a score of "
-            + winningSociety.getScore());
+        if (TRAINING_MODE == 0) {
+          System.out.println(winningSociety + " With ID " + winningSociety.getSocietyId()
+              + " Wins Game " + winCount + " With a score of "
+              + winningSociety.getScore());
+        } else {
+          System.out.println(((winningSociety == World.getSocieties()[0]) ? "Win" : "Lose")
+              + ": " + World.getSocieties()[0].getScore());
+        }
         if (TRAINING_MODE == 0) {
           // Update the score for the single client
           winningSociety.getDecisionClient().setScore(winningSociety.getScore());
