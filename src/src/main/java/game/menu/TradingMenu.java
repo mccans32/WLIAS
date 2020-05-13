@@ -21,6 +21,7 @@ import engine.objects.gui.InspectionPanelObject;
 import engine.objects.gui.SocietyButton;
 import engine.utils.ColourUtils;
 import game.Game;
+import game.GameState;
 import game.menu.data.TradeDeal;
 import game.world.Hud;
 import game.world.World;
@@ -70,6 +71,7 @@ public class TradingMenu {
   private static HudText rightFoodAmount;
   private static HudText rightRawMatsAmount;
   private static ButtonObject acceptButton;
+  private static ButtonObject cancelButton;
   private static ArrayList<ButtonObject> dealButtons = new ArrayList<>();
   private static Text leftSocietyPanelText = new Text("", 0.4f);
   private static Text rightSocietyPanelText = new Text("", 0.4f);
@@ -167,6 +169,23 @@ public class TradingMenu {
     createRightDealButtons();
     createDealAmounts();
     createAcceptButton();
+    createCancelButton();
+  }
+
+  private static void createCancelButton() {
+    RectangleModel acceptButtonModel = new RectangleModel(0.5f, 0.1f);
+    Material acceptButtonMat = new Material(new Image("/images/buttonTexture.png"));
+    RectangleMesh acceptButtonMesh = new RectangleMesh(acceptButtonModel, acceptButtonMat);
+    Text acceptButtonText = new Text("Decline", 0.8f,
+        ColourUtils.convertColor(Color.WHITE), true, true, false);
+    cancelButton = new ButtonObject(acceptButtonMesh, acceptButtonText, -TRADE_PANEL_EDGE_X,
+        0.005f, 0, -0.5f);
+    cancelButton.setInactiveColourOffset(new Vector4f(ColourUtils.convertColor(Color.RED),
+        1.0f));
+    cancelButton.setActiveColourOffset(
+        new Vector4f(ColourUtils.convertColor(ChartColor.DARK_RED), 1.0f));
+    cancelButton.create();
+    cancelButton.disable();
   }
 
   private static void createAcceptButton() {
@@ -331,6 +350,8 @@ public class TradingMenu {
         dealButton.update(window);
         // check if mouse click
         acceptButton.update(window);
+        cancelButton.update(window);
+        cancelButton.reposition();
         tradeDeal.setSocietyA(World.getActiveSocieties().get(0));
         if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
             && Game.buttonLockFree()
@@ -433,6 +454,7 @@ public class TradingMenu {
           if (!(societyButtons.get(i).getSociety() == World.getActiveSocieties().get(0))) {
             societiesChosen = true;
             acceptButton.enable();
+            cancelButton.enable();
             rightSocietyPanel.setActive(true);
             // set the text for the panel
             Society rightSociety = World.getActiveSocieties().get(i);
@@ -458,7 +480,21 @@ public class TradingMenu {
         }
         reset(window);
         tradeDeal.getSocietyA().setEndTurn(true);
+      } else {
+        for (SocietyButton socButton : societyButtons) {
+          socButton.enable();
+        }
+        reset(window);
+        World.getSocieties()[0].setEndTurn(true);
       }
+    } else if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)
+        && Game.buttonLockFree()
+        && cancelButton.isMouseOver(window)) {
+      for (SocietyButton socButton : societyButtons) {
+        socButton.enable();
+      }
+      reset(window);
+      Game.setState(GameState.GAME_CHOICE);
     }
   }
 
@@ -542,6 +578,9 @@ public class TradingMenu {
     }
     if (acceptButton.isEnabled()) {
       acceptButton.render(renderer, textRenderer);
+    }
+    if (cancelButton.isEnabled()) {
+      cancelButton.render(renderer, textRenderer);
     }
     for (SocietyButton societyButton : societyButtons) {
       societyButton.render(renderer, textRenderer);
