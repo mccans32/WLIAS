@@ -40,6 +40,17 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'Main'
+        )
+    } from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 project.ext.jomlVersion = "1.9.22"
 dependencies {
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
