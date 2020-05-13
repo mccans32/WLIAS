@@ -628,5 +628,6 @@ public class TradingMenu {
     }
     dealNumbers.clear();
     acceptButton.destroy();
+    cancelButton.destroy();
   }
 }
