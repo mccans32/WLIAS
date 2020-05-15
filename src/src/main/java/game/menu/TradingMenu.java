@@ -512,6 +512,7 @@ public class TradingMenu {
     }
     societiesChosen = false;
     acceptButton.disable();
+    cancelButton.disable();
     rightSocietyPanel.setActive(false);
     leftSocietyPanel.setActive(false);
   }
