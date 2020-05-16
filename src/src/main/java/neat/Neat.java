@@ -9,6 +9,7 @@ import neat.genomes.RandomHashSet;
 import neat.genomes.RandomSelector;
 
 public class Neat implements Serializable {
+  //NEAT code referenced from https://www.youtube.com/watch?v=vvSjJZDPQVc
 
   public static final int MAX_NODES = (int) Math.pow(2, 20);
 
