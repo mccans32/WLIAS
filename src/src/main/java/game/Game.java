@@ -156,6 +156,9 @@ public class Game {
    * Start.
    */
   public void start() {
+    //This project uses 3D rendering using LWJGL referenced from
+    // https://www.youtube.com/watch?v=fW19iG9Hkrk
+    // And https://www.youtube.com/watch?v=VS8wlS9hF8E&list=PLRIWtICgwaX0u7Rf9zkZhLoLuZVfUksDP
     initialize();
     gameLoop();
     dispose();
